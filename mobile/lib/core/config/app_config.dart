@@ -59,10 +59,10 @@ class AppConfig {
   static Future<String> getBaseUrl() async {
     final prefs = await SharedPreferences.getInstance();
     var custom = prefs.getString(_keyCustomBaseUrl);
-    // Migrasi otomatis jika masih tersimpan IP lokal Wi-Fi lama (192.168.x.x)
-    if (custom != null && custom.contains(RegExp(r'192\.168\.\d+\.\d+'))) {
-      custom = custom.replaceAll(RegExp(r'192\.168\.\d+\.\d+'), '100.86.30.42');
-      await prefs.setString(_keyCustomBaseUrl, custom);
+    // Bersihkan cache lama jika masih tersimpan IP lama atau URL sementara
+    if (custom != null && !custom.contains('tail09bd7a.ts.net')) {
+      await prefs.remove(_keyCustomBaseUrl);
+      custom = null;
     }
     final selected = (custom != null && custom.isNotEmpty) ? custom : defaultBaseUrl;
     activeOrigin = _extractOrigin(selected);

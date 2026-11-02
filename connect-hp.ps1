@@ -60,18 +60,16 @@ try {
     Write-Host "[INFO] Tidak dapat mengambil data dari Tailscale CLI: $($_.Exception.Message)" -ForegroundColor Yellow
 }
 
-# 2. Sinkronkan IP Server PC ke file app_config.dart jika PC IP ditemukan
-if ($pcIp) {
-    $appConfigFile = Join-Path $PSScriptRoot "mobile\lib\core\config\app_config.dart"
-    if (Test-Path $appConfigFile) {
-        $configContent = Get-Content $appConfigFile -Raw
-        $expectedUrl = "http://${pcIp}:8000"
-        if (-not ($configContent -match [regex]::Escape($expectedUrl))) {
-            Write-Host "[SYNC] Memperbarui IP Server di app_config.dart ke: $expectedUrl" -ForegroundColor Cyan
-            $updatedConfig = [regex]::Replace($configContent, "defaultBaseUrl\s*=\s*'[^']+'", "defaultBaseUrl = '$expectedUrl'")
-            $updatedConfig = [regex]::Replace($updatedConfig, "activeOrigin\s*=\s*'[^']+'", "activeOrigin = '$expectedUrl'")
-            Set-Content -Path $appConfigFile -Value $updatedConfig -Encoding UTF8
-        }
+# 2. Sinkronkan URL Tailscale Funnel Permanen ke file app_config.dart
+$funnelDomain = "https://dul-1378.tail09bd7a.ts.net"
+$appConfigFile = Join-Path $PSScriptRoot "mobile\lib\core\config\app_config.dart"
+if (Test-Path $appConfigFile) {
+    $configContent = Get-Content $appConfigFile -Raw
+    if (-not ($configContent -match [regex]::Escape($funnelDomain))) {
+        Write-Host "[SYNC] Memperbarui URL Server di app_config.dart ke: $funnelDomain" -ForegroundColor Cyan
+        $updatedConfig = [regex]::Replace($configContent, "defaultBaseUrl\s*=\s*'[^']+'", "defaultBaseUrl = '$funnelDomain'")
+        $updatedConfig = [regex]::Replace($updatedConfig, "activeOrigin\s*=\s*'[^']+'", "activeOrigin = '$funnelDomain'")
+        Set-Content -Path $appConfigFile -Value $updatedConfig -Encoding UTF8
     }
 }
 
