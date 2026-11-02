@@ -5,8 +5,8 @@ class AppConfig {
   static const String appVersion = '1.0.0';
   
   // Base URL server Laravel (Tailscale Funnel Permanen)
-  static String defaultBaseUrl = 'https://dul-1378.tail09bd7a.ts.net';
-  static String activeOrigin = 'https://dul-1378.tail09bd7a.ts.net';
+  static String defaultBaseUrl = 'https://si-appik.tail09bd7a.ts.net';
+  static String activeOrigin = 'https://si-appik.tail09bd7a.ts.net';
   static String get baseUrl => normalizeUrl(defaultBaseUrl);
   
   static const int connectTimeout = 15000;
@@ -59,8 +59,8 @@ class AppConfig {
   static Future<String> getBaseUrl() async {
     final prefs = await SharedPreferences.getInstance();
     var custom = prefs.getString(_keyCustomBaseUrl);
-    // Bersihkan cache lama jika masih tersimpan IP lama atau URL sementara
-    if (custom != null && !custom.contains('tail09bd7a.ts.net')) {
+    // Bersihkan cache lama jika masih tersimpan domain lama
+    if (custom != null && !custom.contains('si-appik.tail09bd7a.ts.net')) {
       await prefs.remove(_keyCustomBaseUrl);
       custom = null;
     }
