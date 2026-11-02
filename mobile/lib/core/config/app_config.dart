@@ -4,9 +4,9 @@ class AppConfig {
   static const String appName = 'Aduan Jalan';
   static const String appVersion = '1.0.0';
   
-  // Base URL server Laravel (IP Tailscale PC Server Anda)
-  static String defaultBaseUrl = 'http://100.86.30.42:8000';
-  static String activeOrigin = 'http://100.86.30.42:8000';
+  // Base URL server Laravel (Tailscale Funnel Permanen)
+  static String defaultBaseUrl = 'https://dul-1378.tail09bd7a.ts.net';
+  static String activeOrigin = 'https://dul-1378.tail09bd7a.ts.net';
   static String get baseUrl => normalizeUrl(defaultBaseUrl);
   
   static const int connectTimeout = 15000;
@@ -75,3 +75,5 @@ class AppConfig {
     activeOrigin = _extractOrigin(url);
   }
 }
+
+

@@ -8,6 +8,7 @@ Thumbs.db
 *.log
 *.tmp
 *.swp
+cloudflared.exe
 
 # IDEs & Editors
 .idea/
