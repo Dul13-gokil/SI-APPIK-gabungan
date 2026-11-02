@@ -1,0 +1,14 @@
+# Alternatif build native Nixpacks Railway
+[phases.setup]
+nixPkgs = ["php83", "php83Packages.composer", "php83Extensions.pdo_mysql", "php83Extensions.pdo_pgsql", "php83Extensions.mbstring", "php83Extensions.gd", "php83Extensions.zip", "nodejs_20"]
+
+[phases.build]
+cmds = [
+    "composer install --no-dev --optimize-autoloader --no-interaction"
+]
+
+[variables]
+NIXPACKS_PHP_ROOT_DIR = "public"
+
+[start]
+cmd = "php artisan migrate --force && php artisan storage:link && php artisan serve --host=0.0.0.0 --port=$PORT"

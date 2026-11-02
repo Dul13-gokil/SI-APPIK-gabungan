@@ -1,0 +1,447 @@
+openapi: 3.0.3
+info:
+  title: Sistem Pengaduan Infrastruktur Kabupaten API
+  version: 1.0.0
+  description: REST API baseline untuk platform pengaduan infrastruktur kabupaten (Laravel Backend, Flutter Mobile Warga, Web Admin).
+servers:
+  - url: http://localhost:8000/api/v1
+    description: Local Development Server
+
+paths:
+  /auth/register:
+    post:
+      summary: Registrasi Akun Warga
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, email, phone, password, password_confirmation]
+              properties:
+                name: { type: string, example: "Budi Santoso" }
+                email: { type: string, format: email, example: "budi@example.com" }
+                phone: { type: string, example: "081234567890" }
+                password: { type: string, format: password, example: "Rahasia123!" }
+                password_confirmation: { type: string, example: "Rahasia123!" }
+                region_id: { type: integer, example: 1 }
+                is_anonymous: { type: boolean, default: false }
+      responses:
+        '201':
+          description: Registrasi berhasil
+        '422':
+          description: Validasi gagal
+
+  /auth/login:
+    post:
+      summary: Login Pengguna
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email: { type: string, format: email, example: "budi@example.com" }
+                password: { type: string, format: password, example: "Rahasia123!" }
+                device_name: { type: string, example: "Flutter Mobile" }
+      responses:
+        '200':
+          description: Berhasil login
+        '401':
+          description: Kredensial salah
+
+  /auth/logout:
+    post:
+      summary: Logout / Cabut Token
+      tags: [Auth]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Logout berhasil
+
+  /me:
+    get:
+      summary: Profil Pengguna Aktif
+      tags: [Auth]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Detail profil pengguna
+
+  /complaints:
+    get:
+      summary: Daftar Pengaduan
+      tags: [Complaints]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string }
+        - name: category_id
+          in: query
+          schema: { type: integer }
+        - name: region_id
+          in: query
+          schema: { type: integer }
+        - name: page
+          in: query
+          schema: { type: integer, default: 1 }
+        - name: per_page
+          in: query
+          schema: { type: integer, default: 15 }
+      responses:
+        '200':
+          description: Paginated daftar laporan
+    post:
+      summary: Buat Laporan Pengaduan Baru
+      tags: [Complaints]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [title, description, category_id, latitude, longitude, address, photos]
+              properties:
+                title: { type: string, example: "Jalan Berlubang Parah di Depan Puskesmas" }
+                description: { type: string, example: "Lubang jalan sedalam 20cm membahayakan pengendara motor." }
+                category_id: { type: integer, example: 1 }
+                latitude: { type: number, format: float, example: -7.123456 }
+                longitude: { type: number, format: float, example: 110.123456 }
+                address: { type: string, example: "Jl. Pemuda No. 12, Kec. Kota" }
+                region_id: { type: integer, example: 1 }
+                is_anonymous: { type: boolean, default: false }
+                photos:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        '201':
+          description: Laporan berhasil dibuat
+
+  /complaints/{id}:
+    get:
+      summary: Detail Pengaduan
+      tags: [Complaints]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Data lengkap laporan
+
+  /complaints/{id}/supports:
+    post:
+      summary: Berikan Dukungan (Saya Mengalami Ini)
+      tags: [Complaints]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Dukungan dicatat
+    delete:
+      summary: Batalkan Dukungan
+      tags: [Complaints]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Dukungan dibatalkan
+
+  /complaints/{id}/timeline:
+    get:
+      summary: Timeline Riwayat Status Laporan
+      tags: [Complaints]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Urutan peristiwa status laporan
+
+  /complaints/{id}/verify:
+    post:
+      summary: Verifikasi Administratif Laporan (Admin)
+      tags: [Complaints Workflow]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [decision]
+              properties:
+                decision:
+                  type: string
+                  enum: [VERIFIED, REJECTED]
+                notes:
+                  type: string
+                corrected_category_id:
+                  type: integer
+      responses:
+        '200':
+          description: Hasil verifikasi dicatat
+
+  /complaints/{id}/dispositions:
+    post:
+      summary: Disposisi Laporan ke Dinas/Petugas
+      tags: [Complaints Workflow]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [department_id, instruction]
+              properties:
+                department_id: { type: integer, example: 1 }
+                assigned_to: { type: integer, example: 5 }
+                instruction: { type: string, example: "Tinjau dan perbaiki dalam 3 hari" }
+                deadline: { type: string, format: date-time }
+      responses:
+        '200':
+          description: Disposisi berhasil dibuat
+
+  /complaints/{id}/status:
+    post:
+      summary: Perbarui Status Penanganan (Dinas/Petugas/Admin)
+      tags: [Complaints Workflow]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties:
+                status:
+                  type: string
+                  enum: [IN_PROGRESS, WAITING_VERIFICATION, REVISION_REQUIRED, COMPLETED, CLOSED]
+                note: { type: string }
+      responses:
+        '200':
+          description: Status diperbarui
+
+  /complaints/{id}/resolution:
+    post:
+      summary: Kirim Bukti Penyelesaian Pekerjaan
+      tags: [Complaints Workflow]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [note, photos]
+              properties:
+                note: { type: string, example: "Pengaspalan ulang telah rampung." }
+                photos:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        '200':
+          description: Bukti penyelesaian tersimpan
+
+  /ai/classify-image:
+    post:
+      summary: Inferensi AI Klasifikasi Kerusakan Foto
+      tags: [AI Services]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [photo]
+              properties:
+                photo:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Rekomendasi kategori dan confidence score
+
+  /complaints/{id}/duplicate-candidates:
+    get:
+      summary: Deteksi Kandidat Laporan Duplikat Berbasis Spasial
+      tags: [AI & GIS Services]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+        - name: radius_m
+          in: query
+          schema: { type: number, default: 100 }
+      responses:
+        '200':
+          description: Daftar kandidat duplikat dalam radius spasial
+
+  /complaints/{id}/merge:
+    post:
+      summary: Gabungkan Laporan Duplikat ke Parent Complaint
+      tags: [Complaints Workflow]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [parent_complaint_id]
+              properties:
+                parent_complaint_id: { type: integer }
+                note: { type: string }
+      responses:
+        '200':
+          description: Laporan berhasil digabungkan
+
+  /dashboard/summary:
+    get:
+      summary: KPI & Ringkasan Metrik
+      tags: [Dashboard & GIS]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Ringkasan total laporan, status, prioritas
+
+  /dashboard/map:
+    get:
+      summary: Data Titik Marker / Agregasi Peta GIS
+      tags: [Dashboard & GIS]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string }
+        - name: category_id
+          in: query
+          schema: { type: integer }
+        - name: region_id
+          in: query
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Data spasial GeoJSON / Points untuk peta
+
+  /dashboard/performance:
+    get:
+      summary: Kinerja & SLA Penanganan Dinas
+      tags: [Dashboard & GIS]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Metrik waktu respon dan penyelesaian dinas
+
+  /chat/sessions:
+    post:
+      summary: Mulai Sesi Chatbot Pengaduan
+      tags: [Chatbot NLP]
+      security:
+        - bearerAuth: []
+      responses:
+        '201':
+          description: Sesi percakapan baru dibuat
+
+  /chat/sessions/{id}/messages:
+    post:
+      summary: Kirim Pesan ke Chatbot
+      tags: [Chatbot NLP]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [message]
+              properties:
+                message: { type: string }
+                context_data: { type: object }
+      responses:
+        '200':
+          description: Balasan chatbot beserta draft pengaduan terstruktur
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

@@ -1,0 +1,66 @@
+# ==========================================
+# Root .gitignore - Sistem Pengaduan Kolaka Utara
+# ==========================================
+
+# OS & Environment temp files
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+*.swp
+
+# IDEs & Editors
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# ------------------------------------------
+# Backend (Laravel) Ignored Files & Folders
+# ------------------------------------------
+backend/vendor/
+backend/.env
+backend/.env.backup
+backend/.env.production
+backend/.phpunit.result.cache
+backend/storage/framework/cache/*
+backend/storage/framework/sessions/*
+backend/storage/framework/views/*
+backend/storage/logs/*
+backend/storage/*.key
+backend/public/storage
+backend/public/build/
+backend/public/hot
+
+# CRITICAL: Ignore large binary downloads (e.g. 196MB APK) to prevent GitHub 100MB rejection
+backend/public/downloads/*.apk
+backend/public/downloads/*.zip
+
+# ------------------------------------------
+# Mobile (Flutter) Ignored Files & Folders
+# ------------------------------------------
+mobile/build/
+mobile/.dart_tool/
+mobile/.flutter-plugins
+mobile/.flutter-plugins-dependencies
+mobile/.packages
+mobile/.pub-cache/
+mobile/.pub/
+mobile/.widget_preview/
+mobile/android/.gradle/
+mobile/android/app/build/
+mobile/android/local.properties
+mobile/ios/Flutter/Generated.xcconfig
+mobile/ios/Flutter/flutter_export_environment.sh
+mobile/ios/Flutter/App.framework
+mobile/ios/Flutter/Flutter.framework
+mobile/ios/Flutter/Flutter.podspec
+mobile/.idea/
+
+# ------------------------------------------
+# Python & AI Cache
+# ------------------------------------------
+__pycache__/
+*.pyc
+*.pyo
+backend/app/Domain/AI/Scripts/__pycache__/
