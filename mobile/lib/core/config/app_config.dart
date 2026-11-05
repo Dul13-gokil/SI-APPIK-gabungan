@@ -4,9 +4,9 @@ class AppConfig {
   static const String appName = 'Aduan Jalan';
   static const String appVersion = '1.0.0';
   
-  // Base URL server Laravel (Tailscale Funnel Permanen)
-  static String defaultBaseUrl = 'https://dul-1378.tail09bd7a.ts.net';
-  static String activeOrigin = 'https://dul-1378.tail09bd7a.ts.net';
+  // Base URL server Laravel Cloud (Railway Production 24 Jam)
+  static String defaultBaseUrl = 'https://si-appik-production.up.railway.app';
+  static String activeOrigin = 'https://si-appik-production.up.railway.app';
   static String get baseUrl => normalizeUrl(defaultBaseUrl);
   
   static const int connectTimeout = 15000;
@@ -46,6 +46,9 @@ class AppConfig {
       fixed = fixed.replaceFirst('http://localhost:8000', origin);
       fixed = fixed.replaceFirst('http://127.0.0.1:8000', origin);
     }
+    if (fixed.startsWith('http://si-appik-production.up.railway.app')) {
+      fixed = fixed.replaceFirst('http://si-appik-production.up.railway.app', 'https://si-appik-production.up.railway.app');
+    }
     if (!fixed.startsWith('http://') && !fixed.startsWith('https://')) {
       if (fixed.startsWith('/')) {
         fixed = '$origin$fixed';
@@ -60,7 +63,7 @@ class AppConfig {
     final prefs = await SharedPreferences.getInstance();
     var custom = prefs.getString(_keyCustomBaseUrl);
     // Bersihkan cache lama jika masih tersimpan IP lama atau URL sementara
-    if (custom != null && !custom.contains('tail09bd7a.ts.net')) {
+    if (custom != null && !custom.contains('si-appik-production.up.railway.app')) {
       await prefs.remove(_keyCustomBaseUrl);
       custom = null;
     }

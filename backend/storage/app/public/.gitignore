@@ -1,2 +1,8 @@
-*
 !.gitignore
+!complaints/
+!complaints/*
+!resolutions/
+!resolutions/*
+!*.png
+!*.jpg
+!*.jpeg

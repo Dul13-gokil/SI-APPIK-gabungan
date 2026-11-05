@@ -26,10 +26,11 @@ RUN a2dismod mpm_event mpm_worker || true \
     && rm -f /etc/apache2/mods-enabled/mpm_event.* /etc/apache2/mods-enabled/mpm_worker.* \
     && a2enmod mpm_prefork rewrite
 
-# Konfigurasi Apache DocumentRoot ke folder /public
+# Konfigurasi Apache DocumentRoot ke folder /public dan aktifkan FollowSymLinks + AllowOverride All
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+RUN sed -ri -e 's!AllowOverride None!AllowOverride All!g' /etc/apache2/apache2.conf
 
 WORKDIR /var/www/html
 

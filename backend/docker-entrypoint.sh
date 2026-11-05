@@ -44,8 +44,11 @@ if [ -n "$DB_TARGET" ] && [ -f "/var/www/html/database/si-appik.sql" ]; then
     fi
 fi
 
-# Buat symlink storage jika belum ada
+# Buat ulang symlink storage dengan bersih dan pastikan permission dapat dibaca Apache
+rm -rf /var/www/html/public/storage || true
 php artisan storage:link --force || true
+chown -R www-data:www-data /var/www/html/storage || true
+chmod -R 775 /var/www/html/storage || true
 
 # Bersihkan & cache konfigurasi
 php artisan optimize:clear || true
