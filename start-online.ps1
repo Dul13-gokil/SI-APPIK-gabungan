@@ -9,7 +9,7 @@ Write-Host "   SI-APPIK - TAILSCALE FUNNEL (DOMAIN PERMANEN RESMI)    " -Foregro
 Write-Host "==========================================================" -ForegroundColor Cyan
 Write-Host ""
 
-$funnelUrl = "https://si-appik.tail09bd7a.ts.net/"
+$funnelUrl = "https://dul-1378.tail09bd7a.ts.net/"
 
 # 1. Pastikan Laravel Backend berjalan di port 8000
 $port8000 = Get-NetTCPConnection -LocalPort 8000 -State Listen -ErrorAction SilentlyContinue
@@ -21,10 +21,9 @@ if (-not $port8000) {
     Write-Host "[1/3] Laravel Backend sudah aktif di port 8000." -ForegroundColor Green
 }
 
-# 2. Arahkan Tailscale Funnel ke port 8000 (SI-APPIK) dan port 5000 (Skinify)
-Write-Host "[2/3] Mengaktifkan Tailscale Funnel untuk SI-APPIK & Skinify..." -ForegroundColor Yellow
+# 2. Arahkan Tailscale Funnel ke port 8000
+Write-Host "[2/3] Mengaktifkan Tailscale Funnel ke port 8000..." -ForegroundColor Yellow
 tailscale funnel --yes --bg 8000
-tailscale funnel --set-path /skinify --bg 5000
 
 # 3. Sinkronkan ke app_config.dart untuk mobile Flutter
 $appConfigFile = Join-Path $PSScriptRoot "mobile\lib\core\config\app_config.dart"

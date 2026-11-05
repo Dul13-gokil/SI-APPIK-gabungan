@@ -7,7 +7,7 @@ echo    SISTEM INFORMASI SI-APPIK - TAILSCALE FUNNEL (DOMAIN PERMANEN)
 echo =====================================================================
 echo.
 echo Domain Publik Permanen:
-echo https://si-appik.tail09bd7a.ts.net/
+echo https://dul-1378.tail09bd7a.ts.net/
 echo.
 echo =====================================================================
 
@@ -26,18 +26,17 @@ if %errorlevel% neq 0 (
 )
 
 echo.
-echo [2/3] Mengaktifkan Tailscale Funnel (SI-APPIK & Skinify)...
+echo [2/3] Mengaktifkan Tailscale Funnel ke port 8000...
 tailscale funnel --yes --bg 8000
-tailscale funnel --set-path /skinify --bg 5000
 
 echo.
 echo [3/3] Membuka Website di Google Chrome...
-start https://si-appik.tail09bd7a.ts.net/
+start https://dul-1378.tail09bd7a.ts.net/
 
 echo.
 echo =====================================================================
 echo    BERHASIL! WEBSITE DAN API ANDA SEKARANG AKTIF ONLINE!
-echo    URL Permanen: https://si-appik.tail09bd7a.ts.net/
+echo    URL Permanen: https://dul-1378.tail09bd7a.ts.net/
 echo    Aplikasi Flutter: Sudah otomatis terhubung ke URL ini.
 echo =====================================================================
 echo.
