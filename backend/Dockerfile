@@ -21,8 +21,10 @@ RUN apt-get update && apt-get install -y \
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Aktifkan Apache mod_rewrite untuk routing Laravel
-RUN a2enmod rewrite
+# Pastikan hanya mpm_prefork yang aktif dan aktifkan mod_rewrite
+RUN a2dismod mpm_event mpm_worker || true \
+    && rm -f /etc/apache2/mods-enabled/mpm_event.* /etc/apache2/mods-enabled/mpm_worker.* \
+    && a2enmod mpm_prefork rewrite
 
 # Konfigurasi Apache DocumentRoot ke folder /public
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
@@ -43,7 +45,8 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 
 # Salin script entrypoint
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+RUN sed -i 's/\r$//' /usr/local/bin/docker-entrypoint.sh \
+    && chmod +x /usr/local/bin/docker-entrypoint.sh
 
 # Port default Railway
 EXPOSE 80

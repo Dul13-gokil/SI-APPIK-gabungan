@@ -2,8 +2,6 @@
 -- PostgreSQL database dump
 --
 
-\restrict ZpsA0aroaJ6JL3f0WLig6TmDiG0NAQy6i6w02PbXHtT5iE1VL7fWkfMPA48RnGl
-
 -- Dumped from database version 18.6
 -- Dumped by pg_dump version 18.6
 
@@ -12,7 +10,6 @@
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
-SET transaction_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SELECT pg_catalog.set_config('search_path', '', false);
@@ -20,23 +17,6 @@ SET check_function_bodies = false;
 SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
-
---
--- TOC entry 2 (class 3079 OID 16389)
--- Name: postgis; Type: EXTENSION; Schema: -; Owner: -
---
-
-CREATE EXTENSION IF NOT EXISTS postgis WITH SCHEMA public;
-
-
---
--- TOC entry 6257 (class 0 OID 0)
--- Dependencies: 2
--- Name: EXTENSION postgis; Type: COMMENT; Schema: -; Owner: 
---
-
-COMMENT ON EXTENSION postgis IS 'PostGIS geometry and geography spatial types and functions';
-
 
 SET default_tablespace = '';
 
@@ -375,7 +355,7 @@ CREATE TABLE public.complaints (
     parent_complaint_id bigint,
     created_at timestamp(0) without time zone,
     updated_at timestamp(0) without time zone,
-    geom public.geometry(Point,4326),
+    geom text,
     damage_type character varying(255) DEFAULT 'minor'::character varying NOT NULL,
     road_length character varying(255),
     road_condition character varying(255),
@@ -804,7 +784,7 @@ CREATE TABLE public.regions (
     longitude numeric(10,7),
     created_at timestamp(0) without time zone,
     updated_at timestamp(0) without time zone,
-    geom public.geometry(Point,4326)
+    geom text
 );
 
 
@@ -2653,7 +2633,7 @@ CREATE INDEX complaint_status_histories_complaint_id_created_at_index ON public.
 -- Name: complaints_geom_gist; Type: INDEX; Schema: public; Owner: postgres
 --
 
-CREATE INDEX complaints_geom_gist ON public.complaints USING gist (geom);
+-- CREATE INDEX complaints_geom_gist ON public.complaints USING gist (geom);
 
 
 --
@@ -2749,7 +2729,7 @@ CREATE INDEX personal_access_tokens_tokenable_type_tokenable_id_index ON public.
 -- Name: regions_geom_gist; Type: INDEX; Schema: public; Owner: postgres
 --
 
-CREATE INDEX regions_geom_gist ON public.regions USING gist (geom);
+-- CREATE INDEX regions_geom_gist ON public.regions USING gist (geom);
 
 
 --
@@ -2981,5 +2961,4 @@ ALTER TABLE ONLY public.teams
 -- PostgreSQL database dump complete
 --
 
-\unrestrict ZpsA0aroaJ6JL3f0WLig6TmDiG0NAQy6i6w02PbXHtT5iE1VL7fWkfMPA48RnGl
 
