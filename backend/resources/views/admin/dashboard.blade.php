@@ -174,80 +174,72 @@
     <div class="grid grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-2.5 w-full">
         <!-- 1. Tab Pengaturan Akun -->
         <button type="button" onclick="switchAdminTab('users-management')" id="tabBtn-users-management"
-            class="admin-tab-btn text-left p-3 rounded-xl border transition flex items-start gap-2.5 cursor-pointer {{ $activeTab === 'users-management' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
-            <i data-lucide="user-plus" class="w-4 h-4 shrink-0 mt-0.5 text-current"></i>
+            class="admin-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'users-management' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
+            <i data-lucide="user-plus" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
-                <span class="text-xs font-bold block leading-tight">Tambah &amp; Pimpinan</span>
+                <span class="text-[11px] sm:text-xs font-bold block truncate leading-tight">Tambah &amp; Pimpinan</span>
                 <span class="tab-sub text-[10px] block mt-0.5 truncate {{ $activeTab === 'users-management' ? 'text-blue-100' : 'text-[#475569]' }}">Bupati &amp; akun baru</span>
             </div>
         </button>
 
         <!-- 2. Tab Direktori Pengguna -->
         <button type="button" onclick="switchAdminTab('users-list')" id="tabBtn-users-list"
-            class="admin-tab-btn text-left p-3 rounded-xl border transition flex items-start gap-2.5 cursor-pointer {{ $activeTab === 'users-list' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
-            <i data-lucide="users" class="w-4 h-4 shrink-0 mt-0.5 text-current"></i>
+            class="admin-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'users-list' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
+            <i data-lucide="users" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
-                <div class="flex items-center justify-between gap-1">
-                    <span class="text-xs font-bold truncate leading-tight">Direktori Akun</span>
-                    <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'users-list' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
-                        {{ $users->count() }}
-                    </span>
-                </div>
+                <span class="text-[11px] sm:text-xs font-bold block truncate leading-tight">Direktori Akun</span>
                 <span class="tab-sub text-[10px] block mt-0.5 truncate {{ $activeTab === 'users-list' ? 'text-blue-100' : 'text-[#475569]' }}">Daftar &amp; reset sandi</span>
             </div>
+            <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'users-list' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
+                {{ $users->count() }}
+            </span>
         </button>
 
         <!-- 3. Tab Semua Pengaduan -->
         <button type="button" onclick="switchAdminTab('complaints-list')" id="tabBtn-complaints-list"
-            class="admin-tab-btn text-left p-3 rounded-xl border transition flex items-start gap-2.5 cursor-pointer {{ $activeTab === 'complaints-list' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
-            <i data-lucide="layers" class="w-4 h-4 shrink-0 mt-0.5 text-current"></i>
+            class="admin-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'complaints-list' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
+            <i data-lucide="layers" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
-                <div class="flex items-center justify-between gap-1">
-                    <span class="text-xs font-bold truncate leading-tight">Semua Aduan</span>
-                    <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'complaints-list' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
-                        {{ $complaints->count() }}
-                    </span>
-                </div>
+                <span class="text-[11px] sm:text-xs font-bold block truncate leading-tight">Semua Aduan</span>
                 <span class="tab-sub text-[10px] block mt-0.5 truncate {{ $activeTab === 'complaints-list' ? 'text-blue-100' : 'text-[#475569]' }}">Monitor lintas status</span>
             </div>
+            <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'complaints-list' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
+                {{ $complaints->count() }}
+            </span>
         </button>
 
         <!-- 4. Tab Wilayah & Peta GIS -->
         <button type="button" onclick="switchAdminTab('regions-gis')" id="tabBtn-regions-gis"
-            class="admin-tab-btn text-left p-3 rounded-xl border transition flex items-start gap-2.5 cursor-pointer {{ $activeTab === 'regions-gis' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
-            <i data-lucide="map" class="w-4 h-4 shrink-0 mt-0.5 text-current"></i>
+            class="admin-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'regions-gis' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
+            <i data-lucide="map" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
-                <div class="flex items-center justify-between gap-1">
-                    <span class="text-xs font-bold truncate leading-tight">Wilayah &amp; GIS</span>
-                    <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'regions-gis' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
-                        {{ count($districtStats ?? $regions) }}
-                    </span>
-                </div>
+                <span class="text-[11px] sm:text-xs font-bold block truncate leading-tight">Wilayah &amp; GIS</span>
                 <span class="tab-sub text-[10px] block mt-0.5 truncate {{ $activeTab === 'regions-gis' ? 'text-blue-100' : 'text-[#475569]' }}">15 kec. &amp; geofence</span>
             </div>
+            <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'regions-gis' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
+                {{ count($districtStats ?? $regions) }}
+            </span>
         </button>
 
         <!-- 5. Tab Regu & Mode Penugasan -->
         <button type="button" onclick="switchAdminTab('teams-management')" id="tabBtn-teams-management"
-            class="admin-tab-btn text-left p-3 rounded-xl border transition flex items-start gap-2.5 cursor-pointer {{ $activeTab === 'teams-management' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
-            <i data-lucide="users-2" class="w-4 h-4 shrink-0 mt-0.5 text-current"></i>
+            class="admin-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'teams-management' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
+            <i data-lucide="users-2" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
-                <div class="flex items-center justify-between gap-1">
-                    <span class="text-xs font-bold truncate leading-tight">Regu &amp; Tugas</span>
-                    <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'teams-management' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
-                        {{ $teams->count() }}
-                    </span>
-                </div>
+                <span class="text-[11px] sm:text-xs font-bold block truncate leading-tight">Regu &amp; Tugas</span>
                 <span class="tab-sub text-[10px] block mt-0.5 truncate {{ $activeTab === 'teams-management' ? 'text-blue-100' : 'text-[#475569]' }}">Tim &amp; mode disposisi</span>
             </div>
+            <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'teams-management' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
+                {{ $teams->count() }}
+            </span>
         </button>
 
         <!-- 6. Tab Laporan Eksekutif -->
         <button type="button" onclick="switchAdminTab('reporting')" id="tabBtn-reporting"
-            class="admin-tab-btn text-left p-3 rounded-xl border transition flex items-start gap-2.5 cursor-pointer {{ $activeTab === 'reporting' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
-            <i data-lucide="bar-chart-3" class="w-4 h-4 shrink-0 mt-0.5 text-current"></i>
+            class="admin-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'reporting' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
+            <i data-lucide="bar-chart-3" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
-                <span class="text-xs font-bold block leading-tight">Laporan</span>
+                <span class="text-[11px] sm:text-xs font-bold block truncate leading-tight">Laporan</span>
                 <span class="tab-sub text-[10px] block mt-0.5 truncate {{ $activeTab === 'reporting' ? 'text-blue-100' : 'text-[#475569]' }}">Rekap &amp; statistik</span>
             </div>
         </button>
@@ -2402,27 +2394,31 @@
 
         // 3. Update styling tombol tab
         document.querySelectorAll('.admin-tab-btn').forEach(btn => {
-            btn.className = 'admin-tab-btn text-left p-3 rounded-xl border transition flex items-start gap-2.5 cursor-pointer bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]';
+            btn.classList.remove('bg-[#1E3A8A]', 'text-white', 'border-[#1E3A8A]');
+            btn.classList.add('bg-white', 'text-[#0F172A]', 'border-[#E2E8F0]', 'hover:bg-[#F8FAFC]');
             const badge = btn.querySelector('.tab-badge');
             if (badge) {
                 badge.className = 'tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 bg-blue-50 text-[#1E3A8A] border border-blue-200';
             }
             const sub = btn.querySelector('.tab-sub');
             if (sub) {
-                sub.className = 'tab-sub text-[10px] block mt-0.5 truncate text-[#475569]';
+                sub.classList.remove('text-blue-100');
+                sub.classList.add('text-[#475569]');
             }
         });
 
         const activeBtn = document.getElementById('tabBtn-' + tabId);
         if (activeBtn) {
-            activeBtn.className = 'admin-tab-btn text-left p-3 rounded-xl border transition flex items-start gap-2.5 cursor-pointer bg-[#1E3A8A] text-white border-[#1E3A8A]';
+            activeBtn.classList.remove('bg-white', 'text-[#0F172A]', 'border-[#E2E8F0]', 'hover:bg-[#F8FAFC]');
+            activeBtn.classList.add('bg-[#1E3A8A]', 'text-white', 'border-[#1E3A8A]');
             const badge = activeBtn.querySelector('.tab-badge');
             if (badge) {
                 badge.className = 'tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 bg-white text-[#1E3A8A]';
             }
             const sub = activeBtn.querySelector('.tab-sub');
             if (sub) {
-                sub.className = 'tab-sub text-[10px] block mt-0.5 truncate text-blue-100';
+                sub.classList.remove('text-[#475569]');
+                sub.classList.add('text-blue-100');
             }
         }
 

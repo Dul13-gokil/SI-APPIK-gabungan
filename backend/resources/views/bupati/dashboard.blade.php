@@ -147,38 +147,34 @@
     <div class="grid grid-cols-3 gap-2 sm:gap-2.5 w-full">
         <!-- 1. Tab Peta Spasial & Analitik -->
         <button type="button" onclick="switchBupatiTab('executive')" id="tabBtn-executive"
-            class="bupati-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-start gap-2 sm:gap-2.5 cursor-pointer bg-[#1E3A8A] text-white border-[#1E3A8A]">
-            <i data-lucide="map" class="w-4 h-4 shrink-0 mt-0.5 text-current"></i>
+            class="bupati-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer bg-[#1E3A8A] text-white border-[#1E3A8A]">
+            <i data-lucide="map" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
-                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Peta &amp; Analitik</span>
+                <span class="text-[11px] sm:text-xs font-bold block truncate leading-tight">Peta &amp; Analitik</span>
                 <span class="tab-sub hidden sm:block text-[10px] mt-0.5 truncate text-blue-100">Sebaran wilayah &amp; grafik</span>
             </div>
         </button>
 
         <!-- 2. Tab Daftar Seluruh Pengaduan -->
         <button type="button" onclick="switchBupatiTab('complaints')" id="tabBtn-complaints"
-            class="bupati-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-start gap-2 sm:gap-2.5 cursor-pointer bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]">
-            <i data-lucide="layers" class="w-4 h-4 shrink-0 mt-0.5 text-current"></i>
+            class="bupati-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]">
+            <i data-lucide="layers" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
-                <div class="flex items-center justify-between gap-1">
-                    <span class="text-[11px] sm:text-xs font-bold truncate leading-tight">Semua Pengaduan</span>
-                    <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 bg-blue-50 text-[#1E3A8A] border border-blue-200">{{ $allComplaints->count() }}</span>
-                </div>
+                <span class="text-[11px] sm:text-xs font-bold block truncate leading-tight">Semua Pengaduan</span>
                 <span class="tab-sub hidden sm:block text-[10px] mt-0.5 truncate text-[#475569]">Monitor lintas status</span>
             </div>
+            <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 bg-blue-50 text-[#1E3A8A] border border-blue-200">{{ $allComplaints->count() }}</span>
         </button>
 
         <!-- 3. Tab Arsip Laporan -->
         <button type="button" onclick="switchBupatiTab('archive')" id="tabBtn-archive"
-            class="bupati-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-start gap-2 sm:gap-2.5 cursor-pointer bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]">
-            <i data-lucide="archive" class="w-4 h-4 shrink-0 mt-0.5 text-current"></i>
+            class="bupati-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]">
+            <i data-lucide="archive" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
-                <div class="flex items-center justify-between gap-1">
-                    <span class="text-[11px] sm:text-xs font-bold truncate leading-tight">Arsip Laporan</span>
-                    <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 bg-blue-50 text-[#1E3A8A] border border-blue-200">{{ $archivedComplaints->count() }}</span>
-                </div>
+                <span class="text-[11px] sm:text-xs font-bold block truncate leading-tight">Arsip Laporan</span>
                 <span class="tab-sub hidden sm:block text-[10px] mt-0.5 truncate text-[#475569]">Selesai &amp; ditolak</span>
             </div>
+            <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 bg-blue-50 text-[#1E3A8A] border border-blue-200">{{ $archivedComplaints->count() }}</span>
         </button>
     </div>
 
@@ -1048,20 +1044,28 @@
     // Switch Sub Menu Tab Navigation (Gambar 2)
     function switchBupatiTab(tabName) {
         document.querySelectorAll('.bupati-tab-btn').forEach(btn => {
-            btn.className = 'bupati-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-start gap-2 sm:gap-2.5 cursor-pointer bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]';
+            btn.classList.remove('bg-[#1E3A8A]', 'text-white', 'border-[#1E3A8A]');
+            btn.classList.add('bg-white', 'text-[#0F172A]', 'border-[#E2E8F0]', 'hover:bg-[#F8FAFC]');
             const badge = btn.querySelector('.tab-badge');
             if (badge) badge.className = 'tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 bg-blue-50 text-[#1E3A8A] border border-blue-200';
             const sub = btn.querySelector('.tab-sub');
-            if (sub) sub.className = 'tab-sub hidden sm:block text-[10px] mt-0.5 truncate text-[#475569]';
+            if (sub) {
+                sub.classList.remove('text-blue-100');
+                sub.classList.add('text-[#475569]');
+            }
         });
 
         const activeBtn = document.getElementById('tabBtn-' + tabName);
         if (activeBtn) {
-            activeBtn.className = 'bupati-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-start gap-2 sm:gap-2.5 cursor-pointer bg-[#1E3A8A] text-white border-[#1E3A8A]';
+            activeBtn.classList.remove('bg-white', 'text-[#0F172A]', 'border-[#E2E8F0]', 'hover:bg-[#F8FAFC]');
+            activeBtn.classList.add('bg-[#1E3A8A]', 'text-white', 'border-[#1E3A8A]');
             const badge = activeBtn.querySelector('.tab-badge');
             if (badge) badge.className = 'tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 bg-white text-[#1E3A8A]';
             const sub = activeBtn.querySelector('.tab-sub');
-            if (sub) sub.className = 'tab-sub text-[10px] block mt-0.5 truncate text-blue-100';
+            if (sub) {
+                sub.classList.remove('text-[#475569]');
+                sub.classList.add('text-blue-100');
+            }
         }
 
         document.getElementById('tabContent-executive').classList.add('hidden');

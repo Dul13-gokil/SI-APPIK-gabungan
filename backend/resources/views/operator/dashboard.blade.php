@@ -219,85 +219,75 @@
     <div class="grid grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-2.5 w-full">
         <!-- 1. Verifikasi -->
         <button type="button" onclick="switchTab('verify')" id="tabBtn-verify"
-            class="tab-btn text-left p-3 rounded-xl border transition flex items-start gap-2.5 cursor-pointer {{ $activeTab === 'verify' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
-            <i data-lucide="filter" class="w-4 h-4 shrink-0 mt-0.5 text-current"></i>
+            class="tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'verify' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
+            <i data-lucide="filter" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
-                <div class="flex items-center justify-between gap-1">
-                    <span class="text-xs font-bold truncate leading-tight">Verifikasi</span>
-                    <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'verify' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
-                        {{ $pendingVerification->count() }}
-                    </span>
-                </div>
+                <span class="text-[11px] sm:text-xs font-bold block truncate leading-tight">Verifikasi</span>
                 <span class="tab-sub text-[10px] block mt-0.5 truncate {{ $activeTab === 'verify' ? 'text-blue-100' : 'text-[#475569]' }}">Telaah aduan masuk</span>
             </div>
+            <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'verify' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
+                {{ $pendingVerification->count() }}
+            </span>
         </button>
 
         <!-- 2. Ditugaskan -->
         <button type="button" onclick="switchTab('dispatched')" id="tabBtn-dispatched"
-            class="tab-btn text-left p-3 rounded-xl border transition flex items-start gap-2.5 cursor-pointer {{ $activeTab === 'dispatched' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
-            <i data-lucide="send" class="w-4 h-4 shrink-0 mt-0.5 text-current"></i>
+            class="tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'dispatched' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
+            <i data-lucide="send" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
-                <div class="flex items-center justify-between gap-1">
-                    <span class="text-xs font-bold truncate leading-tight">Ditugaskan</span>
-                    <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'dispatched' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
-                        {{ $dispatched->count() }}
-                    </span>
-                </div>
+                <span class="text-[11px] sm:text-xs font-bold block truncate leading-tight">Ditugaskan</span>
                 <span class="tab-sub text-[10px] block mt-0.5 truncate {{ $activeTab === 'dispatched' ? 'text-blue-100' : 'text-[#475569]' }}">Menunggu regu turun</span>
             </div>
+            <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'dispatched' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
+                {{ $dispatched->count() }}
+            </span>
         </button>
 
         <!-- 3. Dikerjakan -->
         <button type="button" onclick="switchTab('inprogress')" id="tabBtn-inprogress"
-            class="tab-btn text-left p-3 rounded-xl border transition flex items-start gap-2.5 cursor-pointer {{ $activeTab === 'inprogress' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
-            <i data-lucide="hard-hat" class="w-4 h-4 shrink-0 mt-0.5 text-current"></i>
+            class="tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'inprogress' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
+            <i data-lucide="hard-hat" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
-                <div class="flex items-center justify-between gap-1">
-                    <span class="text-xs font-bold truncate leading-tight">Dikerjakan</span>
-                    <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'inprogress' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
-                        {{ $inProgress->count() }}
-                    </span>
-                </div>
+                <span class="text-[11px] sm:text-xs font-bold block truncate leading-tight">Dikerjakan</span>
                 <span class="tab-sub text-[10px] block mt-0.5 truncate {{ $activeTab === 'inprogress' ? 'text-blue-100' : 'text-[#475569]' }}">Progres fisik &amp; SLA</span>
             </div>
+            <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'inprogress' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
+                {{ $inProgress->count() }}
+            </span>
         </button>
 
         <!-- 4. Validasi -->
         <button type="button" onclick="switchTab('validation')" id="tabBtn-validation"
-            class="tab-btn text-left p-3 rounded-xl border transition flex items-start gap-2.5 cursor-pointer {{ $activeTab === 'validation' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
-            <i data-lucide="check-square" class="w-4 h-4 shrink-0 mt-0.5 text-current"></i>
+            class="tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'validation' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
+            <i data-lucide="check-square" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
-                <div class="flex items-center justify-between gap-1">
-                    <span class="text-xs font-bold truncate leading-tight">Validasi</span>
-                    <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'validation' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
-                        {{ $waitingValidation->count() }}
-                    </span>
-                </div>
+                <span class="text-[11px] sm:text-xs font-bold block truncate leading-tight">Validasi</span>
                 <span class="tab-sub text-[10px] block mt-0.5 truncate {{ $activeTab === 'validation' ? 'text-blue-100' : 'text-[#475569]' }}">Uji hasil pekerjaan</span>
             </div>
+            <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'validation' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
+                {{ $waitingValidation->count() }}
+            </span>
         </button>
 
         <!-- 5. Arsip -->
         <button type="button" onclick="switchTab('archive')" id="tabBtn-archive"
-            class="tab-btn text-left p-3 rounded-xl border transition flex items-start gap-2.5 cursor-pointer {{ $activeTab === 'archive' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
-            <i data-lucide="archive" class="w-4 h-4 shrink-0 mt-0.5 text-current"></i>
+            class="tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'archive' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
+            <i data-lucide="archive" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
-                <div class="flex items-center justify-between gap-1">
-                    <span class="text-xs font-bold truncate leading-tight">Arsip</span>
-                    <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'archive' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
-                        {{ $completed->count() }}
-                    </span>
-                </div>
+                <span class="text-[11px] sm:text-xs font-bold block truncate leading-tight">Arsip</span>
                 <span class="tab-sub text-[10px] block mt-0.5 truncate {{ $activeTab === 'archive' ? 'text-blue-100' : 'text-[#475569]' }}">Selesai &amp; ditolak</span>
             </div>
+            <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'archive' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
+                {{ $completed->count() }}
+            </span>
         </button>
 
         <!-- 6. Monitoring -->
         <button type="button" onclick="switchTab('monitoring')" id="tabBtn-monitoring"
-            class="tab-btn text-left p-3 rounded-xl border transition flex items-start gap-2.5 cursor-pointer {{ $activeTab === 'monitoring' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
-            <i data-lucide="bar-chart-2" class="w-4 h-4 shrink-0 mt-0.5 text-current"></i>
+            class="tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'monitoring' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
+            <i data-lucide="bar-chart-2" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
-                <span class="text-xs font-bold block leading-tight">Monitoring</span>
+                <span class="text-[11px] sm:text-xs font-bold block truncate leading-tight">Monitoring</span>
                 <span class="tab-sub text-[10px] block mt-0.5 truncate {{ $activeTab === 'monitoring' ? 'text-blue-100' : 'text-[#475569]' }}">Peta &amp; evaluasi OPD</span>
             </div>
         </button>
@@ -2265,27 +2255,31 @@
 
         // 3. Update styling tombol tab seragam desain Admin
         document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.className = 'tab-btn text-left p-3 rounded-xl border transition flex items-start gap-2.5 cursor-pointer bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]';
+            btn.classList.remove('bg-[#1E3A8A]', 'text-white', 'border-[#1E3A8A]');
+            btn.classList.add('bg-white', 'text-[#0F172A]', 'border-[#E2E8F0]', 'hover:bg-[#F8FAFC]');
             const badge = btn.querySelector('.tab-badge');
             if (badge) {
                 badge.className = 'tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 bg-blue-50 text-[#1E3A8A] border border-blue-200';
             }
             const sub = btn.querySelector('.tab-sub');
             if (sub) {
-                sub.className = 'tab-sub text-[10px] block mt-0.5 truncate text-[#475569]';
+                sub.classList.remove('text-blue-100');
+                sub.classList.add('text-[#475569]');
             }
         });
 
         const activeBtn = document.getElementById('tabBtn-' + tabId);
         if (activeBtn) {
-            activeBtn.className = 'tab-btn text-left p-3 rounded-xl border transition flex items-start gap-2.5 cursor-pointer bg-[#1E3A8A] text-white border-[#1E3A8A]';
+            activeBtn.classList.remove('bg-white', 'text-[#0F172A]', 'border-[#E2E8F0]', 'hover:bg-[#F8FAFC]');
+            activeBtn.classList.add('bg-[#1E3A8A]', 'text-white', 'border-[#1E3A8A]');
             const activeBadge = activeBtn.querySelector('.tab-badge');
             if (activeBadge) {
                 activeBadge.className = 'tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 bg-white text-[#1E3A8A]';
             }
             const activeSub = activeBtn.querySelector('.tab-sub');
             if (activeSub) {
-                activeSub.className = 'tab-sub text-[10px] block mt-0.5 truncate text-blue-100';
+                activeSub.classList.remove('text-[#475569]');
+                activeSub.classList.add('text-blue-100');
             }
         }
 
