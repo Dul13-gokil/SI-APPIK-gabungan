@@ -398,12 +398,15 @@ class ComplaintController extends Controller
                 'is_anonymous'      => $isAnon,
             ]);
 
-            // Set PostGIS Point geometry if on pgsql
+            // Set PostGIS Point geometry if postgis extension is active on pgsql
             if (DB::connection()->getDriverName() === 'pgsql') {
-                DB::statement(
-                    "UPDATE complaints SET geom = ST_SetSRID(ST_MakePoint(?, ?), 4326) WHERE id = ?",
-                    [$validated['longitude'], $validated['latitude'], $complaint->id]
-                );
+                $hasPostgis = DB::selectOne("SELECT 1 FROM pg_extension WHERE extname = 'postgis'");
+                if ($hasPostgis) {
+                    DB::statement(
+                        "UPDATE complaints SET geom = ST_SetSRID(ST_MakePoint(?, ?), 4326) WHERE id = ?",
+                        [$validated['longitude'], $validated['latitude'], $complaint->id]
+                    );
+                }
             }
 
             // Save Initial Status History

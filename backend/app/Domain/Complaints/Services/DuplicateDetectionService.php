@@ -27,8 +27,8 @@ class DuplicateDetectionService
         $activeStatuses = ['SUBMITTED', 'VERIFICATION', 'VERIFIED', 'DISPATCHED', 'IN_PROGRESS'];
         $connectionDriver = DB::connection()->getDriverName();
 
-        // 1. PostGIS Query (Production / Postgres)
-        if ($connectionDriver === 'pgsql') {
+        // 1. PostGIS Query (Production / Postgres with PostGIS enabled)
+        if ($connectionDriver === 'pgsql' && DB::selectOne("SELECT 1 FROM pg_extension WHERE extname = 'postgis'")) {
             $pointWkt = "SRID=4326;POINT({$longitude} {$latitude})";
 
             $query = Complaint::query()
@@ -50,14 +50,14 @@ class DuplicateDetectionService
             return $query->orderBy('distance_m', 'asc')->get();
         }
 
-        // 2. Haversine Formula Fallback (MySQL / SQLite / Testing)
-        $haversine = "(6371000 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude))))";
+        // 2. Haversine Formula Fallback (Standard PostgreSQL / MySQL / SQLite)
+        $haversine = "(6371000 * acos(LEAST(1.0, GREATEST(-1.0, cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude))))))";
 
         $query = Complaint::query()
             ->select('*')
             ->selectRaw("{$haversine} AS distance_m", [$latitude, $longitude, $latitude])
             ->whereIn('status', $activeStatuses)
-            ->havingRaw("distance_m <= ?", [$radiusMeters]);
+            ->whereRaw("{$haversine} <= ?", [$latitude, $longitude, $latitude, $radiusMeters]);
 
         if ($excludeComplaintId) {
             $query->where('id', '!=', $excludeComplaintId);

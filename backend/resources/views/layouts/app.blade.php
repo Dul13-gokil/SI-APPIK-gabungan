@@ -54,6 +54,10 @@
             color: #0F172A;
             font-family: 'Inter', sans-serif;
         }
+        :focus-visible {
+            outline: 2px solid #1E3A8A;
+            outline-offset: 2px;
+        }
         .card-white {
             background: #FFFFFF;
             border: 1px solid #E2E8F0;
@@ -273,42 +277,43 @@
     <!-- Halaman Publik (Tanpa Sidebar) -->
     <div class="min-h-full flex flex-col justify-between">
         @if(!request()->routeIs('login'))
-            <!-- Clean Public Top Navbar untuk Halaman Awal Warga (Lebih besar & agak mepet ke layar) -->
-            <header class="sticky top-0 z-30 bg-white border-b border-[#E2E8F0] shadow-xs w-full">
-                <div class="w-full px-5 sm:px-8 lg:px-10 h-20 flex items-center justify-between">
-                    <!-- Brand (Logo SI-APPIK - Sesuai Preview Gambar Pengguna) -->
-                    <a href="{{ url('/') }}" class="flex items-center gap-3 sm:gap-3.5">
-                        <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-white border border-slate-200/80 shadow-xs flex items-center justify-center p-2 shrink-0">
+            <!-- Header Publik Ringkas Civic Clarity -->
+            <header class="sticky top-0 z-30 bg-white border-b border-[#E2E8F0] w-full">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-[72px] py-2.5 flex items-center justify-between gap-3">
+                    <!-- Brand SI-APPIK -->
+                    <a href="{{ url('/') }}" class="flex items-center gap-3 min-w-0">
+                        <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] flex items-center justify-center p-1.5 shrink-0">
                             <img src="{{ asset('images/logo-pin.png') }}" class="w-full h-full object-contain" alt="Logo SI-APPIK">
                         </div>
-                        <div class="leading-none">
-                            <span class="font-outfit font-black text-2xl sm:text-3xl lg:text-3xl text-slate-900 tracking-tight block">
+                        <div class="leading-tight min-w-0">
+                            <span class="font-outfit font-extrabold text-xl sm:text-2xl text-[#0F172A] tracking-tight block">
                                 SI-APPIK
                             </span>
-                            <span class="hidden sm:block text-[9.5px] sm:text-[9.5px] text-slate-500 font-bold tracking-tight mt-1 font-outfit">
-                                Sistem Informasi Aduan &amp; Penanganan Prasarana Infrastruktur Kabupaten
+                            <span class="hidden sm:block text-xs text-[#475569] font-medium truncate">
+                                Layanan Aduan Infrastruktur • Kab. Kolaka Utara
                             </span>
                         </div>
                     </a>
 
-                    <!-- Header Actions: Unduh Aplikasi Mobile + Tombol Login Petugas -->
+                    <!-- Aksi Utama: Unduh Aplikasi Lapor & Masuk Petugas -->
                     <div class="flex items-center gap-2 sm:gap-3 shrink-0">
-                        <a href="#download-app" class="hidden sm:inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs sm:text-sm transition border border-slate-200 shadow-2xs whitespace-nowrap">
-                            <i data-lucide="smartphone" class="w-4 h-4 text-[#1E3A8A] shrink-0"></i>
-                            <span class="whitespace-nowrap">Unduh Aplikasi</span>
+                        <a href="#download-app" class="inline-flex items-center justify-center gap-2 min-h-[44px] px-3.5 sm:px-4 py-2 rounded-lg bg-[#D97706] hover:bg-[#F59E0B] text-[#0F172A] font-bold text-xs sm:text-sm transition whitespace-nowrap">
+                            <i data-lucide="smartphone" class="w-4 h-4 shrink-0"></i>
+                            <span class="hidden sm:inline">Unduh Aplikasi Lapor</span>
+                            <span class="sm:hidden">Unduh App</span>
                         </a>
 
                         @auth
                             <a href="{{ auth()->user()->isSuperAdmin() ? route('admin.dashboard') : (auth()->user()->isOperator() ? route('operator.dashboard') : (auth()->user()->isBupati() ? route('bupati.dashboard') : route('petugas.dashboard'))) }}" 
-                                class="px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-xl bg-[#1E3A8A] text-white font-bold text-xs sm:text-sm hover:bg-[#172e6e] transition flex items-center gap-2 shadow-xs whitespace-nowrap shrink-0">
+                                class="inline-flex items-center justify-center gap-2 min-h-[44px] px-3.5 sm:px-4 py-2 rounded-lg bg-[#1E3A8A] text-white font-semibold text-xs sm:text-sm hover:bg-[#172554] transition whitespace-nowrap">
                                 <i data-lucide="layout-dashboard" class="w-4 h-4 shrink-0"></i>
-                                <span class="whitespace-nowrap">Buka Dashboard Petugas</span>
+                                <span>Dashboard</span>
                             </a>
                         @else
                             <a href="{{ route('login') }}" 
-                                class="px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-xl bg-[#1E3A8A] text-white font-bold text-xs sm:text-sm hover:bg-[#172e6e] transition flex items-center gap-1.5 sm:gap-2 shadow-xs whitespace-nowrap shrink-0">
+                                class="inline-flex items-center justify-center gap-1.5 min-h-[44px] px-3.5 sm:px-4 py-2 rounded-lg bg-white border border-[#CBD5E1] text-[#1E3A8A] font-semibold text-xs sm:text-sm hover:bg-[#F8FAFC] transition whitespace-nowrap">
                                 <i data-lucide="log-in" class="w-4 h-4 shrink-0"></i>
-                                <span class="whitespace-nowrap">Masuk Petugas</span>
+                                <span>Masuk Petugas</span>
                             </a>
                         @endauth
                     </div>
@@ -356,16 +361,16 @@
             @yield('content')
         </main>
 
-        <footer class="border-t border-[#E2E8F0] bg-white py-6 px-6 text-center text-xs text-slate-500">
-            <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
-                <span>© 2026 Pemerintah Kabupaten • Layanan Pengaduan Fasilitas & Infrastruktur</span>
-                <div class="flex items-center gap-4 text-xs font-semibold text-slate-600">
-                    <a href="#download-app" class="text-[#1E3A8A] hover:text-[#172e6e] flex items-center gap-1.5 transition font-bold">
+        <footer class="border-t border-[#E2E8F0] bg-white py-6 px-4 sm:px-6 text-xs text-[#475569]">
+            <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+                <span>© 2026 Dinas Pekerjaan Umum dan Penataan Ruang (PUPR) • Kabupaten Kolaka Utara</span>
+                <div class="flex items-center gap-4 text-xs font-semibold text-[#475569]">
+                    <a href="#download-app" class="text-[#1E3A8A] hover:underline flex items-center gap-1.5 font-bold py-1">
                         <i data-lucide="smartphone" class="w-3.5 h-3.5 text-[#1E3A8A]"></i>
-                        <span>Aplikasi Warga</span>
+                        <span>Aplikasi Lapor Warga</span>
                     </a>
-                    <a href="https://play.google.com" target="_blank" rel="noopener noreferrer" class="hover:text-[#1E3A8A] transition">Google Play</a>
-                    <a href="https://www.apple.com/app-store/" target="_blank" rel="noopener noreferrer" class="hover:text-[#1E3A8A] transition">App Store</a>
+                    <a href="https://play.google.com" target="_blank" rel="noopener noreferrer" class="hover:text-[#0F172A] py-1">Google Play</a>
+                    <a href="https://www.apple.com/app-store/" target="_blank" rel="noopener noreferrer" class="hover:text-[#0F172A] py-1">App Store</a>
                 </div>
             </div>
         </footer>
