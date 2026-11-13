@@ -45,30 +45,30 @@
             dateEl.innerText = item.created_at_full || item.created_at_formatted || (item.time_ago ? `${item.created_at} (${item.time_ago})` : item.created_at) || '-';
         }
 
-        // 3. Status Badge (Harmonisasi Warna Standar Aturan 5)
+        // 3. Status Badge (Harmonisasi Warna Standar Landing Page)
         const statusBadge = document.getElementById('sharedModalStatusBadge');
         if (statusBadge) {
             const s = (item.status || '').toUpperCase();
             if (s === 'COMPLETED' || s === 'CLOSED') {
-                statusBadge.className = 'shrink-0 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[10.5px] sm:text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 whitespace-nowrap';
+                statusBadge.className = 'shrink-0 px-2.5 py-1 rounded-md text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 whitespace-nowrap';
                 statusBadge.innerText = 'SELESAI';
             } else if (s === 'WAITING_VERIFICATION') {
-                statusBadge.className = 'shrink-0 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[10.5px] sm:text-xs font-bold bg-amber-50 text-amber-700 border border-amber-300 whitespace-nowrap';
+                statusBadge.className = 'shrink-0 px-2.5 py-1 rounded-md text-xs font-bold bg-amber-50 text-amber-700 border border-amber-300 whitespace-nowrap';
                 statusBadge.innerText = 'VALIDASI';
             } else if (s === 'IN_PROGRESS') {
-                statusBadge.className = 'shrink-0 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[10.5px] sm:text-xs font-bold bg-amber-50 text-amber-800 border border-amber-300 whitespace-nowrap';
+                statusBadge.className = 'shrink-0 px-2.5 py-1 rounded-md text-xs font-bold bg-amber-50 text-amber-800 border border-amber-300 whitespace-nowrap';
                 statusBadge.innerText = 'DIKERJAKAN';
             } else if (s === 'REVISION_REQUIRED') {
-                statusBadge.className = 'shrink-0 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[10.5px] sm:text-xs font-bold bg-amber-50 text-amber-800 border border-amber-300 whitespace-nowrap';
+                statusBadge.className = 'shrink-0 px-2.5 py-1 rounded-md text-xs font-bold bg-amber-50 text-amber-800 border border-amber-300 whitespace-nowrap';
                 statusBadge.innerText = 'PERLU REVISI';
             } else if (s === 'DISPATCHED') {
-                statusBadge.className = 'shrink-0 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[10.5px] sm:text-xs font-bold bg-blue-50 text-[#1E3A8A] border border-blue-200 whitespace-nowrap';
+                statusBadge.className = 'shrink-0 px-2.5 py-1 rounded-md text-xs font-bold bg-blue-50 text-[#1E3A8A] border border-blue-200 whitespace-nowrap';
                 statusBadge.innerText = 'DITUGASKAN';
             } else if (s === 'REJECTED') {
-                statusBadge.className = 'shrink-0 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[10.5px] sm:text-xs font-bold bg-red-50 text-red-700 border border-red-200 whitespace-nowrap';
+                statusBadge.className = 'shrink-0 px-2.5 py-1 rounded-md text-xs font-bold bg-red-50 text-red-700 border border-red-200 whitespace-nowrap';
                 statusBadge.innerText = 'DITOLAK';
             } else {
-                statusBadge.className = 'shrink-0 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[10.5px] sm:text-xs font-bold bg-red-50 text-red-700 border border-red-200 whitespace-nowrap';
+                statusBadge.className = 'shrink-0 px-2.5 py-1 rounded-md text-xs font-bold bg-red-50 text-red-700 border border-red-200 whitespace-nowrap';
                 statusBadge.innerText = 'VERIFIKASI';
             }
         }
@@ -77,8 +77,8 @@
         const typeBadge = document.getElementById('sharedModalTypeBadge');
         if (typeBadge) {
             const isMajor = item.damage_type === 'major';
-            typeBadge.className = 'shrink-0 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[10.5px] sm:text-xs font-bold bg-red-50 text-red-700 border border-red-200 inline-flex items-center gap-1 sm:gap-1.5 whitespace-nowrap';
-            typeBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0"></span><span>${isMajor ? 'Kerusakan Berat' : 'Kerusakan Ringan'}</span>`;
+            typeBadge.className = 'shrink-0 px-2.5 py-1 rounded-md text-xs font-semibold bg-red-50 text-red-700 border border-red-200 inline-flex items-center gap-1.5 whitespace-nowrap';
+            typeBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-red-600 shrink-0"></span><span>${isMajor ? 'Kerusakan Berat' : 'Kerusakan Ringan'}</span>`;
         }
 
         // 5. Kategori Infrastruktur

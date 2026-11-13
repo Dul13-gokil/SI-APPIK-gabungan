@@ -8,43 +8,47 @@
     $todayStr = \Carbon\Carbon::now('Asia/Makassar')->locale('id')->isoFormat('dddd, D MMMM Y • HH:mm:ss') . ' WITA';
     $tabMeta = [
         'users-management' => [
-            'title' => 'Tata Kelola Akun Pimpinan & Penambahan Tim Teknis',
-            'subtitle' => 'Pembaruan data akun Kepala Daerah (Bupati) serta penambahan akun Operator Verifikasi dan Pekerja Lapangan.',
+            'title' => 'Pengaturan Akun Pimpinan & Tambah Petugas',
+            'subtitle' => 'Perbarui data akun Kepala Daerah (Bupati) serta tambah akun Operator atau Petugas Lapangan.',
         ],
         'users-list' => [
-            'title' => 'Daftar Seluruh Pengguna Terdaftar dalam Sistem',
-            'subtitle' => 'Pemantauan direktori akun, filter peran/role hak akses, reset kata sandi, dan pengelolaan pengguna terdaftar.',
+            'title' => 'Direktori Seluruh Pengguna Sistem',
+            'subtitle' => 'Lihat daftar akun berdasarkan peran, cari pengguna, dan lakukan reset kata sandi.',
         ],
         'complaints-list' => [
-            'title' => 'Daftar Seluruh Pengaduan Infrastruktur Daerah',
-            'subtitle' => 'Pengawasan menyeluruh lintas status aduan, pemantauan penanganan lapangan, dan rekam jejak aduan warga.',
+            'title' => 'Monitoring Seluruh Pengaduan Infrastruktur',
+            'subtitle' => 'Pantau seluruh laporan masyarakat lintas status, lokasi, dan progres penanganan regu.',
         ],
         'regions-gis' => [
-            'title' => 'Manajemen Pemetaan Wilayah & Geofencing GIS (Kabupaten Kolaka Utara)',
-            'subtitle' => 'Konfigurasi batas wilayah administratif, koordinat 15 kecamatan & desa, serta proteksi geofencing aduan publik.',
+            'title' => 'Manajemen Wilayah & Geofencing GIS Kolaka Utara',
+            'subtitle' => 'Atur batas wilayah administratif, koordinat 15 kecamatan & desa, serta geofencing laporan.',
         ],
         'teams-management' => [
-            'title' => 'Tata Kelola Regu Lapangan & Mode Penugasan Sistem',
-            'subtitle' => 'Konfigurasi regu kerja fisik (5–10 personil per regu), penentuan Ketua Regu (Koordinator Lapangan), serta mode penugasan hybrid.',
+            'title' => 'Manajemen Regu Lapangan & Mode Penugasan',
+            'subtitle' => 'Kelola regu kerja lapangan, koordinator regu, dan mode distribusi tugas sistem.',
+        ],
+        'reporting' => [
+            'title' => 'Laporan Eksekutif & Statistik Kinerja',
+            'subtitle' => 'Ringkasan capaian penanganan aduan, distribusi kategori kerusakan, dan ekspor laporan.',
         ],
     ];
     $currentMeta = $tabMeta[$activeTab] ?? $tabMeta['users-management'];
 @endphp
 
-<div class="py-4 sm:py-6 space-y-6">
+<div class="py-4 sm:py-6 space-y-5">
 
-    <!-- 1. HEADER SECTION (Gaya Minimalis & Elegan Sama Seperti Halaman Operator) -->
+    <!-- 1. HEADER SECTION -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
         <div>
-            <h2 id="adminSectionTitle" class="font-outfit font-extrabold text-lg sm:text-xl text-slate-900 leading-tight">
+            <h2 id="adminSectionTitle" class="font-outfit font-bold text-lg sm:text-xl text-[#0F172A] leading-tight">
                 {{ $currentMeta['title'] }}
             </h2>
-            <p id="adminSectionSubtitle" class="text-xs text-slate-500 mt-0.5">
+            <p id="adminSectionSubtitle" class="text-xs text-[#475569] mt-0.5">
                 {{ $currentMeta['subtitle'] }}
             </p>
         </div>
         <div class="flex items-center gap-2 shrink-0">
-            <span class="px-3.5 py-1.5 rounded-xl bg-white text-slate-700 text-xs font-semibold border border-slate-200 flex items-center gap-2 shadow-2xs">
+            <span class="px-3.5 py-2 rounded-lg bg-white text-[#0F172A] text-xs font-semibold border border-[#E2E8F0] flex items-center gap-2">
                 <i data-lucide="clock" class="w-4 h-4 text-[#1E3A8A]"></i>
                 <span class="live-wita-clock">{{ $todayStr }}</span>
             </span>
@@ -52,177 +56,201 @@
     </div>
 
     <!-- 2. KPI SUMMARY CARDS -->
-    <div class="grid grid-cols-2 md:grid-cols-7 gap-3">
+    <div class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-7 gap-2 sm:gap-3">
         <!-- 1. Total Aduan -->
-        <div class="card-white p-4 rounded-2xl bg-white border border-[#E2E8F0] shadow-2xs hover:shadow-md transition flex flex-col justify-between">
-            <div class="flex items-center justify-between">
-                <span class="text-[11px] text-slate-500 font-bold uppercase tracking-wider">TOTAL ADUAN</span>
-                <div class="w-8 h-8 rounded-xl bg-blue-50/80 text-[#1E3A8A] border border-blue-100/70 flex items-center justify-center">
-                    <i data-lucide="inbox" class="w-4 h-4"></i>
+        <div class="p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
+            <div class="flex items-center justify-between gap-1.5">
+                <span class="text-[10px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-wider truncate">Total Aduan</span>
+                <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-blue-50 text-[#1E3A8A] border border-blue-200 flex items-center justify-center shrink-0">
+                    <i data-lucide="inbox" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                 </div>
             </div>
-            <div class="mt-2">
-                <div class="font-outfit text-2xl sm:text-3xl font-extrabold text-slate-900 leading-tight">
+            <div class="mt-1.5 sm:mt-2">
+                <div class="font-outfit text-xl sm:text-2xl font-bold text-[#0F172A] leading-tight">
                     {{ $summary['total_complaints'] ?? 0 }}
                 </div>
-                <span class="text-[11px] text-slate-500 font-medium mt-0.5 block">Laporan masuk</span>
+                <span class="hidden sm:block text-[11px] text-[#475569] font-medium mt-0.5">Laporan masuk</span>
             </div>
         </div>
 
         <!-- 2. Menunggu -->
-        <div class="card-white p-4 rounded-2xl bg-white border border-[#E2E8F0] shadow-2xs hover:shadow-md transition flex flex-col justify-between">
-            <div class="flex items-center justify-between">
-                <span class="text-[11px] text-slate-500 font-bold uppercase tracking-wider">MENUNGGU</span>
-                <div class="w-8 h-8 rounded-xl bg-blue-50/80 text-[#1E3A8A] border border-blue-100/70 flex items-center justify-center">
-                    <i data-lucide="clock" class="w-4 h-4"></i>
+        <div class="p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
+            <div class="flex items-center justify-between gap-1.5">
+                <span class="text-[10px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-wider truncate">Menunggu</span>
+                <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-red-50 text-[#EF4444] border border-red-200 flex items-center justify-center shrink-0">
+                    <i data-lucide="clock" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                 </div>
             </div>
-            <div class="mt-2">
-                <div class="font-outfit text-2xl sm:text-3xl font-extrabold text-slate-900 leading-tight">
+            <div class="mt-1.5 sm:mt-2">
+                <div class="font-outfit text-xl sm:text-2xl font-bold text-[#0F172A] leading-tight">
                     {{ $summary['pending_verification'] ?? 0 }}
                 </div>
-                <span class="text-[11px] text-slate-500 font-medium mt-0.5 block">Menunggu verifikasi</span>
+                <span class="hidden sm:block text-[11px] text-[#475569] font-medium mt-0.5">Perlu verifikasi</span>
             </div>
         </div>
 
         <!-- 3. Ditugaskan -->
-        <div class="card-white p-4 rounded-2xl bg-white border border-[#E2E8F0] shadow-2xs hover:shadow-md transition flex flex-col justify-between">
-            <div class="flex items-center justify-between">
-                <span class="text-[11px] text-slate-500 font-bold uppercase tracking-wider">DITUGASKAN</span>
-                <div class="w-8 h-8 rounded-xl bg-blue-50/80 text-[#1E3A8A] border border-blue-100/70 flex items-center justify-center">
-                    <i data-lucide="send" class="w-4 h-4"></i>
+        <div class="p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
+            <div class="flex items-center justify-between gap-1.5">
+                <span class="text-[10px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-wider truncate">Ditugaskan</span>
+                <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-blue-50 text-[#1E40AF] border border-blue-200 flex items-center justify-center shrink-0">
+                    <i data-lucide="send" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                 </div>
             </div>
-            <div class="mt-2">
-                <div class="font-outfit text-2xl sm:text-3xl font-extrabold text-slate-900 leading-tight">
+            <div class="mt-1.5 sm:mt-2">
+                <div class="font-outfit text-xl sm:text-2xl font-bold text-[#0F172A] leading-tight">
                     {{ $summary['dispatched_count'] ?? 0 }}
                 </div>
-                <span class="text-[11px] text-slate-500 font-medium mt-0.5 block">Ditugaskan ke petugas</span>
+                <span class="hidden sm:block text-[11px] text-[#475569] font-medium mt-0.5">Ke regu lapangan</span>
             </div>
         </div>
 
         <!-- 4. Dikerjakan -->
-        <div class="card-white p-4 rounded-2xl bg-white border border-[#E2E8F0] shadow-2xs hover:shadow-md transition flex flex-col justify-between">
-            <div class="flex items-center justify-between">
-                <span class="text-[11px] text-slate-500 font-bold uppercase tracking-wider">DIKERJAKAN</span>
-                <div class="w-8 h-8 rounded-xl bg-blue-50/80 text-[#1E3A8A] border border-blue-100/70 flex items-center justify-center">
-                    <i data-lucide="hard-hat" class="w-4 h-4"></i>
+        <div class="p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
+            <div class="flex items-center justify-between gap-1.5">
+                <span class="text-[10px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-wider truncate">Dikerjakan</span>
+                <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-amber-50 text-[#D97706] border border-amber-200 flex items-center justify-center shrink-0">
+                    <i data-lucide="hard-hat" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                 </div>
             </div>
-            <div class="mt-2">
-                <div class="font-outfit text-2xl sm:text-3xl font-extrabold text-slate-900 leading-tight">
+            <div class="mt-1.5 sm:mt-2">
+                <div class="font-outfit text-xl sm:text-2xl font-bold text-[#0F172A] leading-tight">
                     {{ $summary['in_progress_count'] ?? 0 }}
                 </div>
-                <span class="text-[11px] text-slate-500 font-medium mt-0.5 block">Fisik di lapangan</span>
+                <span class="hidden sm:block text-[11px] text-[#475569] font-medium mt-0.5">Sedang ditangani</span>
             </div>
         </div>
 
         <!-- 5. Menunggu Validasi -->
-        <div class="card-white p-4 rounded-2xl bg-white border border-[#E2E8F0] shadow-2xs hover:shadow-md transition flex flex-col justify-between">
-            <div class="flex items-center justify-between">
-                <span class="text-[11px] text-slate-500 font-bold uppercase tracking-wider">VALIDASI</span>
-                <div class="w-8 h-8 rounded-xl bg-blue-50/80 text-[#1E3A8A] border border-blue-100/70 flex items-center justify-center">
-                    <i data-lucide="clock-3" class="w-4 h-4"></i>
+        <div class="p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
+            <div class="flex items-center justify-between gap-1.5">
+                <span class="text-[10px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-wider truncate">Validasi</span>
+                <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-amber-50 text-[#D97706] border border-amber-200 flex items-center justify-center shrink-0">
+                    <i data-lucide="clock-3" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                 </div>
             </div>
-            <div class="mt-2">
-                <div class="font-outfit text-2xl sm:text-3xl font-extrabold text-slate-900 leading-tight">
+            <div class="mt-1.5 sm:mt-2">
+                <div class="font-outfit text-xl sm:text-2xl font-bold text-[#0F172A] leading-tight">
                     {{ $summary['waiting_validation'] ?? 0 }}
                 </div>
-                <span class="text-[11px] text-slate-500 font-medium mt-0.5 block">Menunggu validasi</span>
+                <span class="hidden sm:block text-[11px] text-[#475569] font-medium mt-0.5">Uji hasil kerja</span>
             </div>
         </div>
 
         <!-- 6. Selesai -->
-        <div class="card-white p-4 rounded-2xl bg-white border border-[#E2E8F0] shadow-2xs hover:shadow-md transition flex flex-col justify-between">
-            <div class="flex items-center justify-between">
-                <span class="text-[11px] text-slate-500 font-bold uppercase tracking-wider">SELESAI</span>
-                <div class="w-8 h-8 rounded-xl bg-blue-50/80 text-[#1E3A8A] border border-blue-100/70 flex items-center justify-center">
-                    <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+        <div class="p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
+            <div class="flex items-center justify-between gap-1.5">
+                <span class="text-[10px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-wider truncate">Selesai</span>
+                <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-emerald-50 text-[#10B981] border border-emerald-200 flex items-center justify-center shrink-0">
+                    <i data-lucide="check-circle-2" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                 </div>
             </div>
-            <div class="mt-2">
-                <div class="font-outfit text-2xl sm:text-3xl font-extrabold text-slate-900 leading-tight">
+            <div class="mt-1.5 sm:mt-2">
+                <div class="font-outfit text-xl sm:text-2xl font-bold text-[#0F172A] leading-tight">
                     {{ $summary['completed_count'] ?? 0 }}
                 </div>
-                <span class="text-[11px] text-slate-500 font-medium mt-0.5 block">Tuntas diperbaiki</span>
+                <span class="hidden sm:block text-[11px] text-[#475569] font-medium mt-0.5">Tuntas diperbaiki</span>
             </div>
         </div>
 
         <!-- 7. Total Tim -->
-        <div class="card-white p-4 rounded-2xl bg-white border border-[#E2E8F0] shadow-2xs hover:shadow-md transition flex flex-col justify-between">
-            <div class="flex items-center justify-between">
-                <span class="text-[11px] text-slate-500 font-bold uppercase tracking-wider">TOTAL TIM</span>
-                <div class="w-8 h-8 rounded-xl bg-blue-50/80 text-[#1E3A8A] border border-blue-100/70 flex items-center justify-center">
-                    <i data-lucide="users-2" class="w-4 h-4"></i>
+        <div class="col-span-3 sm:col-span-1 p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
+            <div class="flex items-center justify-between gap-1.5">
+                <span class="text-[10px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-wider truncate">Total Tim</span>
+                <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-blue-50 text-[#1E3A8A] border border-blue-200 flex items-center justify-center shrink-0">
+                    <i data-lucide="users-2" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                 </div>
             </div>
-            <div class="mt-2">
-                <div class="font-outfit text-2xl sm:text-3xl font-extrabold text-slate-900 leading-tight">
+            <div class="mt-1.5 sm:mt-2">
+                <div class="font-outfit text-xl sm:text-2xl font-bold text-[#0F172A] leading-tight">
                     {{ ($summary['total_operators'] ?? 0) + ($summary['total_field_workers'] ?? 0) }}
                 </div>
-                <span class="text-[11px] text-slate-500 font-medium mt-0.5 block">Operator & Petugas</span>
+                <span class="hidden sm:block text-[11px] text-[#475569] font-medium mt-0.5">Operator &amp; Petugas</span>
             </div>
         </div>
     </div>
 
-    <!-- 3. SUB MENU TAB NAVIGATION (Gaya Konsisten Sama Persis Seperti Halaman Operator pada Gambar 2) -->
-    <div class="w-full bg-slate-100/90 p-1.5 rounded-2xl border border-slate-200/80 shadow-2xs">
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-1.5 w-full">
-            <!-- 1. Tab Manajemen Akun -->
-            <button type="button" onclick="switchAdminTab('users-management')" id="tabBtn-users-management"
-                class="admin-tab-btn w-full py-2.5 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 {{ $activeTab === 'users-management' ? 'bg-white text-[#1E3A8A] shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-white/60' }}">
-                <i data-lucide="user-cog" class="w-4 h-4 shrink-0"></i>
-                <span class="truncate">Manajemen Pengguna</span>
-            </button>
+    <!-- 3. MENU FITUR ADMIN (TERSTRUKTUR & MUDAH DIKENALI) -->
+    <div class="grid grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-2.5 w-full">
+        <!-- 1. Tab Pengaturan Akun -->
+        <button type="button" onclick="switchAdminTab('users-management')" id="tabBtn-users-management"
+            class="admin-tab-btn text-left p-3 rounded-xl border transition flex items-start gap-2.5 cursor-pointer {{ $activeTab === 'users-management' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
+            <i data-lucide="user-plus" class="w-4 h-4 shrink-0 mt-0.5 text-current"></i>
+            <div class="min-w-0 flex-1">
+                <span class="text-xs font-bold block leading-tight">Tambah &amp; Pimpinan</span>
+                <span class="tab-sub text-[10px] block mt-0.5 truncate {{ $activeTab === 'users-management' ? 'text-blue-100' : 'text-[#475569]' }}">Bupati &amp; akun baru</span>
+            </div>
+        </button>
 
-            <!-- 2. Tab Daftar Pengguna Terdaftar -->
-            <button type="button" onclick="switchAdminTab('users-list')" id="tabBtn-users-list"
-                class="admin-tab-btn w-full py-2.5 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 {{ $activeTab === 'users-list' ? 'bg-white text-[#1E3A8A] shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-white/60' }}">
-                <i data-lucide="users" class="w-4 h-4 shrink-0"></i>
-                <span class="truncate">Pengguna Terdaftar</span>
-                <span class="tab-badge px-2 py-0.5 rounded-full text-[10px] font-extrabold shrink-0 {{ $activeTab === 'users-list' ? 'bg-blue-100 text-[#1E3A8A]' : 'bg-slate-200 text-slate-600' }}">
-                    {{ $users->count() }}
-                </span>
-            </button>
+        <!-- 2. Tab Direktori Pengguna -->
+        <button type="button" onclick="switchAdminTab('users-list')" id="tabBtn-users-list"
+            class="admin-tab-btn text-left p-3 rounded-xl border transition flex items-start gap-2.5 cursor-pointer {{ $activeTab === 'users-list' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
+            <i data-lucide="users" class="w-4 h-4 shrink-0 mt-0.5 text-current"></i>
+            <div class="min-w-0 flex-1">
+                <div class="flex items-center justify-between gap-1">
+                    <span class="text-xs font-bold truncate leading-tight">Direktori Akun</span>
+                    <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'users-list' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
+                        {{ $users->count() }}
+                    </span>
+                </div>
+                <span class="tab-sub text-[10px] block mt-0.5 truncate {{ $activeTab === 'users-list' ? 'text-blue-100' : 'text-[#475569]' }}">Daftar &amp; reset sandi</span>
+            </div>
+        </button>
 
-            <!-- 3. Tab Daftar Seluruh Pengaduan -->
-            <button type="button" onclick="switchAdminTab('complaints-list')" id="tabBtn-complaints-list"
-                class="admin-tab-btn w-full py-2.5 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 {{ $activeTab === 'complaints-list' ? 'bg-white text-[#1E3A8A] shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-white/60' }}">
-                <i data-lucide="layers" class="w-4 h-4 shrink-0"></i>
-                <span class="truncate">Daftar Pengaduan</span>
-                <span class="tab-badge px-2 py-0.5 rounded-full text-[10px] font-extrabold shrink-0 {{ $activeTab === 'complaints-list' ? 'bg-blue-100 text-[#1E3A8A]' : 'bg-slate-200 text-slate-600' }}">
-                    {{ $complaints->count() }}
-                </span>
-            </button>
+        <!-- 3. Tab Semua Pengaduan -->
+        <button type="button" onclick="switchAdminTab('complaints-list')" id="tabBtn-complaints-list"
+            class="admin-tab-btn text-left p-3 rounded-xl border transition flex items-start gap-2.5 cursor-pointer {{ $activeTab === 'complaints-list' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
+            <i data-lucide="layers" class="w-4 h-4 shrink-0 mt-0.5 text-current"></i>
+            <div class="min-w-0 flex-1">
+                <div class="flex items-center justify-between gap-1">
+                    <span class="text-xs font-bold truncate leading-tight">Semua Aduan</span>
+                    <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'complaints-list' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
+                        {{ $complaints->count() }}
+                    </span>
+                </div>
+                <span class="tab-sub text-[10px] block mt-0.5 truncate {{ $activeTab === 'complaints-list' ? 'text-blue-100' : 'text-[#475569]' }}">Monitor lintas status</span>
+            </div>
+        </button>
 
-            <!-- 4. Tab Pemetaan Wilayah GIS Kolaka Utara -->
-            <button type="button" onclick="switchAdminTab('regions-gis')" id="tabBtn-regions-gis"
-                class="admin-tab-btn w-full py-2.5 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 {{ $activeTab === 'regions-gis' ? 'bg-white text-[#1E3A8A] shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-white/60' }}">
-                <i data-lucide="map" class="w-4 h-4 shrink-0"></i>
-                <span class="truncate">Pengaturan Peta</span>
-                <span class="tab-badge px-2 py-0.5 rounded-full text-[10px] font-extrabold shrink-0 {{ $activeTab === 'regions-gis' ? 'bg-blue-100 text-[#1E3A8A]' : 'bg-slate-200 text-slate-600' }}">
-                    {{ count($districtStats ?? $regions) }}
-                </span>
-            </button>
+        <!-- 4. Tab Wilayah & Peta GIS -->
+        <button type="button" onclick="switchAdminTab('regions-gis')" id="tabBtn-regions-gis"
+            class="admin-tab-btn text-left p-3 rounded-xl border transition flex items-start gap-2.5 cursor-pointer {{ $activeTab === 'regions-gis' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
+            <i data-lucide="map" class="w-4 h-4 shrink-0 mt-0.5 text-current"></i>
+            <div class="min-w-0 flex-1">
+                <div class="flex items-center justify-between gap-1">
+                    <span class="text-xs font-bold truncate leading-tight">Wilayah &amp; GIS</span>
+                    <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'regions-gis' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
+                        {{ count($districtStats ?? $regions) }}
+                    </span>
+                </div>
+                <span class="tab-sub text-[10px] block mt-0.5 truncate {{ $activeTab === 'regions-gis' ? 'text-blue-100' : 'text-[#475569]' }}">15 kec. &amp; geofence</span>
+            </div>
+        </button>
 
-            <!-- 5. Tab Manajemen Regu & Mode Penugasan -->
-            <button type="button" onclick="switchAdminTab('teams-management')" id="tabBtn-teams-management"
-                class="admin-tab-btn w-full py-2.5 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 {{ $activeTab === 'teams-management' ? 'bg-white text-[#1E3A8A] shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-white/60' }}">
-                <i data-lucide="users-2" class="w-4 h-4 shrink-0"></i>
-                <span class="truncate">Regu & Mode Tugas</span>
-                <span class="tab-badge px-2 py-0.5 rounded-full text-[10px] font-extrabold shrink-0 {{ $activeTab === 'teams-management' ? 'bg-blue-100 text-[#1E3A8A]' : 'bg-slate-200 text-slate-600' }}">
-                    {{ $teams->count() }}
-                </span>
-            </button>
+        <!-- 5. Tab Regu & Mode Penugasan -->
+        <button type="button" onclick="switchAdminTab('teams-management')" id="tabBtn-teams-management"
+            class="admin-tab-btn text-left p-3 rounded-xl border transition flex items-start gap-2.5 cursor-pointer {{ $activeTab === 'teams-management' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
+            <i data-lucide="users-2" class="w-4 h-4 shrink-0 mt-0.5 text-current"></i>
+            <div class="min-w-0 flex-1">
+                <div class="flex items-center justify-between gap-1">
+                    <span class="text-xs font-bold truncate leading-tight">Regu &amp; Tugas</span>
+                    <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'teams-management' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
+                        {{ $teams->count() }}
+                    </span>
+                </div>
+                <span class="tab-sub text-[10px] block mt-0.5 truncate {{ $activeTab === 'teams-management' ? 'text-blue-100' : 'text-[#475569]' }}">Tim &amp; mode disposisi</span>
+            </div>
+        </button>
 
-            <!-- 6. Tab Pelaporan & Monitoring Eksekutif -->
-            <button type="button" onclick="switchAdminTab('reporting')" id="tabBtn-reporting"
-                class="admin-tab-btn w-full py-2.5 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 {{ $activeTab === 'reporting' ? 'bg-white text-[#1E3A8A] shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-white/60' }}">
-                <i data-lucide="bar-chart-3" class="w-4 h-4 shrink-0"></i>
-                <span class="truncate">Pelaporan</span>
-            </button>
-        </div>
+        <!-- 6. Tab Laporan Eksekutif -->
+        <button type="button" onclick="switchAdminTab('reporting')" id="tabBtn-reporting"
+            class="admin-tab-btn text-left p-3 rounded-xl border transition flex items-start gap-2.5 cursor-pointer {{ $activeTab === 'reporting' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
+            <i data-lucide="bar-chart-3" class="w-4 h-4 shrink-0 mt-0.5 text-current"></i>
+            <div class="min-w-0 flex-1">
+                <span class="text-xs font-bold block leading-tight">Laporan</span>
+                <span class="tab-sub text-[10px] block mt-0.5 truncate {{ $activeTab === 'reporting' ? 'text-blue-100' : 'text-[#475569]' }}">Rekap &amp; statistik</span>
+            </div>
+        </button>
     </div>
 
     <!-- Tab Panel 1: Manajemen Akun (Bupati & Petugas) -->
@@ -378,34 +406,50 @@
             </div>
 
             <!-- Filter Role Pengguna -->
-            <div class="flex items-center gap-2 flex-wrap">
-                <div class="flex items-center gap-1.5 text-xs text-slate-500 shrink-0 font-medium">
-                    <i data-lucide="shield" class="w-3.5 h-3.5 text-[#1E3A8A]"></i>
-                    <span>Peran:</span>
+            <div class="flex flex-wrap items-center justify-between sm:justify-end gap-2 w-full sm:w-auto">
+                <div class="flex items-center gap-1.5 w-full sm:w-auto">
+                    <div class="flex items-center gap-1 text-xs text-slate-500 shrink-0 font-medium">
+                        <i data-lucide="shield" class="w-3.5 h-3.5 text-[#1E3A8A]"></i>
+                        <span>Peran:</span>
+                    </div>
+                    <select id="userRoleFilter" onchange="filterUsersTable()" class="flex-1 sm:flex-none text-xs font-semibold rounded-xl border border-slate-200 py-2 px-3 bg-slate-50 text-slate-700 focus:outline-none focus:border-[#1E3A8A] focus:bg-white transition">
+                        <option value="">Semua Peran / Role</option>
+                        <option value="ADMIN">Administrator</option>
+                        <option value="KEPALA_DAERAH">Kepala Daerah Kabupaten</option>
+                        <option value="OPERATOR">Operator Verifikasi</option>
+                        <option value="PETUGAS">Pekerja Lapangan</option>
+                        <option value="WARGA">Warga Masyarakat</option>
+                    </select>
                 </div>
-                <select id="userRoleFilter" onchange="filterUsersTable()" class="text-xs font-semibold rounded-xl border border-slate-200 py-2 px-3 bg-slate-50 text-slate-700 focus:outline-none focus:border-[#1E3A8A] focus:bg-white transition">
-                    <option value="">Semua Peran / Role</option>
-                    <option value="ADMIN">Administrator</option>
-                    <option value="KEPALA_DAERAH">Kepala Daerah Kabupaten</option>
-                    <option value="OPERATOR">Operator Verifikasi</option>
-                    <option value="PETUGAS">Pekerja Lapangan</option>
-                    <option value="WARGA">Warga Masyarakat</option>
-                </select>
 
                 <div class="px-3 py-2 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold flex items-center gap-1.5 shrink-0">
                     <span>Total:</span>
                     <span id="filteredUserCount">{{ $users->count() }}</span>
                     <span>Akun</span>
                 </div>
+
+                <!-- Toggle Tata Letak Daftar / Petak -->
+                <div class="inline-flex items-center p-0.5 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] shrink-0" role="group" aria-label="Tata letak direktori akun">
+                    <button type="button" id="usersLayoutBtn-list" onclick="setAdminUsersLayout('list')"
+                        class="px-2.5 py-1.5 rounded-md text-xs font-semibold flex items-center gap-1 transition cursor-pointer bg-[#1E3A8A] text-white">
+                        <i data-lucide="list" class="w-3.5 h-3.5"></i>
+                        <span>Daftar</span>
+                    </button>
+                    <button type="button" id="usersLayoutBtn-grid" onclick="setAdminUsersLayout('grid')"
+                        class="px-2.5 py-1.5 rounded-md text-xs font-semibold flex items-center gap-1 transition cursor-pointer text-[#475569] hover:text-[#0F172A]">
+                        <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
+                        <span>Petak</span>
+                    </button>
+                </div>
             </div>
 
         </div>
 
         <!-- Tabel Pengguna Sistem Modern & Enak Dilihat -->
-        <div class="card-white rounded-2xl bg-white border border-[#E2E8F0] shadow-2xs overflow-hidden">
-            <div class="overflow-x-auto">
+        <div class="card-white rounded-2xl bg-white border border-[#E2E8F0] overflow-hidden">
+            <div id="usersTableWrap" class="overflow-x-visible md:overflow-x-auto">
                 <table class="w-full text-left text-xs text-slate-600" id="usersTable">
-                    <thead class="bg-slate-50/80 text-slate-500 font-bold border-b border-[#E2E8F0] uppercase tracking-wider text-[11px]">
+                    <thead class="hidden md:table-header-group bg-slate-50/80 text-slate-500 font-bold border-b border-[#E2E8F0] uppercase tracking-wider text-[11px]">
                         <tr>
                             <th class="py-3.5 px-4">Pengguna</th>
                             <th class="py-3.5 px-4">Email Akun</th>
@@ -436,33 +480,37 @@
                                 };
                                 $initial = strtoupper(substr($u->name, 0, 1));
                             @endphp
-                            <tr class="user-row hover:bg-slate-50/60 transition"
+                            <tr class="user-row flex md:table-row items-center justify-between gap-2.5 px-3.5 py-3 md:p-0 hover:bg-slate-50/60 transition"
                                 data-name="{{ strtolower($u->name) }}"
                                 data-email="{{ strtolower($u->email) }}"
                                 data-phone="{{ $u->phone ?? '' }}"
                                 data-role="{{ $roleUpper == 'BUPATI' ? 'KEPALA_DAERAH' : $roleUpper }}">
-                                <td class="py-3 px-4">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-8 h-8 rounded-full {{ $avatarBg }} flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
+                                <td class="block md:table-cell p-0 md:py-3 md:px-4 min-w-0 flex-1">
+                                    <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                                        <div class="w-8 h-8 rounded-full {{ $avatarBg }} flex items-center justify-center font-bold text-xs shrink-0">
                                             {{ $initial }}
                                         </div>
-                                        <div>
-                                            <div class="font-bold text-slate-900 text-xs">{{ $u->name }}</div>
+                                        <div class="min-w-0 flex-1">
+                                            <div class="flex items-center gap-1.5 flex-wrap">
+                                                <span class="font-bold text-slate-900 text-xs truncate">{{ $u->name }}</span>
+                                                <span class="md:hidden px-1.5 py-0.5 rounded-full text-[9px] font-bold border {{ $roleBadgeClass }}">{{ $roleDisplay }}</span>
+                                            </div>
                                             <div class="text-[11px] text-slate-400">ID #{{ $u->id }}</div>
+                                            <div class="md:hidden text-[11px] text-slate-500 font-mono truncate mt-0.5">{{ $u->email }}</div>
                                         </div>
                                     </div>
                                 </td>
-                                <td class="py-3 px-4 font-mono text-slate-600 text-xs">{{ $u->email }}</td>
-                                <td class="py-3 px-4">
+                                <td class="hidden md:table-cell py-3 px-4 font-mono text-slate-600 text-xs">{{ $u->email }}</td>
+                                <td class="hidden md:table-cell py-3 px-4">
                                     <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold border {{ $roleBadgeClass }}">
                                         {{ $roleDisplay }}
                                     </span>
                                 </td>
-                                <td class="py-3 px-4 text-slate-600 font-mono text-xs">{{ $u->phone ?? '-' }}</td>
-                                <td class="py-3 px-4 text-slate-400 text-[11px]">
+                                <td class="hidden md:table-cell py-3 px-4 text-slate-600 font-mono text-xs">{{ $u->phone ?? '-' }}</td>
+                                <td class="hidden md:table-cell py-3 px-4 text-slate-400 text-[11px]">
                                     {{ $u->created_at ? $u->created_at->isoFormat('D MMM Y') : '-' }}
                                 </td>
-                                <td class="py-3 px-4 text-right">
+                                <td class="block md:table-cell p-0 md:py-3 md:px-4 text-right shrink-0">
                                     <div class="flex items-center justify-end gap-1.5">
                                         <!-- Edit Profil & Akun Pengguna -->
                                         <button type="button" 
@@ -518,9 +566,94 @@
                     </tbody>
                 </table>
             </div>
+
+            <!-- Grid Kartu Pengguna (Tata Letak Petak) -->
+            <div id="usersGridWrap" class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+                @foreach($users as $u)
+                    @php
+                        $roleUpper = strtoupper($u->role?->value ?? $u->role);
+                        $roleDisplay = match($roleUpper) {
+                            'ADMIN', 'SUPERADMIN' => 'ADMIN',
+                            'BUPATI', 'KEPALA_DAERAH' => 'KEPALA DAERAH',
+                            'OPERATOR' => 'OPERATOR',
+                            'PETUGAS' => 'PETUGAS',
+                            'WARGA' => 'WARGA',
+                            default => $roleUpper,
+                        };
+                        $roleFilterVal = match($roleUpper) {
+                            'ADMIN', 'SUPERADMIN' => 'ADMIN',
+                            'BUPATI', 'KEPALA_DAERAH' => 'KEPALA_DAERAH',
+                            default => $roleUpper,
+                        };
+                        $roleBadgeClass = match($roleUpper) {
+                            'ADMIN', 'SUPERADMIN' => 'bg-[#1E3A8A] text-white border-[#1E3A8A]',
+                            'BUPATI', 'KEPALA_DAERAH' => 'bg-blue-100 text-[#1E3A8A] border-blue-200',
+                            'OPERATOR' => 'bg-blue-50 text-[#1E3A8A] border-blue-200',
+                            'PETUGAS' => 'bg-slate-100 text-slate-800 border-slate-200',
+                            default => 'bg-slate-50 text-slate-600 border-slate-200',
+                        };
+                    @endphp
+                    <div class="user-grid-card rounded-xl border border-[#E2E8F0] bg-white p-4 space-y-3 hover:border-[#1E3A8A] transition flex flex-col justify-between"
+                        data-name="{{ strtolower($u->name) }}"
+                        data-email="{{ strtolower($u->email) }}"
+                        data-phone="{{ strtolower($u->phone ?? '') }}"
+                        data-role="{{ $roleFilterVal }}">
+                        <div class="space-y-2.5">
+                            <div class="flex items-start justify-between gap-2">
+                                <div class="flex items-center gap-2.5 min-w-0">
+                                    <div class="w-9 h-9 rounded-full {{ $roleUpper === 'ADMIN' ? 'bg-[#1E3A8A] text-white' : 'bg-blue-50 text-[#1E3A8A]' }} flex items-center justify-center font-bold text-xs shrink-0">
+                                        {{ strtoupper(substr($u->name, 0, 1)) }}
+                                    </div>
+                                    <div class="min-w-0">
+                                        <div class="font-bold text-[#0F172A] text-xs truncate">{{ $u->name }}</div>
+                                        <div class="text-[11px] text-[#475569] font-mono">ID #{{ $u->id }}</div>
+                                    </div>
+                                </div>
+                                <span class="px-2 py-0.5 rounded-md text-[10px] font-bold border shrink-0 {{ $roleBadgeClass }}">{{ $roleDisplay }}</span>
+                            </div>
+                            <div class="text-xs text-[#475569] space-y-1 pt-1 border-t border-[#E2E8F0]">
+                                <div class="font-mono text-[11px] truncate text-[#0F172A]">{{ $u->email }}</div>
+                                <div class="flex items-center justify-between text-[11px]">
+                                    <span class="font-mono">{{ $u->phone ?? '-' }}</span>
+                                    <span>{{ $u->created_at?->format('d M Y') ?? '-' }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-end gap-1.5 pt-2 border-t border-[#E2E8F0]">
+                            <button type="button"
+                                onclick="openEditUserModal({{ $u->id }}, '{{ addslashes($u->name) }}', '{{ addslashes($u->email) }}', '{{ addslashes($u->phone ?? '') }}', '{{ $roleUpper }}')"
+                                class="px-2.5 py-1 rounded-lg border border-[#E2E8F0] text-[#0F172A] hover:bg-slate-100 text-[11px] font-semibold transition cursor-pointer">
+                                Edit
+                            </button>
+                            <button type="button"
+                                onclick="openResetPassModal({{ $u->id }}, '{{ addslashes($u->name) }}', '{{ $roleDisplay }}')"
+                                class="px-2.5 py-1 rounded-lg border border-blue-200 text-[#1E3A8A] hover:bg-blue-50 text-[11px] font-semibold transition cursor-pointer">
+                                Sandi
+                            </button>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
             
-            <div id="noUserFoundMsg" class="hidden p-8 text-center text-slate-400 text-xs">
+            <div id="noUserFoundMsg" class="hidden p-8 text-center text-[#475569] text-xs">
                 Tidak ada data pengguna yang sesuai dengan filter atau kata kunci pencarian.
+            </div>
+
+            <!-- Pagination Bar Direktori Akun (5 / 10 / 50 per halaman, default 10) -->
+            <div id="usersPaginationBar" class="px-4 py-3 bg-[#F8FAFC] border-t border-[#E2E8F0] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                <div class="flex flex-wrap items-center gap-3 text-[#475569]">
+                    <div class="flex items-center gap-2">
+                        <span class="font-medium">Tampilkan:</span>
+                        <select id="usersPageSizeSelect" onchange="changeUsersPageSize(this.value)" aria-label="Jumlah akun per halaman"
+                            class="text-xs font-semibold rounded-lg border border-[#E2E8F0] bg-white text-[#0F172A] px-2.5 py-1.5 focus:outline-none focus:border-[#1E3A8A] cursor-pointer">
+                            <option value="5">5 akun</option>
+                            <option value="10" selected>10 akun</option>
+                            <option value="50">50 akun</option>
+                        </select>
+                    </div>
+                    <span id="usersPageInfo" class="font-medium">Menampilkan 0–0 dari 0 akun</span>
+                </div>
+                <div id="usersPageControls" class="flex items-center gap-1.5 flex-wrap"></div>
             </div>
         </div>
 
@@ -539,62 +672,85 @@
                     class="w-full pl-9 pr-3 py-1.5 text-xs rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-[#1E3A8A] focus:ring-1 focus:ring-[#1E3A8A] transition">
             </div>
 
-            <!-- Filter Kategori & Status Instan (Sejajar Satu Baris Rapi & Presisi di Dalam Kotak) -->
-            <div class="flex items-center gap-1.5 w-full sm:w-auto shrink-0 flex-nowrap overflow-x-auto pb-1 sm:pb-0">
+            <!-- Filter Kategori & Status Instan (Kompak 2-Kolom di Mobile, Satu Baris di Desktop) -->
+            <div class="grid grid-cols-2 sm:flex sm:flex-wrap lg:flex-nowrap items-center gap-2 w-full sm:w-auto shrink-0">
                 <!-- Dropdown Kategori -->
-                <div class="flex items-center gap-1 text-xs text-slate-500 shrink-0 font-medium whitespace-nowrap">
-                    <i data-lucide="layers" class="w-3.5 h-3.5 text-[#1E3A8A]"></i>
-                    <span>Filter Kategori:</span>
+                <div class="flex flex-col sm:flex-row sm:items-center gap-1 min-w-0">
+                    <div class="flex items-center gap-1 text-[11px] sm:text-xs text-slate-500 shrink-0 font-medium whitespace-nowrap">
+                        <i data-lucide="layers" class="w-3.5 h-3.5 text-[#1E3A8A]"></i>
+                        <span>Kategori:</span>
+                    </div>
+                    <select id="complaintCategorySelect" onchange="filterComplaintsTable()" 
+                        class="w-full sm:w-auto text-xs font-semibold rounded-xl border border-slate-200 py-1.5 px-2 bg-slate-50 text-slate-700 focus:outline-none focus:border-[#1E3A8A] focus:bg-white transition">
+                        <option value="ALL">Semua Kategori</option>
+                        @foreach($categories as $cat)
+                            <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                        @endforeach
+                    </select>
                 </div>
-                <select id="complaintCategorySelect" onchange="filterComplaintsTable()" 
-                    class="text-xs font-semibold rounded-xl border border-slate-200 py-1.5 px-2 bg-slate-50 text-slate-700 focus:outline-none focus:border-[#1E3A8A] focus:bg-white transition shrink-0">
-                    <option value="ALL">Semua Kategori</option>
-                    @foreach($categories as $cat)
-                        <option value="{{ $cat->id }}">{{ $cat->name }}</option>
-                    @endforeach
-                </select>
 
                 <!-- Dropdown Tipe Laporan (Kerusakan Ringan / Berat) -->
-                <div class="flex items-center gap-1 text-xs text-slate-500 shrink-0 font-medium whitespace-nowrap">
-                    <i data-lucide="git-commit" class="w-3.5 h-3.5 text-[#1E3A8A]"></i>
-                    <span>Tipe Laporan:</span>
+                <div class="flex flex-col sm:flex-row sm:items-center gap-1 min-w-0">
+                    <div class="flex items-center gap-1 text-[11px] sm:text-xs text-slate-500 shrink-0 font-medium whitespace-nowrap">
+                        <i data-lucide="git-commit" class="w-3.5 h-3.5 text-[#1E3A8A]"></i>
+                        <span>Tipe:</span>
+                    </div>
+                    <select id="complaintDamageTypeSelect" onchange="filterComplaintsTable()" 
+                        class="w-full sm:w-auto text-xs font-semibold rounded-xl border border-slate-200 py-1.5 px-2 bg-slate-50 text-slate-700 focus:outline-none focus:border-[#1E3A8A] focus:bg-white transition">
+                        <option value="ALL">Semua Tipe</option>
+                        <option value="minor">Kerusakan Ringan</option>
+                        <option value="major">Kerusakan Berat</option>
+                    </select>
                 </div>
-                <select id="complaintDamageTypeSelect" onchange="filterComplaintsTable()" 
-                    class="text-xs font-semibold rounded-xl border border-slate-200 py-1.5 px-2 bg-slate-50 text-slate-700 focus:outline-none focus:border-[#1E3A8A] focus:bg-white transition shrink-0">
-                    <option value="ALL">Semua Tipe</option>
-                    <option value="minor">Kerusakan Ringan</option>
-                    <option value="major">Kerusakan Berat</option>
-                </select>
 
                 <!-- Dropdown Status -->
-                <div class="flex items-center gap-1 text-xs text-slate-500 shrink-0 font-medium whitespace-nowrap">
-                    <i data-lucide="check-square" class="w-3.5 h-3.5 text-[#1E3A8A]"></i>
-                    <span>Status:</span>
+                <div class="flex flex-col sm:flex-row sm:items-center gap-1 min-w-0">
+                    <div class="flex items-center gap-1 text-[11px] sm:text-xs text-slate-500 shrink-0 font-medium whitespace-nowrap">
+                        <i data-lucide="check-square" class="w-3.5 h-3.5 text-[#1E3A8A]"></i>
+                        <span>Status:</span>
+                    </div>
+                    <select id="complaintStatusSelect" onchange="filterComplaintsTable()" 
+                        class="w-full sm:w-auto text-xs font-semibold rounded-xl border border-slate-200 py-1.5 px-2 bg-slate-50 text-slate-700 focus:outline-none focus:border-[#1E3A8A] focus:bg-white transition">
+                        <option value="ALL">Semua Status</option>
+                        <option value="SUBMITTED">Verifikasi</option>
+                        <option value="DISPATCHED">Ditugaskan</option>
+                        <option value="IN_PROGRESS">Dikerjakan</option>
+                        <option value="WAITING_VERIFICATION">Validasi</option>
+                        <option value="COMPLETED">Selesai</option>
+                        <option value="REJECTED">Ditolak</option>
+                    </select>
                 </div>
-                <select id="complaintStatusSelect" onchange="filterComplaintsTable()" 
-                    class="text-xs font-semibold rounded-xl border border-slate-200 py-1.5 px-2 bg-slate-50 text-slate-700 focus:outline-none focus:border-[#1E3A8A] focus:bg-white transition shrink-0">
-                    <option value="ALL">Semua Status</option>
-                    <option value="SUBMITTED">Verifikasi</option>
-                    <option value="DISPATCHED">Ditugaskan</option>
-                    <option value="IN_PROGRESS">Dikerjakan</option>
-                    <option value="WAITING_VERIFICATION">Validasi</option>
-                    <option value="COMPLETED">Selesai</option>
-                    <option value="REJECTED">Ditolak</option>
-                </select>
 
-                <!-- Tombol Reset Filter -->
-                <button type="button" onclick="resetComplaintFilters()" 
-                    class="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition flex items-center gap-1 shrink-0 cursor-pointer">
-                    <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
-                    <span>Reset</span>
-                </button>
+                <div class="flex items-end sm:items-center justify-end gap-1.5 self-end sm:self-auto">
+                    <!-- Tombol Reset Filter (Muncul hanya saat filter aktif) -->
+                    <button type="button" id="complaintResetBtn" onclick="resetComplaintFilters()" 
+                        class="hidden px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition flex items-center gap-1 shrink-0 cursor-pointer">
+                        <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                        <span>Reset</span>
+                    </button>
+
+                    <!-- Toggle Tata Letak Daftar / Petak -->
+                    <div class="inline-flex items-center p-0.5 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] shrink-0" role="group" aria-label="Tata letak semua aduan">
+                        <button type="button" id="complaintsLayoutBtn-list" onclick="setAdminComplaintsLayout('list')"
+                            class="px-2.5 py-1 rounded-md text-xs font-semibold flex items-center gap-1 transition cursor-pointer bg-[#1E3A8A] text-white">
+                            <i data-lucide="list" class="w-3.5 h-3.5"></i>
+                            <span>Daftar</span>
+                        </button>
+                        <button type="button" id="complaintsLayoutBtn-grid" onclick="setAdminComplaintsLayout('grid')"
+                            class="px-2.5 py-1 rounded-md text-xs font-semibold flex items-center gap-1 transition cursor-pointer text-[#475569] hover:text-[#0F172A]">
+                            <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
+                            <span>Petak</span>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
 
         <!-- Tabel Daftar Seluruh Pengaduan -->
-        <div class="card-white rounded-2xl bg-white border border-[#E2E8F0] shadow-2xs overflow-hidden">
-            <table class="w-full text-left text-xs text-slate-600" id="complaintsTable">
-                <thead class="bg-slate-50/80 text-slate-500 font-bold border-b border-[#E2E8F0] uppercase tracking-wider text-[11px]">
+        <div class="card-white rounded-2xl bg-white border border-[#E2E8F0] overflow-hidden">
+            <div id="complaintsTableWrap" class="overflow-hidden md:overflow-x-auto">
+            <table class="block md:table w-full text-left text-xs text-slate-600" id="complaintsTable">
+                <thead class="hidden md:table-header-group bg-slate-50/80 text-slate-500 font-bold border-b border-[#E2E8F0] uppercase tracking-wider text-[11px]">
                     <tr>
                         <th class="py-3 px-3 w-28 whitespace-nowrap">Kode</th>
                         <th class="py-3 px-3">Judul & Lokasi</th>
@@ -606,7 +762,7 @@
                         <th class="py-3 px-3 w-20 text-center whitespace-nowrap">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100" id="complaintsTableBody">
+                <tbody class="block md:table-row-group divide-y divide-slate-100" id="complaintsTableBody">
                     @forelse($complaints as $c)
                         @php
                             $firstPhoto = $c->photos->first();
@@ -638,20 +794,20 @@
                                 $statusBadgeClass = 'bg-orange-50 text-orange-700 border-orange-200';
                             }
                         @endphp
-                        <tr class="complaint-row hover:bg-slate-50/60 transition"
+                        <tr onclick="openAdminDetailModal({{ $c->id }})" class="complaint-row flex flex-row items-center justify-between md:table-row gap-2.5 px-3.5 py-3 md:p-0 w-full hover:bg-slate-50/60 transition cursor-pointer"
                             data-search="{{ strtolower($c->public_code . ' ' . $c->title . ' ' . ($c->user?->name ?? $c->citizen?->name ?? '') . ' ' . $c->address) }}"
                             data-category="{{ $c->category_id }}"
                             data-damage-type="{{ $c->damage_type ?? 'minor' }}"
                             data-status="{{ $c->status }}">
-                            <td class="py-2.5 px-3 font-mono font-bold text-[#1E3A8A] text-xs whitespace-nowrap">
-                                <button type="button" onclick="openAdminDetailModal({{ $c->id }})" class="hover:underline text-left cursor-pointer">
+                            <td class="hidden md:table-cell py-2.5 px-3 font-mono font-bold text-[#1E3A8A] text-xs whitespace-nowrap">
+                                <button type="button" onclick="event.stopPropagation(); openAdminDetailModal({{ $c->id }})" class="hover:underline text-left cursor-pointer">
                                     #{{ $c->public_code }}
                                 </button>
                                 <div class="text-[10px] text-slate-400 font-sans font-normal mt-0.5">{{ $c->created_at?->diffForHumans() }}</div>
                             </td>
-                            <td class="py-2.5 px-3">
-                                <div class="flex items-center gap-2.5">
-                                    <div onclick="openAdminDetailModal({{ $c->id }})" class="relative w-11 h-11 rounded-xl overflow-hidden border border-slate-200 bg-slate-100 shrink-0 cursor-pointer hover:ring-2 hover:ring-[#1E3A8A] transition shadow-2xs" title="Lihat Foto & Detail">
+                            <td class="block md:table-cell p-0 md:py-2.5 md:px-3 flex-1 md:w-auto min-w-0">
+                                <div class="flex items-center gap-2.5 min-w-0 group">
+                                    <div class="relative w-11 h-11 rounded-xl overflow-hidden border border-slate-200 bg-slate-100 shrink-0 group-hover:ring-2 group-hover:ring-[#1E3A8A] transition" title="Lihat Foto & Detail">
                                         @if($firstPhotoUrl)
                                             <img src="{{ $firstPhotoUrl }}" alt="Foto Aduan" class="w-full h-full object-cover">
                                         @else
@@ -661,8 +817,12 @@
                                         @endif
                                     </div>
                                     <div class="min-w-0 flex-1">
+                                        <div class="md:hidden flex items-center gap-1.5 flex-wrap mb-0.5">
+                                            <span class="font-mono font-bold text-[#1E3A8A] text-[10px]">#{{ $c->public_code }}</span>
+                                            <span class="px-1.5 py-0.5 rounded-full text-[9px] font-bold border {{ $statusBadgeClass }}">{{ $statusLabel }}</span>
+                                        </div>
                                         <div class="flex items-center gap-1.5 flex-wrap mb-0.5">
-                                            <button type="button" onclick="openAdminDetailModal({{ $c->id }})" class="font-bold text-slate-900 text-xs truncate hover:text-[#1E3A8A] text-left cursor-pointer max-w-[200px]" title="{{ $c->title }}">
+                                            <button type="button" onclick="openAdminDetailModal({{ $c->id }})" class="font-bold text-slate-900 text-xs truncate hover:text-[#1E3A8A] text-left cursor-pointer max-w-full md:max-w-[200px]" title="{{ $c->title }}">
                                                 {{ $c->title }}
                                             </button>
                                             @if($c->severity_text)
@@ -671,33 +831,33 @@
                                                 </span>
                                             @endif
                                         </div>
-                                        <div class="text-[10.5px] text-slate-400 flex items-center gap-1 truncate max-w-[240px]">
+                                        <div class="text-[10.5px] text-slate-400 flex items-center gap-1 truncate max-w-full md:max-w-[240px]">
                                             <i data-lucide="map-pin" class="w-3 h-3 text-slate-400 shrink-0"></i>
                                             <span class="truncate" title="{{ $c->address }}">{{ $c->address ?? 'Kolaka Utara' }}</span>
                                         </div>
                                     </div>
                                 </div>
                             </td>
-                            <td class="py-2.5 px-3 whitespace-nowrap">
+                            <td class="hidden md:table-cell py-2.5 px-3 whitespace-nowrap">
                                 <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-50 text-red-700 border border-red-200">
                                     <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
                                     <span>{{ ($c->damage_type ?? 'point') === 'major' ? 'Berat' : 'Ringan' }}</span>
                                 </span>
                             </td>
-                            <td class="py-2.5 px-3 whitespace-nowrap">
+                            <td class="hidden md:table-cell py-2.5 px-3 whitespace-nowrap">
                                 <span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 text-[10.5px] font-semibold border border-slate-200/60 truncate max-w-[120px] inline-block" title="{{ $c->category?->name ?? 'Infrastruktur' }}">
                                     {{ $c->category?->name ?? 'Infrastruktur' }}
                                 </span>
                             </td>
-                            <td class="py-2.5 px-3 whitespace-nowrap">
+                            <td class="hidden md:table-cell py-2.5 px-3 whitespace-nowrap">
                                 <div class="font-semibold text-slate-800 text-xs truncate max-w-[130px]">{{ $c->user?->name ?? 'Warga Terdaftar' }}</div>
                             </td>
-                            <td class="py-2.5 px-3 text-center whitespace-nowrap">
+                            <td class="hidden md:table-cell py-2.5 px-3 text-center whitespace-nowrap">
                                 <span class="px-2 py-0.5 rounded-full text-[10px] font-bold border {{ $statusBadgeClass }}">
                                     {{ $statusLabel }}
                                 </span>
                             </td>
-                            <td class="py-2.5 px-3 text-xs text-slate-700">
+                            <td class="hidden md:table-cell py-2.5 px-3 text-xs text-slate-700">
                                 @if(in_array($c->status, ['IN_PROGRESS', 'WAITING_VERIFICATION', 'COMPLETED', 'CLOSED']) && $c->latestDisposition?->assignee?->name)
                                     <div class="flex items-center gap-1 text-[11px] text-slate-700 font-semibold truncate max-w-[130px]">
                                         <i data-lucide="hard-hat" class="w-3 h-3 text-slate-400 shrink-0"></i>
@@ -707,14 +867,8 @@
                                     <span class="text-[11px] text-slate-400 font-medium italic">Belum diambil</span>
                                 @endif
                             </td>
-                            <td class="py-2.5 px-3 text-center whitespace-nowrap">
-                                <div class="flex items-center justify-center gap-1.5">
-                                    <button type="button" 
-                                        onclick="openAdminDetailModal({{ $c->id }})"
-                                        title="Lihat Detail & Timeline"
-                                        class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-blue-50 hover:bg-[#1E3A8A] text-[#1E3A8A] hover:text-white border border-blue-200 transition inline-flex items-center justify-center shadow-2xs cursor-pointer">
-                                        <i data-lucide="eye" class="w-3.5 h-3.5"></i>
-                                    </button>
+                            <td onclick="event.stopPropagation();" class="block md:table-cell p-0 md:py-2.5 md:px-3 text-right md:text-center whitespace-nowrap shrink-0 md:w-auto cursor-default">
+                                <div class="flex items-center justify-end md:justify-center gap-1.5">
                                     <button type="button" 
                                         onclick="openDeleteComplaintModal('{{ route('admin.complaints.delete', $c->id) }}', '{{ $c->public_code }}', '{{ addslashes($c->title) }}')"
                                         title="Hapus Aduan"
@@ -735,8 +889,93 @@
                 </table>
             </div>
 
-            <div id="noComplaintFoundMsg" class="hidden p-8 text-center text-slate-400 text-xs">
+            <!-- Grid Kartu Semua Aduan (Tata Letak Petak) -->
+            <div id="complaintsGridWrap" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
+                @foreach($complaints as $c)
+                    @php
+                        $cPhoto = $c->photos->first() ? ($c->photos->first()->url ?? asset('storage/' . $c->photos->first()->storage_key)) : null;
+                        $cSt = $c->status?->value ?? $c->status;
+                        $cStLabel = match($cSt) {
+                            'COMPLETED', 'CLOSED' => 'SELESAI',
+                            'WAITING_VERIFICATION' => 'VALIDASI',
+                            'IN_PROGRESS' => 'DIKERJAKAN',
+                            'DISPATCHED' => 'DITUGASKAN',
+                            'REJECTED' => 'DITOLAK',
+                            'REVISION_REQUIRED' => 'PERLU REVISI',
+                            default => 'VERIFIKASI',
+                        };
+                        $cStClass = match($cSt) {
+                            'COMPLETED', 'CLOSED' => 'bg-emerald-50 text-emerald-800 border-emerald-200',
+                            'WAITING_VERIFICATION' => 'bg-amber-50 text-amber-700 border-amber-300',
+                            'IN_PROGRESS', 'REVISION_REQUIRED' => 'bg-amber-50 text-amber-800 border-amber-300',
+                            'DISPATCHED' => 'bg-blue-50 text-[#1E3A8A] border-blue-200',
+                            default => 'bg-red-50 text-red-700 border-red-200',
+                        };
+                        $cSearch = strtolower($c->public_code . ' ' . $c->title . ' ' . $c->address . ' ' . ($c->citizen?->name ?? ''));
+                    @endphp
+                    <div onclick="if (window.innerWidth < 768) { openAdminDetailModal({{ $c->id }}); }" class="complaint-grid-card rounded-xl border border-[#E2E8F0] bg-white p-4 space-y-3 hover:border-[#1E3A8A] transition cursor-pointer md:cursor-default"
+                        data-search="{{ $cSearch }}"
+                        data-category="{{ $c->category_id ?? '' }}"
+                        data-damage-type="{{ $c->damage_type ?? 'minor' }}"
+                        data-status="{{ $cSt }}">
+                        <div class="flex items-center justify-between gap-2 flex-wrap">
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <span class="px-2 py-0.5 rounded-md bg-slate-100 text-[#0F172A] font-mono text-[11px] font-semibold border border-[#E2E8F0]">#{{ $c->public_code }}</span>
+                                <span class="px-2 py-0.5 rounded-md text-[11px] font-semibold bg-red-50 text-red-700 border border-red-200">{{ ($c->damage_type ?? 'minor') === 'major' ? 'Kerusakan Berat' : 'Kerusakan Ringan' }}</span>
+                                <span class="px-2 py-0.5 rounded-md text-[11px] font-semibold bg-slate-100 text-[#0F172A] border border-[#E2E8F0]">{{ $c->category?->name ?? 'Infrastruktur' }}</span>
+                            </div>
+                            <span class="px-2 py-0.5 rounded-md text-[11px] font-bold border {{ $cStClass }}">{{ $cStLabel }}</span>
+                        </div>
+                        <div class="flex gap-3 items-start">
+                            <div onclick="openAdminDetailModal({{ $c->id }})" class="w-20 h-20 rounded-xl overflow-hidden border border-[#E2E8F0] bg-slate-100 shrink-0 cursor-pointer">
+                                @if($cPhoto)
+                                    <img src="{{ $cPhoto }}" alt="Foto Aduan" class="w-full h-full object-cover">
+                                @else
+                                    <div class="w-full h-full flex items-center justify-center text-slate-400 text-[10px]">Tanpa Foto</div>
+                                @endif
+                            </div>
+                            <div class="min-w-0 flex-1 space-y-1">
+                                <h4 class="font-outfit font-bold text-sm text-[#0F172A] truncate" title="{{ $c->title }}">{{ $c->title }}</h4>
+                                <p class="text-xs text-[#475569] truncate">{{ $c->address }}</p>
+                                <p class="text-[11px] text-[#475569]">Pelapor: <strong class="text-[#0F172A]">{{ $c->citizen?->name ?? 'Warga' }}</strong> • {{ $c->created_at?->diffForHumans() }}</p>
+                                <div class="flex items-center justify-end md:justify-between gap-2 pt-1">
+                                    <button type="button" onclick="openAdminDetailModal({{ $c->id }})" class="hidden md:inline-flex text-xs font-bold text-[#1E3A8A] hover:underline items-center gap-1 cursor-pointer">
+                                        <span>Lihat Rincian Lengkap & Foto</span>
+                                        <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                                    </button>
+                                    <button type="button"
+                                        onclick="event.stopPropagation(); openDeleteComplaintModal('{{ route('admin.complaints.delete', $c->id) }}', '{{ $c->public_code }}', '{{ addslashes($c->title) }}')"
+                                        title="Hapus Aduan"
+                                        class="px-2.5 py-1 rounded-lg bg-red-50 hover:bg-red-600 text-red-600 hover:text-white border border-red-200 transition inline-flex items-center gap-1 text-[11px] font-bold cursor-pointer">
+                                        <i data-lucide="trash-2" class="w-3 h-3"></i>
+                                        <span>Hapus</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+
+            <div id="noComplaintFoundMsg" class="hidden p-8 text-center text-[#475569] text-xs">
                 Tidak ada data aduan yang sesuai dengan filter atau kata kunci pencarian.
+            </div>
+
+            <!-- Pagination Bar Semua Aduan (5 / 10 / 50 per halaman, default 10) -->
+            <div id="complaintsPaginationBar" class="px-4 py-3 bg-[#F8FAFC] border-t border-[#E2E8F0] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                <div class="flex flex-wrap items-center gap-3 text-[#475569]">
+                    <div class="flex items-center gap-2">
+                        <span class="font-medium">Tampilkan:</span>
+                        <select id="complaintsPageSizeSelect" onchange="changeComplaintsPageSize(this.value)" aria-label="Jumlah aduan per halaman"
+                            class="text-xs font-semibold rounded-lg border border-[#E2E8F0] bg-white text-[#0F172A] px-2.5 py-1.5 focus:outline-none focus:border-[#1E3A8A] cursor-pointer">
+                            <option value="5">5 aduan</option>
+                            <option value="10" selected>10 aduan</option>
+                            <option value="50">50 aduan</option>
+                        </select>
+                    </div>
+                    <span id="complaintsPageInfo" class="font-medium">Menampilkan 0–0 dari 0 aduan</span>
+                </div>
+                <div id="complaintsPageControls" class="flex items-center gap-1.5 flex-wrap"></div>
             </div>
         </div>
 
@@ -1105,15 +1344,104 @@
                 </div>
             </div>
 
-            <button type="button" onclick="openCreateTeamModal()"
-                class="px-5 py-2.5 rounded-xl bg-[#1E3A8A] hover:bg-[#172e6e] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md shadow-[#1E3A8A]/20 transition cursor-pointer shrink-0">
-                <i data-lucide="user-plus" class="w-4 h-4"></i>
-                <span>+ Bentuk Regu Lapangan Baru</span>
-            </button>
+            <div class="flex items-center gap-2.5 flex-wrap shrink-0">
+                <!-- Toggle Tata Letak Daftar / Petak -->
+                <div class="inline-flex items-center p-0.5 rounded-lg bg-white border border-[#E2E8F0] shrink-0" role="group" aria-label="Tata letak regu">
+                    <button type="button" id="teamsLayoutBtn-list" onclick="setAdminTeamsLayout('list')"
+                        class="px-2.5 py-1.5 rounded-md text-xs font-semibold flex items-center gap-1 transition cursor-pointer bg-[#1E3A8A] text-white">
+                        <i data-lucide="list" class="w-3.5 h-3.5"></i>
+                        <span>Daftar</span>
+                    </button>
+                    <button type="button" id="teamsLayoutBtn-grid" onclick="setAdminTeamsLayout('grid')"
+                        class="px-2.5 py-1.5 rounded-md text-xs font-semibold flex items-center gap-1 transition cursor-pointer text-[#475569] hover:text-[#0F172A]">
+                        <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
+                        <span>Petak</span>
+                    </button>
+                </div>
+
+                <button type="button" onclick="openCreateTeamModal()"
+                    class="px-5 py-2.5 rounded-xl bg-[#1E3A8A] hover:bg-[#172e6e] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md shadow-[#1E3A8A]/20 transition cursor-pointer shrink-0">
+                    <i data-lucide="user-plus" class="w-4 h-4"></i>
+                    <span>+ Bentuk Regu Lapangan Baru</span>
+                </button>
+            </div>
         </div>
 
         <!-- 3. DAFTAR SELURUH REGU LAPANGAN KABUPATEN -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <div id="adminTeamsTableWrap" class="bg-white rounded-2xl border border-[#E2E8F0] overflow-hidden">
+            <div class="overflow-x-visible md:overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead class="hidden md:table-header-group">
+                        <tr class="bg-slate-50 border-b border-[#E2E8F0] text-[10px] font-extrabold text-[#475569] uppercase tracking-wider">
+                            <th class="px-4 py-3 whitespace-nowrap">KODE REGU</th>
+                            <th class="px-4 py-3">NAMA REGU & WILAYAH</th>
+                            <th class="px-4 py-3">KETUA REGU</th>
+                            <th class="px-4 py-3 whitespace-nowrap">PERSONIL</th>
+                            <th class="px-4 py-3 whitespace-nowrap">STATUS</th>
+                            <th class="px-4 py-3 text-right whitespace-nowrap">AKSI</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-[#E2E8F0] text-xs">
+                        @forelse($teams as $team)
+                            @php
+                                $memberCount = $team->members->count();
+                                $isIdeal = ($memberCount >= 5 && $memberCount <= 10);
+                                $badgeText = $isIdeal ? 'Ideal (5-10 Personil)' : ($memberCount < 5 ? 'Di bawah 5 Personil' : 'Regu Besar');
+                            @endphp
+                            <tr class="admin-team-row flex md:table-row items-center justify-between gap-2.5 px-3.5 py-3 md:p-0 hover:bg-slate-50/80 transition">
+                                <td class="hidden md:table-cell px-4 py-3 whitespace-nowrap">
+                                    <span class="px-2 py-0.5 rounded-md bg-[#1E3A8A] text-white font-mono text-[10px] font-bold">
+                                        {{ $team->code }}
+                                    </span>
+                                </td>
+                                <td class="block md:table-cell p-0 md:px-4 md:py-3 min-w-0 flex-1">
+                                    <div class="md:hidden flex items-center gap-1.5 flex-wrap mb-1">
+                                        <span class="px-1.5 py-0.5 rounded bg-[#1E3A8A] text-white font-mono text-[9.5px] font-bold">{{ $team->code }}</span>
+                                        <span class="px-1.5 py-0.5 rounded-full text-[9.5px] font-bold border {{ $isIdeal ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200' }}">{{ $memberCount }} Personil</span>
+                                    </div>
+                                    <div class="font-bold text-[#0F172A] truncate">{{ $team->name }}</div>
+                                    <div class="text-[11px] text-[#475569] flex items-center gap-1 mt-0.5 truncate">
+                                        <i data-lucide="map-pin" class="w-3 h-3 text-slate-400 shrink-0"></i>
+                                        <span class="truncate">{{ $team->district ?? $team->coverage_area ?? 'Kecamatan Terkait' }}</span>
+                                    </div>
+                                </td>
+                                <td class="hidden md:table-cell px-4 py-3 whitespace-nowrap">
+                                    <div class="font-semibold text-[#0F172A]">{{ $team->leader?->name ?? 'Belum Ditunjuk' }}</div>
+                                    @if($team->leader?->phone)
+                                        <div class="text-[11px] text-[#475569] font-mono">{{ $team->leader->phone }}</div>
+                                    @endif
+                                </td>
+                                <td class="hidden md:table-cell px-4 py-3 whitespace-nowrap">
+                                    <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-slate-100 text-slate-700 border border-[#E2E8F0]">
+                                        {{ $memberCount }} Personil
+                                    </span>
+                                </td>
+                                <td class="hidden md:table-cell px-4 py-3 whitespace-nowrap">
+                                    <span class="px-2.5 py-1 rounded-full text-[11px] font-bold border {{ $isIdeal ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200' }}">
+                                        {{ $badgeText }}
+                                    </span>
+                                </td>
+                                <td class="block md:table-cell p-0 md:px-4 md:py-3 text-right whitespace-nowrap shrink-0">
+                                    <button type="button" onclick="setAdminTeamsLayout('grid'); document.getElementById('team-card-{{ $team->id }}')?.scrollIntoView({ behavior: 'smooth', block: 'center' });"
+                                        class="px-2.5 py-1.5 rounded-lg border border-[#E2E8F0] bg-white hover:bg-slate-50 text-[#1E3A8A] text-[11px] font-bold inline-flex items-center gap-1 transition cursor-pointer">
+                                        <i data-lucide="users" class="w-3.5 h-3.5"></i>
+                                        <span>Kelola Personil</span>
+                                    </button>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="px-4 py-10 text-center text-xs text-[#475569]">
+                                    Belum ada regu lapangan yang dibentuk.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="adminTeamsGrid" class="hidden grid grid-cols-1 lg:grid-cols-2 gap-5">
             @forelse($teams as $team)
                 @php
                     $memberCount = $team->members->count();
@@ -1121,7 +1449,7 @@
                         ? 'Ideal (5-10 Personil)' 
                         : ($memberCount < 5 ? 'Di bawah 5 Personil' : 'Regu Besar');
                 @endphp
-                <div class="card-white rounded-3xl p-5 bg-white border border-[#E2E8F0] shadow-2xs hover:shadow-md transition space-y-4 flex flex-col justify-between">
+                <div id="team-card-{{ $team->id }}" class="admin-team-card card-white rounded-3xl p-5 bg-white border border-[#E2E8F0] hover:border-blue-300 transition space-y-4 flex flex-col justify-between">
                     <div class="space-y-3.5">
                         <!-- Top Header Regu -->
                         <div class="flex items-start justify-between gap-3">
@@ -1311,6 +1639,23 @@
                     </button>
                 </div>
             @endforelse
+        </div>
+
+        <!-- Pagination Bar Regu & Tugas (5 / 10 / 50 per halaman, default 5) -->
+        <div id="teamsPaginationBar" class="rounded-2xl bg-white border border-[#E2E8F0] px-4 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+            <div class="flex flex-wrap items-center gap-3 text-[#475569]">
+                <div class="flex items-center gap-2">
+                    <span class="font-medium">Tampilkan:</span>
+                    <select id="teamsPageSizeSelect" onchange="changeTeamsPageSize(this.value)" aria-label="Jumlah regu per halaman"
+                        class="text-xs font-semibold rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] text-[#0F172A] px-2.5 py-1.5 focus:outline-none focus:border-[#1E3A8A] cursor-pointer">
+                        <option value="5" selected>5 regu</option>
+                        <option value="10">10 regu</option>
+                        <option value="50">50 regu</option>
+                    </select>
+                </div>
+                <span id="teamsPageInfo" class="font-medium">Menampilkan 0–0 dari 0 regu</span>
+            </div>
+            <div id="teamsPageControls" class="flex items-center gap-1.5 flex-wrap"></div>
         </div>
 
     </div>
@@ -2018,28 +2363,31 @@
 <script>
     const adminMeta = {
         'users-management': {
-            title: 'Tata Kelola Akun Pimpinan & Penambahan Tim Teknis',
-            subtitle: 'Pembaruan data akun Kepala Daerah (Bupati) serta penambahan akun Operator Verifikasi dan Pekerja Lapangan.'
+            title: 'Pengaturan Akun Pimpinan & Tambah Petugas',
+            subtitle: 'Perbarui data akun Kepala Daerah (Bupati) serta tambah akun Operator atau Petugas Lapangan.'
         },
         'users-list': {
-            title: 'Daftar Seluruh Pengguna Terdaftar dalam Sistem',
-            subtitle: 'Pemantauan direktori akun, filter peran/role hak akses, reset kata sandi, dan pengelolaan pengguna terdaftar.'
+            title: 'Direktori Seluruh Pengguna Sistem',
+            subtitle: 'Lihat daftar akun berdasarkan peran, cari pengguna, dan lakukan reset kata sandi.'
         },
         'complaints-list': {
-            title: 'Daftar Seluruh Pengaduan Infrastruktur Daerah',
-            subtitle: 'Pengawasan menyeluruh lintas status aduan, pemantauan penanganan lapangan, dan rekam jejak aduan warga.'
+            title: 'Monitoring Seluruh Pengaduan Infrastruktur',
+            subtitle: 'Pantau seluruh laporan masyarakat lintas status, lokasi, dan progres penanganan regu.'
         },
         'regions-gis': {
-            title: 'Manajemen Pemetaan Wilayah & Geofencing GIS (Kabupaten Kolaka Utara)',
-            subtitle: 'Konfigurasi batas wilayah administratif, koordinat 15 kecamatan & desa, serta proteksi geofencing aduan publik.'
+            title: 'Manajemen Wilayah & Geofencing GIS Kolaka Utara',
+            subtitle: 'Atur batas wilayah administratif, koordinat 15 kecamatan & desa, serta geofencing laporan.'
         },
         'teams-management': {
-            title: 'Tata Kelola Regu Lapangan & Mode Penugasan Sistem',
-            subtitle: 'Konfigurasi regu kerja fisik (5–10 personil per regu), penentuan Ketua Regu (Koordinator Lapangan), serta mode penugasan hybrid.'
+            title: 'Manajemen Regu Lapangan & Mode Penugasan',
+            subtitle: 'Kelola regu kerja lapangan, koordinator regu, dan mode distribusi tugas sistem.'
+        },
+        'reporting': {
+            title: 'Laporan Eksekutif & Statistik Kinerja',
+            subtitle: 'Ringkasan capaian penanganan aduan, distribusi kategori kerusakan, dan ekspor laporan.'
         }
     };
 
-    // Fungsi Pindah Tab Instan (Sama Persis Seperti Halaman Operator)
     function switchAdminTab(tabId) {
         // 1. Sembunyikan semua tab panel
         document.querySelectorAll('.admin-tab-panel').forEach(panel => {
@@ -2052,21 +2400,29 @@
             targetPanel.classList.remove('hidden');
         }
 
-        // 3. Update styling tombol tab persis seperti operator
+        // 3. Update styling tombol tab
         document.querySelectorAll('.admin-tab-btn').forEach(btn => {
-            btn.className = 'admin-tab-btn w-full py-2.5 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900 hover:bg-white/60';
+            btn.className = 'admin-tab-btn text-left p-3 rounded-xl border transition flex items-start gap-2.5 cursor-pointer bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]';
             const badge = btn.querySelector('.tab-badge');
             if (badge) {
-                badge.className = 'tab-badge px-2 py-0.5 rounded-full text-[10px] font-extrabold shrink-0 bg-slate-200 text-slate-600';
+                badge.className = 'tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 bg-blue-50 text-[#1E3A8A] border border-blue-200';
+            }
+            const sub = btn.querySelector('.tab-sub');
+            if (sub) {
+                sub.className = 'tab-sub text-[10px] block mt-0.5 truncate text-[#475569]';
             }
         });
 
         const activeBtn = document.getElementById('tabBtn-' + tabId);
         if (activeBtn) {
-            activeBtn.className = 'admin-tab-btn w-full py-2.5 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 bg-white text-[#1E3A8A] shadow-xs';
+            activeBtn.className = 'admin-tab-btn text-left p-3 rounded-xl border transition flex items-start gap-2.5 cursor-pointer bg-[#1E3A8A] text-white border-[#1E3A8A]';
             const badge = activeBtn.querySelector('.tab-badge');
             if (badge) {
-                badge.className = 'tab-badge px-2 py-0.5 rounded-full text-[10px] font-extrabold shrink-0 bg-blue-100 text-[#1E3A8A]';
+                badge.className = 'tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 bg-white text-[#1E3A8A]';
+            }
+            const sub = activeBtn.querySelector('.tab-sub');
+            if (sub) {
+                sub.className = 'tab-sub text-[10px] block mt-0.5 truncate text-blue-100';
             }
         }
 
@@ -2091,14 +2447,169 @@
         }
     }
 
-    // Filter Instan Real-time Tabel Pengguna
-    function filterUsersTable() {
+    // State & Helper Pagination Reusable (Direktori Akun, Semua Aduan, & Regu & Tugas)
+    const adminPaginationState = {
+        users: { page: 1, size: 10 },
+        complaints: { page: 1, size: 10 },
+        teams: { page: 1, size: 5 }
+    };
+
+    function renderPagination(key, matchedRows, infoId, controlsId, unitLabel, onPageChange) {
+        const state = adminPaginationState[key];
+        const total = matchedRows.length;
+        const size = state.size;
+        const totalPages = Math.max(1, Math.ceil(total / size));
+        if (state.page > totalPages) state.page = totalPages;
+        if (state.page < 1) state.page = 1;
+
+        const startIdx = (state.page - 1) * size;
+        const endIdx = Math.min(startIdx + size, total);
+
+        matchedRows.forEach((row, idx) => {
+            row.style.display = (idx >= startIdx && idx < endIdx) ? '' : 'none';
+        });
+
+        const infoEl = document.getElementById(infoId);
+        if (infoEl) {
+            infoEl.textContent = total === 0
+                ? `Menampilkan 0 dari 0 ${unitLabel}`
+                : `Menampilkan ${startIdx + 1}–${endIdx} dari ${total} ${unitLabel}`;
+        }
+
+        const controlsEl = document.getElementById(controlsId);
+        if (!controlsEl) return;
+        if (total === 0) {
+            controlsEl.innerHTML = '';
+            return;
+        }
+
+        const btnBase = 'px-2.5 py-1.5 rounded-lg border text-xs font-semibold transition cursor-pointer';
+        const btnIdle = `${btnBase} bg-white border-[#E2E8F0] text-[#0F172A] hover:bg-slate-100`;
+        const btnActive = `${btnBase} bg-[#1E3A8A] border-[#1E3A8A] text-white`;
+        const btnDisabled = 'px-2.5 py-1.5 rounded-lg border border-[#E2E8F0] bg-slate-100 text-slate-400 text-xs font-semibold cursor-not-allowed';
+
+        let html = '';
+        html += state.page > 1
+            ? `<button type="button" class="${btnIdle}" onclick="${onPageChange}(${state.page - 1})">Sebelumnya</button>`
+            : `<button type="button" class="${btnDisabled}" disabled>Sebelumnya</button>`;
+
+        for (let p = 1; p <= totalPages; p++) {
+            if (totalPages > 7 && p > 2 && p < totalPages - 1 && Math.abs(p - state.page) > 1) {
+                if (p === 3 || p === totalPages - 2) {
+                    html += `<span class="px-1.5 text-[#475569]">…</span>`;
+                }
+                continue;
+            }
+            html += `<button type="button" class="${p === state.page ? btnActive : btnIdle}" onclick="${onPageChange}(${p})">${p}</button>`;
+        }
+
+        html += state.page < totalPages
+            ? `<button type="button" class="${btnIdle}" onclick="${onPageChange}(${state.page + 1})">Berikutnya</button>`
+            : `<button type="button" class="${btnDisabled}" disabled>Berikutnya</button>`;
+
+        controlsEl.innerHTML = html;
+    }
+
+    function changeUsersPageSize(size) {
+        adminPaginationState.users.size = parseInt(size, 10) || 10;
+        adminPaginationState.users.page = 1;
+        filterUsersTable(false);
+    }
+
+    function goUsersPage(page) {
+        adminPaginationState.users.page = page;
+        filterUsersTable(false);
+    }
+
+    function changeComplaintsPageSize(size) {
+        adminPaginationState.complaints.size = parseInt(size, 10) || 10;
+        adminPaginationState.complaints.page = 1;
+        filterComplaintsTable(false);
+    }
+
+    function goComplaintsPage(page) {
+        adminPaginationState.complaints.page = page;
+        filterComplaintsTable(false);
+    }
+
+    function applyAdminTeamsPagination() {
+        const rows = Array.from(document.querySelectorAll('#adminTeamsTableWrap .admin-team-row'));
+        const cards = Array.from(document.querySelectorAll('#adminTeamsGrid .admin-team-card'));
+        const savedPage = adminPaginationState.teams.page;
+        if (rows.length > 0) {
+            renderPagination('teams', rows, 'teamsPageInfo', 'teamsPageControls', 'regu', 'goTeamsPage');
+        }
+        if (cards.length > 0) {
+            adminPaginationState.teams.page = savedPage;
+            renderPagination('teams', cards, 'teamsPageInfo', 'teamsPageControls', 'regu', 'goTeamsPage');
+        }
+    }
+
+    function changeTeamsPageSize(size) {
+        adminPaginationState.teams.size = parseInt(size, 10) || 5;
+        adminPaginationState.teams.page = 1;
+        applyAdminTeamsPagination();
+    }
+
+    function goTeamsPage(page) {
+        adminPaginationState.teams.page = page;
+        applyAdminTeamsPagination();
+    }
+
+    function setAdminUsersLayout(mode) {
+        const tableWrap = document.getElementById('usersTableWrap');
+        const gridWrap = document.getElementById('usersGridWrap');
+        if (tableWrap && gridWrap) {
+            tableWrap.classList.toggle('hidden', mode === 'grid');
+            gridWrap.classList.toggle('hidden', mode !== 'grid');
+        }
+        const listBtn = document.getElementById('usersLayoutBtn-list');
+        const gridBtn = document.getElementById('usersLayoutBtn-grid');
+        if (listBtn && gridBtn) {
+            listBtn.className = `px-2.5 py-1.5 rounded-md text-xs font-semibold flex items-center gap-1 transition cursor-pointer ${mode === 'list' ? 'bg-[#1E3A8A] text-white' : 'text-[#475569] hover:text-[#0F172A]'}`;
+            gridBtn.className = `px-2.5 py-1.5 rounded-md text-xs font-semibold flex items-center gap-1 transition cursor-pointer ${mode === 'grid' ? 'bg-[#1E3A8A] text-white' : 'text-[#475569] hover:text-[#0F172A]'}`;
+        }
+    }
+
+    function setAdminComplaintsLayout(mode) {
+        const tableWrap = document.getElementById('complaintsTableWrap');
+        const gridWrap = document.getElementById('complaintsGridWrap');
+        if (tableWrap && gridWrap) {
+            tableWrap.classList.toggle('hidden', mode === 'grid');
+            gridWrap.classList.toggle('hidden', mode !== 'grid');
+        }
+        const listBtn = document.getElementById('complaintsLayoutBtn-list');
+        const gridBtn = document.getElementById('complaintsLayoutBtn-grid');
+        if (listBtn && gridBtn) {
+            listBtn.className = `px-2.5 py-1 rounded-md text-xs font-semibold flex items-center gap-1 transition cursor-pointer ${mode === 'list' ? 'bg-[#1E3A8A] text-white' : 'text-[#475569] hover:text-[#0F172A]'}`;
+            gridBtn.className = `px-2.5 py-1 rounded-md text-xs font-semibold flex items-center gap-1 transition cursor-pointer ${mode === 'grid' ? 'bg-[#1E3A8A] text-white' : 'text-[#475569] hover:text-[#0F172A]'}`;
+        }
+    }
+
+    function setAdminTeamsLayout(mode) {
+        const tableWrap = document.getElementById('adminTeamsTableWrap');
+        const grid = document.getElementById('adminTeamsGrid');
+        if (tableWrap) tableWrap.classList.toggle('hidden', mode !== 'list');
+        if (grid) grid.classList.toggle('hidden', mode !== 'grid');
+        const listBtn = document.getElementById('teamsLayoutBtn-list');
+        const gridBtn = document.getElementById('teamsLayoutBtn-grid');
+        if (listBtn && gridBtn) {
+            listBtn.className = `px-2.5 py-1.5 rounded-md text-xs font-semibold flex items-center gap-1 transition cursor-pointer ${mode === 'list' ? 'bg-[#1E3A8A] text-white' : 'text-[#475569] hover:text-[#0F172A]'}`;
+            gridBtn.className = `px-2.5 py-1.5 rounded-md text-xs font-semibold flex items-center gap-1 transition cursor-pointer ${mode === 'grid' ? 'bg-[#1E3A8A] text-white' : 'text-[#475569] hover:text-[#0F172A]'}`;
+        }
+    }
+
+    // Filter Instan Real-time Tabel Pengguna + Pagination
+    function filterUsersTable(resetPage = true) {
+        if (resetPage) adminPaginationState.users.page = 1;
         const query = (document.getElementById('userSearchInput')?.value || '').toLowerCase().trim();
         const roleFilter = (document.getElementById('userRoleFilter')?.value || '').toUpperCase();
         const rows = document.querySelectorAll('#usersTableBody .user-row');
-        let visibleCount = 0;
+        const cards = document.querySelectorAll('#usersGridWrap .user-grid-card');
+        const matchedRows = [];
+        const matchedCards = [];
 
-        rows.forEach(row => {
+        rows.forEach((row, idx) => {
             const name = row.getAttribute('data-name') || '';
             const email = row.getAttribute('data-email') || '';
             const phone = row.getAttribute('data-phone') || '';
@@ -2108,34 +2619,43 @@
             const matchRole = !roleFilter || (role === roleFilter);
 
             if (matchQuery && matchRole) {
-                row.style.display = '';
-                visibleCount++;
+                matchedRows.push(row);
+                if (cards[idx]) matchedCards.push(cards[idx]);
             } else {
                 row.style.display = 'none';
+                if (cards[idx]) cards[idx].style.display = 'none';
             }
         });
 
         const counterEl = document.getElementById('filteredUserCount');
         if (counterEl) {
-            counterEl.innerText = visibleCount;
+            counterEl.innerText = matchedRows.length;
         }
 
         const noDataEl = document.getElementById('noUserFoundMsg');
         if (noDataEl) {
-            noDataEl.style.display = visibleCount === 0 ? 'block' : 'none';
+            noDataEl.style.display = matchedRows.length === 0 ? 'block' : 'none';
         }
+
+        renderPagination('users', matchedRows, 'usersPageInfo', 'usersPageControls', 'akun', 'goUsersPage');
+        matchedCards.forEach((card, i) => {
+            card.style.display = matchedRows[i] ? matchedRows[i].style.display : 'none';
+        });
     }
 
-    // Filter Instan Real-time Tabel Pengaduan (0ms Tanpa Reload Halaman!)
-    function filterComplaintsTable() {
+    // Filter Instan Real-time Tabel Pengaduan + Pagination
+    function filterComplaintsTable(resetPage = true) {
+        if (resetPage) adminPaginationState.complaints.page = 1;
         const query = (document.getElementById('complaintSearchInput')?.value || '').toLowerCase().trim();
         const categoryVal = document.getElementById('complaintCategorySelect')?.value || 'ALL';
         const damageTypeVal = document.getElementById('complaintDamageTypeSelect')?.value || 'ALL';
         const statusVal = document.getElementById('complaintStatusSelect')?.value || 'ALL';
         const rows = document.querySelectorAll('#complaintsTableBody .complaint-row');
-        let visibleCount = 0;
+        const cards = document.querySelectorAll('#complaintsGridWrap .complaint-grid-card');
+        const matchedRows = [];
+        const matchedCards = [];
 
-        rows.forEach(row => {
+        rows.forEach((row, idx) => {
             const searchData = row.getAttribute('data-search') || '';
             const category = row.getAttribute('data-category') || '';
             const damageType = row.getAttribute('data-damage-type') || 'minor';
@@ -2161,23 +2681,44 @@
             }
 
             if (matchQuery && matchCategory && matchDamageType && matchStatus) {
-                row.style.display = '';
-                visibleCount++;
+                matchedRows.push(row);
+                if (cards[idx]) matchedCards.push(cards[idx]);
             } else {
                 row.style.display = 'none';
+                if (cards[idx]) cards[idx].style.display = 'none';
             }
         });
 
         const countBadge = document.getElementById('filteredComplaintCount');
         if (countBadge) {
-            countBadge.innerText = visibleCount;
+            countBadge.innerText = matchedRows.length;
         }
 
         const noDataEl = document.getElementById('noComplaintFoundMsg');
         if (noDataEl) {
-            noDataEl.style.display = visibleCount === 0 ? 'block' : 'none';
+            noDataEl.style.display = matchedRows.length === 0 ? 'block' : 'none';
         }
+
+        const hasActiveFilter = (query !== '' || categoryVal !== 'ALL' || damageTypeVal !== 'ALL' || statusVal !== 'ALL');
+        const resetBtn = document.getElementById('complaintResetBtn');
+        if (resetBtn) resetBtn.classList.toggle('hidden', !hasActiveFilter);
+
+        renderPagination('complaints', matchedRows, 'complaintsPageInfo', 'complaintsPageControls', 'aduan', 'goComplaintsPage');
+        matchedCards.forEach((card, i) => {
+            card.style.display = matchedRows[i] ? matchedRows[i].style.display : 'none';
+        });
     }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        if (window.innerWidth < 768) {
+            setAdminUsersLayout('grid');
+            setAdminComplaintsLayout('grid');
+            setAdminTeamsLayout('grid');
+        }
+        filterUsersTable(true);
+        filterComplaintsTable(true);
+        applyAdminTeamsPagination();
+    });
 
     function resetComplaintFilters() {
         const searchInput = document.getElementById('complaintSearchInput');
@@ -3016,8 +3557,8 @@
 
         const typeBadge = document.getElementById('admModalTypeBadge');
         if (typeBadge) {
-            typeBadge.className = 'shrink-0 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[10.5px] sm:text-xs font-bold bg-red-50 text-red-700 border border-red-200 inline-flex items-center gap-1 sm:gap-1.5 whitespace-nowrap';
-            typeBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0"></span><span>${item.damage_type === 'major' ? 'Kerusakan Berat' : 'Kerusakan Ringan'}</span>`;
+            typeBadge.className = 'shrink-0 px-2.5 py-1 rounded-md text-xs font-semibold bg-red-50 text-red-700 border border-red-200 inline-flex items-center gap-1.5 whitespace-nowrap';
+            typeBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-red-600 shrink-0"></span><span>${item.damage_type === 'major' ? 'Kerusakan Berat' : 'Kerusakan Ringan'}</span>`;
         }
 
         const statusBadge = document.getElementById('admModalStatusBadge');
@@ -3026,29 +3567,29 @@
 
         if (item.status === 'REJECTED') {
             statusLabel = 'DITOLAK';
-            statusClass = 'bg-red-50 text-[#DC2626] border-red-200';
+            statusClass = 'bg-red-50 text-red-700 border-red-200';
         } else if (item.status === 'COMPLETED' || item.status === 'CLOSED') {
             statusLabel = 'SELESAI';
-            statusClass = 'bg-emerald-50 text-[#10B981] border-emerald-200';
+            statusClass = 'bg-emerald-50 text-emerald-800 border-emerald-200';
         } else if (item.status === 'WAITING_VERIFICATION') {
             statusLabel = 'VALIDASI';
             statusClass = 'bg-amber-50 text-amber-700 border-amber-300';
         } else if (item.status === 'IN_PROGRESS') {
             statusLabel = 'DIKERJAKAN';
-            statusClass = 'bg-amber-50 text-amber-700 border-amber-300';
+            statusClass = 'bg-amber-50 text-amber-800 border-amber-300';
         } else if (item.status === 'DISPATCHED') {
             statusLabel = 'DITUGASKAN';
-            statusClass = 'bg-indigo-50 text-indigo-700 border-indigo-200';
+            statusClass = 'bg-blue-50 text-[#1E3A8A] border-blue-200';
         } else if (item.status === 'SUBMITTED' || item.status === 'VERIFICATION') {
             statusLabel = 'VERIFIKASI';
-            statusClass = 'bg-red-50 text-[#EF4444] border-red-200';
+            statusClass = 'bg-red-50 text-red-700 border-red-200';
         } else if (item.status === 'REVISION_REQUIRED') {
             statusLabel = 'PERLU REVISI';
-            statusClass = 'bg-amber-50 text-amber-800 border-amber-200';
+            statusClass = 'bg-amber-50 text-amber-800 border-amber-300';
         }
 
         statusBadge.innerText = statusLabel;
-        statusBadge.className = `shrink-0 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[10.5px] sm:text-xs font-bold border whitespace-nowrap ${statusClass}`;
+        statusBadge.className = `shrink-0 px-2.5 py-1 rounded-md text-xs font-bold border whitespace-nowrap ${statusClass}`;
         document.getElementById('admModalCategoryBadge').innerText = item.category_name || 'Infrastruktur';
         document.getElementById('admModalDate').innerText = item.created_at_full || item.created_at_formatted || '-';
         document.getElementById('admModalTitle').innerText = item.title || 'Laporan Pengaduan';

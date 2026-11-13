@@ -42,7 +42,7 @@
 <script>setTimeout(() => { const el = document.getElementById('flashError'); if (el) el.remove(); }, 7000);</script>
 @endif
 
-<div class="py-6 space-y-6">
+<div class="py-4 sm:py-6 space-y-5">
 
     @php
         $todayStr = \Carbon\Carbon::now('Asia/Makassar')->locale('id')->isoFormat('dddd, D MMMM Y • HH:mm:ss') . ' WITA';
@@ -82,258 +82,304 @@
         $currentTabMeta = $tabMetaPhp[$activeTab] ?? $tabMetaPhp['verify'];
     @endphp
 
-    <!-- Header Keterangan Section di Atas Filter & Button Tab -->
+    <!-- Header Keterangan Section (Seragam Desain Admin) -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
         <div>
-            <h2 id="operatorSectionTitle" class="font-outfit font-extrabold text-lg sm:text-xl text-slate-900 leading-tight">
+            <h2 id="operatorSectionTitle" class="font-outfit font-bold text-lg sm:text-xl text-[#0F172A] leading-tight">
                 {{ $currentTabMeta['title'] }}
             </h2>
-            <p id="operatorSectionSubtitle" class="text-xs text-slate-500 mt-0.5">
+            <p id="operatorSectionSubtitle" class="text-xs text-[#475569] mt-0.5">
                 {{ $currentTabMeta['subtitle'] }}
             </p>
         </div>
-        <div class="flex items-center gap-2">
-            <span class="px-3 py-1.5 rounded-xl bg-white text-slate-700 text-xs font-semibold border border-slate-200 flex items-center gap-1.5 shadow-2xs">
-                <i data-lucide="clock" class="w-3.5 h-3.5 text-[#1E3A8A]"></i>
+        <div class="flex items-center gap-2 shrink-0">
+            <span class="px-3.5 py-2 rounded-lg bg-white text-[#0F172A] text-xs font-semibold border border-[#E2E8F0] flex items-center gap-2">
+                <i data-lucide="clock" class="w-4 h-4 text-[#1E3A8A]"></i>
                 <span class="live-wita-clock">{{ $todayStr }}</span>
             </span>
         </div>
     </div>
 
-    <!-- Ringkasan Statistik Utama 7 KPI Cards -->
-    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3">
+    <!-- Ringkasan Statistik Utama 7 KPI Cards (Flat Bordered Seragam Admin) -->
+    <div class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-7 gap-2 sm:gap-3">
         <!-- 1. Total Aduan -->
-        <div class="card-white p-4 rounded-2xl bg-white border border-[#E2E8F0] shadow-2xs hover:shadow-md transition flex flex-col justify-between">
-            <div class="flex items-center justify-between">
-                <span class="text-[11px] text-slate-500 font-bold uppercase tracking-wider">TOTAL ADUAN</span>
-                <div class="w-8 h-8 rounded-xl bg-blue-50/80 text-[#1E3A8A] border border-blue-100/70 flex items-center justify-center">
-                    <i data-lucide="inbox" class="w-4 h-4"></i>
+        <div class="p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
+            <div class="flex items-center justify-between gap-1.5">
+                <span class="text-[10px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-wider truncate">Total Aduan</span>
+                <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-blue-50 text-[#1E3A8A] border border-blue-200 flex items-center justify-center shrink-0">
+                    <i data-lucide="inbox" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                 </div>
             </div>
-            <div class="mt-2">
-                <div class="font-outfit text-2xl sm:text-3xl font-extrabold text-slate-900 leading-tight">
+            <div class="mt-1.5 sm:mt-2">
+                <div class="font-outfit text-xl sm:text-2xl font-bold text-[#0F172A] leading-tight">
                     {{ $summary['total'] }}
                 </div>
-                <span class="text-[11px] text-slate-500 font-medium mt-0.5 block">Laporan masuk</span>
+                <span class="hidden sm:block text-[11px] text-[#475569] font-medium mt-0.5">Laporan masuk</span>
             </div>
         </div>
 
         <!-- 2. Menunggu -->
-        <div class="card-white p-4 rounded-2xl bg-white border border-[#E2E8F0] shadow-2xs hover:shadow-md transition flex flex-col justify-between">
-            <div class="flex items-center justify-between">
-                <span class="text-[11px] text-slate-500 font-bold uppercase tracking-wider">MENUNGGU</span>
-                <div class="w-8 h-8 rounded-xl bg-blue-50/80 text-[#1E3A8A] border border-blue-100/70 flex items-center justify-center">
-                    <i data-lucide="clock" class="w-4 h-4"></i>
+        <div class="p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
+            <div class="flex items-center justify-between gap-1.5">
+                <span class="text-[10px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-wider truncate">Menunggu</span>
+                <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-red-50 text-[#EF4444] border border-red-200 flex items-center justify-center shrink-0">
+                    <i data-lucide="clock" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                 </div>
             </div>
-            <div class="mt-2">
-                <div class="font-outfit text-2xl sm:text-3xl font-extrabold text-slate-900 leading-tight">
+            <div class="mt-1.5 sm:mt-2">
+                <div class="font-outfit text-xl sm:text-2xl font-bold text-[#0F172A] leading-tight">
                     {{ $summary['pending'] }}
                 </div>
-                <span class="text-[11px] text-slate-500 font-medium mt-0.5 block">Menunggu verifikasi</span>
+                <span class="hidden sm:block text-[11px] text-[#475569] font-medium mt-0.5">Perlu verifikasi</span>
             </div>
         </div>
 
         <!-- 3. Ditugaskan -->
-        <div class="card-white p-4 rounded-2xl bg-white border border-[#E2E8F0] shadow-2xs hover:shadow-md transition flex flex-col justify-between">
-            <div class="flex items-center justify-between">
-                <span class="text-[11px] text-slate-500 font-bold uppercase tracking-wider">DITUGASKAN</span>
-                <div class="w-8 h-8 rounded-xl bg-blue-50/80 text-[#1E3A8A] border border-blue-100/70 flex items-center justify-center">
-                    <i data-lucide="send" class="w-4 h-4"></i>
+        <div class="p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
+            <div class="flex items-center justify-between gap-1.5">
+                <span class="text-[10px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-wider truncate">Ditugaskan</span>
+                <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-blue-50 text-[#1E40AF] border border-blue-200 flex items-center justify-center shrink-0">
+                    <i data-lucide="send" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                 </div>
             </div>
-            <div class="mt-2">
-                <div class="font-outfit text-2xl sm:text-3xl font-extrabold text-slate-900 leading-tight">
+            <div class="mt-1.5 sm:mt-2">
+                <div class="font-outfit text-xl sm:text-2xl font-bold text-[#0F172A] leading-tight">
                     {{ $summary['dispatched'] }}
                 </div>
-                <span class="text-[11px] text-slate-500 font-medium mt-0.5 block">Ditugaskan ke petugas</span>
+                <span class="hidden sm:block text-[11px] text-[#475569] font-medium mt-0.5">Ke regu lapangan</span>
             </div>
         </div>
 
         <!-- 4. Dikerjakan -->
-        <div class="card-white p-4 rounded-2xl bg-white border border-[#E2E8F0] shadow-2xs hover:shadow-md transition flex flex-col justify-between">
-            <div class="flex items-center justify-between">
-                <span class="text-[11px] text-slate-500 font-bold uppercase tracking-wider">DIKERJAKAN</span>
-                <div class="w-8 h-8 rounded-xl bg-blue-50/80 text-[#1E3A8A] border border-blue-100/70 flex items-center justify-center">
-                    <i data-lucide="hard-hat" class="w-4 h-4"></i>
+        <div class="p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
+            <div class="flex items-center justify-between gap-1.5">
+                <span class="text-[10px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-wider truncate">Dikerjakan</span>
+                <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-amber-50 text-[#D97706] border border-amber-200 flex items-center justify-center shrink-0">
+                    <i data-lucide="hard-hat" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                 </div>
             </div>
-            <div class="mt-2">
-                <div class="font-outfit text-2xl sm:text-3xl font-extrabold text-slate-900 leading-tight">
+            <div class="mt-1.5 sm:mt-2">
+                <div class="font-outfit text-xl sm:text-2xl font-bold text-[#0F172A] leading-tight">
                     {{ $summary['in_progress'] }}
                 </div>
-                <span class="text-[11px] text-slate-500 font-medium mt-0.5 block">Fisik di lapangan</span>
+                <span class="hidden sm:block text-[11px] text-[#475569] font-medium mt-0.5">Sedang ditangani</span>
             </div>
         </div>
 
         <!-- 5. Menunggu Validasi -->
-        <div class="card-white p-4 rounded-2xl bg-white border border-[#E2E8F0] shadow-2xs hover:shadow-md transition flex flex-col justify-between">
-            <div class="flex items-center justify-between">
-                <span class="text-[11px] text-slate-500 font-bold uppercase tracking-wider">VALIDASI</span>
-                <div class="w-8 h-8 rounded-xl bg-blue-50/80 text-[#1E3A8A] border border-blue-100/70 flex items-center justify-center">
-                    <i data-lucide="clock-3" class="w-4 h-4"></i>
+        <div class="p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
+            <div class="flex items-center justify-between gap-1.5">
+                <span class="text-[10px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-wider truncate">Validasi</span>
+                <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-amber-50 text-[#D97706] border border-amber-200 flex items-center justify-center shrink-0">
+                    <i data-lucide="clock-3" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                 </div>
             </div>
-            <div class="mt-2">
-                <div class="font-outfit text-2xl sm:text-3xl font-extrabold text-slate-900 leading-tight">
+            <div class="mt-1.5 sm:mt-2">
+                <div class="font-outfit text-xl sm:text-2xl font-bold text-[#0F172A] leading-tight">
                     {{ $summary['waiting_verification'] ?? 0 }}
                 </div>
-                <span class="text-[11px] text-slate-500 font-medium mt-0.5 block">Menunggu validasi</span>
+                <span class="hidden sm:block text-[11px] text-[#475569] font-medium mt-0.5">Uji hasil kerja</span>
             </div>
         </div>
 
         <!-- 6. Selesai -->
-        <div class="card-white p-4 rounded-2xl bg-white border border-[#E2E8F0] shadow-2xs hover:shadow-md transition flex flex-col justify-between">
-            <div class="flex items-center justify-between">
-                <span class="text-[11px] text-slate-500 font-bold uppercase tracking-wider">SELESAI</span>
-                <div class="w-8 h-8 rounded-xl bg-blue-50/80 text-[#1E3A8A] border border-blue-100/70 flex items-center justify-center">
-                    <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+        <div class="p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
+            <div class="flex items-center justify-between gap-1.5">
+                <span class="text-[10px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-wider truncate">Selesai</span>
+                <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-emerald-50 text-[#10B981] border border-emerald-200 flex items-center justify-center shrink-0">
+                    <i data-lucide="check-circle-2" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                 </div>
             </div>
-            <div class="mt-2">
-                <div class="font-outfit text-2xl sm:text-3xl font-extrabold text-slate-900 leading-tight">
+            <div class="mt-1.5 sm:mt-2">
+                <div class="font-outfit text-xl sm:text-2xl font-bold text-[#0F172A] leading-tight">
                     {{ $summary['completed'] }}
                 </div>
-                <span class="text-[11px] text-slate-500 font-medium mt-0.5 block">Tuntas diperbaiki</span>
+                <span class="hidden sm:block text-[11px] text-[#475569] font-medium mt-0.5">Tuntas diperbaiki</span>
             </div>
         </div>
 
         <!-- 7. Rasio Sukses -->
-        <div class="card-white p-4 rounded-2xl bg-white border border-[#E2E8F0] shadow-2xs hover:shadow-md transition flex flex-col justify-between">
-            <div class="flex items-center justify-between">
-                <span class="text-[11px] text-slate-500 font-bold uppercase tracking-wider">RASIO SUKSES</span>
-                <div class="w-8 h-8 rounded-xl bg-blue-50/80 text-[#1E3A8A] border border-blue-100/70 flex items-center justify-center">
-                    <i data-lucide="trending-up" class="w-4 h-4"></i>
+        <div class="col-span-3 sm:col-span-1 p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
+            <div class="flex items-center justify-between gap-1.5">
+                <span class="text-[10px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-wider truncate">Rasio Sukses</span>
+                <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-blue-50 text-[#1E3A8A] border border-blue-200 flex items-center justify-center shrink-0">
+                    <i data-lucide="trending-up" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                 </div>
             </div>
-            <div class="mt-2">
-                <div class="font-outfit text-2xl sm:text-3xl font-extrabold text-slate-900 leading-tight">
+            <div class="mt-1.5 sm:mt-2">
+                <div class="font-outfit text-xl sm:text-2xl font-bold text-[#0F172A] leading-tight">
                     {{ $summary['completion_rate'] }}%
                 </div>
-                <span class="text-[11px] text-slate-500 font-medium mt-0.5 block">Tingkat tuntas</span>
+                <span class="hidden sm:block text-[11px] text-[#475569] font-medium mt-0.5">Tingkat tuntas</span>
             </div>
         </div>
     </div>
 
-    <!-- Filter Bar: Tipe Pelaporan & Pencarian Cepat (Ditaruh di atas button tab) -->
-    <div id="operatorFilterBar" class="bg-white rounded-2xl p-3 sm:p-4 border border-slate-200 shadow-2xs flex flex-col sm:flex-row items-center justify-between gap-3 {{ $activeTab === 'monitoring' ? 'hidden' : '' }}">
+    <!-- Sub Menu Tab Navigation (Seragam Desain Admin) -->
+    <div class="grid grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-2.5 w-full">
+        <!-- 1. Verifikasi -->
+        <button type="button" onclick="switchTab('verify')" id="tabBtn-verify"
+            class="tab-btn text-left p-3 rounded-xl border transition flex items-start gap-2.5 cursor-pointer {{ $activeTab === 'verify' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
+            <i data-lucide="filter" class="w-4 h-4 shrink-0 mt-0.5 text-current"></i>
+            <div class="min-w-0 flex-1">
+                <div class="flex items-center justify-between gap-1">
+                    <span class="text-xs font-bold truncate leading-tight">Verifikasi</span>
+                    <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'verify' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
+                        {{ $pendingVerification->count() }}
+                    </span>
+                </div>
+                <span class="tab-sub text-[10px] block mt-0.5 truncate {{ $activeTab === 'verify' ? 'text-blue-100' : 'text-[#475569]' }}">Telaah aduan masuk</span>
+            </div>
+        </button>
+
+        <!-- 2. Ditugaskan -->
+        <button type="button" onclick="switchTab('dispatched')" id="tabBtn-dispatched"
+            class="tab-btn text-left p-3 rounded-xl border transition flex items-start gap-2.5 cursor-pointer {{ $activeTab === 'dispatched' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
+            <i data-lucide="send" class="w-4 h-4 shrink-0 mt-0.5 text-current"></i>
+            <div class="min-w-0 flex-1">
+                <div class="flex items-center justify-between gap-1">
+                    <span class="text-xs font-bold truncate leading-tight">Ditugaskan</span>
+                    <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'dispatched' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
+                        {{ $dispatched->count() }}
+                    </span>
+                </div>
+                <span class="tab-sub text-[10px] block mt-0.5 truncate {{ $activeTab === 'dispatched' ? 'text-blue-100' : 'text-[#475569]' }}">Menunggu regu turun</span>
+            </div>
+        </button>
+
+        <!-- 3. Dikerjakan -->
+        <button type="button" onclick="switchTab('inprogress')" id="tabBtn-inprogress"
+            class="tab-btn text-left p-3 rounded-xl border transition flex items-start gap-2.5 cursor-pointer {{ $activeTab === 'inprogress' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
+            <i data-lucide="hard-hat" class="w-4 h-4 shrink-0 mt-0.5 text-current"></i>
+            <div class="min-w-0 flex-1">
+                <div class="flex items-center justify-between gap-1">
+                    <span class="text-xs font-bold truncate leading-tight">Dikerjakan</span>
+                    <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'inprogress' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
+                        {{ $inProgress->count() }}
+                    </span>
+                </div>
+                <span class="tab-sub text-[10px] block mt-0.5 truncate {{ $activeTab === 'inprogress' ? 'text-blue-100' : 'text-[#475569]' }}">Progres fisik &amp; SLA</span>
+            </div>
+        </button>
+
+        <!-- 4. Validasi -->
+        <button type="button" onclick="switchTab('validation')" id="tabBtn-validation"
+            class="tab-btn text-left p-3 rounded-xl border transition flex items-start gap-2.5 cursor-pointer {{ $activeTab === 'validation' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
+            <i data-lucide="check-square" class="w-4 h-4 shrink-0 mt-0.5 text-current"></i>
+            <div class="min-w-0 flex-1">
+                <div class="flex items-center justify-between gap-1">
+                    <span class="text-xs font-bold truncate leading-tight">Validasi</span>
+                    <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'validation' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
+                        {{ $waitingValidation->count() }}
+                    </span>
+                </div>
+                <span class="tab-sub text-[10px] block mt-0.5 truncate {{ $activeTab === 'validation' ? 'text-blue-100' : 'text-[#475569]' }}">Uji hasil pekerjaan</span>
+            </div>
+        </button>
+
+        <!-- 5. Arsip -->
+        <button type="button" onclick="switchTab('archive')" id="tabBtn-archive"
+            class="tab-btn text-left p-3 rounded-xl border transition flex items-start gap-2.5 cursor-pointer {{ $activeTab === 'archive' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
+            <i data-lucide="archive" class="w-4 h-4 shrink-0 mt-0.5 text-current"></i>
+            <div class="min-w-0 flex-1">
+                <div class="flex items-center justify-between gap-1">
+                    <span class="text-xs font-bold truncate leading-tight">Arsip</span>
+                    <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'archive' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
+                        {{ $completed->count() }}
+                    </span>
+                </div>
+                <span class="tab-sub text-[10px] block mt-0.5 truncate {{ $activeTab === 'archive' ? 'text-blue-100' : 'text-[#475569]' }}">Selesai &amp; ditolak</span>
+            </div>
+        </button>
+
+        <!-- 6. Monitoring -->
+        <button type="button" onclick="switchTab('monitoring')" id="tabBtn-monitoring"
+            class="tab-btn text-left p-3 rounded-xl border transition flex items-start gap-2.5 cursor-pointer {{ $activeTab === 'monitoring' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
+            <i data-lucide="bar-chart-2" class="w-4 h-4 shrink-0 mt-0.5 text-current"></i>
+            <div class="min-w-0 flex-1">
+                <span class="text-xs font-bold block leading-tight">Monitoring</span>
+                <span class="tab-sub text-[10px] block mt-0.5 truncate {{ $activeTab === 'monitoring' ? 'text-blue-100' : 'text-[#475569]' }}">Peta &amp; evaluasi OPD</span>
+            </div>
+        </button>
+    </div>
+
+    <!-- Filter Bar: Tipe Pelaporan & Pencarian Cepat (Di Bawah Sub Halaman) -->
+    <div id="operatorFilterBar" class="bg-white rounded-xl p-3 sm:p-3.5 border border-[#E2E8F0] flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-2.5 {{ $activeTab === 'monitoring' ? 'hidden' : '' }}">
         <!-- Search Input -->
-        <div class="relative w-full sm:w-[380px] lg:w-[440px]">
-            <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-3 text-slate-400"></i>
-            <input type="text" id="filterSearchInput" placeholder="Cari berdasarkan kode aduan, nama pelapor, atau lokasi..." 
-                class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#1E3A8A] focus:bg-white transition"
+        <div class="relative w-full lg:flex-1 lg:min-w-[140px]">
+            <i data-lucide="search" class="w-4 h-4 absolute left-3 top-2.5 text-slate-400"></i>
+            <input type="text" id="filterSearchInput" placeholder="Cari kode, pelapor, atau lokasi..." 
+                class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-3 py-2 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#1E3A8A] focus:bg-white transition"
                 oninput="applyFilters()">
         </div>
 
-        <!-- Filter Controls (Sejajar Satu Baris Tanpa Turun ke Bawah) -->
-        <div class="flex items-center gap-2.5 w-full sm:w-auto shrink-0 flex-nowrap overflow-x-auto">
+        <!-- Filter Controls (Kompak 2-Kolom di Mobile, Satu Baris di Desktop) -->
+        <div class="grid grid-cols-2 sm:flex sm:flex-wrap lg:flex-nowrap items-center gap-2 w-full lg:w-auto shrink-0">
             <!-- Dropdown Kategori -->
-            <div class="flex items-center gap-1.5 text-xs text-slate-500 shrink-0 font-medium whitespace-nowrap">
-                <i data-lucide="layers" class="w-3.5 h-3.5 text-[#1E3A8A]"></i>
-                <span>Filter Kategori:</span>
+            <div class="flex flex-col sm:flex-row sm:items-center gap-1 min-w-0">
+                <div class="flex items-center gap-1 text-[11px] sm:text-xs text-slate-500 shrink-0 font-medium whitespace-nowrap">
+                    <i data-lucide="layers" class="w-3.5 h-3.5 text-[#1E3A8A]"></i>
+                    <span>Kategori:</span>
+                </div>
+                <select id="filterCategorySelect" onchange="applyFilters()" 
+                    class="w-full sm:w-auto text-xs font-semibold rounded-xl border border-slate-200 py-2 px-2.5 lg:max-w-[140px] bg-slate-50 text-slate-700 focus:outline-none focus:border-[#1E3A8A] focus:bg-white transition shrink-0">
+                    <option value="ALL">Semua Kategori</option>
+                    @foreach($categories as $cat)
+                        <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                    @endforeach
+                </select>
             </div>
-            <select id="filterCategorySelect" onchange="applyFilters()" 
-                class="text-xs font-semibold rounded-xl border border-slate-200 py-2 px-3 bg-slate-50 text-slate-700 focus:outline-none focus:border-[#1E3A8A] focus:bg-white transition shrink-0">
-                <option value="ALL">Semua Kategori</option>
-                @foreach($categories as $cat)
-                    <option value="{{ $cat->id }}">{{ $cat->name }}</option>
-                @endforeach
-            </select>
 
             <!-- Dropdown Tipe Kerusakan / Tipe Laporan (Ringan vs Berat) -->
-            <div class="flex items-center gap-1.5 text-xs text-slate-500 shrink-0 font-medium whitespace-nowrap">
-                <i data-lucide="git-commit" class="w-3.5 h-3.5 text-[#1E3A8A]"></i>
-                <span>Tipe Laporan:</span>
+            <div class="flex flex-col sm:flex-row sm:items-center gap-1 min-w-0">
+                <div class="flex items-center gap-1 text-[11px] sm:text-xs text-slate-500 shrink-0 font-medium whitespace-nowrap">
+                    <i data-lucide="git-commit" class="w-3.5 h-3.5 text-[#1E3A8A]"></i>
+                    <span>Tipe:</span>
+                </div>
+                <select id="filterDamageTypeSelect" onchange="applyFilters()" 
+                    class="w-full sm:w-auto text-xs font-semibold rounded-xl border border-slate-200 py-2 px-2.5 lg:max-w-[125px] bg-slate-50 text-slate-700 focus:outline-none focus:border-[#1E3A8A] focus:bg-white transition shrink-0">
+                    <option value="ALL">Semua Tipe</option>
+                    <option value="minor">Kerusakan Ringan</option>
+                    <option value="major">Kerusakan Berat</option>
+                </select>
             </div>
-            <select id="filterDamageTypeSelect" onchange="applyFilters()" 
-                class="text-xs font-semibold rounded-xl border border-slate-200 py-2 px-3 bg-slate-50 text-slate-700 focus:outline-none focus:border-[#1E3A8A] focus:bg-white transition shrink-0">
-                <option value="ALL">Semua Tipe (Ringan & Berat)</option>
-                <option value="minor">Kerusakan Ringan</option>
-                <option value="major">Kerusakan Berat</option>
-            </select>
 
             <!-- Dropdown Status Khusus Tab Arsip (Selesai vs Ditolak) -->
-            <div id="filterArchiveStatusContainer" class="items-center gap-1.5 {{ $activeTab === 'archive' ? 'flex' : 'hidden' }} shrink-0">
-                <div class="flex items-center gap-1.5 text-xs text-slate-500 shrink-0 font-medium whitespace-nowrap">
+            <div id="filterArchiveStatusContainer" class="flex-col sm:flex-row sm:items-center gap-1 min-w-0 {{ $activeTab === 'archive' ? 'flex' : 'hidden' }} shrink-0">
+                <div class="flex items-center gap-1 text-[11px] sm:text-xs text-slate-500 shrink-0 font-medium whitespace-nowrap">
                     <i data-lucide="check-square" class="w-3.5 h-3.5 text-[#1E3A8A]"></i>
-                    <span>Status Arsip:</span>
+                    <span>Status:</span>
                 </div>
                 <select id="filterArchiveStatusSelect" onchange="applyFilters()" 
-                    class="text-xs font-semibold rounded-xl border border-slate-200 py-2 px-3 bg-slate-50 text-slate-700 focus:outline-none focus:border-[#1E3A8A] focus:bg-white transition shrink-0">
-                    <option value="ALL">Semua Status (Selesai & Ditolak)</option>
+                    class="w-full sm:w-auto text-xs font-semibold rounded-xl border border-slate-200 py-2 px-2.5 lg:max-w-[130px] bg-slate-50 text-slate-700 focus:outline-none focus:border-[#1E3A8A] focus:bg-white transition shrink-0">
+                    <option value="ALL">Semua Status</option>
                     <option value="COMPLETED">Selesai / Tuntas</option>
                     <option value="REJECTED">Ditolak (Hoax / Palsu)</option>
                 </select>
             </div>
 
-            <!-- Tombol Reset Filter -->
-            <button type="button" onclick="resetFilters()"
-                class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition flex items-center gap-1 shrink-0 cursor-pointer">
-                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
-                <span>Reset</span>
-            </button>
-        </div>
-    </div>
+            <div class="col-span-2 sm:col-span-1 flex items-center justify-end gap-1.5 shrink-0">
+                <!-- Tombol Reset Filter -->
+                <button type="button" id="operatorResetBtn" onclick="resetFilters()"
+                    class="hidden px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition flex items-center gap-1 shrink-0 cursor-pointer">
+                    <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                    <span>Reset</span>
+                </button>
 
-    <!-- Sub Menu Tab Navigation (Ditaruh tetap tepat di atas section laporan adu-0007) -->
-    <div class="w-full bg-slate-100/90 p-1.5 rounded-2xl border border-slate-200/80 shadow-2xs">
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-1.5 w-full">
-            <!-- 1. Verifikasi -->
-            <button type="button" onclick="switchTab('verify')" id="tabBtn-verify"
-                class="tab-btn w-full py-2.5 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 {{ $activeTab === 'verify' ? 'bg-white text-[#1E3A8A] shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-white/60' }}">
-                <i data-lucide="filter" class="w-4 h-4 shrink-0"></i>
-                <span class="truncate">Verifikasi</span>
-                <span class="tab-badge px-2 py-0.5 rounded-full text-[10px] font-extrabold shrink-0 {{ $activeTab === 'verify' ? 'bg-blue-100 text-[#1E3A8A]' : 'bg-slate-200 text-slate-600' }}">
-                    {{ $pendingVerification->count() }}
-                </span>
-            </button>
-
-            <!-- 2. Ditugaskan -->
-            <button type="button" onclick="switchTab('dispatched')" id="tabBtn-dispatched"
-                class="tab-btn w-full py-2.5 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 {{ $activeTab === 'dispatched' ? 'bg-white text-[#1E3A8A] shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-white/60' }}">
-                <i data-lucide="send" class="w-4 h-4 shrink-0"></i>
-                <span class="truncate">Ditugaskan</span>
-                <span class="tab-badge px-2 py-0.5 rounded-full text-[10px] font-extrabold shrink-0 {{ $activeTab === 'dispatched' ? 'bg-blue-100 text-[#1E3A8A]' : 'bg-slate-200 text-slate-600' }}">
-                    {{ $dispatched->count() }}
-                </span>
-            </button>
-
-            <!-- 3. Dikerjakan -->
-            <button type="button" onclick="switchTab('inprogress')" id="tabBtn-inprogress"
-                class="tab-btn w-full py-2.5 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 {{ $activeTab === 'inprogress' ? 'bg-white text-[#1E3A8A] shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-white/60' }}">
-                <i data-lucide="hard-hat" class="w-4 h-4 shrink-0"></i>
-                <span class="truncate">Dikerjakan</span>
-                <span class="tab-badge px-2 py-0.5 rounded-full text-[10px] font-extrabold shrink-0 {{ $activeTab === 'inprogress' ? 'bg-blue-100 text-[#1E3A8A]' : 'bg-slate-200 text-slate-600' }}">
-                    {{ $inProgress->count() }}
-                </span>
-            </button>
-
-            <!-- 4. Validasi -->
-            <button type="button" onclick="switchTab('validation')" id="tabBtn-validation"
-                class="tab-btn w-full py-2.5 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 {{ $activeTab === 'validation' ? 'bg-white text-[#1E3A8A] shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-white/60' }}">
-                <i data-lucide="check-square" class="w-4 h-4 shrink-0"></i>
-                <span class="truncate">Validasi</span>
-                <span class="tab-badge px-2 py-0.5 rounded-full text-[10px] font-extrabold shrink-0 {{ $activeTab === 'validation' ? 'bg-blue-100 text-[#1E3A8A]' : 'bg-slate-200 text-slate-600' }}">
-                    {{ $waitingValidation->count() }}
-                </span>
-            </button>
-
-            <!-- 5. Arsip -->
-            <button type="button" onclick="switchTab('archive')" id="tabBtn-archive"
-                class="tab-btn w-full py-2.5 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 {{ $activeTab === 'archive' ? 'bg-white text-[#1E3A8A] shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-white/60' }}">
-                <i data-lucide="archive" class="w-4 h-4 shrink-0"></i>
-                <span class="truncate">Arsip</span>
-                <span class="tab-badge px-2 py-0.5 rounded-full text-[10px] font-extrabold shrink-0 {{ $activeTab === 'archive' ? 'bg-blue-100 text-[#1E3A8A]' : 'bg-slate-200 text-slate-600' }}">
-                    {{ $completed->count() }}
-                </span>
-            </button>
-
-            <!-- 6. Monitoring -->
-            <button type="button" onclick="switchTab('monitoring')" id="tabBtn-monitoring"
-                class="tab-btn w-full py-2.5 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 {{ $activeTab === 'monitoring' ? 'bg-white text-[#1E3A8A] shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-white/60' }}">
-                <i data-lucide="bar-chart-2" class="w-4 h-4 shrink-0"></i>
-                <span class="truncate">Monitoring</span>
-            </button>
+                <!-- Toggle Tata Letak Daftar / Petak -->
+                <div class="inline-flex items-center p-0.5 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] shrink-0" role="group" aria-label="Tata letak aduan">
+                    <button type="button" id="opLayoutBtn-list" onclick="setOperatorLayout('list')"
+                        class="px-2.5 py-1.5 rounded-md text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer bg-[#1E3A8A] text-white">
+                        <i data-lucide="list" class="w-3.5 h-3.5"></i>
+                        <span>Daftar</span>
+                    </button>
+                    <button type="button" id="opLayoutBtn-grid" onclick="setOperatorLayout('grid')"
+                        class="px-2.5 py-1.5 rounded-md text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer text-[#475569] hover:text-[#0F172A]">
+                        <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
+                        <span>Petak</span>
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -349,10 +395,11 @@
                     <p class="text-xs text-slate-400 max-w-sm mx-auto">Tidak ada antrean laporan baru yang menunggu verifikasi saat ini.</p>
                 </div>
             @else
+                @include('partials.role_complaints_table', ['wrapId' => 'operatorTableWrap-verify', 'rowClass' => 'operator-verify-row', 'items' => $pendingVerification, 'mode' => 'operator-verify', 'hidden' => false])
                 <!-- Grid Card Antrean (Lebar Proporsional, Rapi, & Sejajar) -->
-                <div id="verifyCardsContainer" class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                <div id="verifyCardsContainer" class="hidden grid grid-cols-1 lg:grid-cols-2 gap-5">
                     @foreach($pendingVerification as $c)
-                        <div class="complaint-verify-card card-white rounded-2xl p-4 sm:p-5 bg-white border border-slate-200/90 hover:border-blue-300 hover:shadow-md transition-all duration-200 flex flex-col justify-between space-y-3.5"
+                        <div onclick="if (window.innerWidth < 768) { openOperatorModal({{ $c->id }}); }" class="complaint-verify-card card-white rounded-2xl p-4 sm:p-5 bg-white border border-slate-200/90 hover:border-blue-300 hover:shadow-md transition-all duration-200 flex flex-col justify-between space-y-3.5 cursor-pointer md:cursor-default"
                             data-category="{{ $c->category_id }}"
                             data-damage-type="{{ $c->damage_type ?? 'minor' }}"
                             data-search="{{ strtolower($c->public_code . ' ' . ($c->user?->name ?? $c->citizen?->name ?? '') . ' ' . $c->title . ' ' . $c->address) }}">
@@ -435,7 +482,7 @@
                                         </div>
 
                                         <!-- Baris 4: Tombol Detail Lengkap & Foto (1 Baris Rapi) -->
-                                        <div class="relative z-10">
+                                        <div class="relative z-10 hidden md:block">
                                             <button type="button" onclick="openOperatorModal({{ $c->id }})" class="text-xs font-bold text-[#1E3A8A] hover:underline inline-flex items-center gap-1 cursor-pointer">
                                                 <span>Lihat Rincian Lengkap & Foto</span>
                                                 <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
@@ -446,7 +493,7 @@
                             </div>
 
                             <!-- 3. Tombol Aksi Verifikasi -->
-                            <div class="pt-3 border-t border-slate-100/90">
+                            <div onclick="event.stopPropagation();" class="pt-3 border-t border-slate-100/90 cursor-default">
                                 <button type="button" onclick="openDispatchModal({{ $c->id }})" 
                                     class="w-full py-2.5 px-3 rounded-xl bg-[#1E3A8A] hover:bg-[#172554] active:scale-[0.99] text-white font-bold text-xs shadow-xs hover:shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
                                     <i data-lucide="send" class="w-4 h-4"></i>
@@ -472,7 +519,8 @@
                     Belum ada laporan yang berstatus ditugaskan.
                 </div>
             @else
-                <div id="dispatchedCardsContainer" class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                @include('partials.role_complaints_table', ['wrapId' => 'operatorTableWrap-dispatched', 'rowClass' => 'operator-dispatched-row', 'items' => $dispatched, 'mode' => 'operator-dispatched', 'hidden' => false])
+                <div id="dispatchedCardsContainer" class="hidden grid grid-cols-1 lg:grid-cols-2 gap-5">
                     @foreach($dispatched as $c)
                         @php
                             $disp = $c->latestDisposition;
@@ -481,7 +529,7 @@
                                 ? ($c->photos->first()->url ?? asset('storage/' . $c->photos->first()->storage_key)) 
                                 : null;
                         @endphp
-                        <div class="complaint-dispatched-card card-white rounded-2xl p-4 sm:p-5 bg-white border border-slate-200/90 hover:border-blue-300 hover:shadow-md transition-all duration-200 flex flex-col justify-between space-y-3.5"
+                        <div onclick="if (window.innerWidth < 768) { openOperatorModal({{ $c->id }}); }" class="complaint-dispatched-card card-white rounded-2xl p-4 sm:p-5 bg-white border border-slate-200/90 hover:border-blue-300 hover:shadow-md transition-all duration-200 flex flex-col justify-between space-y-3.5 cursor-pointer md:cursor-default"
                             data-category="{{ $c->category_id }}"
                             data-damage-type="{{ $c->damage_type ?? 'minor' }}"
                             data-search="{{ strtolower($c->public_code . ' ' . ($c->user?->name ?? $c->citizen?->name ?? '') . ' ' . $c->title . ' ' . $c->address) }}">
@@ -558,7 +606,7 @@
                                         </div>
 
                                         <!-- Baris 4: Tombol Detail Lengkap & Foto (1 Baris Rapi) -->
-                                        <div class="relative z-10">
+                                        <div class="relative z-10 hidden md:block">
                                             <button type="button" onclick="openOperatorModal({{ $c->id }})" class="text-xs font-bold text-[#1E3A8A] hover:underline inline-flex items-center gap-1 cursor-pointer">
                                                 <span>Lihat Rincian Lengkap & Foto</span>
                                                 <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
@@ -632,7 +680,8 @@
                     Belum ada tugas lapangan yang sedang berjalan.
                 </div>
             @else
-                <div id="inprogressCardsContainer" class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                @include('partials.role_complaints_table', ['wrapId' => 'operatorTableWrap-inprogress', 'rowClass' => 'operator-inprogress-row', 'items' => $inProgress, 'mode' => 'operator-inprogress', 'hidden' => false])
+                <div id="inprogressCardsContainer" class="hidden grid grid-cols-1 lg:grid-cols-2 gap-5">
                     @foreach($inProgress as $c)
                         @php
                             $disp = $c->latestDisposition;
@@ -642,7 +691,7 @@
                                 ? ($c->photos->first()->url ?? asset('storage/' . $c->photos->first()->storage_key)) 
                                 : null;
                         @endphp
-                        <div class="complaint-inprogress-card card-white rounded-2xl p-4 sm:p-5 bg-white border border-slate-200/90 hover:border-blue-300 hover:shadow-md transition-all duration-200 flex flex-col justify-between space-y-3.5"
+                        <div onclick="if (window.innerWidth < 768) { openOperatorModal({{ $c->id }}); }" class="complaint-inprogress-card card-white rounded-2xl p-4 sm:p-5 bg-white border border-slate-200/90 hover:border-blue-300 hover:shadow-md transition-all duration-200 flex flex-col justify-between space-y-3.5 cursor-pointer md:cursor-default"
                             data-category="{{ $c->category_id }}"
                             data-damage-type="{{ $c->damage_type ?? 'minor' }}"
                             data-search="{{ strtolower($c->public_code . ' ' . ($c->user?->name ?? $c->citizen?->name ?? '') . ' ' . $c->title . ' ' . $c->address) }}">
@@ -718,7 +767,7 @@
                                         </div>
 
                                         <!-- Baris 4: Tombol Detail Lengkap & Foto (1 Baris Rapi) -->
-                                        <div class="relative z-10">
+                                        <div class="relative z-10 hidden md:block">
                                             <button type="button" onclick="openOperatorModal({{ $c->id }})" class="text-xs font-bold text-[#1E3A8A] hover:underline inline-flex items-center gap-1 cursor-pointer">
                                                 <span>Lihat Rincian Lengkap & Foto</span>
                                                 <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
@@ -760,7 +809,8 @@
                     Tidak ada laporan yang sedang menunggu validasi selesai.
                 </div>
             @else
-                <div id="validationCardsContainer" class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                @include('partials.role_complaints_table', ['wrapId' => 'operatorTableWrap-validation', 'rowClass' => 'operator-validation-row', 'items' => $waitingValidation, 'mode' => 'operator-validation', 'hidden' => false])
+                <div id="validationCardsContainer" class="hidden grid grid-cols-1 lg:grid-cols-2 gap-5">
                     @foreach($waitingValidation as $c)
                         @php
                             $disp = $c->latestDisposition;
@@ -769,7 +819,7 @@
                             $beforeUrl = $beforePhoto ? ($beforePhoto->url ?? asset('storage/' . $beforePhoto->storage_key)) : null;
                             $afterUrl = $afterPhoto && $afterPhoto->id !== ($beforePhoto?->id) ? ($afterPhoto->url ?? asset('storage/' . $afterPhoto->storage_key)) : null;
                         @endphp
-                        <div class="complaint-validation-card card-white rounded-2xl p-4 sm:p-5 bg-white border border-slate-200/90 hover:border-blue-300 hover:shadow-md transition-all duration-200 flex flex-col justify-between space-y-3.5"
+                        <div onclick="if (window.innerWidth < 768) { openOperatorModal({{ $c->id }}); }" class="complaint-validation-card card-white rounded-2xl p-4 sm:p-5 bg-white border border-slate-200/90 hover:border-blue-300 hover:shadow-md transition-all duration-200 flex flex-col justify-between space-y-3.5 cursor-pointer md:cursor-default"
                             data-category="{{ $c->category_id }}"
                             data-damage-type="{{ $c->damage_type ?? 'minor' }}"
                             data-search="{{ strtolower($c->public_code . ' ' . ($c->user?->name ?? $c->citizen?->name ?? '') . ' ' . $c->title . ' ' . $c->address) }}">
@@ -847,9 +897,9 @@
                                         </div>
 
                                         <!-- Baris 4: Tombol Detail Lengkap & Foto (1 Baris Rapi) -->
-                                        <div class="relative z-10">
+                                        <div class="relative z-10 hidden md:block">
                                             <button type="button" onclick="openOperatorModal({{ $c->id }})" class="text-xs font-bold text-[#1E3A8A] hover:underline inline-flex items-center gap-1 cursor-pointer">
-                                                <span>Lihat Komparasi Foto & Rincian</span>
+                                                <span>Lihat Rincian Lengkap & Foto</span>
                                                 <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
                                             </button>
                                         </div>
@@ -858,7 +908,7 @@
                             </div>
 
                             <!-- 3. Tombol Aksi Validasi (Full-width Dominan Biru) -->
-                            <div class="pt-3 border-t border-slate-100/90">
+                            <div onclick="event.stopPropagation();" class="pt-3 border-t border-slate-100/90 cursor-default">
                                 <button type="button" onclick="openValidationModal({{ $c->id }})" 
                                     class="w-full py-2.5 px-3 rounded-xl bg-[#1E3A8A] hover:bg-[#172554] active:scale-[0.99] text-white font-bold text-xs shadow-xs hover:shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
                                     <i data-lucide="check-circle-2" class="w-4 h-4"></i>
@@ -884,8 +934,9 @@
                 Belum ada laporan yang selesai dan diarsipkan.
             </div>
         @else
+            @include('partials.role_complaints_table', ['wrapId' => 'operatorTableWrap-archive', 'rowClass' => 'operator-archive-row', 'items' => $completed, 'mode' => 'operator-archive', 'hidden' => false])
             <!-- Grid Card Arsip 2 Kolom Rapi & Sejajar -->
-            <div id="archiveCardsContainer" class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            <div id="archiveCardsContainer" class="hidden grid grid-cols-1 lg:grid-cols-2 gap-5">
                 @foreach($completed as $c)
                     @php
                         $isRejected = ($c->status === 'REJECTED');
@@ -895,7 +946,7 @@
                         $afterUrl = $afterPhoto && $afterPhoto->id !== ($beforePhoto?->id) ? ($afterPhoto->url ?? asset('storage/' . $afterPhoto->storage_key)) : null;
                         $displayPhoto = $afterUrl ?: $beforeUrl;
                     @endphp
-                    <div class="complaint-archive-card card-white rounded-2xl p-4 sm:p-5 bg-white border border-slate-200/90 hover:border-blue-300 hover:shadow-md transition-all duration-200 flex flex-col justify-between space-y-3.5"
+                    <div onclick="if (window.innerWidth < 768) { openOperatorModal({{ $c->id }}); }" class="complaint-archive-card card-white rounded-2xl p-4 sm:p-5 bg-white border border-slate-200/90 hover:border-blue-300 hover:shadow-md transition-all duration-200 flex flex-col justify-between space-y-3.5 cursor-pointer md:cursor-default"
                         data-category="{{ $c->category_id }}"
                         data-damage-type="{{ $c->damage_type ?? 'minor' }}"
                         data-status="{{ $c->status }}"
@@ -976,7 +1027,7 @@
                                     </div>
 
                                     <!-- Baris 4: Tombol Detail Lengkap & Foto (1 Baris Rapi) -->
-                                    <div class="relative z-10">
+                                    <div class="relative z-10 hidden md:block">
                                         <button type="button" onclick="openOperatorModal({{ $c->id }})" class="text-xs font-bold text-[#1E3A8A] hover:underline inline-flex items-center gap-1 cursor-pointer">
                                             <span>Lihat Rincian Lengkap & Foto</span>
                                             <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
@@ -1027,6 +1078,23 @@
                 Tidak ditemukan laporan arsip yang cocok dengan filter yang dipilih.
             </div>
         @endif
+    </div>
+
+    <!-- Pagination Bar Operator (5 / 10 / 50 per halaman, default 10) -->
+    <div id="operatorPaginationBar" class="p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs {{ $activeTab === 'monitoring' ? 'hidden' : '' }}">
+        <div class="flex flex-wrap items-center gap-3 text-[#475569]">
+            <div class="flex items-center gap-2">
+                <span class="font-medium">Tampilkan:</span>
+                <select id="operatorPageSizeSelect" onchange="changeOperatorPageSize(this.value)" aria-label="Jumlah laporan per halaman"
+                    class="text-xs font-semibold rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] text-[#0F172A] px-2.5 py-1.5 focus:outline-none focus:border-[#1E3A8A] cursor-pointer">
+                    <option value="5">5 laporan</option>
+                    <option value="10" selected>10 laporan</option>
+                    <option value="50">50 laporan</option>
+                </select>
+            </div>
+            <span id="operatorPageInfo" class="font-medium">Menampilkan 0 dari 0 laporan</span>
+        </div>
+        <div id="operatorPageControls" class="flex items-center gap-1 flex-wrap"></div>
     </div>
 
     <!-- TAB 5: MONITORING EKSEKUTIF & KINERJA DINAS (LENGKAP ANALITIK EKSEKUTIF & PETA SPASIAL KOLAKA UTARA) -->
@@ -1216,40 +1284,40 @@
 </div>
 
 <!-- Pop-up Modal Detail Lengkap Operator (Super Cepat, Bersih & Langsung Fokus) -->
-<div id="operatorDetailModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-3 sm:p-5 bg-slate-900/75 transition-opacity duration-150 overscroll-contain">
-    <div class="bg-white w-full max-w-xl rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92vh] animate-in fade-in zoom-in-95" style="transform: translateZ(0); will-change: transform;">
+<div id="operatorDetailModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-3 sm:p-5 bg-slate-900/65 transition-opacity duration-150 overscroll-contain">
+    <div class="bg-white w-full max-w-xl rounded-xl shadow-md border border-[#E2E8F0] overflow-hidden flex flex-col max-h-[92vh]">
         
-        <!-- Modal Top Header (Selaras 1 Baris: Kerusakan -> Kategori -> Status) -->
-        <div class="px-4 sm:px-5 py-3 sm:py-3.5 border-b border-slate-100 flex items-center justify-between bg-slate-50/80 gap-2">
+        <!-- Modal Top Header (Selaras Landing Page: Kerusakan -> Kategori -> Status) -->
+        <div class="px-4 sm:px-5 py-3 sm:py-3.5 border-b border-[#E2E8F0] flex items-center justify-between bg-[#F8FAFC] gap-2">
             <div class="flex items-center gap-1.5 sm:gap-2 flex-nowrap min-w-0 overflow-x-auto no-scrollbar py-0.5">
                 <!-- 1. Tingkat Kerusakan -->
-                <span id="opModalTypeBadge" class="shrink-0 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[10.5px] sm:text-xs font-bold bg-red-50 text-red-700 border border-red-200 inline-flex items-center gap-1 sm:gap-1.5 whitespace-nowrap">
-                    <span class="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0"></span>
+                <span id="opModalTypeBadge" class="shrink-0 px-2.5 py-1 rounded-md text-xs font-semibold bg-red-50 text-red-700 border border-red-200 inline-flex items-center gap-1.5 whitespace-nowrap">
+                    <span class="w-1.5 h-1.5 rounded-full bg-red-600 shrink-0"></span>
                     <span>Kerusakan Ringan</span>
                 </span>
                 <!-- 2. Kategori Infrastruktur -->
-                <span id="opModalCategoryBadge" class="shrink-0 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full bg-slate-100 text-slate-700 font-semibold text-[10.5px] sm:text-xs border border-slate-200 inline-flex items-center whitespace-nowrap">
+                <span id="opModalCategoryBadge" class="shrink-0 px-2.5 py-1 rounded-md bg-slate-100 text-[#0F172A] font-semibold text-xs border border-[#E2E8F0] inline-flex items-center whitespace-nowrap">
                     Kategori
                 </span>
                 <!-- 3. Status Pengerjaan -->
-                <span id="opModalStatusBadge" class="shrink-0 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[10.5px] sm:text-xs font-bold border border-blue-200/80 bg-blue-50 text-[#1E3A8A] whitespace-nowrap">
+                <span id="opModalStatusBadge" class="shrink-0 px-2.5 py-1 rounded-md text-xs font-bold border border-blue-200 bg-blue-50 text-[#1E3A8A] whitespace-nowrap">
                     STATUS
                 </span>
             </div>
-            <button type="button" onclick="closeOperatorModal()" class="w-8 h-8 rounded-full bg-slate-200/70 hover:bg-slate-300 text-slate-700 flex items-center justify-center transition cursor-pointer shrink-0 ml-1">
+            <button type="button" onclick="closeOperatorModal()" class="w-9 h-9 rounded-lg bg-white hover:bg-slate-100 text-[#475569] hover:text-[#0F172A] border border-[#E2E8F0] flex items-center justify-center transition cursor-pointer shrink-0 ml-1" title="Tutup Detail" aria-label="Tutup Rincian">
                 <i data-lucide="x" class="w-4 h-4"></i>
             </button>
         </div>
 
         <!-- Modal Scrollable Body -->
-        <div class="p-5 overflow-y-auto space-y-4 flex-1 overscroll-contain">
+        <div class="p-4 sm:p-5 overflow-y-auto space-y-4 flex-1 overscroll-contain" style="-webkit-overflow-scrolling: touch;">
             
             <!-- 1. Foto Bukti Kerusakan Warga -->
             <div id="opModalCitizenPhotoSection" class="space-y-2">
-                <div class="rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 relative max-h-64 sm:max-h-72 flex items-center justify-center">
+                <div class="rounded-xl overflow-hidden border border-[#E2E8F0] bg-slate-100 relative max-h-64 sm:max-h-72 flex items-center justify-center">
                     <img id="opModalCitizenPhoto" src="" alt="Foto Kerusakan Warga" class="w-full h-full object-cover max-h-64 sm:max-h-72">
-                    <div class="absolute bottom-2.5 left-2.5 bg-black/75 backdrop-blur-xs text-white text-[10px] font-bold px-2.5 py-1 rounded-lg flex items-center gap-1.5 shadow-sm">
-                        <i data-lucide="image" class="w-3.5 h-3.5"></i>
+                    <div class="absolute bottom-2.5 left-2.5 bg-[#0F172A] text-white text-[11px] font-semibold px-2.5 py-1 rounded-md flex items-center gap-1.5 border border-slate-700">
+                        <i data-lucide="image" class="w-3.5 h-3.5 text-white"></i>
                         <span id="opModalCitizenPhotoLabel">Foto Bukti Warga</span>
                     </div>
                 </div>
@@ -1259,10 +1327,10 @@
 
             <!-- 2. Foto Bukti Penanganan Petugas Lapangan -->
             <div id="opModalOfficerPhotoSection" class="space-y-2 hidden">
-                <div class="rounded-2xl overflow-hidden border border-emerald-300 bg-emerald-50/50 relative max-h-64 sm:max-h-72 flex items-center justify-center">
+                <div class="rounded-xl overflow-hidden border border-emerald-300 bg-emerald-50 relative max-h-64 sm:max-h-72 flex items-center justify-center">
                     <img id="opModalOfficerPhoto" src="" alt="Foto Hasil Pengerjaan Petugas" class="w-full h-full object-cover max-h-64 sm:max-h-72">
-                    <div class="absolute bottom-2.5 left-2.5 bg-emerald-950/90 backdrop-blur-xs text-white text-[10px] font-bold px-2.5 py-1 rounded-lg flex items-center gap-1.5 shadow-sm">
-                        <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400"></i>
+                    <div class="absolute bottom-2.5 left-2.5 bg-[#064E3B] text-white text-[11px] font-semibold px-2.5 py-1 rounded-md flex items-center gap-1.5 border border-emerald-800">
+                        <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-300"></i>
                         <span id="opModalOfficerPhotoLabel">Bukti Penyelesaian Lapangan</span>
                     </div>
                 </div>
@@ -1272,14 +1340,14 @@
 
             <!-- Judul & Info Waktu Laporan -->
             <div>
-                <span id="opModalCode" class="text-[11px] font-mono font-medium text-slate-400 block tracking-wide mb-0.5">
+                <span id="opModalCode" class="text-[11px] font-mono font-semibold text-[#475569] block tracking-wide mb-0.5">
                     #ADU-0000
                 </span>
-                <h3 id="opModalTitle" class="font-outfit font-extrabold text-lg sm:text-xl text-slate-900 leading-snug">
+                <h3 id="opModalTitle" class="font-outfit font-bold text-lg sm:text-xl text-[#0F172A] leading-snug">
                     Judul Laporan
                 </h3>
-                <div class="flex items-center gap-1.5 text-xs text-slate-500 pt-0.5">
-                    <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-400"></i>
+                <div class="flex items-center gap-1.5 text-xs text-[#475569] pt-1">
+                    <i data-lucide="calendar" class="w-3.5 h-3.5 text-[#475569]"></i>
                     <span id="opModalDate">03 Sep 2026</span>
                 </div>
             </div>
@@ -1456,23 +1524,27 @@
 </div>
 
 <!-- MODAL VERIFIKASI & DISPOSISI PENUGASAN PETUGAS (CLEAN, FOKUS INPUT & VERIFIKASI) -->
-<div id="dispatchModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5 overscroll-contain">
-    <div class="bg-white w-full max-w-xl rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92vh] animate-in fade-in zoom-in-95" style="transform: translateZ(0); will-change: transform;">
+<div id="dispatchModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/65 flex items-center justify-center p-3 sm:p-5 overscroll-contain">
+    <div class="bg-white w-full max-w-xl rounded-xl shadow-md border border-[#E2E8F0] overflow-hidden flex flex-col max-h-[92vh]">
         
-        <!-- Header Modal Disposisi -->
-        <div class="px-5 py-3.5 border-b border-slate-100 flex items-center justify-between bg-slate-50/80">
-            <div class="flex items-center gap-2 flex-wrap">
-                <span id="dispatchModalCode" class="px-2.5 py-1 rounded-lg bg-[#1E3A8A]/10 text-[#1E3A8A] font-bold text-xs font-mono">
-                    #ADU-0000
+        <!-- Header Modal Disposisi (Selaras Landing Page: Kerusakan -> Kategori -> Status) -->
+        <div class="px-4 sm:px-5 py-3 sm:py-3.5 border-b border-[#E2E8F0] flex items-center justify-between bg-[#F8FAFC] gap-2">
+            <div class="flex items-center gap-1.5 sm:gap-2 flex-nowrap min-w-0 overflow-x-auto no-scrollbar py-0.5">
+                <span id="dispatchModalTypeBadge" class="shrink-0 px-2.5 py-1 rounded-md text-xs font-semibold bg-red-50 text-red-700 border border-red-200 inline-flex items-center gap-1.5 whitespace-nowrap">
+                    <span class="w-1.5 h-1.5 rounded-full bg-red-600 shrink-0"></span>
+                    <span>Kerusakan Ringan</span>
                 </span>
-                <span id="dispatchModalTypeBadge" class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
-                    Kerusakan Ringan
-                </span>
-                <span id="dispatchModalCategoryBadge" class="px-2.5 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200">
+                <span id="dispatchModalCategoryBadge" class="shrink-0 px-2.5 py-1 rounded-md text-xs font-semibold bg-slate-100 text-[#0F172A] border border-[#E2E8F0] inline-flex items-center whitespace-nowrap">
                     Kategori
                 </span>
+                <span id="dispatchModalStatusBadge" class="shrink-0 px-2.5 py-1 rounded-md text-xs font-bold bg-red-50 text-red-700 border border-red-200 whitespace-nowrap">
+                    VERIFIKASI
+                </span>
+                <span id="dispatchModalCode" class="shrink-0 px-2 py-1 rounded-md bg-white text-[#475569] border border-[#E2E8F0] font-semibold text-[11px] font-mono whitespace-nowrap">
+                    #ADU-0000
+                </span>
             </div>
-            <button type="button" onclick="closeDispatchModal()" class="w-8 h-8 rounded-full bg-slate-200/70 hover:bg-slate-300 text-slate-700 flex items-center justify-center transition cursor-pointer">
+            <button type="button" onclick="closeDispatchModal()" class="w-9 h-9 rounded-lg bg-white hover:bg-slate-100 text-[#475569] hover:text-[#0F172A] border border-[#E2E8F0] flex items-center justify-center transition cursor-pointer shrink-0 ml-1" title="Tutup Detail" aria-label="Tutup Rincian">
                 <i data-lucide="x" class="w-4 h-4"></i>
             </button>
         </div>
@@ -2191,25 +2263,29 @@
             activePanel.classList.remove('hidden');
         }
 
-        // 3. Update styling tombol segmented pill
+        // 3. Update styling tombol tab seragam desain Admin
         document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.classList.remove('bg-white', 'text-[#1E3A8A]', 'shadow-xs');
-            btn.classList.add('text-slate-600', 'hover:text-slate-900', 'hover:bg-white/60');
+            btn.className = 'tab-btn text-left p-3 rounded-xl border transition flex items-start gap-2.5 cursor-pointer bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]';
             const badge = btn.querySelector('.tab-badge');
             if (badge) {
-                badge.classList.remove('bg-blue-100', 'text-[#1E3A8A]');
-                badge.classList.add('bg-slate-200', 'text-slate-600');
+                badge.className = 'tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 bg-blue-50 text-[#1E3A8A] border border-blue-200';
+            }
+            const sub = btn.querySelector('.tab-sub');
+            if (sub) {
+                sub.className = 'tab-sub text-[10px] block mt-0.5 truncate text-[#475569]';
             }
         });
 
         const activeBtn = document.getElementById('tabBtn-' + tabId);
         if (activeBtn) {
-            activeBtn.classList.add('bg-white', 'text-[#1E3A8A]', 'shadow-xs');
-            activeBtn.classList.remove('text-slate-600', 'hover:text-slate-900', 'hover:bg-white/60');
+            activeBtn.className = 'tab-btn text-left p-3 rounded-xl border transition flex items-start gap-2.5 cursor-pointer bg-[#1E3A8A] text-white border-[#1E3A8A]';
             const activeBadge = activeBtn.querySelector('.tab-badge');
             if (activeBadge) {
-                activeBadge.classList.add('bg-blue-100', 'text-[#1E3A8A]');
-                activeBadge.classList.remove('bg-slate-200', 'text-slate-600');
+                activeBadge.className = 'tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 bg-white text-[#1E3A8A]';
+            }
+            const activeSub = activeBtn.querySelector('.tab-sub');
+            if (activeSub) {
+                activeSub.className = 'tab-sub text-[10px] block mt-0.5 truncate text-blue-100';
             }
         }
 
@@ -2256,15 +2332,13 @@
         // Simpan active tab untuk keperluan filter
         window.currentActiveTab = tabId;
 
-        // Toggle filter bar: tampilkan di verify, dispatched, inprogress, validation, dan archive (sembunyikan hanya di monitoring)
+        // Toggle filter bar & pagination bar: tampilkan di verify, dispatched, inprogress, validation, dan archive (sembunyikan hanya di monitoring)
         const filterBar = document.getElementById('operatorFilterBar');
-        if (filterBar) {
-            if (['verify', 'dispatched', 'inprogress', 'validation', 'archive'].includes(tabId)) {
-                filterBar.classList.remove('hidden');
-            } else {
-                filterBar.classList.add('hidden');
-            }
-        }
+        const paginationBar = document.getElementById('operatorPaginationBar');
+        const isListTab = ['verify', 'dispatched', 'inprogress', 'validation', 'archive'].includes(tabId);
+        if (filterBar) filterBar.classList.toggle('hidden', !isListTab);
+        if (paginationBar) paginationBar.classList.toggle('hidden', !isListTab);
+        if (typeof operatorPaginationState !== 'undefined') operatorPaginationState.page = 1;
 
         // Toggle filter status khusus tab arsip (Selesai vs Ditolak)
         const archiveStatusContainer = document.getElementById('filterArchiveStatusContainer');
@@ -2558,40 +2632,40 @@
 
         const typeBadge = document.getElementById('opModalTypeBadge');
         if (typeBadge) {
-            typeBadge.className = 'shrink-0 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[10.5px] sm:text-xs font-bold bg-red-50 text-red-700 border border-red-200 inline-flex items-center gap-1 sm:gap-1.5 whitespace-nowrap';
-            typeBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0"></span><span>${item.damage_type === 'major' ? 'Kerusakan Berat' : 'Kerusakan Ringan'}</span>`;
+            typeBadge.className = 'shrink-0 px-2.5 py-1 rounded-md text-xs font-semibold bg-red-50 text-red-700 border border-red-200 inline-flex items-center gap-1.5 whitespace-nowrap';
+            typeBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-red-600 shrink-0"></span><span>${item.damage_type === 'major' ? 'Kerusakan Berat' : 'Kerusakan Ringan'}</span>`;
         }
 
-        // Terjemahkan Status ke Bahasa Indonesia dan Terapkan Warna Badge yang Sesuai
+        // Terjemahkan Status ke Bahasa Indonesia dan Terapkan Warna Badge yang Sesuai Landing Page
         const statusBadge = document.getElementById('opModalStatusBadge');
         let statusLabel = item.status;
         let statusClass = 'bg-slate-100 text-slate-700 border-slate-200';
 
         if (item.status === 'REJECTED') {
             statusLabel = 'DITOLAK';
-            statusClass = 'bg-red-50 text-[#DC2626] border-red-200';
+            statusClass = 'bg-red-50 text-red-700 border-red-200';
         } else if (item.status === 'COMPLETED' || item.status === 'CLOSED') {
             statusLabel = 'SELESAI';
-            statusClass = 'bg-emerald-50 text-[#10B981] border-emerald-200';
+            statusClass = 'bg-emerald-50 text-emerald-800 border-emerald-200';
         } else if (item.status === 'WAITING_VERIFICATION') {
             statusLabel = 'VALIDASI';
             statusClass = 'bg-amber-50 text-amber-700 border-amber-300';
         } else if (item.status === 'IN_PROGRESS') {
             statusLabel = 'DIKERJAKAN';
-            statusClass = 'bg-amber-50 text-amber-700 border-amber-300';
+            statusClass = 'bg-amber-50 text-amber-800 border-amber-300';
         } else if (item.status === 'DISPATCHED') {
             statusLabel = 'DITUGASKAN';
-            statusClass = 'bg-indigo-50 text-indigo-700 border-indigo-200';
+            statusClass = 'bg-blue-50 text-[#1E3A8A] border-blue-200';
         } else if (item.status === 'SUBMITTED' || item.status === 'VERIFICATION') {
             statusLabel = 'VERIFIKASI';
-            statusClass = 'bg-red-50 text-[#EF4444] border-red-200';
+            statusClass = 'bg-red-50 text-red-700 border-red-200';
         } else if (item.status === 'REVISION_REQUIRED') {
             statusLabel = 'PERLU REVISI';
-            statusClass = 'bg-amber-50 text-amber-800 border-amber-200';
+            statusClass = 'bg-amber-50 text-amber-800 border-amber-300';
         }
 
         statusBadge.innerText = statusLabel;
-        statusBadge.className = `shrink-0 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[10.5px] sm:text-xs font-bold border whitespace-nowrap ${statusClass}`;
+        statusBadge.className = `shrink-0 px-2.5 py-1 rounded-md text-xs font-bold border whitespace-nowrap ${statusClass}`;
         document.getElementById('opModalCategoryBadge').innerText = item.category_name;
         document.getElementById('opModalDate').innerText = item.created_at_full;
         document.getElementById('opModalTitle').innerText = item.title;
@@ -3154,8 +3228,8 @@
 
         const typeBadge = document.getElementById('dispatchModalTypeBadge');
         if (typeBadge) {
-            typeBadge.className = 'px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-50 text-red-700 border border-red-200 inline-flex items-center gap-1.5';
-            typeBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-red-500"></span><span>${item.damage_type === 'major' ? 'Kerusakan Berat' : 'Kerusakan Ringan'}</span>`;
+            typeBadge.className = 'shrink-0 px-2.5 py-1 rounded-md text-xs font-semibold bg-red-50 text-red-700 border border-red-200 inline-flex items-center gap-1.5 whitespace-nowrap';
+            typeBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-red-600 shrink-0"></span><span>${item.damage_type === 'major' ? 'Kerusakan Berat' : 'Kerusakan Ringan'}</span>`;
         }
 
         const catBadge = document.getElementById('dispatchModalCategoryBadge');
@@ -3356,7 +3430,92 @@
     });
 
     // Filter Kategori & Pencarian Real-time untuk Semua Tab (Verifikasi, Dikerjakan, Validasi, Arsip)
-    function applyFilters() {
+    function setOperatorLayout(mode) {
+        const tabs = ['verify', 'dispatched', 'inprogress', 'validation', 'archive'];
+        tabs.forEach(tab => {
+            const tableWrap = document.getElementById(`operatorTableWrap-${tab}`);
+            const cardsEl = document.getElementById(`${tab}CardsContainer`);
+            if (tableWrap) tableWrap.classList.toggle('hidden', mode !== 'list');
+            if (cardsEl) cardsEl.classList.toggle('hidden', mode !== 'grid');
+        });
+        const listBtn = document.getElementById('opLayoutBtn-list');
+        const gridBtn = document.getElementById('opLayoutBtn-grid');
+        if (listBtn && gridBtn) {
+            listBtn.className = `px-2.5 py-1.5 rounded-md text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer ${mode === 'list' ? 'bg-[#1E3A8A] text-white' : 'text-[#475569] hover:text-[#0F172A]'}`;
+            gridBtn.className = `px-2.5 py-1.5 rounded-md text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer ${mode === 'grid' ? 'bg-[#1E3A8A] text-white' : 'text-[#475569] hover:text-[#0F172A]'}`;
+        }
+    }
+
+    const operatorPaginationState = { page: 1, size: 10 };
+
+    function changeOperatorPageSize(size) {
+        operatorPaginationState.size = parseInt(size, 10) || 10;
+        operatorPaginationState.page = 1;
+        applyFilters(false);
+    }
+
+    function goOperatorPage(page) {
+        operatorPaginationState.page = page;
+        applyFilters(false);
+    }
+
+    function renderOperatorPagination(matchedCards, matchedRows = []) {
+        const total = Math.max(matchedCards.length, matchedRows.length);
+        const size = operatorPaginationState.size;
+        const totalPages = Math.max(1, Math.ceil(total / size));
+        if (operatorPaginationState.page > totalPages) operatorPaginationState.page = totalPages;
+        if (operatorPaginationState.page < 1) operatorPaginationState.page = 1;
+
+        const startIdx = (operatorPaginationState.page - 1) * size;
+        const endIdx = Math.min(startIdx + size, total);
+
+        matchedCards.forEach((card, idx) => {
+            card.style.display = (idx >= startIdx && idx < endIdx) ? '' : 'none';
+        });
+        matchedRows.forEach((row, idx) => {
+            row.style.display = (idx >= startIdx && idx < endIdx) ? '' : 'none';
+        });
+
+        const infoEl = document.getElementById('operatorPageInfo');
+        if (infoEl) {
+            infoEl.textContent = total === 0
+                ? 'Menampilkan 0 dari 0 laporan'
+                : `Menampilkan ${startIdx + 1}–${endIdx} dari ${total} laporan`;
+        }
+
+        const controlsEl = document.getElementById('operatorPageControls');
+        if (!controlsEl) return;
+        if (total === 0) {
+            controlsEl.innerHTML = '';
+            return;
+        }
+
+        const btnBase = 'px-2.5 py-1.5 rounded-lg border text-xs font-semibold transition cursor-pointer';
+        const btnIdle = `${btnBase} bg-white border-[#E2E8F0] text-[#0F172A] hover:bg-slate-100`;
+        const btnActive = `${btnBase} bg-[#1E3A8A] border-[#1E3A8A] text-white`;
+        const btnDisabled = 'px-2.5 py-1.5 rounded-lg border border-[#E2E8F0] bg-slate-100 text-slate-400 text-xs font-semibold cursor-not-allowed';
+
+        let html = operatorPaginationState.page > 1
+            ? `<button type="button" class="${btnIdle}" onclick="goOperatorPage(${operatorPaginationState.page - 1})">Sebelumnya</button>`
+            : `<button type="button" class="${btnDisabled}" disabled>Sebelumnya</button>`;
+
+        for (let p = 1; p <= totalPages; p++) {
+            if (totalPages > 7 && p > 2 && p < totalPages - 1 && Math.abs(p - operatorPaginationState.page) > 1) {
+                if (p === 3 || p === totalPages - 2) html += `<span class="px-1.5 text-[#475569]">…</span>`;
+                continue;
+            }
+            html += `<button type="button" class="${p === operatorPaginationState.page ? btnActive : btnIdle}" onclick="goOperatorPage(${p})">${p}</button>`;
+        }
+
+        html += operatorPaginationState.page < totalPages
+            ? `<button type="button" class="${btnIdle}" onclick="goOperatorPage(${operatorPaginationState.page + 1})">Berikutnya</button>`
+            : `<button type="button" class="${btnDisabled}" disabled>Berikutnya</button>`;
+
+        controlsEl.innerHTML = html;
+    }
+
+    function applyFilters(resetPage = true) {
+        if (resetPage) operatorPaginationState.page = 1;
         const searchInput = document.getElementById('filterSearchInput');
         const categorySelect = document.getElementById('filterCategorySelect');
         const damageTypeSelect = document.getElementById('filterDamageTypeSelect');
@@ -3370,47 +3529,75 @@
         const archiveStatusSelect = document.getElementById('filterArchiveStatusSelect');
         const archiveStatusVal = archiveStatusSelect ? archiveStatusSelect.value : 'ALL';
 
+        const resetBtn = document.getElementById('operatorResetBtn');
+        if (resetBtn) {
+            const hasActiveFilter = (query !== '' || catId !== 'ALL' || damageTypeVal !== 'ALL' || (currentTab === 'archive' && archiveStatusVal !== 'ALL'));
+            resetBtn.classList.toggle('hidden', !hasActiveFilter);
+        }
+
         let selector = '.complaint-verify-card';
+        let rowSelector = '.operator-verify-row';
         if (currentTab === 'dispatched') {
             selector = '.complaint-dispatched-card';
+            rowSelector = '.operator-dispatched-row';
         } else if (currentTab === 'inprogress') {
             selector = '.complaint-inprogress-card';
+            rowSelector = '.operator-inprogress-row';
         } else if (currentTab === 'validation') {
             selector = '.complaint-validation-card';
+            rowSelector = '.operator-validation-row';
         } else if (currentTab === 'archive') {
             selector = '.complaint-archive-card';
+            rowSelector = '.operator-archive-row';
         }
 
         const cards = document.querySelectorAll(selector);
-        let visibleCount = 0;
+        const rows = document.querySelectorAll(rowSelector);
+        const matchedCards = [];
+        const matchedRows = [];
 
-        cards.forEach(card => {
-            const cardCat = card.getAttribute('data-category');
-            const cardDamageType = card.getAttribute('data-damage-type') || 'minor';
-            const cardSearch = card.getAttribute('data-search') || '';
-            const cardStatus = card.getAttribute('data-status') || '';
+        const matchesItem = (el) => {
+            const itemCat = el.getAttribute('data-category');
+            const itemDamageType = el.getAttribute('data-damage-type') || 'minor';
+            const itemSearch = el.getAttribute('data-search') || '';
+            const itemStatus = el.getAttribute('data-status') || '';
 
-            const matchCat = (catId === 'ALL' || cardCat === catId);
-            const matchDamageType = (damageTypeVal === 'ALL' || cardDamageType === damageTypeVal);
-            const matchQuery = (!query || cardSearch.includes(query));
+            const matchCat = (catId === 'ALL' || itemCat === catId);
+            const matchDamageType = (damageTypeVal === 'ALL' || itemDamageType === damageTypeVal);
+            const matchQuery = (!query || itemSearch.includes(query));
 
             let matchStatus = true;
             if (currentTab === 'archive' && archiveStatusVal !== 'ALL') {
                 if (archiveStatusVal === 'COMPLETED') {
-                    matchStatus = (cardStatus === 'COMPLETED' || cardStatus === 'CLOSED');
+                    matchStatus = (itemStatus === 'COMPLETED' || itemStatus === 'CLOSED');
                 } else if (archiveStatusVal === 'REJECTED') {
-                    matchStatus = (cardStatus === 'REJECTED');
+                    matchStatus = (itemStatus === 'REJECTED');
                 }
             }
+            return matchCat && matchDamageType && matchQuery && matchStatus;
+        };
 
-            if (matchCat && matchDamageType && matchQuery && matchStatus) {
+        cards.forEach(card => {
+            if (matchesItem(card)) {
                 card.classList.remove('hidden');
-                visibleCount++;
+                matchedCards.push(card);
             } else {
                 card.classList.add('hidden');
+                card.style.display = 'none';
             }
         });
 
+        rows.forEach(row => {
+            if (matchesItem(row)) {
+                row.classList.remove('hidden');
+                matchedRows.push(row);
+            } else {
+                row.classList.add('hidden');
+                row.style.display = 'none';
+            }
+        });
+
+        const visibleCount = Math.max(matchedCards.length, matchedRows.length);
         const countBadge = document.getElementById('filterCountBadge');
         if (countBadge) {
             countBadge.innerText = `${visibleCount} Laporan`;
@@ -3422,14 +3609,23 @@
             const noticeId = tab === 'verify' ? 'emptyFilterNotice' : `emptyFilterNotice-${tab}`;
             const el = document.getElementById(noticeId);
             if (el) {
-                if (tab === currentTab && visibleCount === 0 && cards.length > 0) {
+                if (tab === currentTab && visibleCount === 0 && (cards.length > 0 || rows.length > 0)) {
                     el.classList.remove('hidden');
                 } else {
                     el.classList.add('hidden');
                 }
             }
         });
+
+        renderOperatorPagination(matchedCards, matchedRows);
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        if (window.innerWidth < 768) {
+            setOperatorLayout('grid');
+        }
+        applyFilters(true);
+    });
 
     function resetFilters() {
         const searchInput = document.getElementById('filterSearchInput');

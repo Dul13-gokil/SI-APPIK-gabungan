@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id" class="h-full bg-[#F8FAFC]">
+<html lang="id" class="h-full bg-[#F8FAFC] scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -54,10 +54,6 @@
             color: #0F172A;
             font-family: 'Inter', sans-serif;
         }
-        :focus-visible {
-            outline: 2px solid #1E3A8A;
-            outline-offset: 2px;
-        }
         .card-white {
             background: #FFFFFF;
             border: 1px solid #E2E8F0;
@@ -71,13 +67,13 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
-        /* Custom map popup matching mobile theme */
+        /* Custom map popup matching official government civic clarity */
         .leaflet-popup-content-wrapper {
-            border-radius: 16px !important;
+            border-radius: 12px !important;
             padding: 0 !important;
             background: #FFFFFF !important;
-            box-shadow: 0 15px 35px -5px rgba(15, 23, 42, 0.22), 0 0 0 1px rgba(15, 23, 42, 0.08) !important;
-            border: none !important;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12) !important;
+            border: 1px solid #E2E8F0 !important;
             overflow: hidden !important;
         }
         .leaflet-popup-content {
@@ -93,24 +89,23 @@
         }
         .leaflet-popup-tip {
             background: #FFFFFF !important;
-            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15) !important;
+            box-shadow: 0 2px 6px rgba(15, 23, 42, 0.1) !important;
         }
         .leaflet-container a.leaflet-popup-close-button {
             top: 8px !important;
             right: 8px !important;
-            width: 26px !important;
-            height: 26px !important;
-            background: rgba(255, 255, 255, 0.9) !important;
-            backdrop-filter: blur(4px) !important;
+            width: 28px !important;
+            height: 28px !important;
+            background: #FFFFFF !important;
             border-radius: 9999px !important;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2) !important;
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.15) !important;
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
-            color: #1E293B !important;
-            font: bold 14px/26px Arial, sans-serif !important;
+            color: #0F172A !important;
+            font: bold 14px/28px Arial, sans-serif !important;
             z-index: 30 !important;
-            border: none !important;
+            border: 1px solid #E2E8F0 !important;
             padding: 0 !important;
         }
         .leaflet-container a.leaflet-popup-close-button:hover {
@@ -136,93 +131,95 @@
         <div id="sidebarBackdrop" onclick="toggleSidebar()" class="fixed inset-0 bg-slate-900/50 z-40 hidden lg:hidden transition-opacity"></div>
 
         <!-- Left Sidebar Navigation -->
-        <aside id="mainSidebar" class="fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-[#E2E8F0] flex flex-col justify-between transform -translate-x-full lg:translate-x-0 transition-transform duration-200 ease-in-out shrink-0">
+        <aside id="mainSidebar" class="fixed inset-y-0 left-0 z-50 w-[264px] bg-white border-r border-[#E2E8F0] flex flex-col justify-between transform -translate-x-full lg:translate-x-0 transition-transform duration-200 ease-in-out shrink-0">
             <div>
                 <!-- Brand Top -->
-                <div class="h-16 flex items-center px-5 border-b border-[#E2E8F0] gap-3">
-                    <img src="{{ asset('images/logo-pin.png') }}" class="w-9 h-9 object-contain drop-shadow-xs shrink-0" alt="Logo SI-APPIK">
-                    <div class="leading-none">
-                        <a href="{{ url('/') }}" class="font-outfit font-black text-lg block hover:opacity-90 transition text-slate-900">
+                <div class="h-16 flex items-center px-4 border-b border-[#E2E8F0] gap-3">
+                    <div class="w-9 h-9 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] flex items-center justify-center shrink-0">
+                        <img src="{{ asset('images/logo-pin.png') }}" class="w-6 h-6 object-contain" alt="Logo SI-APPIK">
+                    </div>
+                    <div class="leading-none min-w-0">
+                        <a href="{{ url('/') }}" class="font-outfit font-bold text-base block hover:opacity-90 transition text-[#0F172A] tracking-tight">
                             SI-APPIK
                         </a>
-                        <span class="text-[9px] text-slate-600 font-bold uppercase tracking-wider block mt-1">Prasarana Kabupaten</span>
+                        <span class="text-[10px] text-[#475569] font-semibold uppercase tracking-wider block mt-1">Kab. Kolaka Utara</span>
                     </div>
                 </div>
 
                 <!-- Navigation List -->
                 <nav class="p-3 space-y-1">
-                    <div class="px-3 pt-2 pb-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                    <div class="px-3 pt-2 pb-1 text-[10px] font-bold uppercase tracking-wider text-[#64748B]">
                         Menu Utama
                     </div>
 
-                    <a href="{{ url('/') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold {{ request()->is('/') ? 'bg-blue-50 text-[#1E3A8A] font-bold' : 'text-slate-700 hover:bg-slate-50 hover:text-[#1E3A8A]' }} transition">
-                        <i data-lucide="map" class="w-4 h-4 shrink-0 {{ request()->is('/') ? 'text-[#1E3A8A]' : 'text-slate-400' }}"></i>
-                        <span class="whitespace-nowrap">Peta Sebaran Laporan</span>
+                    <a href="{{ url('/') }}" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-xs font-semibold {{ request()->is('/') ? 'bg-[#1E3A8A] text-white' : 'text-[#475569] hover:bg-[#F8FAFC] hover:text-[#0F172A]' }} transition">
+                        <i data-lucide="map" class="w-4 h-4 shrink-0 {{ request()->is('/') ? 'text-white' : 'text-[#64748B]' }}"></i>
+                        <span class="truncate">Peta Sebaran Laporan</span>
                     </a>
 
-                    <div class="px-3 pt-3 pb-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                    <div class="px-3 pt-3.5 pb-1 text-[10px] font-bold uppercase tracking-wider text-[#64748B]">
                         Portal Kerja
                     </div>
 
                     @if(auth()->user()->isSuperAdmin())
-                        <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold {{ request()->routeIs('admin.*') ? 'bg-blue-50 text-[#1E3A8A] font-bold' : 'text-slate-700 hover:bg-slate-50 hover:text-[#1E3A8A]' }} transition">
-                            <i data-lucide="shield" class="w-4 h-4 shrink-0 {{ request()->routeIs('admin.*') ? 'text-[#1E3A8A]' : 'text-slate-400' }}"></i>
-                            <span class="whitespace-nowrap">Pusat Kendali Super Admin</span>
+                        <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-xs font-semibold {{ request()->routeIs('admin.*') ? 'bg-[#1E3A8A] text-white' : 'text-[#475569] hover:bg-[#F8FAFC] hover:text-[#0F172A]' }} transition">
+                            <i data-lucide="shield" class="w-4 h-4 shrink-0 {{ request()->routeIs('admin.*') ? 'text-white' : 'text-[#64748B]' }}"></i>
+                            <span class="truncate">Pusat Kendali Super Admin</span>
                         </a>
                     @endif
 
                     @if(auth()->user()->isOperator() || auth()->user()->isSuperAdmin())
-                        <a href="{{ route('operator.dashboard') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold {{ request()->routeIs('operator.*') ? 'bg-blue-50 text-[#1E3A8A] font-bold' : 'text-slate-700 hover:bg-slate-50 hover:text-[#1E3A8A]' }} transition">
-                            <i data-lucide="clipboard-check" class="w-4 h-4 shrink-0 {{ request()->routeIs('operator.*') ? 'text-[#1E3A8A]' : 'text-slate-400' }}"></i>
-                            <span class="whitespace-nowrap">Pusat Kendali Operator</span>
+                        <a href="{{ route('operator.dashboard') }}" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-xs font-semibold {{ request()->routeIs('operator.*') ? 'bg-[#1E3A8A] text-white' : 'text-[#475569] hover:bg-[#F8FAFC] hover:text-[#0F172A]' }} transition">
+                            <i data-lucide="clipboard-check" class="w-4 h-4 shrink-0 {{ request()->routeIs('operator.*') ? 'text-white' : 'text-[#64748B]' }}"></i>
+                            <span class="truncate">Pusat Kendali Operator</span>
                         </a>
                     @endif
 
                     @if(auth()->user()->isBupati() || auth()->user()->isSuperAdmin())
-                        <a href="{{ route('bupati.dashboard') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold {{ request()->routeIs('bupati.*') ? 'bg-blue-50 text-[#1E3A8A] font-bold' : 'text-slate-700 hover:bg-slate-50 hover:text-[#1E3A8A]' }} transition">
-                            <i data-lucide="landmark" class="w-4 h-4 shrink-0 {{ request()->routeIs('bupati.*') ? 'text-[#1E3A8A]' : 'text-slate-400' }}"></i>
-                            <span class="whitespace-nowrap">Pusat Kendali Kepala Daerah</span>
+                        <a href="{{ route('bupati.dashboard') }}" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-xs font-semibold {{ request()->routeIs('bupati.*') ? 'bg-[#1E3A8A] text-white' : 'text-[#475569] hover:bg-[#F8FAFC] hover:text-[#0F172A]' }} transition">
+                            <i data-lucide="landmark" class="w-4 h-4 shrink-0 {{ request()->routeIs('bupati.*') ? 'text-white' : 'text-[#64748B]' }}"></i>
+                            <span class="truncate">Pusat Kendali Kepala Daerah</span>
                         </a>
                     @endif
 
                     @if(auth()->user()->isPetugas() || auth()->user()->isSuperAdmin())
-                        <a href="{{ route('petugas.dashboard') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold {{ request()->routeIs('petugas.*') ? 'bg-blue-50 text-[#1E3A8A] font-bold' : 'text-slate-700 hover:bg-slate-50 hover:text-[#1E3A8A]' }} transition">
-                            <i data-lucide="wrench" class="w-4 h-4 shrink-0 {{ request()->routeIs('petugas.*') ? 'text-[#1E3A8A]' : 'text-slate-400' }}"></i>
-                            <span class="whitespace-nowrap">Pusat Kendali Pekerja Lapangan</span>
+                        <a href="{{ route('petugas.dashboard') }}" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-xs font-semibold {{ request()->routeIs('petugas.*') ? 'bg-[#1E3A8A] text-white' : 'text-[#475569] hover:bg-[#F8FAFC] hover:text-[#0F172A]' }} transition">
+                            <i data-lucide="wrench" class="w-4 h-4 shrink-0 {{ request()->routeIs('petugas.*') ? 'text-white' : 'text-[#64748B]' }}"></i>
+                            <span class="truncate">Pusat Kendali Pekerja Lapangan</span>
                         </a>
                     @endif
                 </nav>
             </div>
 
-            <!-- Profile Tile (Sisakan Role & Nama Saja) -->
-            <div class="p-3 border-t border-[#E2E8F0] bg-slate-50/50">
-                <div class="p-2.5 rounded-xl bg-white border border-[#E2E8F0] flex items-center gap-3 shadow-xs">
-                    <div class="w-8 h-8 rounded-lg bg-[#1E3A8A]/10 text-[#1E3A8A] flex items-center justify-center font-bold text-xs shrink-0">
+            <!-- Profile Tile -->
+            <div class="p-3 border-t border-[#E2E8F0] bg-[#F8FAFC]">
+                <div class="p-2.5 rounded-lg bg-white border border-[#E2E8F0] flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-[#1E3A8A] text-white flex items-center justify-center font-outfit font-bold text-xs shrink-0">
                         {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                     </div>
-                    <div class="truncate">
-                        <span class="block text-xs font-bold text-slate-900 truncate">{{ auth()->user()->name }}</span>
-                        <span class="block text-[10px] font-semibold text-[#1E3A8A]">{{ auth()->user()->role }}</span>
+                    <div class="min-w-0">
+                        <span class="block text-xs font-bold text-[#0F172A] truncate">{{ auth()->user()->name }}</span>
+                        <span class="block text-[10px] font-semibold text-[#1E3A8A] uppercase tracking-wide">{{ auth()->user()->role }}</span>
                     </div>
                 </div>
             </div>
         </aside>
 
         <!-- Content Area -->
-        <div class="flex-1 flex flex-col min-w-0 lg:pl-72">
+        <div class="flex-1 flex flex-col min-w-0 lg:pl-[264px]">
             <!-- Top Header Bar -->
             <header class="sticky top-0 z-30 bg-white border-b border-[#E2E8F0] h-16 flex items-center justify-between px-4 sm:px-6">
                 <div class="flex items-center gap-3">
-                    <button onclick="toggleSidebar()" class="lg:hidden p-2 rounded-xl text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition">
+                    <button onclick="toggleSidebar()" class="lg:hidden p-2 rounded-lg text-[#475569] hover:text-[#0F172A] hover:bg-[#F8FAFC] border border-[#E2E8F0] transition">
                         <i data-lucide="menu" class="w-5 h-5"></i>
                     </button>
-                    <h1 class="font-outfit font-extrabold text-sm sm:text-base text-slate-900">
+                    <h1 class="font-outfit font-bold text-sm sm:text-base text-[#0F172A]">
                         @yield('header_title', 'Sistem Pengaduan')
                     </h1>
                 </div>
 
                 <div class="flex items-center gap-3">
-                    <a href="{{ route('logout') }}" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-red-50 text-slate-600 hover:text-red-600 text-xs font-bold transition flex items-center gap-1.5 border border-slate-200">
+                    <a href="{{ route('logout') }}" class="px-3 py-1.5 rounded-lg bg-[#F8FAFC] hover:bg-red-50 text-[#475569] hover:text-red-600 text-xs font-semibold transition flex items-center gap-1.5 border border-[#E2E8F0]">
                         <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
                         <span>Keluar</span>
                     </a>
@@ -267,8 +264,8 @@
                 @yield('content')
             </main>
 
-            <footer class="border-t border-[#E2E8F0] bg-white py-4 px-6 text-center text-xs text-slate-400">
-                © 2026 Pemerintah Kabupaten • Sistem Pengaduan Infrastruktur
+            <footer class="border-t border-[#E2E8F0] bg-white py-4 px-6 text-center text-xs text-slate-600">
+                © 2026 Pemerintah Kabupaten Kolaka Utara • Dinas Pekerjaan Umum dan Penataan Ruang (PUPR)
             </footer>
         </div>
     </div>
@@ -277,48 +274,155 @@
     <!-- Halaman Publik (Tanpa Sidebar) -->
     <div class="min-h-full flex flex-col justify-between">
         @if(!request()->routeIs('login'))
-            <!-- Header Publik Ringkas Civic Clarity -->
-            <header class="sticky top-0 z-30 bg-white border-b border-[#E2E8F0] w-full">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-[72px] py-2.5 flex items-center justify-between gap-3">
-                    <!-- Brand SI-APPIK -->
-                    <a href="{{ url('/') }}" class="flex items-center gap-3 min-w-0">
-                        <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] flex items-center justify-center p-1.5 shrink-0">
+            <!-- Public Top Navbar (Putih Bersih, Proporsional & Responsif dengan Burger Menu) -->
+            <header class="sticky top-0 z-40 bg-white text-[#0F172A] border-b border-[#E2E8F0] w-full">
+                <div class="max-w-[1440px] mx-auto px-5 sm:px-8 lg:px-10 h-16 flex items-center justify-between gap-4">
+                    <!-- Brand & Kepanjangan -->
+                    <a href="{{ url('/') }}#top" class="flex items-center gap-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1E3A8A] rounded-lg min-w-0">
+                        <div class="w-9 h-9 rounded-lg bg-white border border-[#E2E8F0] flex items-center justify-center p-1 shrink-0">
                             <img src="{{ asset('images/logo-pin.png') }}" class="w-full h-full object-contain" alt="Logo SI-APPIK">
                         </div>
-                        <div class="leading-tight min-w-0">
-                            <span class="font-outfit font-extrabold text-xl sm:text-2xl text-[#0F172A] tracking-tight block">
+                        <div class="leading-none min-w-0">
+                            <span class="font-outfit font-bold text-lg sm:text-xl text-[#0F172A] tracking-tight block">
                                 SI-APPIK
                             </span>
-                            <span class="hidden sm:block text-xs text-[#475569] font-medium truncate">
-                                Layanan Aduan Infrastruktur • Kab. Kolaka Utara
+                            <span class="hidden lg:block text-[11px] text-[#475569] font-medium mt-0.5 truncate">
+                                Sistem Informasi Aduan &amp; Penanganan Prasarana Infrastruktur Kabupaten Kolaka Utara
                             </span>
                         </div>
                     </a>
 
-                    <!-- Aksi Utama: Unduh Aplikasi Lapor & Masuk Petugas -->
-                    <div class="flex items-center gap-2 sm:gap-3 shrink-0">
-                        <a href="#download-app" class="inline-flex items-center justify-center gap-2 min-h-[44px] px-3.5 sm:px-4 py-2 rounded-lg bg-[#D97706] hover:bg-[#F59E0B] text-[#0F172A] font-bold text-xs sm:text-sm transition whitespace-nowrap">
-                            <i data-lucide="smartphone" class="w-4 h-4 shrink-0"></i>
-                            <span class="hidden sm:inline">Unduh Aplikasi Lapor</span>
-                            <span class="sm:hidden">Unduh App</span>
-                        </a>
+                    <!-- Nav Links + CTA + Mobile Burger -->
+                    <div class="flex items-center gap-3 lg:gap-6 shrink-0">
+                        <nav id="publicDesktopNav" class="hidden md:flex items-center gap-5 lg:gap-6 text-[13px] font-semibold text-[#475569]" aria-label="Navigasi Utama">
+                            <a href="{{ url('/') }}#top" data-nav-target="top" class="public-nav-link relative py-1.5 text-[#1E3A8A] border-b-2 border-[#1E3A8A] transition-colors duration-200">Beranda</a>
+                            <a href="{{ url('/') }}#mapSectionContainer" data-nav-target="mapSectionContainer" class="public-nav-link relative py-1.5 border-b-2 border-transparent hover:text-[#1E3A8A] hover:border-[#93C5FD] transition-colors duration-200">Peta Sebaran</a>
+                            <a href="{{ url('/') }}#kategori-infrastruktur" data-nav-target="kategori-infrastruktur" class="public-nav-link relative py-1.5 border-b-2 border-transparent hover:text-[#1E3A8A] hover:border-[#93C5FD] transition-colors duration-200 whitespace-nowrap">Kategori &amp; Layanan</a>
+                            <a href="{{ url('/') }}#download-app" data-nav-target="download-app" class="public-nav-link relative py-1.5 border-b-2 border-transparent hover:text-[#1E3A8A] hover:border-[#93C5FD] transition-colors duration-200">Unduh Aplikasi</a>
+                        </nav>
 
                         @auth
                             <a href="{{ auth()->user()->isSuperAdmin() ? route('admin.dashboard') : (auth()->user()->isOperator() ? route('operator.dashboard') : (auth()->user()->isBupati() ? route('bupati.dashboard') : route('petugas.dashboard'))) }}" 
-                                class="inline-flex items-center justify-center gap-2 min-h-[44px] px-3.5 sm:px-4 py-2 rounded-lg bg-[#1E3A8A] text-white font-semibold text-xs sm:text-sm hover:bg-[#172554] transition whitespace-nowrap">
+                                class="px-4 h-10 rounded-lg bg-[#1E3A8A] hover:bg-[#172554] text-white font-semibold text-xs sm:text-[13px] transition inline-flex items-center gap-2 whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1E3A8A]">
                                 <i data-lucide="layout-dashboard" class="w-4 h-4 shrink-0"></i>
-                                <span>Dashboard</span>
+                                <span class="whitespace-nowrap">Dashboard Petugas</span>
                             </a>
                         @else
                             <a href="{{ route('login') }}" 
-                                class="inline-flex items-center justify-center gap-1.5 min-h-[44px] px-3.5 sm:px-4 py-2 rounded-lg bg-white border border-[#CBD5E1] text-[#1E3A8A] font-semibold text-xs sm:text-sm hover:bg-[#F8FAFC] transition whitespace-nowrap">
+                                class="px-4 h-10 rounded-lg bg-[#1E3A8A] hover:bg-[#172554] text-white font-semibold text-xs sm:text-[13px] transition inline-flex items-center gap-1.5 whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1E3A8A]">
                                 <i data-lucide="log-in" class="w-4 h-4 shrink-0"></i>
-                                <span>Masuk Petugas</span>
+                                <span class="whitespace-nowrap">Masuk Petugas</span>
                             </a>
                         @endauth
+
+                        <!-- Burger Menu Button (Mobile / Tablet) -->
+                        <button type="button" id="publicBurgerBtn" onclick="togglePublicMobileMenu()" aria-label="Buka Menu Navigasi" aria-expanded="false" aria-controls="publicMobileMenu"
+                            class="md:hidden w-10 h-10 rounded-lg border border-[#E2E8F0] bg-white hover:bg-[#F8FAFC] text-[#0F172A] flex items-center justify-center transition cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1E3A8A]">
+                            <i id="publicBurgerIcon" data-lucide="menu" class="w-5 h-5"></i>
+                        </button>
                     </div>
                 </div>
+
+                <!-- Mobile Dropdown Menu -->
+                <div id="publicMobileMenu" class="hidden md:hidden bg-white border-t border-[#E2E8F0] px-5 py-3 space-y-1">
+                    <a href="{{ url('/') }}#top" data-nav-target="top" onclick="closePublicMobileMenu()" class="public-mobile-link block px-3 py-2.5 rounded-lg text-sm font-semibold text-[#1E3A8A] bg-[#F8FAFC] transition-colors">Beranda</a>
+                    <a href="{{ url('/') }}#mapSectionContainer" data-nav-target="mapSectionContainer" onclick="closePublicMobileMenu()" class="public-mobile-link block px-3 py-2.5 rounded-lg text-sm font-medium text-[#0F172A] hover:bg-[#F8FAFC] hover:text-[#1E3A8A] transition-colors">Peta Sebaran</a>
+                    <a href="{{ url('/') }}#kategori-infrastruktur" data-nav-target="kategori-infrastruktur" onclick="closePublicMobileMenu()" class="public-mobile-link block px-3 py-2.5 rounded-lg text-sm font-medium text-[#0F172A] hover:bg-[#F8FAFC] hover:text-[#1E3A8A] transition-colors">Kategori &amp; Layanan</a>
+                    <a href="{{ url('/') }}#download-app" data-nav-target="download-app" onclick="closePublicMobileMenu()" class="public-mobile-link block px-3 py-2.5 rounded-lg text-sm font-medium text-[#0F172A] hover:bg-[#F8FAFC] hover:text-[#1E3A8A] transition-colors">Unduh Aplikasi</a>
+                </div>
             </header>
+            <script>
+                function togglePublicMobileMenu() {
+                    const menu = document.getElementById('publicMobileMenu');
+                    const btn = document.getElementById('publicBurgerBtn');
+                    const icon = document.getElementById('publicBurgerIcon');
+                    if (!menu || !btn) return;
+                    const isOpen = !menu.classList.contains('hidden');
+                    menu.classList.toggle('hidden', isOpen);
+                    btn.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+                    if (icon && window.lucide) {
+                        icon.setAttribute('data-lucide', isOpen ? 'menu' : 'x');
+                        lucide.createIcons({ root: btn });
+                    }
+                }
+                function closePublicMobileMenu() {
+                    const menu = document.getElementById('publicMobileMenu');
+                    const btn = document.getElementById('publicBurgerBtn');
+                    const icon = document.getElementById('publicBurgerIcon');
+                    if (menu) menu.classList.add('hidden');
+                    if (btn) btn.setAttribute('aria-expanded', 'false');
+                    if (icon && window.lucide) {
+                        icon.setAttribute('data-lucide', 'menu');
+                        lucide.createIcons({ root: btn });
+                    }
+                }
+
+                // Scroll-Spy Navbar (Desktop & Mobile)
+                document.addEventListener('DOMContentLoaded', () => {
+                    const sectionIds = ['top', 'mapSectionContainer', 'kategori-infrastruktur', 'download-app'];
+                    const sections = sectionIds.map(id => document.getElementById(id)).filter(Boolean);
+                    if (!sections.length) return;
+
+                    const setActiveNav = (activeId) => {
+                        document.querySelectorAll('.public-nav-link').forEach(link => {
+                            const isMatch = link.getAttribute('data-nav-target') === activeId;
+                            if (isMatch) {
+                                link.classList.add('text-[#1E3A8A]', 'border-[#1E3A8A]');
+                                link.classList.remove('border-transparent');
+                            } else {
+                                link.classList.remove('text-[#1E3A8A]', 'border-[#1E3A8A]');
+                                link.classList.add('border-transparent');
+                            }
+                        });
+                        document.querySelectorAll('.public-mobile-link').forEach(link => {
+                            const isMatch = link.getAttribute('data-nav-target') === activeId;
+                            if (isMatch) {
+                                link.classList.add('text-[#1E3A8A]', 'bg-[#F8FAFC]', 'font-semibold');
+                                link.classList.remove('text-[#0F172A]', 'font-medium');
+                            } else {
+                                link.classList.remove('text-[#1E3A8A]', 'bg-[#F8FAFC]', 'font-semibold');
+                                link.classList.add('text-[#0F172A]', 'font-medium');
+                            }
+                        });
+                    };
+
+                    const updateOnScroll = () => {
+                        let currentId = 'top';
+                        for (const sec of sections) {
+                            const rect = sec.getBoundingClientRect();
+                            if (rect.top <= 140) {
+                                currentId = sec.id;
+                            }
+                        }
+                        const docHeight = document.documentElement.scrollHeight;
+                        if (window.scrollY > 100 && docHeight > window.innerHeight + 100 && (window.innerHeight + window.scrollY) >= docHeight - 30) {
+                            currentId = sections[sections.length - 1].id;
+                        }
+                        setActiveNav(currentId);
+                    };
+
+                    document.querySelectorAll('.public-nav-link, .public-mobile-link').forEach(link => {
+                        link.addEventListener('click', (e) => {
+                            const targetId = link.getAttribute('data-nav-target');
+                            const targetEl = targetId ? document.getElementById(targetId) : null;
+                            if (targetEl && (window.location.pathname === '/' || window.location.pathname === '')) {
+                                e.preventDefault();
+                                setActiveNav(targetId);
+                                targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                if (history.replaceState) {
+                                    history.replaceState(null, '', '#' + targetId);
+                                }
+                            } else if (targetId) {
+                                setActiveNav(targetId);
+                            }
+                        });
+                    });
+
+                    window.addEventListener('scroll', updateOnScroll, { passive: true });
+                    document.addEventListener('scroll', updateOnScroll, { passive: true, capture: true });
+                    updateOnScroll();
+                });
+            </script>
         @endif
 
         <!-- Alerts -->
@@ -361,16 +465,16 @@
             @yield('content')
         </main>
 
-        <footer class="border-t border-[#E2E8F0] bg-white py-6 px-4 sm:px-6 text-xs text-[#475569]">
-            <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
-                <span>© 2026 Dinas Pekerjaan Umum dan Penataan Ruang (PUPR) • Kabupaten Kolaka Utara</span>
+        <footer class="border-t border-[#E2E8F0] bg-white py-6 px-6 text-center text-xs text-[#475569]">
+            <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+                <span>© 2026 Pemerintah Kabupaten Kolaka Utara • Dinas Pekerjaan Umum dan Penataan Ruang (PUPR)</span>
                 <div class="flex items-center gap-4 text-xs font-semibold text-[#475569]">
-                    <a href="#download-app" class="text-[#1E3A8A] hover:underline flex items-center gap-1.5 font-bold py-1">
+                    <a href="#download-app" class="text-[#1E3A8A] hover:text-[#172554] flex items-center gap-1.5 transition font-bold">
                         <i data-lucide="smartphone" class="w-3.5 h-3.5 text-[#1E3A8A]"></i>
-                        <span>Aplikasi Lapor Warga</span>
+                        <span>Aplikasi Warga</span>
                     </a>
-                    <a href="https://play.google.com" target="_blank" rel="noopener noreferrer" class="hover:text-[#0F172A] py-1">Google Play</a>
-                    <a href="https://www.apple.com/app-store/" target="_blank" rel="noopener noreferrer" class="hover:text-[#0F172A] py-1">App Store</a>
+                    <a href="https://play.google.com" target="_blank" rel="noopener noreferrer" class="hover:text-[#1E3A8A] transition">Google Play</a>
+                    <a href="https://www.apple.com/app-store/" target="_blank" rel="noopener noreferrer" class="hover:text-[#1E3A8A] transition">App Store</a>
                 </div>
             </div>
         </footer>

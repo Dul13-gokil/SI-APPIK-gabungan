@@ -8,167 +8,178 @@
     $todayStr = \Carbon\Carbon::now('Asia/Makassar')->locale('id')->isoFormat('dddd, D MMMM Y • HH:mm:ss') . ' WITA';
 @endphp
 
-<div class="py-4 sm:py-6 space-y-6">
+<div class="py-4 sm:py-6 space-y-5">
 
-    <!-- Header Eksekutif -->
+    <!-- 1. HEADER SECTION (Seragam Desain Admin) -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
         <div>
-            <h2 class="font-outfit font-extrabold text-lg sm:text-xl text-slate-900 leading-tight">
-                Tata Kelola Pengaduan & Infrastruktur Daerah
+            <h2 class="font-outfit font-bold text-lg sm:text-xl text-[#0F172A] leading-tight">
+                Pemantauan Eksekutif Pengaduan &amp; Infrastruktur Daerah
             </h2>
-            <p class="text-xs text-slate-500 mt-0.5">
-                Pemantauan berkala penanganan pengaduan fisik jalan, jembatan, dan fasilitas umum kabupaten.
+            <p class="text-xs text-[#475569] mt-0.5">
+                Pantau sebaran laporan, progres penanganan regu lapangan, serta rekap arsip infrastruktur Kabupaten Kolaka Utara.
             </p>
         </div>
         <div class="flex items-center gap-2 shrink-0">
-            <span class="px-3.5 py-1.5 rounded-xl bg-white text-slate-700 text-xs font-semibold border border-slate-200 flex items-center gap-2 shadow-2xs">
+            <span class="px-3.5 py-2 rounded-lg bg-white text-[#0F172A] text-xs font-semibold border border-[#E2E8F0] flex items-center gap-2">
                 <i data-lucide="clock" class="w-4 h-4 text-[#1E3A8A]"></i>
                 <span class="live-wita-clock">{{ $todayStr }}</span>
             </span>
         </div>
     </div>
 
-    <!-- Ringkasan KPI Eksekutif -->
-    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3">
+    <!-- 2. RINGKASAN KPI EKSEKUTIF (Flat Bordered Seragam Admin) -->
+    <div class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-7 gap-2 sm:gap-3">
         <!-- 1. Total Aduan -->
-        <div class="card-white p-4 rounded-2xl bg-white border border-[#E2E8F0] shadow-2xs hover:shadow-md transition flex flex-col justify-between">
-            <div class="flex items-center justify-between">
-                <span class="text-[11px] text-slate-500 font-bold uppercase tracking-wider">TOTAL ADUAN</span>
-                <div class="w-8 h-8 rounded-xl bg-blue-50/80 text-[#1E3A8A] border border-blue-100/70 flex items-center justify-center">
-                    <i data-lucide="inbox" class="w-4 h-4"></i>
+        <div class="p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
+            <div class="flex items-center justify-between gap-1.5">
+                <span class="text-[10px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-wider truncate">Total Aduan</span>
+                <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-blue-50 text-[#1E3A8A] border border-blue-200 flex items-center justify-center shrink-0">
+                    <i data-lucide="inbox" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                 </div>
             </div>
-            <div class="mt-2">
-                <div class="font-outfit text-2xl sm:text-3xl font-extrabold text-slate-900 leading-tight">
+            <div class="mt-1.5 sm:mt-2">
+                <div class="font-outfit text-xl sm:text-2xl font-bold text-[#0F172A] leading-tight">
                     {{ $summary['total'] }}
                 </div>
-                <span class="text-[11px] text-slate-500 font-medium mt-0.5 block">Laporan masuk</span>
+                <span class="hidden sm:block text-[11px] text-[#475569] font-medium mt-0.5">Laporan masuk</span>
             </div>
         </div>
 
         <!-- 2. Menunggu -->
-        <div class="card-white p-4 rounded-2xl bg-white border border-[#E2E8F0] shadow-2xs hover:shadow-md transition flex flex-col justify-between">
-            <div class="flex items-center justify-between">
-                <span class="text-[11px] text-slate-500 font-bold uppercase tracking-wider">MENUNGGU</span>
-                <div class="w-8 h-8 rounded-xl bg-blue-50/80 text-[#1E3A8A] border border-blue-100/70 flex items-center justify-center">
-                    <i data-lucide="clock" class="w-4 h-4"></i>
+        <div class="p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
+            <div class="flex items-center justify-between gap-1.5">
+                <span class="text-[10px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-wider truncate">Menunggu</span>
+                <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-red-50 text-[#EF4444] border border-red-200 flex items-center justify-center shrink-0">
+                    <i data-lucide="clock" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                 </div>
             </div>
-            <div class="mt-2">
-                <div class="font-outfit text-2xl sm:text-3xl font-extrabold text-slate-900 leading-tight">
+            <div class="mt-1.5 sm:mt-2">
+                <div class="font-outfit text-xl sm:text-2xl font-bold text-[#0F172A] leading-tight">
                     {{ $summary['pending'] }}
                 </div>
-                <span class="text-[11px] text-slate-500 font-medium mt-0.5 block">Menunggu verifikasi</span>
+                <span class="hidden sm:block text-[11px] text-[#475569] font-medium mt-0.5">Perlu verifikasi</span>
             </div>
         </div>
 
         <!-- 3. Ditugaskan -->
-        <div class="card-white p-4 rounded-2xl bg-white border border-[#E2E8F0] shadow-2xs hover:shadow-md transition flex flex-col justify-between">
-            <div class="flex items-center justify-between">
-                <span class="text-[11px] text-slate-500 font-bold uppercase tracking-wider">DITUGASKAN</span>
-                <div class="w-8 h-8 rounded-xl bg-blue-50/80 text-[#1E3A8A] border border-blue-100/70 flex items-center justify-center">
-                    <i data-lucide="send" class="w-4 h-4"></i>
+        <div class="p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
+            <div class="flex items-center justify-between gap-1.5">
+                <span class="text-[10px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-wider truncate">Ditugaskan</span>
+                <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-blue-50 text-[#1E40AF] border border-blue-200 flex items-center justify-center shrink-0">
+                    <i data-lucide="send" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                 </div>
             </div>
-            <div class="mt-2">
-                <div class="font-outfit text-2xl sm:text-3xl font-extrabold text-slate-900 leading-tight">
+            <div class="mt-1.5 sm:mt-2">
+                <div class="font-outfit text-xl sm:text-2xl font-bold text-[#0F172A] leading-tight">
                     {{ $summary['dispatched'] }}
                 </div>
-                <span class="text-[11px] text-slate-500 font-medium mt-0.5 block">Ditugaskan ke petugas</span>
+                <span class="hidden sm:block text-[11px] text-[#475569] font-medium mt-0.5">Ke regu lapangan</span>
             </div>
         </div>
 
         <!-- 4. Dikerjakan -->
-        <div class="card-white p-4 rounded-2xl bg-white border border-[#E2E8F0] shadow-2xs hover:shadow-md transition flex flex-col justify-between">
-            <div class="flex items-center justify-between">
-                <span class="text-[11px] text-slate-500 font-bold uppercase tracking-wider">DIKERJAKAN</span>
-                <div class="w-8 h-8 rounded-xl bg-blue-50/80 text-[#1E3A8A] border border-blue-100/70 flex items-center justify-center">
-                    <i data-lucide="hard-hat" class="w-4 h-4"></i>
+        <div class="p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
+            <div class="flex items-center justify-between gap-1.5">
+                <span class="text-[10px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-wider truncate">Dikerjakan</span>
+                <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-amber-50 text-[#D97706] border border-amber-200 flex items-center justify-center shrink-0">
+                    <i data-lucide="hard-hat" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                 </div>
             </div>
-            <div class="mt-2">
-                <div class="font-outfit text-2xl sm:text-3xl font-extrabold text-slate-900 leading-tight">
+            <div class="mt-1.5 sm:mt-2">
+                <div class="font-outfit text-xl sm:text-2xl font-bold text-[#0F172A] leading-tight">
                     {{ $summary['in_progress'] }}
                 </div>
-                <span class="text-[11px] text-slate-500 font-medium mt-0.5 block">Fisik di lapangan</span>
+                <span class="hidden sm:block text-[11px] text-[#475569] font-medium mt-0.5">Sedang ditangani</span>
             </div>
         </div>
 
         <!-- 5. Menunggu Validasi -->
-        <div class="card-white p-4 rounded-2xl bg-white border border-[#E2E8F0] shadow-2xs hover:shadow-md transition flex flex-col justify-between">
-            <div class="flex items-center justify-between">
-                <span class="text-[11px] text-slate-500 font-bold uppercase tracking-wider">VALIDASI</span>
-                <div class="w-8 h-8 rounded-xl bg-blue-50/80 text-[#1E3A8A] border border-blue-100/70 flex items-center justify-center">
-                    <i data-lucide="clock-3" class="w-4 h-4"></i>
+        <div class="p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
+            <div class="flex items-center justify-between gap-1.5">
+                <span class="text-[10px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-wider truncate">Validasi</span>
+                <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-amber-50 text-[#D97706] border border-amber-200 flex items-center justify-center shrink-0">
+                    <i data-lucide="clock-3" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                 </div>
             </div>
-            <div class="mt-2">
-                <div class="font-outfit text-2xl sm:text-3xl font-extrabold text-slate-900 leading-tight">
+            <div class="mt-1.5 sm:mt-2">
+                <div class="font-outfit text-xl sm:text-2xl font-bold text-[#0F172A] leading-tight">
                     {{ $summary['waiting_verification'] ?? 0 }}
                 </div>
-                <span class="text-[11px] text-slate-500 font-medium mt-0.5 block">Menunggu validasi</span>
+                <span class="hidden sm:block text-[11px] text-[#475569] font-medium mt-0.5">Uji hasil kerja</span>
             </div>
         </div>
 
         <!-- 6. Selesai -->
-        <div class="card-white p-4 rounded-2xl bg-white border border-[#E2E8F0] shadow-2xs hover:shadow-md transition flex flex-col justify-between">
-            <div class="flex items-center justify-between">
-                <span class="text-[11px] text-slate-500 font-bold uppercase tracking-wider">SELESAI</span>
-                <div class="w-8 h-8 rounded-xl bg-blue-50/80 text-[#1E3A8A] border border-blue-100/70 flex items-center justify-center">
-                    <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+        <div class="p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
+            <div class="flex items-center justify-between gap-1.5">
+                <span class="text-[10px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-wider truncate">Selesai</span>
+                <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-emerald-50 text-[#10B981] border border-emerald-200 flex items-center justify-center shrink-0">
+                    <i data-lucide="check-circle-2" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                 </div>
             </div>
-            <div class="mt-2">
-                <div class="font-outfit text-2xl sm:text-3xl font-extrabold text-slate-900 leading-tight">
+            <div class="mt-1.5 sm:mt-2">
+                <div class="font-outfit text-xl sm:text-2xl font-bold text-[#0F172A] leading-tight">
                     {{ $summary['completed'] }}
                 </div>
-                <span class="text-[11px] text-slate-500 font-medium mt-0.5 block">Tuntas diperbaiki</span>
+                <span class="hidden sm:block text-[11px] text-[#475569] font-medium mt-0.5">Tuntas diperbaiki</span>
             </div>
         </div>
 
         <!-- 7. Ditolak -->
-        <div class="card-white p-4 rounded-2xl bg-white border border-[#E2E8F0] shadow-2xs hover:shadow-md transition flex flex-col justify-between">
-            <div class="flex items-center justify-between">
-                <span class="text-[11px] text-slate-500 font-bold uppercase tracking-wider">DITOLAK</span>
-                <div class="w-8 h-8 rounded-xl bg-blue-50/80 text-[#1E3A8A] border border-blue-100/70 flex items-center justify-center">
-                    <i data-lucide="x-circle" class="w-4 h-4"></i>
+        <div class="col-span-3 sm:col-span-1 p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
+            <div class="flex items-center justify-between gap-1.5">
+                <span class="text-[10px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-wider truncate">Ditolak</span>
+                <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-red-50 text-[#DC2626] border border-red-200 flex items-center justify-center shrink-0">
+                    <i data-lucide="x-circle" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                 </div>
             </div>
-            <div class="mt-2">
-                <div class="font-outfit text-2xl sm:text-3xl font-extrabold text-slate-900 leading-tight">
+            <div class="mt-1.5 sm:mt-2">
+                <div class="font-outfit text-xl sm:text-2xl font-bold text-[#0F172A] leading-tight">
                     {{ $summary['rejected'] }}
                 </div>
-                <span class="text-[11px] text-slate-500 font-medium mt-0.5 block">Tidak memenuhi syarat</span>
+                <span class="hidden sm:block text-[11px] text-[#475569] font-medium mt-0.5">Tidak memenuhi syarat</span>
             </div>
         </div>
     </div>
 
-    <!-- Navigasi Tab Eksekutif -->
-    <div class="w-full bg-slate-100/90 p-1.5 rounded-2xl border border-slate-200/80 shadow-2xs">
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-1.5 w-full">
-            <!-- 1. Tab Peta Spasial & Analitik Eksekutif -->
-            <button type="button" onclick="switchBupatiTab('executive')" id="tabBtn-executive"
-                class="bupati-tab-btn w-full py-2.5 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 bg-white text-[#1E3A8A] shadow-xs">
-                <i data-lucide="map" class="w-4 h-4 shrink-0"></i>
-                <span class="truncate">Peta Spasial & Analitik Eksekutif</span>
-            </button>
+    <!-- 3. MENU TAB EKSEKUTIF (TERSTRUKTUR SERAGAM ADMIN) -->
+    <div class="grid grid-cols-3 gap-2 sm:gap-2.5 w-full">
+        <!-- 1. Tab Peta Spasial & Analitik -->
+        <button type="button" onclick="switchBupatiTab('executive')" id="tabBtn-executive"
+            class="bupati-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-start gap-2 sm:gap-2.5 cursor-pointer bg-[#1E3A8A] text-white border-[#1E3A8A]">
+            <i data-lucide="map" class="w-4 h-4 shrink-0 mt-0.5 text-current"></i>
+            <div class="min-w-0 flex-1">
+                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Peta &amp; Analitik</span>
+                <span class="tab-sub hidden sm:block text-[10px] mt-0.5 truncate text-blue-100">Sebaran wilayah &amp; grafik</span>
+            </div>
+        </button>
 
-            <!-- 2. Tab Daftar Seluruh Pengaduan -->
-            <button type="button" onclick="switchBupatiTab('complaints')" id="tabBtn-complaints"
-                class="bupati-tab-btn w-full py-2.5 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900 hover:bg-white/60">
-                <i data-lucide="layers" class="w-4 h-4 shrink-0"></i>
-                <span class="truncate">Daftar Seluruh Pengaduan</span>
-                <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-slate-200/70 text-slate-700">{{ $allComplaints->count() }}</span>
-            </button>
+        <!-- 2. Tab Daftar Seluruh Pengaduan -->
+        <button type="button" onclick="switchBupatiTab('complaints')" id="tabBtn-complaints"
+            class="bupati-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-start gap-2 sm:gap-2.5 cursor-pointer bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]">
+            <i data-lucide="layers" class="w-4 h-4 shrink-0 mt-0.5 text-current"></i>
+            <div class="min-w-0 flex-1">
+                <div class="flex items-center justify-between gap-1">
+                    <span class="text-[11px] sm:text-xs font-bold truncate leading-tight">Semua Pengaduan</span>
+                    <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 bg-blue-50 text-[#1E3A8A] border border-blue-200">{{ $allComplaints->count() }}</span>
+                </div>
+                <span class="tab-sub hidden sm:block text-[10px] mt-0.5 truncate text-[#475569]">Monitor lintas status</span>
+            </div>
+        </button>
 
-            <!-- 3. Tab Arsip Laporan (Selesai & Ditolak Sesuai Gambar 2) -->
-            <button type="button" onclick="switchBupatiTab('archive')" id="tabBtn-archive"
-                class="bupati-tab-btn w-full py-2.5 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900 hover:bg-white/60">
-                <i data-lucide="archive" class="w-4 h-4 shrink-0"></i>
-                <span class="truncate">Arsip Laporan</span>
-                <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-slate-200/70 text-slate-700">{{ $archivedComplaints->count() }}</span>
-            </button>
-        </div>
+        <!-- 3. Tab Arsip Laporan -->
+        <button type="button" onclick="switchBupatiTab('archive')" id="tabBtn-archive"
+            class="bupati-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-start gap-2 sm:gap-2.5 cursor-pointer bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]">
+            <i data-lucide="archive" class="w-4 h-4 shrink-0 mt-0.5 text-current"></i>
+            <div class="min-w-0 flex-1">
+                <div class="flex items-center justify-between gap-1">
+                    <span class="text-[11px] sm:text-xs font-bold truncate leading-tight">Arsip Laporan</span>
+                    <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 bg-blue-50 text-[#1E3A8A] border border-blue-200">{{ $archivedComplaints->count() }}</span>
+                </div>
+                <span class="tab-sub hidden sm:block text-[10px] mt-0.5 truncate text-[#475569]">Selesai &amp; ditolak</span>
+            </div>
+        </button>
     </div>
 
     <!-- Tab 1: Peta Spasial & Analitik Eksekutif -->
@@ -368,62 +379,84 @@
                         class="w-full pl-8 pr-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800 placeholder-slate-400 focus:outline-hidden focus:ring-1 focus:ring-[#1E3A8A] focus:border-[#1E3A8A] focus:bg-white transition">
                 </div>
 
-                <!-- Filter Controls (Sejajar Satu Baris Tanpa Turun ke Bawah) -->
-                <div class="flex items-center gap-1.5 w-full sm:w-auto shrink-0 flex-nowrap overflow-x-auto pb-1 sm:pb-0">
+                <!-- Filter Controls (Kompak 2-Kolom di Mobile, Rapi Tanpa Scroll Horizontal) -->
+                <div class="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 w-full sm:w-auto">
                     <!-- Dropdown Kategori -->
-                    <div class="flex items-center gap-1 text-xs text-slate-500 shrink-0 font-medium whitespace-nowrap">
-                        <i data-lucide="layers" class="w-3.5 h-3.5 text-[#1E3A8A]"></i>
-                        <span>Filter Kategori:</span>
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-1 min-w-0">
+                        <div class="flex items-center gap-1 text-[11px] sm:text-xs text-slate-500 shrink-0 font-medium whitespace-nowrap">
+                            <i data-lucide="layers" class="w-3.5 h-3.5 text-[#1E3A8A]"></i>
+                            <span>Kategori:</span>
+                        </div>
+                        <select id="bupatiCategorySelect" onchange="filterBupatiTable()" 
+                            class="w-full sm:w-auto text-xs font-semibold rounded-xl border border-slate-200 py-1.5 px-2 bg-slate-50 text-slate-700 focus:outline-none focus:border-[#1E3A8A] focus:bg-white transition">
+                            <option value="ALL">Semua Kategori</option>
+                            @foreach($categories as $cat)
+                                <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                            @endforeach
+                        </select>
                     </div>
-                    <select id="bupatiCategorySelect" onchange="filterBupatiTable()" 
-                        class="text-xs font-semibold rounded-xl border border-slate-200 py-1.5 px-2 bg-slate-50 text-slate-700 focus:outline-none focus:border-[#1E3A8A] focus:bg-white transition shrink-0">
-                        <option value="ALL">Semua Kategori</option>
-                        @foreach($categories as $cat)
-                            <option value="{{ $cat->id }}">{{ $cat->name }}</option>
-                        @endforeach
-                    </select>
 
                     <!-- Dropdown Tipe Laporan (Kerusakan Ringan / Berat) -->
-                    <div class="flex items-center gap-1 text-xs text-slate-500 shrink-0 font-medium whitespace-nowrap">
-                        <i data-lucide="git-commit" class="w-3.5 h-3.5 text-[#1E3A8A]"></i>
-                        <span>Tipe Laporan:</span>
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-1 min-w-0">
+                        <div class="flex items-center gap-1 text-[11px] sm:text-xs text-slate-500 shrink-0 font-medium whitespace-nowrap">
+                            <i data-lucide="git-commit" class="w-3.5 h-3.5 text-[#1E3A8A]"></i>
+                            <span>Tipe:</span>
+                        </div>
+                        <select id="bupatiDamageTypeSelect" onchange="filterBupatiTable()" 
+                            class="w-full sm:w-auto text-xs font-semibold rounded-xl border border-slate-200 py-1.5 px-2 bg-slate-50 text-slate-700 focus:outline-none focus:border-[#1E3A8A] focus:bg-white transition">
+                            <option value="ALL">Semua Tipe</option>
+                            <option value="minor">Kerusakan Ringan</option>
+                            <option value="major">Kerusakan Berat</option>
+                        </select>
                     </div>
-                    <select id="bupatiDamageTypeSelect" onchange="filterBupatiTable()" 
-                        class="text-xs font-semibold rounded-xl border border-slate-200 py-1.5 px-2 bg-slate-50 text-slate-700 focus:outline-none focus:border-[#1E3A8A] focus:bg-white transition shrink-0">
-                        <option value="ALL">Semua Tipe</option>
-                        <option value="minor">Kerusakan Ringan</option>
-                        <option value="major">Kerusakan Berat</option>
-                    </select>
 
                     <!-- Dropdown Status -->
-                    <div class="flex items-center gap-1 text-xs text-slate-500 shrink-0 font-medium whitespace-nowrap">
-                        <i data-lucide="check-square" class="w-3.5 h-3.5 text-[#1E3A8A]"></i>
-                        <span>Status:</span>
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-1 min-w-0">
+                        <div class="flex items-center gap-1 text-[11px] sm:text-xs text-slate-500 shrink-0 font-medium whitespace-nowrap">
+                            <i data-lucide="check-square" class="w-3.5 h-3.5 text-[#1E3A8A]"></i>
+                            <span>Status:</span>
+                        </div>
+                        <select id="bupatiStatusSelect" onchange="filterBupatiTable()" 
+                            class="w-full sm:w-auto text-xs font-semibold rounded-xl border border-slate-200 py-1.5 px-2 bg-slate-50 text-slate-700 focus:outline-none focus:border-[#1E3A8A] focus:bg-white transition">
+                            <option value="ALL">Semua Status</option>
+                            <option value="SUBMITTED">Verifikasi</option>
+                            <option value="DISPATCHED">Ditugaskan</option>
+                            <option value="IN_PROGRESS">Dikerjakan</option>
+                            <option value="WAITING_VERIFICATION">Validasi</option>
+                            <option value="COMPLETED">Selesai</option>
+                            <option value="REJECTED">Ditolak</option>
+                        </select>
                     </div>
-                    <select id="bupatiStatusSelect" onchange="filterBupatiTable()" 
-                        class="text-xs font-semibold rounded-xl border border-slate-200 py-1.5 px-2 bg-slate-50 text-slate-700 focus:outline-none focus:border-[#1E3A8A] focus:bg-white transition shrink-0">
-                        <option value="ALL">Semua Status</option>
-                        <option value="SUBMITTED">Verifikasi</option>
-                        <option value="DISPATCHED">Ditugaskan</option>
-                        <option value="IN_PROGRESS">Dikerjakan</option>
-                        <option value="WAITING_VERIFICATION">Validasi</option>
-                        <option value="COMPLETED">Selesai</option>
-                        <option value="REJECTED">Ditolak</option>
-                    </select>
 
-                    <!-- Tombol Reset Filter -->
-                    <button type="button" onclick="resetBupatiFilters()"
-                        class="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition flex items-center gap-1 shrink-0 cursor-pointer">
-                        <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
-                        <span>Reset</span>
-                    </button>
+                    <div class="flex items-end sm:items-center justify-end gap-1.5 self-end sm:self-auto">
+                        <!-- Tombol Reset Filter (Muncul saat filter aktif) -->
+                        <button type="button" id="bupatiResetBtn" onclick="resetBupatiFilters()"
+                            class="hidden px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition flex items-center gap-1 shrink-0 cursor-pointer">
+                            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                            <span>Reset</span>
+                        </button>
+
+                        <!-- Toggle Tata Letak Daftar / Petak -->
+                        <div class="inline-flex items-center p-0.5 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] shrink-0" role="group" aria-label="Tata letak semua pengaduan">
+                            <button type="button" id="bupatiComplaintsLayoutBtn-list" onclick="setBupatiComplaintsLayout('list')"
+                                class="px-2.5 py-1 rounded-md text-xs font-semibold flex items-center gap-1 transition cursor-pointer bg-[#1E3A8A] text-white">
+                                <i data-lucide="list" class="w-3.5 h-3.5"></i>
+                                <span>Daftar</span>
+                            </button>
+                            <button type="button" id="bupatiComplaintsLayoutBtn-grid" onclick="setBupatiComplaintsLayout('grid')"
+                                class="px-2.5 py-1 rounded-md text-xs font-semibold flex items-center gap-1 transition cursor-pointer text-[#475569] hover:text-[#0F172A]">
+                                <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
+                                <span>Petak</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <!-- Table Pengaduan Terkini (Simetris, Rapih, Tanpa Scroll Horizontal) -->
-            <div class="rounded-2xl border border-slate-200 shadow-2xs overflow-hidden bg-white">
-                <table class="w-full text-left text-xs text-slate-600">
-                    <thead class="bg-slate-50 text-slate-700 font-bold border-b border-slate-200 uppercase tracking-wider text-[11px]">
+            <div id="bupatiComplaintsTableWrap" class="rounded-xl border border-[#E2E8F0] overflow-hidden bg-white">
+                <table class="block md:table w-full text-left text-xs text-slate-600">
+                    <thead class="hidden md:table-header-group bg-slate-50 text-slate-700 font-bold border-b border-slate-200 uppercase tracking-wider text-[11px]">
                         <tr>
                             <th class="py-3 px-3 w-28 whitespace-nowrap">Kode & Waktu</th>
                             <th class="py-3 px-3">Judul Aduan & Pelapor</th>
@@ -431,10 +464,9 @@
                             <th class="py-3 px-3 w-24 whitespace-nowrap">Tipe Laporan</th>
                             <th class="py-3 px-3 w-24 text-center whitespace-nowrap">Status</th>
                             <th class="py-3 px-3 w-40 whitespace-nowrap">OPD & Petugas</th>
-                            <th class="py-3 px-3 w-16 text-center whitespace-nowrap">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody id="bupatiTableBody" class="divide-y divide-slate-100 bg-white">
+                    <tbody id="bupatiTableBody" class="block md:table-row-group divide-y divide-slate-100 bg-white">
                         @forelse($allComplaints as $c)
                             @php
                                 $firstPhoto = $c->photos->first();
@@ -460,7 +492,7 @@
                                     default => 'VERIFIKASI'
                                 };
                             @endphp
-                            <tr class="bupati-complaint-row hover:bg-slate-50/70 transition"
+                            <tr onclick="openBupatiDetailModal({{ $c->id }})" class="bupati-complaint-row flex flex-col md:table-row gap-2 px-3.5 py-3 md:p-0 w-full hover:bg-slate-50/70 transition cursor-pointer"
                                 data-code="{{ strtolower($c->public_code) }}"
                                 data-title="{{ strtolower($c->title) }}"
                                 data-reporter="{{ strtolower($c->user?->name ?? $c->citizen?->name ?? 'warga') }}"
@@ -468,15 +500,15 @@
                                 data-category="{{ $c->category_id }}"
                                 data-damage-type="{{ $c->damage_type ?? 'minor' }}"
                                 data-status="{{ $c->status }}">
-                                <td class="py-2.5 px-3 align-middle whitespace-nowrap">
-                                    <button type="button" onclick="openBupatiDetailModal({{ $c->id }})" class="font-mono font-bold text-[#1E3A8A] text-xs hover:underline text-left cursor-pointer">
+                                <td class="hidden md:table-cell py-2.5 px-3 align-middle whitespace-nowrap">
+                                    <button type="button" onclick="event.stopPropagation(); openBupatiDetailModal({{ $c->id }})" class="font-mono font-bold text-[#1E3A8A] text-xs hover:underline text-left cursor-pointer">
                                         #{{ $c->public_code }}
                                     </button>
                                     <div class="text-[10px] text-slate-400 font-sans mt-0.5">{{ $c->created_at?->diffForHumans() }}</div>
                                 </td>
-                                <td class="py-2.5 px-3 align-middle">
-                                    <div class="flex items-center gap-2.5">
-                                        <div onclick="openBupatiDetailModal({{ $c->id }})" class="relative w-11 h-11 rounded-xl overflow-hidden border border-slate-200 bg-slate-100 shrink-0 cursor-pointer hover:ring-2 hover:ring-[#1E3A8A] transition shadow-2xs" title="Lihat Foto & Detail">
+                                <td class="block md:table-cell p-0 md:py-2.5 md:px-3 align-middle w-full md:w-auto min-w-0">
+                                    <div class="flex items-center gap-2.5 min-w-0 group">
+                                        <div class="relative w-11 h-11 rounded-xl overflow-hidden border border-slate-200 bg-slate-100 shrink-0 group-hover:ring-2 group-hover:ring-[#1E3A8A] transition" title="Lihat Foto & Detail">
                                             @if($firstPhotoUrl)
                                                 <img src="{{ $firstPhotoUrl }}" alt="Foto Aduan" class="w-full h-full object-cover">
                                             @else
@@ -486,13 +518,17 @@
                                             @endif
                                         </div>
                                         <div class="min-w-0 flex-1">
+                                            <div class="md:hidden flex items-center gap-1.5 flex-wrap mb-0.5">
+                                                <span class="font-mono font-bold text-[#1E3A8A] text-[10px]">#{{ $c->public_code }}</span>
+                                                <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-extrabold border {{ $statusBadgeClass }}">{{ $statusLabel }}</span>
+                                            </div>
                                             <div class="flex items-center gap-1.5 flex-wrap mb-0.5">
-                                                <span class="font-bold text-slate-900 text-xs leading-snug truncate max-w-[200px]" title="{{ $c->title }}">{{ $c->title }}</span>
+                                                <span class="font-bold text-slate-900 text-xs leading-snug truncate max-w-full md:max-w-[200px]" title="{{ $c->title }}">{{ $c->title }}</span>
                                                 @if($c->severity_text)
                                                     <span class="px-1.5 py-0.2 rounded text-[9.5px] font-bold bg-blue-50 text-[#1E3A8A] border border-blue-200 shrink-0 whitespace-nowrap">{{ $c->severity_text }}</span>
                                                 @endif
                                             </div>
-                                            <div class="text-[10.5px] text-slate-500 flex items-center gap-1 truncate max-w-[240px]">
+                                            <div class="text-[10.5px] text-slate-500 flex items-center gap-1 truncate max-w-full md:max-w-[240px]">
                                                 <i data-lucide="user" class="w-3 h-3 text-slate-400 shrink-0"></i>
                                                 <span class="font-semibold text-slate-700 truncate">{{ $c->user?->name ?? $c->citizen?->name ?? 'Warga Terdaftar' }}</span>
                                                 <span class="text-slate-300 shrink-0">•</span>
@@ -501,12 +537,12 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td class="py-2.5 px-3 align-middle whitespace-nowrap">
+                                <td class="hidden md:table-cell py-2.5 px-3 align-middle whitespace-nowrap">
                                     <span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 font-semibold text-[10.5px] whitespace-nowrap inline-block border border-slate-200/60 truncate max-w-[120px]" title="{{ $c->category?->name ?? 'Umum' }}">
                                         {{ $c->category?->name ?? 'Umum' }}
                                     </span>
                                 </td>
-                                <td class="py-2.5 px-3 align-middle whitespace-nowrap">
+                                <td class="hidden md:table-cell py-2.5 px-3 align-middle whitespace-nowrap">
                                     @if($c->damage_type === 'major')
                                         <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-50 text-red-700 border border-red-200 inline-flex items-center gap-1 whitespace-nowrap">
                                             <span class="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0"></span>
@@ -519,12 +555,12 @@
                                         </span>
                                     @endif
                                 </td>
-                                <td class="py-2.5 px-3 text-center align-middle whitespace-nowrap">
+                                <td class="hidden md:table-cell py-2.5 px-3 text-center align-middle whitespace-nowrap">
                                     <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-extrabold border {{ $statusBadgeClass }} whitespace-nowrap">
                                         {{ $statusLabel }}
                                     </span>
                                 </td>
-                                <td class="py-2.5 px-3 align-middle">
+                                <td class="hidden md:table-cell py-2.5 px-3 align-middle">
                                     @if(in_array($c->status, ['IN_PROGRESS', 'WAITING_VERIFICATION', 'COMPLETED', 'CLOSED']) && ($c->latestDisposition?->department || $c->latestDisposition?->assignee))
                                         <div class="font-semibold text-slate-800 text-xs leading-snug truncate max-w-[160px]">{{ $c->latestDisposition?->department?->name ?? 'Dinas Teknis' }}</div>
                                         <div class="text-[10.5px] text-slate-500 mt-0.5 flex items-center gap-1">
@@ -535,17 +571,10 @@
                                         <span class="text-[11px] text-slate-400 font-medium italic">Belum diambil</span>
                                     @endif
                                 </td>
-                                <td class="py-2.5 px-3 text-center align-middle whitespace-nowrap">
-                                    <button type="button" onclick="openBupatiDetailModal({{ $c->id }})"
-                                        title="Lihat Detail & Timeline"
-                                        class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-blue-50 hover:bg-[#1E3A8A] text-[#1E3A8A] hover:text-white border border-blue-200 transition inline-flex items-center justify-center shadow-2xs cursor-pointer mx-auto">
-                                        <i data-lucide="eye" class="w-3.5 h-3.5"></i>
-                                    </button>
-                                </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="py-8 text-center text-slate-400 text-xs">Belum ada data pengaduan masuk.</td>
+                                <td colspan="6" class="py-8 text-center text-slate-400 text-xs">Belum ada data pengaduan masuk.</td>
                             </tr>
                         @endforelse
                         <!-- Empty Filter Row Notice -->
@@ -559,6 +588,89 @@
                         </tr>
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Grid Kartu Semua Pengaduan (Tata Letak Petak) -->
+            <div id="bupatiComplaintsGridWrap" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4">
+                @forelse($allComplaints as $c)
+                    @php
+                        $cPhoto = $c->photos->first() ? ($c->photos->first()->url ?? asset('storage/' . $c->photos->first()->storage_key)) : null;
+                        $cSt = $c->status?->value ?? $c->status;
+                        $cStLabel = match($cSt) {
+                            'COMPLETED', 'CLOSED' => 'SELESAI',
+                            'WAITING_VERIFICATION' => 'VALIDASI',
+                            'IN_PROGRESS' => 'DIKERJAKAN',
+                            'DISPATCHED' => 'DITUGASKAN',
+                            'REJECTED' => 'DITOLAK',
+                            'REVISION_REQUIRED' => 'PERLU REVISI',
+                            default => 'VERIFIKASI',
+                        };
+                        $cStClass = match($cSt) {
+                            'COMPLETED', 'CLOSED' => 'bg-emerald-50 text-emerald-800 border-emerald-200',
+                            'WAITING_VERIFICATION' => 'bg-amber-50 text-amber-700 border-amber-300',
+                            'IN_PROGRESS', 'REVISION_REQUIRED' => 'bg-amber-50 text-amber-800 border-amber-300',
+                            'DISPATCHED' => 'bg-blue-50 text-[#1E3A8A] border-blue-200',
+                            default => 'bg-red-50 text-red-700 border-red-200',
+                        };
+                    @endphp
+                    <div onclick="if (window.innerWidth < 768) { openBupatiDetailModal({{ $c->id }}); }" class="bupati-complaint-card rounded-xl border border-[#E2E8F0] bg-white p-4 space-y-3 hover:border-[#1E3A8A] transition cursor-pointer md:cursor-default"
+                        data-code="{{ strtolower($c->public_code) }}"
+                        data-title="{{ strtolower($c->title) }}"
+                        data-reporter="{{ strtolower($c->citizen?->name ?? '') }}"
+                        data-address="{{ strtolower($c->address) }}"
+                        data-status="{{ $cSt }}"
+                        data-category="{{ $c->category_id ?? '' }}"
+                        data-damage-type="{{ $c->damage_type ?? 'minor' }}">
+                        <div class="flex items-center justify-between gap-2 flex-wrap">
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <span class="px-2 py-0.5 rounded-md bg-slate-100 text-[#0F172A] font-mono text-[11px] font-semibold border border-[#E2E8F0]">#{{ $c->public_code }}</span>
+                                <span class="px-2 py-0.5 rounded-md text-[11px] font-semibold bg-red-50 text-red-700 border border-red-200">{{ ($c->damage_type ?? 'minor') === 'major' ? 'Kerusakan Berat' : 'Kerusakan Ringan' }}</span>
+                                <span class="px-2 py-0.5 rounded-md text-[11px] font-semibold bg-slate-100 text-[#0F172A] border border-[#E2E8F0]">{{ $c->category?->name ?? 'Infrastruktur' }}</span>
+                            </div>
+                            <span class="px-2 py-0.5 rounded-md text-[11px] font-bold border {{ $cStClass }}">{{ $cStLabel }}</span>
+                        </div>
+                        <div class="flex gap-3 items-start">
+                            <div onclick="openBupatiDetailModal({{ $c->id }})" class="w-20 h-20 rounded-xl overflow-hidden border border-[#E2E8F0] bg-slate-100 shrink-0 cursor-pointer">
+                                @if($cPhoto)
+                                    <img src="{{ $cPhoto }}" alt="Foto Aduan" class="w-full h-full object-cover">
+                                @else
+                                    <div class="w-full h-full flex items-center justify-center text-slate-400 text-[10px]">Tanpa Foto</div>
+                                @endif
+                            </div>
+                            <div class="min-w-0 flex-1 space-y-1">
+                                <h4 class="font-outfit font-bold text-sm text-[#0F172A] truncate" title="{{ $c->title }}">{{ $c->title }}</h4>
+                                <p class="text-xs text-[#475569] truncate">{{ $c->address }}</p>
+                                <p class="text-[11px] text-[#475569]">Pelapor: <strong class="text-[#0F172A]">{{ $c->citizen?->name ?? 'Warga' }}</strong> • {{ $c->created_at?->diffForHumans() }}</p>
+                                <button type="button" onclick="openBupatiDetailModal({{ $c->id }})" class="hidden md:inline-flex text-xs font-bold text-[#1E3A8A] hover:underline items-center gap-1 cursor-pointer pt-0.5">
+                                    <span>Lihat Rincian Lengkap & Foto</span>
+                                    <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                @empty
+                    <div class="col-span-full py-8 text-center text-[#475569] text-xs">Belum ada data pengaduan masuk.</div>
+                @endforelse
+                <div id="bupatiEmptyFilterGrid" class="hidden col-span-full py-8 text-center text-[#475569] text-xs">
+                    Tidak ada laporan yang sesuai dengan filter pencarian.
+                </div>
+            </div>
+
+            <!-- Pagination Bar Semua Pengaduan (5 / 10 / 50 per halaman, default 10) -->
+            <div id="bupatiComplaintsPaginationBar" class="pt-3 border-t border-[#E2E8F0] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                <div class="flex flex-wrap items-center gap-3 text-[#475569]">
+                    <div class="flex items-center gap-2">
+                        <span class="font-medium">Tampilkan:</span>
+                        <select id="bupatiComplaintsPageSizeSelect" onchange="changeBupatiComplaintsPageSize(this.value)" aria-label="Jumlah laporan per halaman"
+                            class="text-xs font-semibold rounded-lg border border-[#E2E8F0] bg-white text-[#0F172A] px-2.5 py-1.5 focus:outline-none focus:border-[#1E3A8A] cursor-pointer">
+                            <option value="5">5 laporan</option>
+                            <option value="10" selected>10 laporan</option>
+                            <option value="50">50 laporan</option>
+                        </select>
+                    </div>
+                    <span id="bupatiComplaintsPageInfo" class="font-medium">Menampilkan 0 dari 0 laporan</span>
+                </div>
+                <div id="bupatiComplaintsPageControls" class="flex items-center gap-1 flex-wrap"></div>
             </div>
         </div>
     </div>
@@ -587,51 +699,73 @@
                         class="w-full pl-8 pr-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800 placeholder-slate-400 focus:outline-hidden focus:ring-1 focus:ring-[#1E3A8A] focus:border-[#1E3A8A] focus:bg-white transition">
                 </div>
 
-                <!-- Filter Controls (Sejajar Satu Baris Tanpa Turun ke Bawah Persis Gambar 2) -->
-                <div class="flex items-center gap-1.5 w-full sm:w-auto shrink-0 flex-nowrap overflow-x-auto pb-1 sm:pb-0">
+                <!-- Filter Controls (Kompak 2-Kolom di Mobile, Rapi Tanpa Scroll Horizontal) -->
+                <div class="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 w-full sm:w-auto">
                     <!-- Dropdown Kategori / Tipe Pelaporan -->
-                    <div class="flex items-center gap-1 text-xs text-slate-500 shrink-0 font-medium whitespace-nowrap">
-                        <i data-lucide="layers" class="w-3.5 h-3.5 text-[#1E3A8A]"></i>
-                        <span>Filter Kategori:</span>
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-1 min-w-0">
+                        <div class="flex items-center gap-1 text-[11px] sm:text-xs text-slate-500 shrink-0 font-medium whitespace-nowrap">
+                            <i data-lucide="layers" class="w-3.5 h-3.5 text-[#1E3A8A]"></i>
+                            <span>Kategori:</span>
+                        </div>
+                        <select id="bupatiArchiveCategorySelect" onchange="filterBupatiArchive()" 
+                            class="w-full sm:w-auto text-xs font-semibold rounded-xl border border-slate-200 py-1.5 px-2 bg-slate-50 text-slate-700 focus:outline-none focus:border-[#1E3A8A] focus:bg-white transition">
+                            <option value="ALL">Semua Kategori</option>
+                            @foreach($categories as $cat)
+                                <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                            @endforeach
+                        </select>
                     </div>
-                    <select id="bupatiArchiveCategorySelect" onchange="filterBupatiArchive()" 
-                        class="text-xs font-semibold rounded-xl border border-slate-200 py-1.5 px-2 bg-slate-50 text-slate-700 focus:outline-none focus:border-[#1E3A8A] focus:bg-white transition shrink-0">
-                        <option value="ALL">Semua Kategori</option>
-                        @foreach($categories as $cat)
-                            <option value="{{ $cat->id }}">{{ $cat->name }}</option>
-                        @endforeach
-                    </select>
 
                     <!-- Dropdown Tipe Laporan (Kerusakan Ringan / Berat) -->
-                    <div class="flex items-center gap-1 text-xs text-slate-500 shrink-0 font-medium whitespace-nowrap">
-                        <i data-lucide="git-commit" class="w-3.5 h-3.5 text-[#1E3A8A]"></i>
-                        <span>Tipe Laporan:</span>
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-1 min-w-0">
+                        <div class="flex items-center gap-1 text-[11px] sm:text-xs text-slate-500 shrink-0 font-medium whitespace-nowrap">
+                            <i data-lucide="git-commit" class="w-3.5 h-3.5 text-[#1E3A8A]"></i>
+                            <span>Tipe:</span>
+                        </div>
+                        <select id="bupatiArchiveDamageTypeSelect" onchange="filterBupatiArchive()" 
+                            class="w-full sm:w-auto text-xs font-semibold rounded-xl border border-slate-200 py-1.5 px-2 bg-slate-50 text-slate-700 focus:outline-none focus:border-[#1E3A8A] focus:bg-white transition">
+                            <option value="ALL">Semua Tipe</option>
+                            <option value="minor">Kerusakan Ringan</option>
+                            <option value="major">Kerusakan Berat</option>
+                        </select>
                     </div>
-                    <select id="bupatiArchiveDamageTypeSelect" onchange="filterBupatiArchive()" 
-                        class="text-xs font-semibold rounded-xl border border-slate-200 py-1.5 px-2 bg-slate-50 text-slate-700 focus:outline-none focus:border-[#1E3A8A] focus:bg-white transition shrink-0">
-                        <option value="ALL">Semua Tipe</option>
-                        <option value="minor">Kerusakan Ringan</option>
-                        <option value="major">Kerusakan Berat</option>
-                    </select>
 
                     <!-- Dropdown Status Arsip (Selesai vs Ditolak Sesuai Gambar 2) -->
-                    <div class="flex items-center gap-1 text-xs text-slate-500 shrink-0 font-medium whitespace-nowrap">
-                        <i data-lucide="check-square" class="w-3.5 h-3.5 text-[#1E3A8A]"></i>
-                        <span>Status:</span>
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-1 min-w-0">
+                        <div class="flex items-center gap-1 text-[11px] sm:text-xs text-slate-500 shrink-0 font-medium whitespace-nowrap">
+                            <i data-lucide="check-square" class="w-3.5 h-3.5 text-[#1E3A8A]"></i>
+                            <span>Status:</span>
+                        </div>
+                        <select id="bupatiArchiveStatusSelect" onchange="filterBupatiArchive()" 
+                            class="w-full sm:w-auto text-xs font-semibold rounded-xl border border-slate-200 py-1.5 px-2 bg-slate-50 text-slate-700 focus:outline-none focus:border-[#1E3A8A] focus:bg-white transition">
+                            <option value="ALL">Semua Status</option>
+                            <option value="COMPLETED">Selesai / Tuntas</option>
+                            <option value="REJECTED">Ditolak (Hoax / Palsu)</option>
+                        </select>
                     </div>
-                    <select id="bupatiArchiveStatusSelect" onchange="filterBupatiArchive()" 
-                        class="text-xs font-semibold rounded-xl border border-slate-200 py-1.5 px-2 bg-slate-50 text-slate-700 focus:outline-none focus:border-[#1E3A8A] focus:bg-white transition shrink-0">
-                        <option value="ALL">Semua Status</option>
-                        <option value="COMPLETED">Selesai / Tuntas</option>
-                        <option value="REJECTED">Ditolak (Hoax / Palsu)</option>
-                    </select>
 
-                    <!-- Tombol Reset Filter -->
-                    <button type="button" onclick="resetBupatiArchiveFilters()"
-                        class="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition flex items-center gap-1 shrink-0 cursor-pointer">
-                        <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
-                        <span>Reset</span>
-                    </button>
+                    <div class="flex items-end sm:items-center justify-end gap-1.5 self-end sm:self-auto">
+                        <!-- Tombol Reset Filter (Muncul saat filter aktif) -->
+                        <button type="button" id="bupatiArchiveResetBtn" onclick="resetBupatiArchiveFilters()"
+                            class="hidden px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition flex items-center gap-1 shrink-0 cursor-pointer">
+                            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                            <span>Reset</span>
+                        </button>
+
+                        <!-- Toggle Tata Letak Daftar / Petak -->
+                        <div class="inline-flex items-center p-0.5 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] shrink-0" role="group" aria-label="Tata letak arsip">
+                            <button type="button" id="bupatiArchiveLayoutBtn-list" onclick="setBupatiArchiveLayout('list')"
+                                class="px-2.5 py-1 rounded-md text-xs font-semibold flex items-center gap-1 transition cursor-pointer bg-[#1E3A8A] text-white">
+                                <i data-lucide="list" class="w-3.5 h-3.5"></i>
+                                <span>Daftar</span>
+                            </button>
+                            <button type="button" id="bupatiArchiveLayoutBtn-grid" onclick="setBupatiArchiveLayout('grid')"
+                                class="px-2.5 py-1 rounded-md text-xs font-semibold flex items-center gap-1 transition cursor-pointer text-[#475569] hover:text-[#0F172A]">
+                                <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
+                                <span>Petak</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -640,8 +774,83 @@
                     Belum ada arsip laporan yang tuntas atau ditolak saat ini.
                 </div>
             @else
-                <!-- Grid Kartu Arsip (Sesuai Gaya Kartu Halaman Operator / Gambar 2) -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Tabel Arsip Laporan (Tata Letak Daftar Seragam Admin) -->
+                <div id="bupatiArchiveTableWrap" class="rounded-xl border border-[#E2E8F0] overflow-hidden md:overflow-x-auto bg-white">
+                    <table class="block md:table w-full text-left text-xs text-slate-600">
+                        <thead class="hidden md:table-header-group bg-[#F8FAFC] text-[#475569] font-bold border-b border-[#E2E8F0] uppercase tracking-wider text-[11px]">
+                            <tr>
+                                <th class="py-3 px-3 w-28 whitespace-nowrap">Kode</th>
+                                <th class="py-3 px-3">Judul &amp; Lokasi</th>
+                                <th class="py-3 px-3 w-24 whitespace-nowrap">Tipe</th>
+                                <th class="py-3 px-3 w-32 whitespace-nowrap">Kategori</th>
+                                <th class="py-3 px-3 w-32 whitespace-nowrap">Pelapor</th>
+                                <th class="py-3 px-3 w-24 text-center whitespace-nowrap">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="block md:table-row-group divide-y divide-[#E2E8F0]">
+                            @foreach($archivedComplaints as $ac)
+                                @php
+                                    $acPhoto = $ac->photos->first() ? ($ac->photos->first()->url ?? asset('storage/' . $ac->photos->first()->storage_key)) : null;
+                                    $acSt = $ac->status?->value ?? $ac->status;
+                                    $acIsRejected = ($acSt === 'REJECTED');
+                                @endphp
+                                <tr onclick="openBupatiDetailModal({{ $ac->id }})" class="bupati-archive-row flex flex-col md:table-row gap-2 px-3.5 py-3 md:p-0 w-full hover:bg-slate-50/80 transition cursor-pointer"
+                                    data-code="{{ strtolower($ac->public_code) }}"
+                                    data-title="{{ strtolower($ac->title) }}"
+                                    data-address="{{ strtolower($ac->address) }}"
+                                    data-citizen="{{ strtolower($ac->citizen?->name ?? '') }}"
+                                    data-category="{{ $ac->category_id ?? '' }}"
+                                    data-damage-type="{{ $ac->damage_type ?? 'minor' }}"
+                                    data-status="{{ $acSt }}">
+                                    <td class="hidden md:table-cell py-3 px-3 align-middle whitespace-nowrap">
+                                        <button type="button" onclick="event.stopPropagation(); openBupatiDetailModal({{ $ac->id }})" class="font-mono font-bold text-[#1E3A8A] hover:underline cursor-pointer">#{{ $ac->public_code }}</button>
+                                        <span class="block text-[10px] text-[#475569]">{{ $ac->created_at?->diffForHumans() }}</span>
+                                    </td>
+                                    <td class="block md:table-cell p-0 md:py-3 md:px-3 align-middle w-full md:w-auto min-w-0">
+                                        <div class="flex items-center gap-2.5 min-w-0 group">
+                                            <div class="w-10 h-10 rounded-lg overflow-hidden border border-[#E2E8F0] bg-slate-100 shrink-0">
+                                                @if($acPhoto)
+                                                    <img src="{{ $acPhoto }}" alt="Foto" class="w-full h-full object-cover">
+                                                @else
+                                                    <div class="w-full h-full flex items-center justify-center text-slate-400 text-[9px]">-</div>
+                                                @endif
+                                            </div>
+                                            <div class="min-w-0 flex-1">
+                                                <div class="md:hidden flex items-center gap-1.5 flex-wrap mb-0.5">
+                                                    <span class="font-mono font-bold text-[#1E3A8A] text-[10px]">#{{ $ac->public_code }}</span>
+                                                    @if($acIsRejected)
+                                                        <span class="px-1.5 py-0.5 rounded text-[9.5px] font-bold bg-red-50 text-red-700 border border-red-200">DITOLAK</span>
+                                                    @else
+                                                        <span class="px-1.5 py-0.5 rounded text-[9.5px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">SELESAI</span>
+                                                    @endif
+                                                </div>
+                                                <button type="button" onclick="openBupatiDetailModal({{ $ac->id }})" class="font-bold text-[#0F172A] hover:text-[#1E3A8A] truncate block w-full md:max-w-[260px] text-left cursor-pointer">{{ $ac->title }}</button>
+                                                <span class="text-[11px] text-[#475569] truncate block w-full md:max-w-[260px]">{{ $ac->address }}</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="hidden md:table-cell py-3 px-3 align-middle whitespace-nowrap">
+                                        <span class="px-2 py-0.5 rounded-md text-[11px] font-semibold bg-red-50 text-red-700 border border-red-200">{{ ($ac->damage_type ?? 'minor') === 'major' ? 'Berat' : 'Ringan' }}</span>
+                                    </td>
+                                    <td class="hidden md:table-cell py-3 px-3 align-middle whitespace-nowrap">
+                                        <span class="px-2 py-0.5 rounded-md text-[11px] font-semibold bg-slate-100 text-[#0F172A] border border-[#E2E8F0]">{{ $ac->category?->name ?? 'Infrastruktur' }}</span>
+                                    </td>
+                                    <td class="hidden md:table-cell py-3 px-3 align-middle font-semibold text-[#0F172A] whitespace-nowrap">{{ $ac->citizen?->name ?? 'Warga' }}</td>
+                                    <td class="hidden md:table-cell py-3 px-3 align-middle text-center whitespace-nowrap">
+                                        @if($acIsRejected)
+                                            <span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-red-50 text-red-700 border border-red-200">DITOLAK</span>
+                                        @else
+                                            <span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">SELESAI</span>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Grid Kartu Arsip (Tata Letak Petak) -->
+                <div id="bupatiArchiveGridContainer" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4">
                     @foreach($archivedComplaints as $ac)
                         @php
                             $isRejected = ($ac->status === 'REJECTED');
@@ -651,7 +860,7 @@
                             $afterUrl = $afterPhoto && $afterPhoto->id !== ($beforePhoto?->id) ? ($afterPhoto->url ?? asset('storage/' . $afterPhoto->storage_key)) : null;
                             $displayPhoto = $afterUrl ?: $beforeUrl;
                         @endphp
-                        <div class="bupati-archive-card card-white rounded-2xl p-4 sm:p-5 bg-white border border-slate-200/90 hover:border-blue-300 hover:shadow-md transition-all duration-200 flex flex-col justify-between space-y-3.5"
+                        <div onclick="if (window.innerWidth < 768) { openBupatiDetailModal({{ $ac->id }}); }" class="bupati-archive-card card-white rounded-2xl p-4 sm:p-5 bg-white border border-slate-200/90 hover:border-blue-300 hover:shadow-md transition-all duration-200 flex flex-col justify-between space-y-3.5 cursor-pointer md:cursor-default"
                             data-code="{{ strtolower($ac->public_code) }}"
                             data-title="{{ strtolower($ac->title) }}"
                             data-address="{{ strtolower($ac->address ?? '') }}"
@@ -737,7 +946,7 @@
                                         </div>
 
                                         <!-- Baris 4: Tombol Detail Lengkap & Foto (1 Baris Rapi) -->
-                                        <div class="relative z-10">
+                                        <div class="relative z-10 hidden md:block">
                                             <button type="button" onclick="openBupatiDetailModal({{ $ac->id }})" class="text-xs font-bold text-[#1E3A8A] hover:underline inline-flex items-center gap-1 cursor-pointer">
                                                 <span>Lihat Rincian Lengkap & Foto</span>
                                                 <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
@@ -787,6 +996,23 @@
                 <div id="bupatiArchiveEmptyNotice" class="hidden card-white rounded-2xl p-8 text-center text-slate-400 text-xs bg-white border border-slate-200">
                     Tidak ditemukan laporan arsip yang cocok dengan filter yang dipilih.
                 </div>
+
+                <!-- Pagination Bar Arsip Laporan (5 / 10 / 50 per halaman, default 10) -->
+                <div id="bupatiArchivePaginationBar" class="pt-3 border-t border-[#E2E8F0] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                    <div class="flex flex-wrap items-center gap-3 text-[#475569]">
+                        <div class="flex items-center gap-2">
+                            <span class="font-medium">Tampilkan:</span>
+                            <select id="bupatiArchivePageSizeSelect" onchange="changeBupatiArchivePageSize(this.value)" aria-label="Jumlah arsip per halaman"
+                                class="text-xs font-semibold rounded-lg border border-[#E2E8F0] bg-white text-[#0F172A] px-2.5 py-1.5 focus:outline-none focus:border-[#1E3A8A] cursor-pointer">
+                                <option value="5">5 laporan</option>
+                                <option value="10" selected>10 laporan</option>
+                                <option value="50">50 laporan</option>
+                            </select>
+                        </div>
+                        <span id="bupatiArchivePageInfo" class="font-medium">Menampilkan 0 dari 0 laporan</span>
+                    </div>
+                    <div id="bupatiArchivePageControls" class="flex items-center gap-1 flex-wrap"></div>
+                </div>
             @endif
         </div>
     </div>
@@ -794,7 +1020,9 @@
 </div>
 
 <!-- Modal Detail Pengaduan Eksekutif -->
+@push('modals')
 @include('partials.complaint_detail_modal', ['role' => 'bupati'])
+@endpush
 
 
 @push('scripts')
@@ -809,19 +1037,31 @@
     document.addEventListener('DOMContentLoaded', function() {
         initBupatiMap();
         initExecutiveMonitoringCharts();
+        if (window.innerWidth < 768) {
+            setBupatiLayout('grid');
+            setBupatiArchiveLayout('grid');
+        }
+        filterBupatiTable(true);
+        filterBupatiArchive(true);
     });
 
     // Switch Sub Menu Tab Navigation (Gambar 2)
     function switchBupatiTab(tabName) {
         document.querySelectorAll('.bupati-tab-btn').forEach(btn => {
-            btn.classList.remove('bg-white', 'text-[#1E3A8A]', 'shadow-xs');
-            btn.classList.add('text-slate-600', 'hover:text-slate-900', 'hover:bg-white/60');
+            btn.className = 'bupati-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-start gap-2 sm:gap-2.5 cursor-pointer bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]';
+            const badge = btn.querySelector('.tab-badge');
+            if (badge) badge.className = 'tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 bg-blue-50 text-[#1E3A8A] border border-blue-200';
+            const sub = btn.querySelector('.tab-sub');
+            if (sub) sub.className = 'tab-sub hidden sm:block text-[10px] mt-0.5 truncate text-[#475569]';
         });
 
         const activeBtn = document.getElementById('tabBtn-' + tabName);
         if (activeBtn) {
-            activeBtn.classList.remove('text-slate-600', 'hover:text-slate-900', 'hover:bg-white/60');
-            activeBtn.classList.add('bg-white', 'text-[#1E3A8A]', 'shadow-xs');
+            activeBtn.className = 'bupati-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-start gap-2 sm:gap-2.5 cursor-pointer bg-[#1E3A8A] text-white border-[#1E3A8A]';
+            const badge = activeBtn.querySelector('.tab-badge');
+            if (badge) badge.className = 'tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 bg-white text-[#1E3A8A]';
+            const sub = activeBtn.querySelector('.tab-sub');
+            if (sub) sub.className = 'tab-sub text-[10px] block mt-0.5 truncate text-blue-100';
         }
 
         document.getElementById('tabContent-executive').classList.add('hidden');
@@ -1073,22 +1313,140 @@
 
 
     // Filter & Pencarian Tabel Bupati (Sesuai Gambar 5)
-    function filterBupatiTable() {
+    function setBupatiComplaintsLayout(mode) {
+        const tableWrap = document.getElementById('bupatiComplaintsTableWrap');
+        const gridWrap = document.getElementById('bupatiComplaintsGridWrap');
+        if (tableWrap && gridWrap) {
+            tableWrap.classList.toggle('hidden', mode === 'grid');
+            gridWrap.classList.toggle('hidden', mode !== 'grid');
+        }
+        const listBtn = document.getElementById('bupatiComplaintsLayoutBtn-list');
+        const gridBtn = document.getElementById('bupatiComplaintsLayoutBtn-grid');
+        if (listBtn && gridBtn) {
+            listBtn.className = `px-2.5 py-1 rounded-md text-xs font-semibold flex items-center gap-1 transition cursor-pointer ${mode === 'list' ? 'bg-[#1E3A8A] text-white' : 'text-[#475569] hover:text-[#0F172A]'}`;
+            gridBtn.className = `px-2.5 py-1 rounded-md text-xs font-semibold flex items-center gap-1 transition cursor-pointer ${mode === 'grid' ? 'bg-[#1E3A8A] text-white' : 'text-[#475569] hover:text-[#0F172A]'}`;
+        }
+    }
+
+    function setBupatiArchiveLayout(mode) {
+        const tableWrap = document.getElementById('bupatiArchiveTableWrap');
+        const gridWrap = document.getElementById('bupatiArchiveGridContainer');
+        if (tableWrap && gridWrap) {
+            tableWrap.classList.toggle('hidden', mode === 'grid');
+            gridWrap.classList.toggle('hidden', mode !== 'grid');
+        }
+        const listBtn = document.getElementById('bupatiArchiveLayoutBtn-list');
+        const gridBtn = document.getElementById('bupatiArchiveLayoutBtn-grid');
+        if (listBtn && gridBtn) {
+            listBtn.className = `px-2.5 py-1 rounded-md text-xs font-semibold flex items-center gap-1 transition cursor-pointer ${mode === 'list' ? 'bg-[#1E3A8A] text-white' : 'text-[#475569] hover:text-[#0F172A]'}`;
+            gridBtn.className = `px-2.5 py-1 rounded-md text-xs font-semibold flex items-center gap-1 transition cursor-pointer ${mode === 'grid' ? 'bg-[#1E3A8A] text-white' : 'text-[#475569] hover:text-[#0F172A]'}`;
+        }
+    }
+
+    const bupatiPaginationState = {
+        complaints: { page: 1, size: 10 },
+        archive: { page: 1, size: 10 }
+    };
+
+    function renderBupatiPagination(key, matchedPrimary, matchedSecondary, infoId, controlsId, onPageChange) {
+        const state = bupatiPaginationState[key];
+        const total = matchedPrimary.length;
+        const size = state.size;
+        const totalPages = Math.max(1, Math.ceil(total / size));
+        if (state.page > totalPages) state.page = totalPages;
+        if (state.page < 1) state.page = 1;
+
+        const startIdx = (state.page - 1) * size;
+        const endIdx = Math.min(startIdx + size, total);
+
+        matchedPrimary.forEach((el, idx) => {
+            el.style.display = (idx >= startIdx && idx < endIdx) ? '' : 'none';
+        });
+        if (matchedSecondary && matchedSecondary.length) {
+            matchedSecondary.forEach((el, idx) => {
+                el.style.display = (idx >= startIdx && idx < endIdx) ? '' : 'none';
+            });
+        }
+
+        const infoEl = document.getElementById(infoId);
+        if (infoEl) {
+            infoEl.textContent = total === 0
+                ? 'Menampilkan 0 dari 0 laporan'
+                : `Menampilkan ${startIdx + 1}–${endIdx} dari ${total} laporan`;
+        }
+
+        const controlsEl = document.getElementById(controlsId);
+        if (!controlsEl) return;
+        if (total === 0) {
+            controlsEl.innerHTML = '';
+            return;
+        }
+
+        const btnBase = 'px-2.5 py-1.5 rounded-lg border text-xs font-semibold transition cursor-pointer';
+        const btnIdle = `${btnBase} bg-white border-[#E2E8F0] text-[#0F172A] hover:bg-slate-100`;
+        const btnActive = `${btnBase} bg-[#1E3A8A] border-[#1E3A8A] text-white`;
+        const btnDisabled = 'px-2.5 py-1.5 rounded-lg border border-[#E2E8F0] bg-slate-100 text-slate-400 text-xs font-semibold cursor-not-allowed';
+
+        let html = state.page > 1
+            ? `<button type="button" class="${btnIdle}" onclick="${onPageChange}(${state.page - 1})">Sebelumnya</button>`
+            : `<button type="button" class="${btnDisabled}" disabled>Sebelumnya</button>`;
+
+        for (let p = 1; p <= totalPages; p++) {
+            if (totalPages > 7 && p > 2 && p < totalPages - 1 && Math.abs(p - state.page) > 1) {
+                if (p === 3 || p === totalPages - 2) html += `<span class="px-1.5 text-[#475569]">…</span>`;
+                continue;
+            }
+            html += `<button type="button" class="${p === state.page ? btnActive : btnIdle}" onclick="${onPageChange}(${p})">${p}</button>`;
+        }
+
+        html += state.page < totalPages
+            ? `<button type="button" class="${btnIdle}" onclick="${onPageChange}(${state.page + 1})">Berikutnya</button>`
+            : `<button type="button" class="${btnDisabled}" disabled>Berikutnya</button>`;
+
+        controlsEl.innerHTML = html;
+    }
+
+    function changeBupatiComplaintsPageSize(size) {
+        bupatiPaginationState.complaints.size = parseInt(size, 10) || 10;
+        bupatiPaginationState.complaints.page = 1;
+        filterBupatiTable(false);
+    }
+
+    function goBupatiComplaintsPage(page) {
+        bupatiPaginationState.complaints.page = page;
+        filterBupatiTable(false);
+    }
+
+    function changeBupatiArchivePageSize(size) {
+        bupatiPaginationState.archive.size = parseInt(size, 10) || 10;
+        bupatiPaginationState.archive.page = 1;
+        filterBupatiArchive(false);
+    }
+
+    function goBupatiArchivePage(page) {
+        bupatiPaginationState.archive.page = page;
+        filterBupatiArchive(false);
+    }
+
+    function filterBupatiTable(resetPage = true) {
+        if (resetPage) bupatiPaginationState.complaints.page = 1;
         const query = (document.getElementById('bupatiSearchInput')?.value || '').toLowerCase().trim();
         const selectedCategory = document.getElementById('bupatiCategorySelect')?.value || 'ALL';
         const selectedDamageType = document.getElementById('bupatiDamageTypeSelect')?.value || 'ALL';
         const selectedStatus = document.getElementById('bupatiStatusSelect')?.value || 'ALL';
         const rows = document.querySelectorAll('.bupati-complaint-row');
+        const cards = document.querySelectorAll('.bupati-complaint-card');
 
-        let visibleCount = 0;
-        rows.forEach(row => {
-            const code = row.getAttribute('data-code') || '';
-            const title = row.getAttribute('data-title') || '';
-            const reporter = row.getAttribute('data-reporter') || '';
-            const address = row.getAttribute('data-address') || '';
-            const status = row.getAttribute('data-status') || '';
-            const categoryId = row.getAttribute('data-category') || '';
-            const damageType = row.getAttribute('data-damage-type') || 'minor';
+        const matchedRows = [];
+        const matchedCards = [];
+        const matchesElement = (el) => {
+            const code = el.getAttribute('data-code') || '';
+            const title = el.getAttribute('data-title') || '';
+            const reporter = el.getAttribute('data-reporter') || '';
+            const address = el.getAttribute('data-address') || '';
+            const status = el.getAttribute('data-status') || '';
+            const categoryId = el.getAttribute('data-category') || '';
+            const damageType = el.getAttribute('data-damage-type') || 'minor';
 
             const matchQuery = !query || code.includes(query) || title.includes(query) || reporter.includes(query) || address.includes(query);
             const matchCategory = (selectedCategory === 'ALL' || categoryId === selectedCategory);
@@ -1108,12 +1466,20 @@
                     matchStatus = (status === selectedStatus);
                 }
             }
+            return (matchQuery && matchCategory && matchDamageType && matchStatus);
+        };
 
-            const isVisible = (matchQuery && matchCategory && matchDamageType && matchStatus);
-            row.style.display = isVisible ? '' : 'none';
-            if (isVisible) visibleCount++;
+        rows.forEach((row, idx) => {
+            if (matchesElement(row)) {
+                matchedRows.push(row);
+                if (cards[idx]) matchedCards.push(cards[idx]);
+            } else {
+                row.style.display = 'none';
+                if (cards[idx]) cards[idx].style.display = 'none';
+            }
         });
 
+        const visibleCount = matchedRows.length;
         const countBadge = document.getElementById('bupatiCountBadge');
         if (countBadge) {
             countBadge.innerText = visibleCount + ' Laporan';
@@ -1123,18 +1489,31 @@
         if (emptyRow) {
             emptyRow.classList.toggle('hidden', visibleCount > 0);
         }
+        const emptyGrid = document.getElementById('bupatiEmptyFilterGrid');
+        if (emptyGrid) {
+            emptyGrid.classList.toggle('hidden', visibleCount > 0);
+        }
+
+        const hasActiveFilter = (query !== '' || selectedCategory !== 'ALL' || selectedDamageType !== 'ALL' || selectedStatus !== 'ALL');
+        const resetBtn = document.getElementById('bupatiResetBtn');
+        if (resetBtn) resetBtn.classList.toggle('hidden', !hasActiveFilter);
+
+        renderBupatiPagination('complaints', matchedRows, matchedCards, 'bupatiComplaintsPageInfo', 'bupatiComplaintsPageControls', 'goBupatiComplaintsPage');
     }
 
     // Filter & Pencarian Arsip Bupati (Sesuai Gambar 2)
-    function filterBupatiArchive() {
+    function filterBupatiArchive(resetPage = true) {
+        if (resetPage) bupatiPaginationState.archive.page = 1;
         const query = (document.getElementById('bupatiArchiveSearchInput')?.value || '').toLowerCase().trim();
         const selectedCategory = document.getElementById('bupatiArchiveCategorySelect')?.value || 'ALL';
         const selectedDamageType = document.getElementById('bupatiArchiveDamageTypeSelect')?.value || 'ALL';
         const selectedStatus = document.getElementById('bupatiArchiveStatusSelect')?.value || 'ALL';
         const cards = document.querySelectorAll('.bupati-archive-card');
+        const rows = document.querySelectorAll('.bupati-archive-row');
 
-        let visibleCount = 0;
-        cards.forEach(card => {
+        const matchedCards = [];
+        const matchedRows = [];
+        cards.forEach((card, idx) => {
             const code = card.getAttribute('data-code') || '';
             const title = card.getAttribute('data-title') || '';
             const address = card.getAttribute('data-address') || '';
@@ -1152,11 +1531,16 @@
                 matchStatus = (status === selectedStatus);
             }
 
-            const isVisible = (matchQuery && matchCategory && matchDamageType && matchStatus);
-            card.style.display = isVisible ? '' : 'none';
-            if (isVisible) visibleCount++;
+            if (matchQuery && matchCategory && matchDamageType && matchStatus) {
+                matchedCards.push(card);
+                if (rows[idx]) matchedRows.push(rows[idx]);
+            } else {
+                card.style.display = 'none';
+                if (rows[idx]) rows[idx].style.display = 'none';
+            }
         });
 
+        const visibleCount = matchedCards.length;
         const countBadge = document.getElementById('bupatiArchiveCountBadge');
         if (countBadge) {
             countBadge.innerText = visibleCount + ' Laporan';
@@ -1165,6 +1549,12 @@
         if (emptyNotice) {
             emptyNotice.classList.toggle('hidden', visibleCount > 0);
         }
+
+        const hasActiveFilter = (query !== '' || selectedCategory !== 'ALL' || selectedDamageType !== 'ALL' || selectedStatus !== 'ALL');
+        const archiveResetBtn = document.getElementById('bupatiArchiveResetBtn');
+        if (archiveResetBtn) archiveResetBtn.classList.toggle('hidden', !hasActiveFilter);
+
+        renderBupatiPagination('archive', matchedCards, matchedRows, 'bupatiArchivePageInfo', 'bupatiArchivePageControls', 'goBupatiArchivePage');
     }
 
     function resetBupatiFilters() {

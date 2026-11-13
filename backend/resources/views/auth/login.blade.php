@@ -3,21 +3,21 @@
 @section('title', 'SI-APPIK - Login Panel')
 
 @section('content')
-<div class="min-h-[85vh] flex items-center justify-center py-6 px-3 sm:px-4 relative overflow-hidden bg-slate-50/50">
-    <div class="max-w-lg w-full bg-white rounded-3xl shadow-lg border border-slate-200 p-6 sm:p-9 space-y-6 relative z-10">
+<div class="min-h-[calc(100vh-110px)] flex items-center justify-center py-3 px-3 sm:px-4 relative overflow-hidden bg-[#F8FAFC]">
+    <div class="max-w-lg w-full bg-white rounded-xl border border-[#E2E8F0] p-5 sm:p-6 space-y-4 relative z-10">
 
         <!-- 1. Header & Logo Panel -->
         <div class="text-center relative z-10 flex flex-col items-center justify-center">
-            <img src="{{ asset('images/logo-pin.png') }}" class="w-16 h-16 object-contain drop-shadow-md mb-2 mx-auto" alt="Logo SI-APPIK">
-            <div class="flex items-center justify-center gap-1.5 mb-1">
-                <span class="font-outfit font-black text-4xl tracking-tight text-slate-900">
+            <img src="{{ asset('images/logo-pin.png') }}" class="w-12 h-12 object-contain mb-1.5 mx-auto" alt="Logo SI-APPIK">
+            <div class="flex items-center justify-center gap-1.5 mb-0.5">
+                <span class="font-outfit font-bold text-2xl tracking-tight text-[#0F172A]">
                     SI-APPIK
                 </span>
             </div>
-            <p class="text-[9.5px] sm:text-[11px] font-bold text-slate-500 tracking-tight font-outfit">
+            <p class="text-[10.5px] sm:text-xs font-semibold text-[#475569] tracking-tight font-outfit">
                 Sistem Informasi Aduan &amp; Penanganan Prasarana Infrastruktur Kabupaten
             </p>
-            <p class="text-xs text-slate-500 mt-1">
+            <p class="text-[11px] text-[#475569] mt-0.5">
                 Portal Masuk Khusus Petugas, Operator, dan Pimpinan Daerah
             </p>
         </div>
@@ -100,7 +100,7 @@
         @endif
 
         <!-- 3. Form Input Kredensial -->
-        <form id="loginForm" method="POST" action="{{ route('login') }}" onsubmit="handleLoginSubmit(event)" class="space-y-4 relative z-10">
+        <form id="loginForm" method="POST" action="{{ route('login') }}" onsubmit="handleLoginSubmit(event)" class="space-y-3 relative z-10">
             @csrf
 
             @if(session('success'))
@@ -150,16 +150,32 @@
                 <label for="password" class="block text-xs font-bold text-slate-700">
                     Kata Sandi
                 </label>
-                <div class="relative rounded-xl shadow-xs group">
+                <div class="relative rounded-xl group">
                     <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-[#1E3A8A] transition-colors">
                         <i data-lucide="lock" class="w-4 h-4"></i>
                     </div>
                     <input id="password" name="password" type="password" required
                         value="password"
                         placeholder="••••••••"
-                        class="block w-full pl-10 pr-3.5 py-2.5 text-xs rounded-xl border border-slate-300 bg-slate-50/50 hover:border-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#1E3A8A]/20 focus:border-[#1E3A8A] transition">
+                        class="block w-full pl-10 pr-10 py-2.5 text-xs rounded-xl border border-slate-300 bg-slate-50/50 hover:border-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#1E3A8A]/20 focus:border-[#1E3A8A] transition">
+                    <button type="button" id="togglePasswordBtn" onclick="toggleLoginPasswordVisibility()" aria-label="Tampilkan atau sembunyikan kata sandi"
+                        class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-[#1E3A8A] transition-colors cursor-pointer">
+                        <i id="togglePasswordIcon" data-lucide="eye" class="w-4 h-4"></i>
+                    </button>
                 </div>
             </div>
+            <script>
+                function toggleLoginPasswordVisibility() {
+                    const input = document.getElementById('password');
+                    const icon = document.getElementById('togglePasswordIcon');
+                    const btn = document.getElementById('togglePasswordBtn');
+                    if (!input || !icon) return;
+                    const isHidden = input.type === 'password';
+                    input.type = isHidden ? 'text' : 'password';
+                    icon.setAttribute('data-lucide', isHidden ? 'eye-off' : 'eye');
+                    if (window.lucide && btn) lucide.createIcons({ root: btn });
+                }
+            </script>
 
             <div class="flex items-center justify-between text-xs pt-0.5">
                 <label class="flex items-center text-slate-600 cursor-pointer select-none">
@@ -172,7 +188,7 @@
             </div>
 
             <button type="submit" id="submitLoginBtn"
-                class="w-full py-3.5 px-4 rounded-xl bg-[#1E3A8A] hover:bg-[#172e6e] text-white font-bold text-xs tracking-wide shadow-md shadow-[#1E3A8A]/25 hover:shadow-lg hover:shadow-[#1E3A8A]/35 active:scale-[0.99] transition duration-150 flex items-center justify-center gap-2 cursor-pointer">
+                class="w-full min-h-[44px] px-4 rounded-lg bg-[#1E3A8A] hover:bg-[#172554] text-white font-semibold text-xs tracking-wide transition duration-150 flex items-center justify-center gap-2 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1E3A8A]">
                 <i data-lucide="log-in" class="w-4 h-4"></i>
                 <span id="submitBtnText">Masuk ke Panel Kerja</span>
             </button>
@@ -190,96 +206,89 @@
 </div>
 
 <!-- Modal Pengalihan Akun Warga ke Mobile -->
-<div id="wargaRedirectModal" class="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto w-full h-full">
-    <div class="w-full max-w-[calc(100vw-24px)] sm:max-w-md bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200 overflow-hidden relative my-auto animate-in fade-in zoom-in-95 duration-150">
+<div id="wargaRedirectModal" class="fixed inset-0 z-50 bg-slate-900/70 hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto w-full h-full">
+    <div class="w-full max-w-[calc(100vw-24px)] sm:max-w-md bg-white rounded-xl border border-[#E2E8F0] overflow-hidden relative my-auto">
         
         <!-- Header Modal -->
-        <div class="bg-[#1E3A8A] text-white p-4 sm:p-5 relative">
-            <button type="button" onclick="handleSayaMengerti()" 
-                class="absolute top-3.5 right-3.5 w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition cursor-pointer">
-                <i data-lucide="x" class="w-3.5 h-3.5"></i>
+        <div class="bg-[#1E3A8A] text-white p-4 sm:p-5 relative border-b border-[#172554]">
+            <button type="button" onclick="handleSayaMengerti()" aria-label="Tutup"
+                class="absolute top-3.5 right-3.5 w-8 h-8 rounded-lg bg-[#172554] hover:bg-blue-950 text-white flex items-center justify-center transition cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
+                <i data-lucide="x" class="w-4 h-4"></i>
             </button>
 
-            <div class="flex items-center gap-3 pr-6">
-                <div class="w-10 h-10 rounded-xl bg-white/15 border border-white/20 flex items-center justify-center text-white shrink-0">
+            <div class="flex items-center gap-3 pr-8">
+                <div class="w-10 h-10 rounded-lg bg-[#172554] border border-blue-800 flex items-center justify-center text-white shrink-0">
                     <i id="modalHeaderIcon" data-lucide="smartphone" class="w-5 h-5 text-white"></i>
                 </div>
                 <div>
-                    <h3 id="modalHeaderTitle" class="font-outfit font-extrabold text-base sm:text-lg text-white tracking-tight leading-snug">
-                        Portal Khusus Internal Dinas
+                    <h3 id="modalHeaderTitle" class="font-outfit font-bold text-base sm:text-lg text-white tracking-tight leading-snug">
+                        Gunakan Aplikasi Mobile SI-APPIK
                     </h3>
-                    <p id="modalHeaderSub" class="text-[11px] text-blue-100 mt-0.5 leading-snug">
-                        Khusus Operator, Petugas Lapangan, & Kepala Daerah
+                    <p id="modalHeaderSub" class="text-xs text-blue-100 mt-0.5 leading-snug">
+                        Portal web ini khusus untuk petugas dinas
                     </p>
                 </div>
             </div>
         </div>
 
-        <div class="p-4 sm:p-6 space-y-4">
+        <div class="p-4 sm:p-5 space-y-4">
             
-            <div class="p-3 sm:p-3.5 rounded-xl sm:rounded-2xl bg-amber-50/80 border border-amber-200 text-slate-800 text-xs leading-relaxed">
-                Halo <strong id="wargaCitizenName" class="text-[#1E3A8A]">Warga</strong>, akun Anda terdaftar sebagai <strong>Warga Masyarakat</strong>.<br>
-                Portal website ini <strong>khusus diperuntukkan bagi Operator, Petugas Lapangan, dan Kepala Daerah</strong>. Seluruh layanan pengaduan masyarakat, pemantauan status, dan pengelolaan akun warga dialihkan melalui <strong>Aplikasi Mobile SI-APPIK</strong>.
+            <div class="p-3.5 rounded-lg bg-amber-50 border border-amber-200 text-[#0F172A] text-xs leading-relaxed">
+                Halo <strong id="wargaCitizenName" class="text-[#1E3A8A]">Warga</strong>, akun Anda terdaftar sebagai <strong>Warga Masyarakat</strong>. Pelaporan kerusakan dan pantauan status dilakukan melalui aplikasi mobile SI-APPIK.
             </div>
 
             <!-- Tampilan Download di Smartphone -->
-            <div id="viewMobileContainer" class="space-y-3.5">
-                <p class="text-xs text-slate-600 text-center sm:text-left">
-                    Silakan unduh dan gunakan aplikasi mobile resmi pada ponsel Anda untuk menyampaikan aduan infrastruktur:
+            <div id="viewMobileContainer" class="space-y-3">
+                <p class="text-xs text-[#475569]">
+                    Unduh aplikasi resmi SI-APPIK di ponsel Anda:
                 </p>
 
-                <div class="flex flex-col gap-2.5 pt-0.5 w-full">
+                <div class="flex flex-col gap-2.5 w-full">
                     <a href="{{ route('download.apk') }}" 
-                        class="w-full flex items-center justify-center gap-3.5 px-4 py-3 rounded-2xl bg-[#090D1A] hover:bg-black text-white border border-slate-800 shadow-sm transition">
-                        <svg class="w-6 h-6 shrink-0 fill-white" viewBox="0 0 24 24">
+                        class="w-full flex items-center justify-center gap-3 px-4 min-h-[48px] rounded-lg bg-[#0F172A] hover:bg-slate-800 text-white border border-slate-800 transition">
+                        <svg class="w-5 h-5 shrink-0 fill-white" viewBox="0 0 24 24">
                             <path d="M4.059 2.046C3.714 2.39 3.5 2.915 3.5 3.612v16.776c0 .697.214 1.222.56 1.566l.08.077 9.4-9.399v-.223l-9.4-9.4-.08.037zM17.067 15.65l-3.427-3.428v-.444l3.427-3.428.077.045 4.062 2.308c1.16.658 1.16 1.737 0 2.396l-4.062 2.307-.077.244zM13.64 11.778L4.208 2.346c.386-.41.986-.445 1.71-.035l11.149 6.335-3.427 3.132zM13.64 12.222l3.427 3.132-11.149 6.335c-.724.41-1.324.375-1.71-.035L13.64 12.222z"/>
                         </svg>
                         <div class="text-left leading-tight">
-                            <span class="text-[9px] font-semibold text-slate-300 uppercase tracking-widest block mb-0.5">TEMUKAN DI</span>
-                            <span class="text-sm font-bold text-white tracking-tight">Google Play</span>
+                            <span class="text-[10px] font-semibold text-slate-300 uppercase tracking-wider block">Unduh APK</span>
+                            <span class="text-sm font-bold text-white">Android (Google Play)</span>
                         </div>
                     </a>
 
-                    <!-- App Store Button (Persis Gambar 2 - Ditengah) -->
                     <a href="https://apps.apple.com" target="_blank" rel="noopener noreferrer" 
-                        class="w-full flex items-center justify-center gap-3.5 px-4 py-3 rounded-2xl bg-[#090D1A] hover:bg-black text-white border border-slate-800 shadow-sm transition">
-                        <svg class="w-6 h-6 shrink-0 fill-white" viewBox="0 0 24 24">
+                        class="w-full flex items-center justify-center gap-3 px-4 min-h-[48px] rounded-lg bg-[#0F172A] hover:bg-slate-800 text-white border border-slate-800 transition">
+                        <svg class="w-5 h-5 shrink-0 fill-white" viewBox="0 0 24 24">
                             <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.62-.75 1.04-1.8 1.01-2.87-.96.04-2.12.64-2.8 1.44-.59.68-1.11 1.77-1 2.82 1.07.08 2.17-.55 2.79-1.39z"/>
                         </svg>
                         <div class="text-left leading-tight">
-                            <span class="text-[9px] font-semibold text-slate-300 uppercase tracking-widest block mb-0.5">UNDUH DI</span>
-                            <span class="text-sm font-bold text-white tracking-tight">App Store</span>
+                            <span class="text-[10px] font-semibold text-slate-300 uppercase tracking-wider block">Tersedia di</span>
+                            <span class="text-sm font-bold text-white">App Store</span>
                         </div>
                     </a>
                 </div>
             </div>
 
-            <!-- 2. TAMPILAN LAPTOP / WEBSITE - MUNCUL OTOMATIS JIKA DI LAPTOP -->
-            <div id="viewDesktopContainer" class="hidden space-y-4">
-                <p class="text-xs text-slate-600">
-                    Buka kamera ponsel Anda dan <strong>scan QR Code</strong> di bawah untuk langsung mengunduh aplikasi ke smartphone:
-                </p>
-
-                <!-- QR Code Box Sederhana & Bersih -->
-                <div class="flex flex-col sm:flex-row items-center gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-200">
-                    <div class="w-28 h-28 p-1.5 bg-white rounded-xl border border-slate-200 shadow-xs shrink-0 flex items-center justify-center">
+            <!-- Tampilan Desktop: QR Code -->
+            <div id="viewDesktopContainer" class="hidden space-y-3">
+                <div class="flex flex-col sm:flex-row items-center gap-4 p-3.5 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0]">
+                    <div class="w-24 h-24 p-1.5 bg-white rounded-lg border border-[#E2E8F0] shrink-0 flex items-center justify-center">
                         <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ urlencode(route('download.apk')) }}" 
                              alt="QR Code Unduh Aplikasi" 
                              class="w-full h-full object-contain">
                     </div>
-                    <div class="text-left space-y-1.5">
-                        <span class="text-xs font-bold text-slate-900 block">Scan dengan Kamera Ponsel</span>
-                        <p class="text-[11px] text-slate-500 leading-relaxed">
-                            Arahkan kamera smartphone Anda ke QR Code untuk mengunduh aplikasi resmi pengaduan Kabupaten Kolaka Utara.
+                    <div class="text-center sm:text-left space-y-1">
+                        <span class="text-xs font-bold text-[#0F172A] block">Pindai QR dengan Kamera Ponsel</span>
+                        <p class="text-xs text-[#475569] leading-relaxed">
+                            Arahkan kamera ponsel ke QR Code untuk mengunduh aplikasi SI-APPIK.
                         </p>
                     </div>
                 </div>
             </div>
 
-            <!-- Footer Tombol: Dialihkan ke Halaman Landing Saat Ditekan -->
-            <div class="pt-2 border-t border-slate-100">
+            <!-- Footer Tombol -->
+            <div class="pt-2 border-t border-[#E2E8F0]">
                 <button type="button" onclick="handleSayaMengerti()" 
-                    class="w-full py-3.5 rounded-2xl bg-[#1E3A8A] hover:bg-[#172e6e] text-white font-bold text-sm transition shadow-md shadow-[#1E3A8A]/20 cursor-pointer flex items-center justify-center gap-2">
+                    class="w-full min-h-[44px] rounded-lg bg-[#1E3A8A] hover:bg-[#172554] text-white font-semibold text-sm transition cursor-pointer flex items-center justify-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1E3A8A]">
                     <span>Saya Mengerti</span>
                     <i data-lucide="arrow-right" class="w-4 h-4"></i>
                 </button>
@@ -291,8 +300,8 @@
 <!-- ========================================================================= -->
 <!-- MODAL LUPA KATA SANDI - VERIFIKASI OTP RESMI (WEBSITE) -->
 <!-- ========================================================================= -->
-<div id="forgotPasswordModal" class="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto w-full h-full">
-    <div class="w-full max-w-[calc(100vw-24px)] sm:max-w-md bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200 overflow-hidden relative my-auto animate-in fade-in zoom-in-95 duration-150">
+<div id="forgotPasswordModal" class="fixed inset-0 z-50 bg-slate-900/65 hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto w-full h-full">
+    <div class="w-full max-w-[calc(100vw-24px)] sm:max-w-md bg-white rounded-xl shadow-md border border-[#E2E8F0] overflow-hidden relative my-auto">
         
         <!-- Header Modal (#1E3A8A) -->
         <div class="bg-[#1E3A8A] text-white p-4 sm:p-5 relative">

@@ -1,25 +1,25 @@
 <!-- Modal Detail Pengaduan Terpadu (Shared Component) -->
-<div id="complaintDetailModal" class="fixed inset-0 z-[9999] hidden flex items-center justify-center p-3 sm:p-5 bg-slate-900/75 transition-opacity duration-150 overscroll-contain">
-    <div class="bg-white w-full max-w-xl rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92vh] animate-in fade-in zoom-in-95" style="transform: translateZ(0); will-change: transform;">
+<div id="complaintDetailModal" class="fixed inset-0 z-[9999] hidden flex items-center justify-center p-3 sm:p-5 bg-slate-900/65 transition-opacity duration-150 overscroll-contain">
+    <div class="bg-white w-full max-w-xl rounded-xl shadow-md border border-[#E2E8F0] overflow-hidden flex flex-col max-h-[92vh]">
         
-        <!-- Modal Top Header (Selaras 1 Baris: Kerusakan -> Kategori -> Status) -->
-        <div class="px-4 sm:px-5 py-3 sm:py-3.5 border-b border-slate-100 flex items-center justify-between bg-slate-50/80 gap-2">
+        <!-- Modal Top Header (Selaras Landing Page: Kerusakan -> Kategori -> Status) -->
+        <div class="px-4 sm:px-5 py-3 sm:py-3.5 border-b border-[#E2E8F0] flex items-center justify-between bg-[#F8FAFC] gap-2">
             <div class="flex items-center gap-1.5 sm:gap-2 flex-nowrap min-w-0 overflow-x-auto no-scrollbar py-0.5">
                 <!-- 1. Tingkat Kerusakan -->
-                <span id="sharedModalTypeBadge" class="shrink-0 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[10.5px] sm:text-xs font-bold bg-red-50 text-red-700 border border-red-200 inline-flex items-center gap-1 sm:gap-1.5 whitespace-nowrap">
-                    <span class="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0"></span>
+                <span id="sharedModalTypeBadge" class="shrink-0 px-2.5 py-1 rounded-md text-xs font-semibold bg-red-50 text-red-700 border border-red-200 inline-flex items-center gap-1.5 whitespace-nowrap">
+                    <span class="w-1.5 h-1.5 rounded-full bg-red-600 shrink-0"></span>
                     <span>Kerusakan Ringan</span>
                 </span>
                 <!-- 2. Kategori Infrastruktur -->
-                <span id="sharedModalCategoryBadge" class="shrink-0 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full bg-slate-100 text-slate-700 font-semibold text-[10.5px] sm:text-xs border border-slate-200 inline-flex items-center whitespace-nowrap">
+                <span id="sharedModalCategoryBadge" class="shrink-0 px-2.5 py-1 rounded-md bg-slate-100 text-[#0F172A] font-semibold text-xs border border-[#E2E8F0] inline-flex items-center whitespace-nowrap">
                     Infrastruktur
                 </span>
                 <!-- 3. Status Pengerjaan -->
-                <span id="sharedModalStatusBadge" class="shrink-0 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[10.5px] sm:text-xs font-bold whitespace-nowrap border">
+                <span id="sharedModalStatusBadge" class="shrink-0 px-2.5 py-1 rounded-md text-xs font-bold whitespace-nowrap border">
                     STATUS
                 </span>
             </div>
-            <button type="button" onclick="closeSharedDetailModal()" class="w-8 h-8 rounded-full bg-slate-200/70 hover:bg-slate-300 text-slate-700 flex items-center justify-center transition cursor-pointer shrink-0 ml-1" title="Tutup Detail">
+            <button type="button" onclick="closeSharedDetailModal()" class="w-9 h-9 rounded-lg bg-white hover:bg-slate-100 text-[#475569] hover:text-[#0F172A] border border-[#E2E8F0] flex items-center justify-center transition cursor-pointer shrink-0 ml-1" title="Tutup Detail" aria-label="Tutup Rincian">
                 <i data-lucide="x" class="w-4 h-4"></i>
             </button>
         </div>
@@ -29,10 +29,10 @@
             
             <!-- 1. Foto Bukti Kerusakan Awal (Warga) -->
             <div id="sharedModalPhotoContainer" class="space-y-2">
-                <div class="rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 relative max-h-64 sm:max-h-72 flex items-center justify-center shadow-xs">
+                <div class="rounded-xl overflow-hidden border border-[#E2E8F0] bg-slate-100 relative max-h-64 sm:max-h-72 flex items-center justify-center">
                     <img id="sharedModalPhoto" src="" alt="Foto Kerusakan" class="w-full h-full object-cover max-h-64 sm:max-h-72">
-                    <div class="absolute bottom-2.5 left-2.5 bg-black/75 backdrop-blur-xs text-white text-[10.5px] font-medium px-2.5 py-1 rounded-lg flex items-center gap-1.5 shadow-xs">
-                        <i data-lucide="camera" class="w-3.5 h-3.5 text-white/90"></i>
+                    <div class="absolute bottom-2.5 left-2.5 bg-[#0F172A] text-white text-[11px] font-semibold px-2.5 py-1 rounded-md flex items-center gap-1.5 border border-slate-700">
+                        <i data-lucide="camera" class="w-3.5 h-3.5 text-white"></i>
                         <span id="sharedModalPhotoCountLabel">Foto Bukti Kerusakan</span>
                     </div>
                 </div>
@@ -42,10 +42,10 @@
 
             <!-- 2. Foto Bukti Hasil Pengerjaan Fisik (Petugas Lapangan) -->
             <div id="sharedModalCompletionPhotoContainer" class="space-y-2 hidden">
-                <div class="rounded-2xl overflow-hidden border border-emerald-300 bg-emerald-50/50 relative max-h-64 sm:max-h-72 flex items-center justify-center shadow-xs">
+                <div class="rounded-xl overflow-hidden border border-emerald-300 bg-emerald-50 relative max-h-64 sm:max-h-72 flex items-center justify-center">
                     <img id="sharedModalCompletionPhoto" src="" alt="Foto Hasil Pengerjaan" class="w-full h-full object-cover max-h-64 sm:max-h-72">
-                    <div class="absolute bottom-2.5 left-2.5 bg-emerald-950/90 backdrop-blur-xs text-white text-[10.5px] font-bold px-2.5 py-1 rounded-lg flex items-center gap-1.5 shadow-md">
-                        <i data-lucide="badge-check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                    <div class="absolute bottom-2.5 left-2.5 bg-[#064E3B] text-white text-[11px] font-semibold px-2.5 py-1 rounded-md flex items-center gap-1.5 border border-emerald-800">
+                        <i data-lucide="badge-check" class="w-3.5 h-3.5 text-emerald-300"></i>
                         <span id="sharedModalCompletionPhotoLabel">Bukti Penyelesaian Lapangan</span>
                     </div>
                 </div>
@@ -55,12 +55,12 @@
 
             <!-- 3. Judul & Info Waktu Laporan -->
             <div>
-                <span id="sharedModalCode" class="text-[11px] font-mono font-medium text-slate-400 block tracking-wide mb-0.5">#ADU-0000</span>
-                <h3 id="sharedModalTitle" class="font-outfit font-extrabold text-lg sm:text-xl text-slate-900 leading-snug">
+                <span id="sharedModalCode" class="text-[11px] font-mono font-semibold text-[#475569] block tracking-wide mb-0.5">#ADU-0000</span>
+                <h3 id="sharedModalTitle" class="font-outfit font-bold text-lg sm:text-xl text-[#0F172A] leading-snug">
                     Judul Pengaduan
                 </h3>
-                <div class="flex items-center gap-1.5 text-xs text-slate-500 pt-0.5">
-                    <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-400"></i>
+                <div class="flex items-center gap-1.5 text-xs text-[#475569] pt-1">
+                    <i data-lucide="calendar" class="w-3.5 h-3.5 text-[#475569]"></i>
                     <span id="sharedModalDate">01 Jan 2026, 00:00 WITA</span>
                 </div>
             </div>
