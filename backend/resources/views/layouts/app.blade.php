@@ -308,10 +308,10 @@
                                 <span class="whitespace-nowrap">Dashboard Petugas</span>
                             </a>
                         @else
-                            <a href="{{ route('login') }}" 
-                                class="px-4 h-10 rounded-lg bg-[#1E3A8A] hover:bg-[#172554] text-white font-semibold text-xs sm:text-[13px] transition inline-flex items-center gap-1.5 whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1E3A8A]">
-                                <i data-lucide="log-in" class="w-4 h-4 shrink-0"></i>
-                                <span class="whitespace-nowrap">Masuk Petugas</span>
+                            <a href="{{ route('login') }}" title="Masuk" aria-label="Masuk"
+                                class="w-10 md:w-auto md:px-4 h-10 rounded-lg bg-[#1E3A8A] hover:bg-[#172554] text-white font-semibold text-xs sm:text-[13px] transition inline-flex items-center justify-center gap-1.5 whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1E3A8A]">
+                                <i data-lucide="external-link" class="w-4 h-4 shrink-0"></i>
+                                <span class="hidden md:inline whitespace-nowrap">Masuk</span>
                             </a>
                         @endauth
 

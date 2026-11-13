@@ -15,11 +15,6 @@
     </div>
 
     <div class="max-w-4xl mx-auto px-6 sm:px-10 lg:px-12 text-center flex flex-col items-center justify-center">
-        <!-- Badge Identitas Instansi -->
-        <div class="relative z-10 inline-flex items-center gap-2 px-4 py-1.5 rounded-md bg-[#172554] text-blue-100 border border-[#2B4C9B] text-xs font-semibold mb-5">
-            <span>Portal Resmi Pemerintah Kabupaten Kolaka Utara • Dinas PUPR</span>
-        </div>
-
         <!-- Headline -->
         <h1 class="relative z-10 font-outfit font-bold text-2xl sm:text-3xl lg:text-4xl text-white tracking-tight leading-tight max-w-3xl mx-auto">
             Pemantauan Kondisi Jalan, Jembatan, dan Prasarana Umum Kabupaten Kolaka Utara
@@ -409,10 +404,6 @@
     <div id="download-app" class="scroll-mt-20 rounded-xl p-6 sm:p-8 bg-[#1E3A8A] text-white border border-[#172554]">
         <div class="flex flex-col lg:flex-row items-center justify-between gap-6 text-center lg:text-left">
             <div class="max-w-xl space-y-2.5">
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#172554] text-blue-100 border border-[#2B4C9B] text-xs font-semibold">
-                    <i data-lucide="smartphone" class="w-3.5 h-3.5"></i>
-                    <span>Aplikasi Resmi Pelaporan Masyarakat &amp; Petugas</span>
-                </div>
                 <h3 class="font-outfit font-bold text-xl sm:text-2xl text-white tracking-tight">
                     Laporkan Kerusakan Infrastruktur Langsung dari Lokasi
                 </h3>
