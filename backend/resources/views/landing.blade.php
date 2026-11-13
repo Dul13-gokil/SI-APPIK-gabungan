@@ -120,11 +120,11 @@
             </div>
 
             <!-- Toolbar Kanan -->
-            <div class="flex flex-wrap items-center gap-2 shrink-0">
+            <div class="flex flex-nowrap items-center gap-1.5 sm:gap-2 w-full md:w-auto shrink-0">
                 <!-- Dropdown Filter Kecamatan -->
-                <div class="relative">
+                <div class="relative flex-1 md:flex-initial min-w-0">
                     <select id="districtFilterSelect" onchange="onDistrictFilterChange(this.value)" aria-label="Filter Kecamatan"
-                        class="bg-white border border-[#E2E8F0] text-xs font-semibold text-[#0F172A] min-h-[44px] pl-3 pr-8 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A8A] focus:border-[#1E3A8A] cursor-pointer">
+                        class="w-full md:w-auto min-w-0 truncate bg-white border border-[#E2E8F0] text-xs font-semibold text-[#0F172A] min-h-[44px] pl-2.5 sm:pl-3 pr-7 sm:pr-8 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A8A] focus:border-[#1E3A8A] cursor-pointer">
                         <option value="ALL">Semua Kecamatan</option>
                         @foreach($districts as $d)
                             <option value="{{ $d }}">{{ str_starts_with($d, 'Kecamatan ') ? $d : 'Kecamatan ' . $d }}</option>
@@ -134,15 +134,15 @@
 
                 <!-- Tombol Reset Filter -->
                 <button type="button" id="resetFilterBtn" onclick="resetAllFilters()" 
-                    class="hidden items-center gap-1.5 px-3.5 min-h-[44px] rounded-lg text-xs font-semibold bg-red-50 hover:bg-red-100 text-[#DC2626] border border-red-200 transition shrink-0 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#DC2626]" title="Reset filter status & kecamatan">
+                    class="hidden items-center gap-1.5 px-2.5 sm:px-3.5 min-h-[44px] rounded-lg text-xs font-semibold bg-red-50 hover:bg-red-100 text-[#DC2626] border border-red-200 transition shrink-0 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#DC2626]" title="Reset filter status & kecamatan">
                     <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
-                    <span>Reset</span>
+                    <span class="hidden sm:inline">Reset</span>
                 </button>
 
                 <!-- Tombol Toggle Daftar Titik -->
                 <button type="button" id="toggleDrawerBtn" onclick="toggleReportDrawer()" 
-                    class="flex items-center gap-1.5 px-4 min-h-[44px] rounded-lg text-xs font-semibold bg-white border border-[#E2E8F0] text-[#0F172A] hover:bg-[#F8FAFC] transition shrink-0 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1E3A8A]">
-                    <i data-lucide="list" class="w-3.5 h-3.5 text-current"></i>
+                    class="flex items-center gap-1.5 px-3 sm:px-4 min-h-[44px] rounded-lg text-xs font-semibold bg-white border border-[#E2E8F0] text-[#0F172A] hover:bg-[#F8FAFC] transition shrink-0 whitespace-nowrap cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1E3A8A]">
+                    <i data-lucide="list" class="w-3.5 h-3.5 text-current shrink-0"></i>
                     <span id="drawerToggleText">Daftar Titik</span>
                     <span id="drawerCountBadge" class="ml-0.5 px-1.5 py-0.5 rounded-md text-[10px] bg-blue-50 text-[#1E3A8A] font-bold border border-blue-200">0</span>
                 </button>
