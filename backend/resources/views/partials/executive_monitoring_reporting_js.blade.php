@@ -255,6 +255,44 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(initExecutiveMonitoringCharts, 200);
 });
 
+// Format Laporan Resmi ('professional' | 'ats')
+let activeReportFormat = 'professional';
+
+function setReportFormat(format) {
+    activeReportFormat = format === 'ats' ? 'ats' : 'professional';
+
+    const profEl = document.getElementById('reportFormatProfessional');
+    const atsEl = document.getElementById('reportFormatAts');
+    const subtitleEl = document.getElementById('modalReportFormatSubtitle');
+
+    if (profEl && atsEl) {
+        if (activeReportFormat === 'ats') {
+            profEl.classList.add('hidden');
+            atsEl.classList.remove('hidden');
+        } else {
+            atsEl.classList.add('hidden');
+            profEl.classList.remove('hidden');
+        }
+    }
+
+    if (subtitleEl) {
+        subtitleEl.textContent = activeReportFormat === 'ats'
+            ? 'Format ATS (Teks Terstruktur & Ramah Arsip) • Kabupaten Kolaka Utara'
+            : 'Format Profesional Kedinasan • Kabupaten Kolaka Utara';
+    }
+
+    document.querySelectorAll('[data-format-btn]').forEach((btn) => {
+        const isSelected = btn.getAttribute('data-format-btn') === activeReportFormat;
+        if (isSelected) {
+            btn.classList.add('bg-white', 'text-[#1E3A8A]', 'border-slate-200', 'shadow-2xs');
+            btn.classList.remove('text-slate-600', 'border-transparent');
+        } else {
+            btn.classList.remove('bg-white', 'text-[#1E3A8A]', 'border-slate-200', 'shadow-2xs');
+            btn.classList.add('text-slate-600', 'border-transparent');
+        }
+    });
+}
+
 // Modal Pratinjau Dokumen & Cetak Laporan
 
 function openReportPreviewModal() {
