@@ -233,18 +233,9 @@
             </span>
         </button>
 
-        <!-- 6. Tab Laporan Kinerja -->
-        <button type="button" onclick="switchAdminTab('reporting')" id="tabBtn-reporting"
-            class="admin-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'reporting' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
-            <i data-lucide="bar-chart-3" class="w-4 h-4 shrink-0 text-current"></i>
-            <div class="min-w-0 flex-1">
-                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Laporan Kinerja</span>
-            </div>
-        </button>
-
-        <!-- 7. Tab Arsip Ditolak (Khusus Super Admin) -->
+        <!-- 6. Tab Arsip Ditolak (Khusus Super Admin) -->
         <button type="button" onclick="switchAdminTab('admin-rejected')" id="tabBtn-admin-rejected"
-            class="admin-tab-btn col-span-2 sm:col-span-1 text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'admin-rejected' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
+            class="admin-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'admin-rejected' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
             <i data-lucide="archive-x" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
                 <span class="text-[11px] sm:text-xs font-bold block leading-tight">Arsip Ditolak</span>
@@ -252,6 +243,15 @@
             <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'admin-rejected' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
                 {{ ($adminRejectedComplaints ?? collect())->count() }}
             </span>
+        </button>
+
+        <!-- 7. Tab Laporan Kinerja -->
+        <button type="button" onclick="switchAdminTab('reporting')" id="tabBtn-reporting"
+            class="admin-tab-btn col-span-2 sm:col-span-1 text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'reporting' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
+            <i data-lucide="bar-chart-3" class="w-4 h-4 shrink-0 text-current"></i>
+            <div class="min-w-0 flex-1">
+                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Laporan Kinerja</span>
+            </div>
         </button>
     </div>
 

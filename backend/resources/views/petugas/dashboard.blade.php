@@ -1948,44 +1948,42 @@
         </div>
     </div>
 
-    <!-- MODAL UNGGAH BUKTI SELESAI PENGERJAAN FISIK LAPANGAN -->
+    <!-- MODAL KIRIM BUKTI PENYELESAIAN LAPANGAN -->
     <div id="petugasFinishModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/65 flex items-center justify-center p-3 sm:p-5 overscroll-contain">
-        <div class="card-white rounded-2xl bg-white border border-slate-200 shadow-2xl max-w-md w-full overflow-hidden flex flex-col relative animate-in fade-in zoom-in duration-150">
-            <div class="px-5 py-3.5 border-b border-slate-100 flex items-center justify-between bg-slate-50/80">
-                <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-xl bg-blue-100 text-[#1E3A8A] flex items-center justify-center font-bold text-xs">
+        <div class="card-white rounded-2xl bg-white border border-[#E2E8F0] shadow-2xl max-w-md w-full overflow-hidden flex flex-col relative animate-in fade-in zoom-in duration-150">
+            <div class="px-4 sm:px-5 py-3.5 border-b border-[#E2E8F0] flex items-center justify-between bg-[#F8FAFC]">
+                <div class="flex items-center gap-2.5 min-w-0">
+                    <div class="w-8 h-8 rounded-xl bg-blue-50 text-[#1E3A8A] border border-blue-200 flex items-center justify-center shrink-0">
                         <i data-lucide="upload-cloud" class="w-4 h-4"></i>
                     </div>
-                    <div>
-                        <h3 class="font-outfit font-extrabold text-sm text-slate-900">Unggah Bukti Selesai</h3>
-                        <span id="finishModalCode" class="text-[10.5px] font-mono text-slate-500 font-bold">#</span>
-                    </div>
+                    <h3 class="font-outfit font-bold text-sm sm:text-base text-slate-900 truncate">Kirim Bukti Penyelesaian</h3>
                 </div>
-                <button type="button" onclick="closePetugasFinishModal()" class="w-7 h-7 rounded-full bg-slate-200/70 hover:bg-slate-300 text-slate-700 flex items-center justify-center transition cursor-pointer">
-                    <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                <button type="button" onclick="closePetugasFinishModal()" class="w-8 h-8 rounded-lg bg-white hover:bg-slate-100 text-slate-600 border border-[#E2E8F0] flex items-center justify-center transition cursor-pointer shrink-0" aria-label="Tutup">
+                    <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
             </div>
-            <form id="petugasFinishForm" method="POST" action="" enctype="multipart/form-data" class="p-5 space-y-4">
+            <form id="petugasFinishForm" method="POST" action="" enctype="multipart/form-data" class="p-4 sm:p-5 space-y-4">
                 @csrf
-                <div>
-                    <h4 id="finishModalTitle" class="font-outfit font-bold text-xs text-slate-800 line-clamp-1 mb-2"></h4>
+                <div class="p-3 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0]">
+                    <span id="finishModalCode" class="text-[11px] font-mono font-bold text-[#1E3A8A] block mb-0.5">#</span>
+                    <h4 id="finishModalTitle" class="font-outfit font-bold text-sm text-slate-900 line-clamp-2 leading-snug"></h4>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Foto Bukti Hasil Pengerjaan Fisik <span class="text-red-500">*</span></label>
-                    <input type="file" name="photos[]" required accept="image/*" class="w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-blue-50 file:text-[#1E3A8A] border border-slate-200 rounded-xl p-1 bg-slate-50 focus:bg-white">
-                    <p class="text-[10px] text-slate-400 mt-1">Lampirkan foto fisik hasil perbaikan yang telah tuntas di lapangan.</p>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Foto Hasil Perbaikan <span class="text-red-500">*</span></label>
+                    <input type="file" name="photos[]" required accept="image/*" class="w-full text-xs text-slate-600 file:mr-2.5 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-[#1E3A8A] file:text-white hover:file:bg-[#172554] file:cursor-pointer border border-[#E2E8F0] rounded-xl p-1.5 bg-[#F8FAFC] focus:bg-white transition">
+                    <p class="text-[11px] text-slate-500 mt-1">Unggah foto kondisi lapangan setelah selesai diperbaiki.</p>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Catatan Pengerjaan Teknis <span class="text-red-500">*</span></label>
-                    <input type="text" name="note" required placeholder="Contoh: Penambalan hotmix tuntas & rata sesuai spesifikasi" class="w-full text-xs rounded-xl border border-slate-300 py-2 px-3 bg-white focus:ring-1 focus:ring-[#1E3A8A]">
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Catatan Teknis <span class="text-red-500">*</span></label>
+                    <textarea name="note" rows="2" required placeholder="Contoh: Penambalan aspal selesai dan rata sesuai standar." class="w-full text-xs rounded-xl border border-slate-300 py-2 px-3 bg-white text-slate-800 focus:ring-2 focus:ring-[#1E3A8A] focus:border-[#1E3A8A] leading-relaxed"></textarea>
                 </div>
-                <div class="flex items-center justify-end gap-2.5 pt-2 border-t border-slate-100">
-                    <button type="button" onclick="closePetugasFinishModal()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer">
+                <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+                    <button type="button" onclick="closePetugasFinishModal()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer">
                         Batal
                     </button>
-                    <button type="submit" class="px-4 py-2 rounded-xl bg-[#1E3A8A] hover:bg-blue-900 text-white font-bold text-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer">
+                    <button type="submit" class="px-4 py-2.5 rounded-xl bg-[#1E3A8A] hover:bg-[#172554] text-white font-bold text-xs shadow-sm transition flex items-center gap-1.5 cursor-pointer">
                         <i data-lucide="check-circle" class="w-3.5 h-3.5"></i>
-                        <span>Kirim ke Operator PUPR</span>
+                        <span>Kirim Bukti</span>
                     </button>
                 </div>
             </form>
