@@ -150,7 +150,7 @@
             class="bupati-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer bg-[#1E3A8A] text-white border-[#1E3A8A]">
             <i data-lucide="map" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
-                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Peta &amp; Laporan</span>
+                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Peta &amp; Laporan Kinerja</span>
             </div>
         </button>
 
@@ -516,9 +516,6 @@
                                             </div>
                                             <div class="flex items-center gap-1.5 flex-wrap mb-0.5">
                                                 <span class="font-bold text-slate-900 text-xs leading-snug truncate max-w-full md:max-w-[200px]" title="{{ $c->title }}">{{ $c->title }}</span>
-                                                @if($c->severity_text)
-                                                    <span class="px-1.5 py-0.2 rounded text-[9.5px] font-bold bg-blue-50 text-[#1E3A8A] border border-blue-200 shrink-0 whitespace-nowrap">{{ $c->severity_text }}</span>
-                                                @endif
                                             </div>
                                             <div class="text-[10.5px] text-slate-500 flex items-center gap-1 truncate max-w-full md:max-w-[240px]">
                                                 <i data-lucide="user" class="w-3 h-3 text-slate-400 shrink-0"></i>
@@ -896,16 +893,11 @@
 
                                     <!-- Rincian Informasi Aduan: Sejajar Sempurna dengan Foto -->
                                     <div class="flex-1 min-w-0 flex flex-col justify-between py-0.5">
-                                        <!-- Baris 1: Judul & Tingkat Kerusakan (1 Baris Rapi, Sejajar Kiri-Kanan) -->
+                                        <!-- Baris 1: Judul Laporan -->
                                         <div class="flex items-center justify-between gap-2 min-w-0">
                                             <h4 class="font-outfit font-extrabold text-sm sm:text-base text-slate-900 tracking-tight leading-snug truncate" title="{{ $ac->title }}">
                                                 {{ $ac->title }}
                                             </h4>
-                                            @if($ac->severity_text)
-                                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-[#1E3A8A] border border-blue-200/80 shrink-0 whitespace-nowrap">
-                                                    {{ $ac->severity_text }}
-                                                </span>
-                                            @endif
                                         </div>
 
                                         <!-- Baris 2: Lokasi Fisik (1 Baris Rapi) -->

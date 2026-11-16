@@ -390,14 +390,11 @@
 
                                 <!-- Rincian Informasi Aduan: Sejajar Sempurna dengan Foto -->
                                 <div class="flex-1 min-w-0 flex flex-col justify-between py-0.5">
-                                    <!-- Baris 1: Judul & Tingkat Kerusakan -->
+                                    <!-- Baris 1: Judul Laporan -->
                                     <div class="flex items-center justify-between gap-2 min-w-0">
                                         <h4 class="font-outfit font-extrabold text-sm sm:text-base text-slate-900 tracking-tight leading-snug truncate" title="{{ $t->title }}">
                                             {{ $t->title }}
                                         </h4>
-                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-[#1E3A8A] border border-blue-200/80 shrink-0 whitespace-nowrap">
-                                            {{ $t->severity_text }}
-                                        </span>
                                     </div>
 
                                     <!-- Baris 2: Lokasi Fisik -->
@@ -545,14 +542,11 @@
 
                                 <!-- Rincian Informasi Aduan: Sejajar Sempurna dengan Foto -->
                                 <div class="flex-1 min-w-0 flex flex-col justify-between py-0.5">
-                                    <!-- Baris 1: Judul & Tingkat Kerusakan -->
+                                    <!-- Baris 1: Judul Laporan -->
                                     <div class="flex items-center justify-between gap-2 min-w-0">
                                         <h4 class="font-outfit font-extrabold text-sm sm:text-base text-slate-900 tracking-tight leading-snug truncate" title="{{ $t->title }}">
                                             {{ $t->title }}
                                         </h4>
-                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-[#1E3A8A] border border-blue-200/80 shrink-0 whitespace-nowrap">
-                                            {{ $t->severity_text }}
-                                        </span>
                                     </div>
 
                                     <!-- Baris 2: Lokasi Fisik -->
@@ -678,9 +672,6 @@
                                         <h4 class="font-outfit font-extrabold text-sm sm:text-base text-slate-900 tracking-tight leading-snug truncate" title="{{ $t->title }}">
                                             {{ $t->title }}
                                         </h4>
-                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-[#1E3A8A] border border-blue-200/80 shrink-0 whitespace-nowrap">
-                                            {{ $t->severity_text }}
-                                        </span>
                                     </div>
 
                                     <div class="text-xs text-slate-600 flex items-center gap-1.5 min-w-0">
@@ -801,14 +792,11 @@
 
                                 <!-- Rincian Informasi Aduan: Sejajar Sempurna dengan Foto -->
                                 <div class="flex-1 min-w-0 flex flex-col justify-between py-0.5">
-                                    <!-- Baris 1: Judul & Tingkat Kerusakan -->
+                                    <!-- Baris 1: Judul Laporan -->
                                     <div class="flex items-center justify-between gap-2 min-w-0">
                                         <h4 class="font-outfit font-extrabold text-sm sm:text-base text-slate-900 tracking-tight leading-snug truncate" title="{{ $c->title }}">
                                             {{ $c->title }}
                                         </h4>
-                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-[#1E3A8A] border border-blue-200/80 shrink-0 whitespace-nowrap">
-                                            {{ $c->severity_text }}
-                                        </span>
                                     </div>
 
                                     <!-- Baris 2: Lokasi Fisik -->

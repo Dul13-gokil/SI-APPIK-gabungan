@@ -863,11 +863,6 @@
                                             <button type="button" onclick="openAdminDetailModal({{ $c->id }})" class="font-bold text-slate-900 text-xs truncate hover:text-[#1E3A8A] text-left cursor-pointer max-w-full md:max-w-[200px]" title="{{ $c->title }}">
                                                 {{ $c->title }}
                                             </button>
-                                            @if($c->severity_text)
-                                                <span class="px-1.5 py-0.2 rounded text-[9.5px] font-bold bg-blue-50 text-[#1E3A8A] border border-blue-200/80 shrink-0 whitespace-nowrap">
-                                                    {{ $c->severity_text }}
-                                                </span>
-                                            @endif
                                         </div>
                                         <div class="text-[10.5px] text-slate-400 flex items-center gap-1 truncate max-w-full md:max-w-[240px]">
                                             <i data-lucide="map-pin" class="w-3 h-3 text-slate-400 shrink-0"></i>
