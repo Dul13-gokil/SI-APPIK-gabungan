@@ -314,18 +314,36 @@ class WebAuthController extends Controller
     public function downloadApk(): \Symfony\Component\HttpFoundation\BinaryFileResponse|RedirectResponse
     {
         $apkPath = public_path('downloads/SI-APPIK.APK');
-        $sourceApk = base_path('../mobile/build/app/outputs/apk/debug/app-debug.apk');
+        $candidates = [
+            base_path('../mobile/build/app/outputs/flutter-apk/app-release.apk'),
+            base_path('../mobile/build/app/outputs/flutter-apk/app-arm64-v8a-release.apk'),
+            base_path('../mobile/build/app/outputs/flutter-apk/app-debug.apk'),
+            base_path('../mobile/build/app/outputs/apk/debug/app-debug.apk'),
+        ];
 
-        if (file_exists($sourceApk) && (!file_exists($apkPath) || filemtime($sourceApk) > filemtime($apkPath))) {
+        $newestSource = null;
+        $newestMtime = 0;
+        foreach ($candidates as $candidate) {
+            if (file_exists($candidate)) {
+                $mtime = filemtime($candidate) ?: 0;
+                if ($mtime > $newestMtime) {
+                    $newestMtime = $mtime;
+                    $newestSource = $candidate;
+                }
+            }
+        }
+
+        if ($newestSource && (!file_exists($apkPath) || $newestMtime > filemtime($apkPath))) {
             if (!is_dir(public_path('downloads'))) {
                 mkdir(public_path('downloads'), 0777, true);
             }
-            copy($sourceApk, $apkPath);
+            copy($newestSource, $apkPath);
         }
 
         if (file_exists($apkPath)) {
             return response()->download($apkPath, 'SI-APPIK.APK', [
                 'Content-Type' => 'application/vnd.android.package-archive',
+                'Cache-Control' => 'no-cache, no-store, must-revalidate',
             ]);
         }
 

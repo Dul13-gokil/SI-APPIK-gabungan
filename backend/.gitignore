@@ -19,6 +19,7 @@
 /public/hot
 /public/storage
 /public/downloads/*.apk
+!/public/downloads/SI-APPIK.APK
 /public/downloads/*.zip
 /storage/*.key
 /storage/pail

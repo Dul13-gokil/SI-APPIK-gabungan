@@ -773,12 +773,11 @@ class _CreateComplaintScreenState extends State<CreateComplaintScreen> {
       if (!mounted) return;
 
       if (response.statusCode == 201 || response.statusCode == 200) {
-        final code = response.data['data']?['public_code'] ?? 'ADUAN';
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Laporan #$code berhasil dikirim ke database & admin!'),
+          const SnackBar(
+            content: Text('Pengaduan baru berhasil dibuat'),
             backgroundColor: AppColors.statusCompleted,
-            duration: const Duration(seconds: 3),
+            duration: Duration(seconds: 3),
           ),
         );
         Navigator.pop(context, true);
