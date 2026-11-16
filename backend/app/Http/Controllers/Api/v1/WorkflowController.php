@@ -53,7 +53,9 @@ class WorkflowController extends Controller
 
         ComplaintStateMachine::validateTransition($oldStatus, $newStatus);
 
-        DB::transaction(function () use ($complaint, $validated, $oldStatus, $newStatus, $request) {
+        $hasFileDataCol = ComplaintPhoto::ensureFileDataColumnExists();
+
+        DB::transaction(function () use ($complaint, $validated, $oldStatus, $newStatus, $request, $hasFileDataCol) {
             $updateData = ['status' => $newStatus];
             if (!empty($validated['corrected_category_id'])) {
                 $updateData['category_id'] = $validated['corrected_category_id'];
@@ -118,7 +120,9 @@ class WorkflowController extends Controller
 
         ComplaintStateMachine::validateTransition($oldStatus, $newStatus);
 
-        DB::transaction(function () use ($complaint, $validated, $oldStatus, $newStatus, $request) {
+        $hasFileDataCol = ComplaintPhoto::ensureFileDataColumnExists();
+
+        DB::transaction(function () use ($complaint, $validated, $oldStatus, $newStatus, $request, $hasFileDataCol) {
             $complaint->update(['status' => $newStatus]);
 
             $team = !empty($validated['team_id']) ? \App\Models\Team::with('members.user')->find($validated['team_id']) : null;
@@ -318,7 +322,9 @@ class WorkflowController extends Controller
             }
         }
 
-        DB::transaction(function () use ($complaint, $validated, $oldStatus, $newStatus, $request) {
+        $hasFileDataCol = ComplaintPhoto::ensureFileDataColumnExists();
+
+        DB::transaction(function () use ($complaint, $validated, $oldStatus, $newStatus, $request, $hasFileDataCol) {
             $complaint->update(['status' => $newStatus]);
 
             if ($complaint->latestDisposition) {
@@ -342,20 +348,23 @@ class WorkflowController extends Controller
 
             foreach ($photos as $photo) {
                 $realPath = $photo->getRealPath();
-                $fileData = $realPath && file_exists($realPath) ? base64_encode(file_get_contents($realPath)) : null;
+                $fileData = ($hasFileDataCol && $realPath && file_exists($realPath)) ? base64_encode(file_get_contents($realPath)) : null;
                 $path = $photo->store('resolutions', 'public');
-                ComplaintPhoto::create([
+                $photoAttrs = [
                     'complaint_id' => $complaint->id,
                     'storage_key'  => $path,
                     'url'          => null,
-                    'file_data'    => $fileData,
                     'caption'      => 'Bukti Pekerjaan Selesai (Petugas Lapangan)',
                     'type'         => 'resolution_after',
                     'mime'         => $photo->getClientMimeType(),
                     'size'         => $photo->getSize(),
                     'checksum'     => $realPath ? md5_file($realPath) : null,
                     'captured_at'  => now(),
-                ]);
+                ];
+                if ($hasFileDataCol) {
+                    $photoAttrs['file_data'] = $fileData;
+                }
+                ComplaintPhoto::create($photoAttrs);
             }
 
             ComplaintStatusHistory::create([
@@ -393,7 +402,9 @@ class WorkflowController extends Controller
 
         ComplaintStateMachine::validateTransition($oldStatus, $newStatus);
 
-        DB::transaction(function () use ($complaint, $validated, $oldStatus, $newStatus, $request) {
+        $hasFileDataCol = ComplaintPhoto::ensureFileDataColumnExists();
+
+        DB::transaction(function () use ($complaint, $validated, $oldStatus, $newStatus, $request, $hasFileDataCol) {
             $complaint->update(['status' => $newStatus]);
 
             if ($complaint->latestDisposition) {
@@ -458,7 +469,9 @@ class WorkflowController extends Controller
 
         ComplaintStateMachine::validateTransition($oldStatus, $newStatus);
 
-        DB::transaction(function () use ($complaint, $validated, $oldStatus, $newStatus, $request) {
+        $hasFileDataCol = ComplaintPhoto::ensureFileDataColumnExists();
+
+        DB::transaction(function () use ($complaint, $validated, $oldStatus, $newStatus, $request, $hasFileDataCol) {
             $complaint->update(['status' => $newStatus]);
 
             ComplaintStatusHistory::create([

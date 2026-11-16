@@ -323,7 +323,9 @@ class WebPetugasController extends Controller
             }
         }
 
-        DB::transaction(function () use ($complaint, $validated, $oldStatus, $newStatus, $request) {
+        $hasFileDataCol = ComplaintPhoto::ensureFileDataColumnExists();
+
+        DB::transaction(function () use ($complaint, $validated, $oldStatus, $newStatus, $request, $hasFileDataCol) {
             $complaint->update(['status' => $newStatus]);
 
             if ($complaint->latestDisposition) {
@@ -333,20 +335,23 @@ class WebPetugasController extends Controller
             if ($request->hasFile('photos')) {
                 foreach ($request->file('photos') as $photo) {
                     $realPath = $photo->getRealPath();
-                    $fileData = $realPath && file_exists($realPath) ? base64_encode(file_get_contents($realPath)) : null;
+                    $fileData = ($hasFileDataCol && $realPath && file_exists($realPath)) ? base64_encode(file_get_contents($realPath)) : null;
                     $path = $photo->store('resolutions', 'public');
-                    ComplaintPhoto::create([
+                    $photoAttrs = [
                         'complaint_id' => $complaint->id,
                         'storage_key'  => $path,
                         'url'          => null,
-                        'file_data'    => $fileData,
                         'caption'      => 'Bukti Penyelesaian Lapangan',
                         'type'         => 'resolution_after',
                         'mime'         => $photo->getClientMimeType(),
                         'size'         => $photo->getSize(),
                         'checksum'     => $realPath ? md5_file($realPath) : null,
                         'captured_at'  => now(),
-                    ]);
+                    ];
+                    if ($hasFileDataCol) {
+                        $photoAttrs['file_data'] = $fileData;
+                    }
+                    ComplaintPhoto::create($photoAttrs);
                 }
             }
 

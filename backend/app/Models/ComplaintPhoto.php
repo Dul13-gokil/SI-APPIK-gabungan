@@ -35,4 +35,29 @@ class ComplaintPhoto extends Model
     {
         return $this->belongsTo(Complaint::class);
     }
+
+    /**
+     * Pastikan kolom file_data tersedia di tabel complaint_photos (aman untuk PostgreSQL & MySQL)
+     * agar unggahan foto tidak gagal jika migrasi tertunda di server produksi.
+     */
+    public static function ensureFileDataColumnExists(): bool
+    {
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasColumn('complaint_photos', 'file_data')) {
+                return true;
+            }
+
+            if (\Illuminate\Support\Facades\DB::connection()->getDriverName() === 'pgsql') {
+                \Illuminate\Support\Facades\DB::statement('ALTER TABLE complaint_photos ADD COLUMN IF NOT EXISTS file_data TEXT NULL');
+            } else {
+                \Illuminate\Support\Facades\Schema::table('complaint_photos', function ($table) {
+                    $table->longText('file_data')->nullable()->after('url');
+                });
+            }
+
+            return \Illuminate\Support\Facades\Schema::hasColumn('complaint_photos', 'file_data');
+        } catch (\Throwable $e) {
+            return false;
+        }
+    }
 }

@@ -347,7 +347,9 @@ class ComplaintController extends Controller
             duplicateCount:    0
         );
 
-        $complaint = DB::transaction(function () use ($validated, $damageType, $userId, $publicCode, $priorityCalc, $photoFiles) {
+        $hasFileDataCol = ComplaintPhoto::ensureFileDataColumnExists();
+
+        $complaint = DB::transaction(function () use ($validated, $damageType, $userId, $publicCode, $priorityCalc, $photoFiles, $hasFileDataCol) {
             $isAnon = filter_var($validated['is_anonymous'] ?? false, FILTER_VALIDATE_BOOLEAN);
 
             $latFloat = (float) $validated['latitude'];
@@ -437,20 +439,23 @@ class ComplaintController extends Controller
 
             foreach ($uploadedPhotos as $index => $photo) {
                 $realPath = $photo->getRealPath();
-                $fileData = $realPath && file_exists($realPath) ? base64_encode(file_get_contents($realPath)) : null;
+                $fileData = ($hasFileDataCol && $realPath && file_exists($realPath)) ? base64_encode(file_get_contents($realPath)) : null;
                 $path = $photo->store('complaints', 'public');
-                ComplaintPhoto::create([
+                $photoAttrs = [
                     'complaint_id' => $complaint->id,
                     'storage_key'  => $path,
                     'url'          => null, // Di-resolve dinamis di ComplaintResource
-                    'file_data'    => $fileData,
                     'caption'      => 'Foto Bukti ' . ($index + 1),
                     'type'         => 'evidence_before',
                     'mime'         => $photo->getClientMimeType(),
                     'size'         => $photo->getSize(),
                     'checksum'     => $realPath ? md5_file($realPath) : null,
                     'captured_at'  => now(),
-                ]);
+                ];
+                if ($hasFileDataCol) {
+                    $photoAttrs['file_data'] = $fileData;
+                }
+                ComplaintPhoto::create($photoAttrs);
             }
 
             return $complaint;
