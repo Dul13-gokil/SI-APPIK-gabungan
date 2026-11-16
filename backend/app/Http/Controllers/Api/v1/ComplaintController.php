@@ -332,11 +332,19 @@ class ComplaintController extends Controller
         }
 
         // Generate Distinct Public Code by Damage Type (e.g. 0005/ringan/2026 or 0004/berat/2026)
-        $nextId = (Complaint::max('id') ?? 0) + 1;
-        $seq = str_pad($nextId, 4, '0', STR_PAD_LEFT);
+        // Wajib menggunakan withoutGlobalScopes() agar laporan yang ditolak Super Admin tetap dihitung
+        // dan tidak menyebabkan duplikasi unik (SQL 23505 Unique Violation / 500 Server Error)
+        $nextId = (Complaint::withoutGlobalScopes()->max('id') ?? 0) + 1;
         $typeCode = ($damageType === 'major') ? 'berat' : 'ringan';
         $year = date('Y');
-        $publicCode = "{$seq}/{$typeCode}/{$year}";
+        do {
+            $seq = str_pad($nextId, 4, '0', STR_PAD_LEFT);
+            $publicCode = "{$seq}/{$typeCode}/{$year}";
+            $exists = Complaint::withoutGlobalScopes()->where('public_code', $publicCode)->exists();
+            if ($exists) {
+                $nextId++;
+            }
+        } while ($exists);
 
         // Initial Priority Calculation (SAP Section 18)
         $priorityCalc = $this->priorityService->calculate(
