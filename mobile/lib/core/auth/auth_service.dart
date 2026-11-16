@@ -12,6 +12,7 @@ class UserModel {
   final String role;
   final bool isAnonymous;
   final bool needsFirstLoginSetup;
+  final bool isActive;
 
   UserModel({
     required this.id,
@@ -22,9 +23,17 @@ class UserModel {
     required this.role,
     this.isAnonymous = false,
     this.needsFirstLoginSetup = false,
+    this.isActive = true,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
+    final rawActive = json['is_active'];
+    final active = rawActive == null
+        ? true
+        : (rawActive is bool
+            ? rawActive
+            : (rawActive == 1 || rawActive.toString() == '1' || rawActive.toString().toLowerCase() == 'true'));
+
     return UserModel(
       id: json['id'] ?? 0,
       name: json['name'] ?? 'Warga',
@@ -34,6 +43,7 @@ class UserModel {
       role: json['role'] ?? 'WARGA',
       isAnonymous: json['is_anonymous'] ?? false,
       needsFirstLoginSetup: json['needs_first_login_setup'] ?? false,
+      isActive: active,
     );
   }
 
@@ -46,6 +56,7 @@ class UserModel {
         'role': role,
         'is_anonymous': isAnonymous,
         'needs_first_login_setup': needsFirstLoginSetup,
+        'is_active': isActive,
       };
 
   UserModel copyWith({
@@ -112,6 +123,80 @@ class AuthService {
     return null;
   }
 
+  Map<String, dynamic>? _parseResponseMap(dynamic raw) {
+    if (raw is Map<String, dynamic>) return raw;
+    if (raw is Map) return Map<String, dynamic>.from(raw);
+    if (raw is String && raw.trim().startsWith('{')) {
+      try {
+        final decoded = jsonDecode(raw);
+        if (decoded is Map) return Map<String, dynamic>.from(decoded);
+      } catch (_) {}
+    }
+    return null;
+  }
+
+  Map<String, dynamic> _extractDeactivationInfo(DioException e, String fallbackMsg) {
+    final respMap = _parseResponseMap(e.response?.data);
+    final msg = respMap?['message']?.toString() ?? fallbackMsg;
+    final errors = respMap?['errors'] is Map ? respMap!['errors'] as Map : null;
+    final data = respMap?['data'] is Map ? respMap!['data'] as Map : null;
+    final isDeactivated = e.response?.statusCode == 403 &&
+        ((errors?['account_deactivated'] == true) ||
+            (data?['account_deactivated'] == true) ||
+            msg.toLowerCase().contains('dinonaktifkan'));
+    final reason = (errors?['deactivation_reason'] ?? data?['deactivation_reason'])?.toString();
+
+    return {
+      'message': msg,
+      'account_deactivated': isDeactivated,
+      if (reason != null && reason.isNotEmpty) 'deactivation_reason': reason,
+    };
+  }
+
+  Future<Map<String, dynamic>> verifyActiveSession() async {
+    if (await isGuestMode()) {
+      return {'active': true, 'guest': true};
+    }
+
+    final token = await _storage.getToken();
+    if (token == null || token.isEmpty) {
+      return {'active': false, 'account_deactivated': false, 'message': null};
+    }
+
+    try {
+      final response = await _apiClient.dio.get('/me');
+      if (response.statusCode == 200 && response.data?['data'] != null) {
+        final user = UserModel.fromJson(Map<String, dynamic>.from(response.data['data']));
+        if (!user.isActive) {
+          await _storage.clearAuth();
+          return {
+            'active': false,
+            'account_deactivated': true,
+            'message': 'Akun Anda telah dinonaktifkan oleh Super Admin. Silakan hubungi administrator untuk pengaktifan kembali.',
+          };
+        }
+        await _storage.saveUserData(jsonEncode(user.toJson()));
+        return {'active': true, 'user': user};
+      }
+      return {'active': true};
+    } on DioException catch (e) {
+      final statusCode = e.response?.statusCode;
+      if (statusCode == 401 || statusCode == 403) {
+        final info = _extractDeactivationInfo(e, 'Sesi akun Anda tidak lagi aktif. Silakan masuk kembali.');
+        await _storage.clearAuth();
+        return {
+          'active': false,
+          'account_deactivated': info['account_deactivated'] == true,
+          'message': info['message'],
+        };
+      }
+      // Offline / network timeout: jangan paksa logout
+      return {'active': true, 'offline': true};
+    } catch (_) {
+      return {'active': true, 'offline': true};
+    }
+  }
+
   Future<Map<String, dynamic>> login({
     required String email,
     required String password,
@@ -127,6 +212,15 @@ class AuthService {
         final token = data['token'];
         final user = UserModel.fromJson(data['user']);
 
+        if (!user.isActive) {
+          await _storage.clearAuth();
+          return {
+            'success': false,
+            'account_deactivated': true,
+            'message': 'Akun Anda telah dinonaktifkan oleh Super Admin. Silakan hubungi administrator untuk pengaktifan kembali.',
+          };
+        }
+
         await _storage.saveToken(token);
         await _storage.saveUserData(jsonEncode(user.toJson()));
 
@@ -134,8 +228,13 @@ class AuthService {
       }
       return {'success': false, 'message': response.data['message'] ?? 'Login gagal'};
     } on DioException catch (e) {
-      final msg = e.response?.data?['message'] ?? 'Koneksi gagal atau kredensial salah';
-      return {'success': false, 'message': msg};
+      final info = _extractDeactivationInfo(e, 'Koneksi gagal atau kredensial salah');
+      return {
+        'success': false,
+        'message': info['message'],
+        'account_deactivated': info['account_deactivated'],
+        if (info['deactivation_reason'] != null) 'deactivation_reason': info['deactivation_reason'],
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -153,6 +252,15 @@ class AuthService {
         final user = UserModel.fromJson(data['user']);
         final isNewUser = data['is_new_user'] == true;
 
+        if (!user.isActive) {
+          await _storage.clearAuth();
+          return {
+            'success': false,
+            'account_deactivated': true,
+            'message': 'Akun Anda telah dinonaktifkan oleh Super Admin. Silakan hubungi administrator untuk pengaktifan kembali.',
+          };
+        }
+
         await _storage.saveToken(token);
         await _storage.saveUserData(jsonEncode(user.toJson()));
 
@@ -160,8 +268,13 @@ class AuthService {
       }
       return {'success': false, 'message': response.data['message'] ?? 'Login Google gagal'};
     } on DioException catch (e) {
-      final msg = e.response?.data?['message'] ?? 'Gagal memverifikasi akun Google ke server';
-      return {'success': false, 'message': msg};
+      final info = _extractDeactivationInfo(e, 'Gagal memverifikasi akun Google ke server');
+      return {
+        'success': false,
+        'message': info['message'],
+        'account_deactivated': info['account_deactivated'],
+        if (info['deactivation_reason'] != null) 'deactivation_reason': info['deactivation_reason'],
+      };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }

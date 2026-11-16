@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../core/auth/auth_service.dart';
 import '../../../shared/theme/app_colors.dart';
+import '../../auth/presentation/login_screen.dart';
 import '../../chatbot/presentation/ai_assistant_screen.dart';
 import '../../complaints/presentation/create_complaint_screen.dart';
 import '../../field/presentation/field_completed_tasks_screen.dart';
@@ -779,6 +780,22 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     if (mounted) {
       final role = user?.role ?? 'WARGA';
       setState(() => _userRole = role);
+
+      // Verifikasi status aktif akun ke server secara langsung agar akun yang dinonaktifkan
+      // (baik Warga maupun Petugas Lapangan) tidak dapat tetap menggunakan sesi lama
+      if (user != null && role != 'TAMU') {
+        final session = await _authService.verifyActiveSession();
+        if (!mounted) return;
+        if (session['active'] == false) {
+          final msg = session['message']?.toString() ??
+              'Akun Anda telah dinonaktifkan oleh Super Admin. Silakan hubungi administrator.';
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (_) => LoginScreen(initialErrorMessage: msg)),
+            (route) => false,
+          );
+          return;
+        }
+      }
 
       // Tangani situasi jika akun keluar aplikasi sebelum melengkapi no HP:
       // Munculkan kembali dialog pelengkapan identitas sampai tuntas diisi

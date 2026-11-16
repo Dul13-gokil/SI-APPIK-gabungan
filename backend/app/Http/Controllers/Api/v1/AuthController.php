@@ -350,6 +350,17 @@ class AuthController extends Controller
             return ApiResponse::error('Proses reset kata sandi tidak dapat dilanjutkan.', [], 422);
         }
 
+        if (!($user->is_active ?? true)) {
+            $reasonText = $user->deactivation_reason
+                ? " Alasan: {$user->deactivation_reason}"
+                : '';
+            return ApiResponse::error(
+                "Akun Anda telah dinonaktifkan oleh Super Admin.{$reasonText} Silakan hubungi administrator untuk pengaktifan kembali.",
+                ['account_deactivated' => true, 'deactivation_reason' => $user->deactivation_reason],
+                403
+            );
+        }
+
         $role = strtoupper($user->role);
 
         // Hanya WARGA dan PETUGAS yang diizinkan reset sandi secara mandiri via OTP di aplikasi mobile
@@ -437,6 +448,21 @@ class AuthController extends Controller
         $user = self::resolveUser($request);
         if (!$user) {
             return ApiResponse::error('Sesi autentikasi kedaluwarsa atau belum masuk.', [], 401);
+        }
+
+        if (!($user->is_active ?? true)) {
+            try {
+                $user->tokens()->delete();
+            } catch (\Throwable $e) {
+            }
+            $reasonText = $user->deactivation_reason
+                ? " Alasan: {$user->deactivation_reason}"
+                : '';
+            return ApiResponse::error(
+                "Akun Anda telah dinonaktifkan oleh Super Admin.{$reasonText} Silakan hubungi administrator untuk pengaktifan kembali.",
+                ['account_deactivated' => true, 'deactivation_reason' => $user->deactivation_reason],
+                403
+            );
         }
 
         return ApiResponse::success($user);

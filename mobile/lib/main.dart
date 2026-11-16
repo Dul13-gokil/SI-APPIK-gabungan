@@ -37,6 +37,7 @@ class _AuthCheckScreenState extends State<AuthCheckScreen> {
   final AuthService _authService = AuthService();
   bool _isChecking = true;
   bool _isLoggedIn = false;
+  String? _initialErrorMessage;
 
   @override
   void initState() {
@@ -45,10 +46,21 @@ class _AuthCheckScreenState extends State<AuthCheckScreen> {
   }
 
   Future<void> _checkAuth() async {
-    final loggedIn = await _authService.isLoggedIn();
+    var loggedIn = await _authService.isLoggedIn();
+    String? errorMsg;
+
+    if (loggedIn && !(await _authService.isGuestMode())) {
+      final session = await _authService.verifyActiveSession();
+      if (session['active'] == false) {
+        loggedIn = false;
+        errorMsg = session['message']?.toString();
+      }
+    }
+
     if (mounted) {
       setState(() {
         _isLoggedIn = loggedIn;
+        _initialErrorMessage = errorMsg;
         _isChecking = false;
       });
     }
@@ -68,6 +80,6 @@ class _AuthCheckScreenState extends State<AuthCheckScreen> {
       return const MainNavigationScreen();
     }
 
-    return const LoginScreen();
+    return LoginScreen(initialErrorMessage: _initialErrorMessage);
   }
 }

@@ -10,7 +10,9 @@ import '../../navigation/presentation/main_navigation_screen.dart';
 import 'register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  final String? initialErrorMessage;
+
+  const LoginScreen({super.key, this.initialErrorMessage});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -27,6 +29,66 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _obscurePassword = true;
   bool _isLoading = false;
   String? _errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialErrorMessage != null && widget.initialErrorMessage!.isNotEmpty) {
+      _errorMessage = widget.initialErrorMessage;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _showDeactivatedDialog(widget.initialErrorMessage!);
+        }
+      });
+    }
+  }
+
+  void _showDeactivatedDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.red.shade50,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(LucideIcons.shieldOff, color: Colors.red.shade700, size: 22),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                'Akun Dinonaktifkan',
+                style: GoogleFonts.outfit(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+            ),
+          ],
+        ),
+        content: Text(
+          message,
+          style: GoogleFonts.inter(fontSize: 13, color: AppColors.textSecondary, height: 1.5),
+        ),
+        actions: [
+          ElevatedButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            ),
+            child: Text('Mengerti', style: GoogleFonts.inter(fontWeight: FontWeight.w600)),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   void dispose() {
@@ -71,9 +133,13 @@ class _LoginScreenState extends State<LoginScreen> {
         MaterialPageRoute(builder: (_) => const MainNavigationScreen()),
       );
     } else {
+      final msg = result['message']?.toString() ?? 'Login gagal. Periksa kembali email dan password.';
       setState(() {
-        _errorMessage = result['message'] ?? 'Login gagal. Periksa kembali email dan password.';
+        _errorMessage = msg;
       });
+      if (result['account_deactivated'] == true && mounted) {
+        _showDeactivatedDialog(msg);
+      }
     }
   }
 
@@ -151,9 +217,13 @@ class _LoginScreenState extends State<LoginScreen> {
           );
         }
       } else {
+        final msg = result['message']?.toString() ?? 'Login dengan Akun Google gagal diverifikasi oleh server.';
         setState(() {
-          _errorMessage = result['message'] ?? 'Login dengan Akun Google gagal diverifikasi oleh server.';
+          _errorMessage = msg;
         });
+        if (result['account_deactivated'] == true && mounted) {
+          _showDeactivatedDialog(msg);
+        }
       }
     } catch (e) {
       if (mounted) {

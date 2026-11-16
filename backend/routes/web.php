@@ -58,11 +58,11 @@ Route::post('/forgot-password', [WebAuthController::class, 'sendForgotPasswordOt
 Route::post('/auth/forgot-password/send-otp', [WebAuthController::class, 'sendForgotPasswordOtp'])->middleware('throttle:5,1')->name('auth.forgot-password.send-otp');
 Route::post('/auth/forgot-password/reset', [WebAuthController::class, 'resetForgotPassword'])->middleware('throttle:5,1')->name('auth.forgot-password.reset');
 Route::post('/auth/check-warga', [WebAuthController::class, 'checkWargaRole'])->name('auth.check-warga');
-Route::post('/profile/first-login-setup', [WebAuthController::class, 'completeFirstLoginSetup'])->middleware('auth')->name('profile.first-login.setup');
+Route::post('/profile/first-login-setup', [WebAuthController::class, 'completeFirstLoginSetup'])->middleware(['auth', 'active'])->name('profile.first-login.setup');
 Route::get('/download-apk', [WebAuthController::class, 'downloadApk'])->name('download.apk');
 
 // 3. Panel Super Admin
-Route::prefix('admin')->middleware(['auth', 'role:SUPERADMIN,ADMIN'])->group(function () {
+Route::prefix('admin')->middleware(['auth', 'active', 'role:SUPERADMIN,ADMIN'])->group(function () {
     Route::get('/', [WebSuperAdminController::class, 'index'])->name('admin.dashboard');
     Route::match(['post', 'put'], '/bupati', [WebSuperAdminController::class, 'updateBupati'])->name('admin.bupati.update');
     Route::post('/users', [WebSuperAdminController::class, 'storeUser'])->name('admin.users.store');
@@ -88,7 +88,7 @@ Route::prefix('admin')->middleware(['auth', 'role:SUPERADMIN,ADMIN'])->group(fun
 });
 
 // 4. Pusat Kendali Operator Dinas
-Route::prefix('operator')->middleware(['auth', 'role:OPERATOR,SUPERADMIN,ADMIN'])->group(function () {
+Route::prefix('operator')->middleware(['auth', 'active', 'role:OPERATOR,SUPERADMIN,ADMIN'])->group(function () {
     Route::get('/', [WebOperatorController::class, 'index'])->name('operator.dashboard');
     Route::post('/complaints/{id}/verify-dispatch', [WebOperatorController::class, 'verifyAndDispatch'])->name('operator.complaints.dispatch');
     Route::post('/complaints/{id}/reject', [WebOperatorController::class, 'reject'])->name('operator.complaints.reject');
@@ -97,12 +97,12 @@ Route::prefix('operator')->middleware(['auth', 'role:OPERATOR,SUPERADMIN,ADMIN']
 });
 
 // 5. Dashboard Eksekutif Kepala Daerah (Bupati)
-Route::prefix('bupati')->middleware(['auth', 'role:KEPALA_DAERAH,BUPATI,SUPERADMIN,ADMIN'])->group(function () {
+Route::prefix('bupati')->middleware(['auth', 'active', 'role:KEPALA_DAERAH,BUPATI,SUPERADMIN,ADMIN'])->group(function () {
     Route::get('/', [WebBupatiController::class, 'index'])->name('bupati.dashboard');
 });
 
 // 6. Portal Petugas Lapangan
-Route::prefix('petugas')->middleware(['auth', 'role:PETUGAS,SUPERADMIN,ADMIN'])->group(function () {
+Route::prefix('petugas')->middleware(['auth', 'active', 'role:PETUGAS,SUPERADMIN,ADMIN'])->group(function () {
     Route::get('/', [WebPetugasController::class, 'index'])->name('petugas.dashboard');
     Route::post('/complaints/{id}/start', [WebPetugasController::class, 'startWork'])->name('petugas.complaints.start');
     Route::post('/complaints/{id}/finish', [WebPetugasController::class, 'finishWork'])->name('petugas.complaints.finish');

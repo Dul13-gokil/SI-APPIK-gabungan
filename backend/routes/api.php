@@ -54,7 +54,7 @@ Route::prefix('v1')->group(function () {
     // ==========================================
     // 2. PROTECTED ROUTES (Requires auth:sanctum)
     // ==========================================
-    Route::middleware('auth:sanctum')->group(function () {
+    Route::middleware(['auth:sanctum', 'active'])->group(function () {
 
         // A. Autentikasi, Profil & Keamanan Akun
         Route::post('/auth/logout',          [AuthController::class, 'logout']);

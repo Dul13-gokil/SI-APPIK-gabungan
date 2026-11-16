@@ -36,7 +36,15 @@ class ApiClient {
           return handler.next(options);
         },
         onError: (DioException error, handler) async {
-          if (error.response?.statusCode == 401) {
+          final statusCode = error.response?.statusCode;
+          final respData = error.response?.data;
+          final isDeactivated = statusCode == 403 &&
+              respData is Map &&
+              ((respData['data'] is Map && respData['data']['account_deactivated'] == true) ||
+                  (respData['errors'] is Map && respData['errors']['account_deactivated'] == true) ||
+                  (respData['message']?.toString().toLowerCase().contains('dinonaktifkan') ?? false));
+
+          if (statusCode == 401 || isDeactivated) {
             await _storageService.clearAuth();
           }
           return handler.next(error);

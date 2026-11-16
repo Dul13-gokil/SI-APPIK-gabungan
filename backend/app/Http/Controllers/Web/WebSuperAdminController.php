@@ -542,12 +542,13 @@ class WebSuperAdminController extends Controller
 
         // Catat di Audit Trail
         \App\Models\AuditLog::create([
-            'user_id'    => auth()->id(),
-            'action'     => 'user.deactivated',
-            'model_type' => User::class,
-            'model_id'   => $user->id,
-            'new_values' => ['is_active' => false, 'reason' => $reason],
-            'ip_address' => $request->ip(),
+            'actor_id'    => auth()->id(),
+            'action'      => 'user.deactivated',
+            'entity_type' => User::class,
+            'entity_id'   => $user->id,
+            'before_json' => ['is_active' => true],
+            'after_json'  => ['is_active' => false, 'reason' => $reason],
+            'ip'          => $request->ip(),
         ]);
 
         // Kirim email pemberitahuan resmi ke pengguna
@@ -573,12 +574,13 @@ class WebSuperAdminController extends Controller
         ]);
 
         \App\Models\AuditLog::create([
-            'user_id'    => auth()->id(),
-            'action'     => 'user.reactivated',
-            'model_type' => User::class,
-            'model_id'   => $user->id,
-            'new_values' => ['is_active' => true, 'reason' => $reason ?: 'Diaktifkan kembali oleh Super Admin'],
-            'ip_address' => $request->ip(),
+            'actor_id'    => auth()->id(),
+            'action'      => 'user.reactivated',
+            'entity_type' => User::class,
+            'entity_id'   => $user->id,
+            'before_json' => ['is_active' => false],
+            'after_json'  => ['is_active' => true, 'reason' => $reason ?: 'Diaktifkan kembali oleh Super Admin'],
+            'ip'          => $request->ip(),
         ]);
 
         try {
@@ -671,13 +673,13 @@ class WebSuperAdminController extends Controller
         ]);
 
         \App\Models\AuditLog::create([
-            'user_id'    => auth()->id(),
-            'action'     => 'complaint.admin_rejected',
-            'model_type' => Complaint::class,
-            'model_id'   => $complaint->id,
-            'old_values' => ['status' => $fromStatus],
-            'new_values' => ['status' => 'REJECTED', 'rejected_by_superadmin' => true, 'reason' => $reason],
-            'ip_address' => $request->ip(),
+            'actor_id'    => auth()->id(),
+            'action'      => 'complaint.admin_rejected',
+            'entity_type' => Complaint::class,
+            'entity_id'   => $complaint->id,
+            'before_json' => ['status' => $fromStatus, 'rejected_by_superadmin' => false],
+            'after_json'  => ['status' => 'REJECTED', 'rejected_by_superadmin' => true, 'reason' => $reason],
+            'ip'          => $request->ip(),
         ]);
 
         return back()->with('success', "Laporan #{$complaint->public_code} telah ditolak dan dipindahkan ke Arsip Ditolak (khusus Super Admin).");
