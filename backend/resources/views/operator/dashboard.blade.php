@@ -105,7 +105,7 @@
         <!-- 1. Total Aduan -->
         <div class="p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
             <div class="flex items-center justify-between gap-1.5">
-                <span class="text-[10px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-wider truncate">Total Aduan</span>
+                <span class="text-[8.5px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-normal sm:tracking-wider leading-tight">Total Aduan</span>
                 <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-blue-50 text-[#1E3A8A] border border-blue-200 flex items-center justify-center shrink-0">
                     <i data-lucide="inbox" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                 </div>
@@ -121,7 +121,7 @@
         <!-- 2. Menunggu -->
         <div class="p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
             <div class="flex items-center justify-between gap-1.5">
-                <span class="text-[10px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-wider truncate">Menunggu</span>
+                <span class="text-[8.5px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-normal sm:tracking-wider leading-tight">Menunggu</span>
                 <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-red-50 text-[#EF4444] border border-red-200 flex items-center justify-center shrink-0">
                     <i data-lucide="clock" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                 </div>
@@ -137,7 +137,7 @@
         <!-- 3. Ditugaskan -->
         <div class="p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
             <div class="flex items-center justify-between gap-1.5">
-                <span class="text-[10px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-wider truncate">Ditugaskan</span>
+                <span class="text-[8.5px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-normal sm:tracking-wider leading-tight">Ditugaskan</span>
                 <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-blue-50 text-[#1E40AF] border border-blue-200 flex items-center justify-center shrink-0">
                     <i data-lucide="send" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                 </div>
@@ -153,7 +153,7 @@
         <!-- 4. Dikerjakan -->
         <div class="p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
             <div class="flex items-center justify-between gap-1.5">
-                <span class="text-[10px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-wider truncate">Dikerjakan</span>
+                <span class="text-[8.5px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-normal sm:tracking-wider leading-tight">Dikerjakan</span>
                 <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-amber-50 text-[#D97706] border border-amber-200 flex items-center justify-center shrink-0">
                     <i data-lucide="hard-hat" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                 </div>
@@ -169,7 +169,7 @@
         <!-- 5. Menunggu Validasi -->
         <div class="p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
             <div class="flex items-center justify-between gap-1.5">
-                <span class="text-[10px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-wider truncate">Validasi</span>
+                <span class="text-[8.5px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-normal sm:tracking-wider leading-tight">Validasi</span>
                 <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-amber-50 text-[#D97706] border border-amber-200 flex items-center justify-center shrink-0">
                     <i data-lucide="clock-3" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                 </div>
@@ -185,7 +185,7 @@
         <!-- 6. Selesai -->
         <div class="p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
             <div class="flex items-center justify-between gap-1.5">
-                <span class="text-[10px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-wider truncate">Selesai</span>
+                <span class="text-[8.5px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-normal sm:tracking-wider leading-tight">Selesai</span>
                 <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-emerald-50 text-[#10B981] border border-emerald-200 flex items-center justify-center shrink-0">
                     <i data-lucide="check-circle-2" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                 </div>
@@ -201,7 +201,7 @@
         <!-- 7. Rasio Sukses -->
         <div class="col-span-3 sm:col-span-1 p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
             <div class="flex items-center justify-between gap-1.5">
-                <span class="text-[10px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-wider truncate">Rasio Sukses</span>
+                <span class="text-[8.5px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-normal sm:tracking-wider leading-tight">Rasio Sukses</span>
                 <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-blue-50 text-[#1E3A8A] border border-blue-200 flex items-center justify-center shrink-0">
                     <i data-lucide="trending-up" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                 </div>
@@ -223,7 +223,6 @@
             <i data-lucide="filter" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
                 <span class="text-[11px] sm:text-xs font-bold block leading-tight">Verifikasi</span>
-                <span class="tab-sub hidden md:block text-[10px] mt-0.5 truncate {{ $activeTab === 'verify' ? 'text-blue-100' : 'text-[#475569]' }}">Telaah aduan masuk</span>
             </div>
             <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'verify' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
                 {{ $pendingVerification->count() }}
@@ -236,7 +235,6 @@
             <i data-lucide="send" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
                 <span class="text-[11px] sm:text-xs font-bold block leading-tight">Ditugaskan</span>
-                <span class="tab-sub hidden md:block text-[10px] mt-0.5 truncate {{ $activeTab === 'dispatched' ? 'text-blue-100' : 'text-[#475569]' }}">Menunggu regu turun</span>
             </div>
             <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'dispatched' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
                 {{ $dispatched->count() }}
@@ -249,7 +247,6 @@
             <i data-lucide="hard-hat" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
                 <span class="text-[11px] sm:text-xs font-bold block leading-tight">Dikerjakan</span>
-                <span class="tab-sub hidden md:block text-[10px] mt-0.5 truncate {{ $activeTab === 'inprogress' ? 'text-blue-100' : 'text-[#475569]' }}">Progres fisik &amp; SLA</span>
             </div>
             <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'inprogress' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
                 {{ $inProgress->count() }}
@@ -262,7 +259,6 @@
             <i data-lucide="check-square" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
                 <span class="text-[11px] sm:text-xs font-bold block leading-tight">Validasi</span>
-                <span class="tab-sub hidden md:block text-[10px] mt-0.5 truncate {{ $activeTab === 'validation' ? 'text-blue-100' : 'text-[#475569]' }}">Uji hasil pekerjaan</span>
             </div>
             <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'validation' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
                 {{ $waitingValidation->count() }}
@@ -275,7 +271,6 @@
             <i data-lucide="archive" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
                 <span class="text-[11px] sm:text-xs font-bold block leading-tight">Arsip</span>
-                <span class="tab-sub hidden md:block text-[10px] mt-0.5 truncate {{ $activeTab === 'archive' ? 'text-blue-100' : 'text-[#475569]' }}">Selesai &amp; ditolak</span>
             </div>
             <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'archive' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
                 {{ $completed->count() }}
@@ -288,7 +283,6 @@
             <i data-lucide="bar-chart-2" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
                 <span class="text-[11px] sm:text-xs font-bold block leading-tight">Monitoring</span>
-                <span class="tab-sub hidden md:block text-[10px] mt-0.5 truncate {{ $activeTab === 'monitoring' ? 'text-blue-100' : 'text-[#475569]' }}">Peta &amp; evaluasi OPD</span>
             </div>
         </button>
     </div>
@@ -1098,7 +1092,6 @@
                         <i data-lucide="map-pin" class="w-4 h-4 text-[#1E3A8A] shrink-0"></i>
                         <span>Peta Sebaran Infrastruktur Rusak Seluruh Kabupaten</span>
                     </h3>
-                    <p class="text-xs text-slate-500 mt-0.5">Visualisasi titik kerusakan jalan, jembatan, penerangan jalan umum, dan fasilitas umum.</p>
                 </div>
                 <div class="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs font-semibold shrink-0">
                     <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#EF4444] shrink-0"></span> Verifikasi</span>

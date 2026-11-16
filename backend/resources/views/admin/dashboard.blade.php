@@ -60,7 +60,7 @@
         <!-- 1. Total Aduan -->
         <div class="p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
             <div class="flex items-center justify-between gap-1.5">
-                <span class="text-[10px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-wider truncate">Total Aduan</span>
+                <span class="text-[8.5px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-normal sm:tracking-wider leading-tight">Total Aduan</span>
                 <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-blue-50 text-[#1E3A8A] border border-blue-200 flex items-center justify-center shrink-0">
                     <i data-lucide="inbox" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                 </div>
@@ -76,7 +76,7 @@
         <!-- 2. Menunggu -->
         <div class="p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
             <div class="flex items-center justify-between gap-1.5">
-                <span class="text-[10px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-wider truncate">Menunggu</span>
+                <span class="text-[8.5px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-normal sm:tracking-wider leading-tight">Menunggu</span>
                 <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-red-50 text-[#EF4444] border border-red-200 flex items-center justify-center shrink-0">
                     <i data-lucide="clock" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                 </div>
@@ -92,7 +92,7 @@
         <!-- 3. Ditugaskan -->
         <div class="p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
             <div class="flex items-center justify-between gap-1.5">
-                <span class="text-[10px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-wider truncate">Ditugaskan</span>
+                <span class="text-[8.5px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-normal sm:tracking-wider leading-tight">Ditugaskan</span>
                 <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-blue-50 text-[#1E40AF] border border-blue-200 flex items-center justify-center shrink-0">
                     <i data-lucide="send" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                 </div>
@@ -108,7 +108,7 @@
         <!-- 4. Dikerjakan -->
         <div class="p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
             <div class="flex items-center justify-between gap-1.5">
-                <span class="text-[10px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-wider truncate">Dikerjakan</span>
+                <span class="text-[8.5px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-normal sm:tracking-wider leading-tight">Dikerjakan</span>
                 <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-amber-50 text-[#D97706] border border-amber-200 flex items-center justify-center shrink-0">
                     <i data-lucide="hard-hat" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                 </div>
@@ -124,7 +124,7 @@
         <!-- 5. Menunggu Validasi -->
         <div class="p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
             <div class="flex items-center justify-between gap-1.5">
-                <span class="text-[10px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-wider truncate">Validasi</span>
+                <span class="text-[8.5px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-normal sm:tracking-wider leading-tight">Validasi</span>
                 <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-amber-50 text-[#D97706] border border-amber-200 flex items-center justify-center shrink-0">
                     <i data-lucide="clock-3" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                 </div>
@@ -140,7 +140,7 @@
         <!-- 6. Selesai -->
         <div class="p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
             <div class="flex items-center justify-between gap-1.5">
-                <span class="text-[10px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-wider truncate">Selesai</span>
+                <span class="text-[8.5px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-normal sm:tracking-wider leading-tight">Selesai</span>
                 <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-emerald-50 text-[#10B981] border border-emerald-200 flex items-center justify-center shrink-0">
                     <i data-lucide="check-circle-2" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                 </div>
@@ -156,7 +156,7 @@
         <!-- 7. Total Tim -->
         <div class="col-span-3 sm:col-span-1 p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
             <div class="flex items-center justify-between gap-1.5">
-                <span class="text-[10px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-wider truncate">Total Tim</span>
+                <span class="text-[8.5px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-normal sm:tracking-wider leading-tight">Total Tim</span>
                 <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-blue-50 text-[#1E3A8A] border border-blue-200 flex items-center justify-center shrink-0">
                     <i data-lucide="users-2" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                 </div>
@@ -178,7 +178,6 @@
             <i data-lucide="user-plus" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
                 <span class="text-[11px] sm:text-xs font-bold block leading-tight">Tambah &amp; Pimpinan</span>
-                <span class="tab-sub hidden md:block text-[10px] mt-0.5 truncate {{ $activeTab === 'users-management' ? 'text-blue-100' : 'text-[#475569]' }}">Bupati &amp; akun baru</span>
             </div>
         </button>
 
@@ -188,7 +187,6 @@
             <i data-lucide="users" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
                 <span class="text-[11px] sm:text-xs font-bold block leading-tight">Direktori Akun</span>
-                <span class="tab-sub hidden md:block text-[10px] mt-0.5 truncate {{ $activeTab === 'users-list' ? 'text-blue-100' : 'text-[#475569]' }}">Daftar &amp; reset sandi</span>
             </div>
             <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'users-list' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
                 {{ $users->count() }}
@@ -201,7 +199,6 @@
             <i data-lucide="layers" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
                 <span class="text-[11px] sm:text-xs font-bold block leading-tight">Semua Aduan</span>
-                <span class="tab-sub hidden md:block text-[10px] mt-0.5 truncate {{ $activeTab === 'complaints-list' ? 'text-blue-100' : 'text-[#475569]' }}">Monitor lintas status</span>
             </div>
             <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'complaints-list' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
                 {{ $complaints->count() }}
@@ -214,7 +211,6 @@
             <i data-lucide="map" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
                 <span class="text-[11px] sm:text-xs font-bold block leading-tight">Wilayah &amp; GIS</span>
-                <span class="tab-sub hidden md:block text-[10px] mt-0.5 truncate {{ $activeTab === 'regions-gis' ? 'text-blue-100' : 'text-[#475569]' }}">15 kec. &amp; geofence</span>
             </div>
             <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'regions-gis' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
                 {{ count($districtStats ?? $regions) }}
@@ -227,7 +223,6 @@
             <i data-lucide="users-2" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
                 <span class="text-[11px] sm:text-xs font-bold block leading-tight">Regu &amp; Tugas</span>
-                <span class="tab-sub hidden md:block text-[10px] mt-0.5 truncate {{ $activeTab === 'teams-management' ? 'text-blue-100' : 'text-[#475569]' }}">Tim &amp; mode disposisi</span>
             </div>
             <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'teams-management' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
                 {{ $teams->count() }}
@@ -240,7 +235,6 @@
             <i data-lucide="bar-chart-3" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
                 <span class="text-[11px] sm:text-xs font-bold block leading-tight">Laporan</span>
-                <span class="tab-sub hidden md:block text-[10px] mt-0.5 truncate {{ $activeTab === 'reporting' ? 'text-blue-100' : 'text-[#475569]' }}">Rekap &amp; statistik</span>
             </div>
         </button>
     </div>
@@ -261,7 +255,6 @@
                                 <h3 class="font-outfit font-extrabold text-sm sm:text-base text-slate-900 leading-tight">
                                     Perbarui Akun / Ganti Kepala Daerah Kabupaten
                                 </h3>
-                                <p class="text-[11px] text-slate-500">Pimpinan daerah pemegang hak monitoring eksekutif aduan.</p>
                             </div>
                         </div>
                         <span class="px-2.5 py-1 rounded-full bg-blue-50 text-[#1E3A8A] border border-blue-200 text-[10px] font-bold text-center shrink-0 whitespace-nowrap">
@@ -320,7 +313,6 @@
                                 <h3 class="font-outfit font-extrabold text-sm sm:text-base text-slate-900 leading-tight">
                                     Penambahan Akun Baru
                                 </h3>
-                                <p class="text-[11px] text-slate-500">Daftarkan akun Operator Verifikasi atau Petugas Lapangan baru.</p>
                             </div>
                         </div>
                         <span class="px-2.5 py-1 rounded-full bg-blue-50 text-[#1E3A8A] border border-blue-200 text-[10px] font-bold text-center shrink-0 whitespace-nowrap">
@@ -987,7 +979,6 @@
                         <h4 class="font-outfit font-bold text-sm text-slate-900">
                             Peta Spasial Administratif & Titik Pusat 15 Kecamatan
                         </h4>
-                        <p class="text-xs text-slate-500">Visualisasi 15 titik koordinat daratan kecamatan administratif Kabupaten Kolaka Utara.</p>
                     </div>
                 </div>
                 <div class="flex flex-wrap items-center gap-3 text-xs font-semibold">
@@ -1011,12 +1002,12 @@
                         <i data-lucide="crosshair" class="w-5 h-5"></i>
                     </div>
                     <div>
-                        <div class="flex items-center gap-2">
-                            <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-[#1E3A8A] text-white">Mode CMS Atur Titik</span>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-[#1E3A8A] text-white">Penyesuaian Koordinat Wilayah</span>
                             <strong class="text-xs sm:text-sm text-slate-900 font-extrabold" id="pickingDistrictTitle">Kecamatan Lasusua</strong>
                         </div>
-                        <span class="text-[11px] text-slate-600 block mt-0.5">
-                            Silakan <span class="font-bold text-[#1E3A8A]">klik atau klik 2 kali (double-click) pada peta</span> di bawah ini untuk memindahkan titik koordinat pusat baru.
+                        <span class="text-[11px] text-slate-600 block mt-0.5 leading-snug">
+                            Ketuk peta 2x untuk menentukan titik koordinat baru.
                         </span>
                     </div>
                 </div>
@@ -1052,9 +1043,6 @@
                         <h3 class="font-outfit font-extrabold text-sm sm:text-base text-slate-900 leading-tight">
                             Sebaran Pengaduan Infrastruktur per Wilayah Kecamatan & Desa
                         </h3>
-                        <p class="text-xs text-slate-500 mt-0.5">
-                            Distribusi laporan masyarakat, efektivitas penanganan fisik Dinas PUPR, dan status koordinat 15 Kecamatan Kabupaten Kolaka Utara.
-                        </p>
                     </div>
                 </div>
                 <div class="flex items-center gap-2 self-start md:self-auto shrink-0">
@@ -1231,9 +1219,6 @@
                                 AKTIF: {{ $dispatchMode ?? 'HYBRID' }}
                             </span>
                         </div>
-                        <p class="text-xs text-slate-500 mt-0.5">
-                            Atur bagaimana operator dan tim lapangan berkoordinasi dalam pembagian pekerjaan perbaikan infrastruktur fisik.
-                        </p>
                     </div>
                 </div>
             </div>

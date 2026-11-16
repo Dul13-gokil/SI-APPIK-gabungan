@@ -114,9 +114,6 @@
                 <h2 class="font-outfit font-bold text-xl sm:text-2xl text-[#0F172A]">
                     Peta Sebaran Titik Kerusakan
                 </h2>
-                <p class="text-xs sm:text-sm text-[#475569] mt-0.5">
-                    Pilih status di atas atau gunakan filter wilayah untuk melihat sebaran titik di Kabupaten Kolaka Utara.
-                </p>
             </div>
 
             <!-- Toolbar Kanan -->
@@ -234,9 +231,6 @@
             <h2 class="font-outfit font-bold text-xl sm:text-2xl text-[#0F172A]">
                 Kategori Infrastruktur yang Ditangani
             </h2>
-            <p class="text-xs sm:text-sm text-[#475569] mt-0.5">
-                Jenis prasarana umum di Kabupaten Kolaka Utara yang tercatat pada sistem dan dapat dilaporkan melalui aplikasi SI-APPIK.
-            </p>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-4">
@@ -293,9 +287,6 @@
             <h2 class="font-outfit font-bold text-xl sm:text-2xl text-[#0F172A]">
                 Alur Penanganan Aduan
             </h2>
-            <p class="text-xs sm:text-sm text-[#475569] mt-0.5">
-                Setiap laporan masyarakat diproses secara berurutan dari pelaporan hingga validasi hasil di lapangan.
-            </p>
         </div>
 
         <div class="relative">
@@ -390,11 +381,8 @@
         <div class="flex flex-col lg:flex-row items-center justify-between gap-6 text-center lg:text-left">
             <div class="max-w-xl space-y-2.5">
                 <h3 class="font-outfit font-bold text-xl sm:text-2xl text-white tracking-tight">
-                    Laporkan Kerusakan Infrastruktur Langsung dari Lokasi
+                    Sampaikan Aduan Infrastruktur Anda Melalui Aplikasi
                 </h3>
-                <p class="text-xs sm:text-sm text-blue-100 leading-relaxed max-w-xl">
-                    Sampaikan laporan jalan rusak, jembatan, fasilitas umum, atau penerangan jalan umum di Kabupaten Kolaka Utara dilengkapi foto kondisi langsung dari lokasi agar segera ditangani Dinas PUPR.
-                </p>
             </div>
 
             <!-- QR Code Desktop + Tombol Unduh Aplikasi -->

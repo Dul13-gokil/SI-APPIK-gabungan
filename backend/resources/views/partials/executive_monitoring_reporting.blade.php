@@ -45,9 +45,6 @@
             <h3 class="font-outfit font-bold text-base sm:text-lg text-slate-900 tracking-tight leading-snug">
                 Pelaporan &amp; Evaluasi Kinerja Penanganan Infrastruktur
             </h3>
-            <p class="text-xs text-slate-500 max-w-2xl">
-                Ringkasan eksekutif siklus pengaduan, kepatuhan SLA dinas, sebaran wilayah, serta cetak dokumen resmi dalam format Profesional maupun ATS.
-            </p>
         </div>
     </div>
 
@@ -95,9 +92,6 @@
                         <h3 class="font-outfit font-bold text-sm sm:text-base text-slate-900 leading-tight">
                             Status Progres Siklus Penanganan Pengaduan
                         </h3>
-                        <p class="text-xs text-slate-500 mt-0.5">
-                            Distribusi komparasi total laporan masuk, tahap verifikasi, penugasan, pengerjaan, hingga tuntas dan ditolak.
-                        </p>
                     </div>
                 </div>
                 <span class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-50 text-slate-700 border border-slate-200 shrink-0">
@@ -170,7 +164,6 @@
                         <h3 class="font-outfit font-bold text-sm sm:text-base text-slate-900 leading-tight">
                             Sebaran Masalah per Kategori Infrastruktur
                         </h3>
-                        <p class="text-xs text-slate-500 mt-0.5">Distribusi pengaduan infrastruktur berdasarkan jenis.</p>
                     </div>
                 </div>
                 <span class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-50 text-slate-700 border border-slate-200 shrink-0">
@@ -222,7 +215,6 @@
                         <h3 class="font-outfit font-bold text-sm sm:text-base text-slate-900 leading-tight">
                             Kinerja Ketepatan Waktu Penanganan Dinas (OPD)
                         </h3>
-                        <p class="text-xs text-slate-500 mt-0.5">Komparasi penanganan fisik yang tuntas tepat waktu vs tidak tepat waktu (terlambat).</p>
                     </div>
                 </div>
                 <span class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-50 text-slate-700 border border-slate-200 shrink-0">
@@ -268,7 +260,6 @@
                         <h3 class="font-outfit font-bold text-sm sm:text-base text-slate-900 leading-tight">
                             Persentase Kinerja Penanganan Tugas
                         </h3>
-                        <p class="text-xs text-slate-500 mt-0.5">Komparasi total aktivitas Petugas Lapangan, Operator, dan Dinas.</p>
                     </div>
                 </div>
                 <span class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-50 text-slate-700 border border-slate-200 shrink-0">
@@ -322,7 +313,6 @@
                 {{ $summary['completed'] ?? 0 }}/{{ $summary['total'] ?? 0 }}
             </span>
         </div>
-        <p class="text-[11px] text-slate-500">Rasio aduan selesai dari total laporan masuk.</p>
     </div>
 
     <div class="card-white rounded-2xl p-4 bg-white border border-[#E2E8F0] space-y-1">
@@ -333,7 +323,6 @@
                 SOP &le; {{ $sopTargetDays }} hr
             </span>
         </div>
-        <p class="text-[11px] text-slate-500">Estimasi rata-rata penyelesaian per laporan.</p>
     </div>
 
     <div class="card-white rounded-2xl p-4 bg-white border border-[#E2E8F0] space-y-1">
@@ -341,7 +330,6 @@
         <div class="flex items-baseline justify-between gap-2">
             <span class="font-outfit font-extrabold text-xl text-slate-900">{{ $minorCount }} Titik &bull; {{ $majorCount }} Ruas</span>
         </div>
-        <p class="text-[11px] text-slate-500">Kerusakan titik (ringan) vs ruas panjang (berat).</p>
     </div>
 
     <div class="card-white rounded-2xl p-4 bg-white border border-[#E2E8F0] space-y-1">
@@ -352,7 +340,6 @@
                 dari 15 Kec.
             </span>
         </div>
-        <p class="text-[11px] text-slate-500">Kecamatan aktif dengan laporan infrastruktur.</p>
     </div>
 </div>
 
