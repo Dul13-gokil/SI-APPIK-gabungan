@@ -552,13 +552,18 @@ class WebSuperAdminController extends Controller
         ]);
 
         // Kirim email pemberitahuan resmi ke pengguna
+        $mailSent = false;
         try {
-            app(\App\Services\SecurityMailService::class)->sendAccountStatusChangedAlert($user, false, $reason);
+            $mailSent = app(\App\Services\SecurityMailService::class)->sendAccountStatusChangedAlert($user, false, $reason);
         } catch (\Throwable $e) {
             \Illuminate\Support\Facades\Log::warning("Gagal mengirim email penonaktifan ke {$user->email}: " . $e->getMessage());
         }
 
-        return back()->with('success', "Akun {$user->name} berhasil dinonaktifkan. Notifikasi email resmi telah dikirim ke {$user->email}.");
+        $mailNote = $mailSent && config('mail.default') !== 'log'
+            ? "Notifikasi email resmi telah dikirim ke {$user->email}."
+            : "Email notifikasi tidak terkirim (periksa konfigurasi MAIL_MAILER / layanan email HTTP di Railway).";
+
+        return back()->with('success', "Akun {$user->name} berhasil dinonaktifkan. {$mailNote}");
     }
 
     public function reactivateUser(Request $request, int $id): RedirectResponse
@@ -583,8 +588,9 @@ class WebSuperAdminController extends Controller
             'ip'          => $request->ip(),
         ]);
 
+        $mailSent = false;
         try {
-            app(\App\Services\SecurityMailService::class)->sendAccountStatusChangedAlert(
+            $mailSent = app(\App\Services\SecurityMailService::class)->sendAccountStatusChangedAlert(
                 $user,
                 true,
                 $reason ?: 'Akun telah diaktifkan kembali oleh Super Administrator.'
@@ -593,7 +599,11 @@ class WebSuperAdminController extends Controller
             \Illuminate\Support\Facades\Log::warning("Gagal mengirim email pengaktifan ke {$user->email}: " . $e->getMessage());
         }
 
-        return back()->with('success', "Akun {$user->name} berhasil diaktifkan kembali. Notifikasi email resmi telah dikirim ke {$user->email}.");
+        $mailNote = $mailSent && config('mail.default') !== 'log'
+            ? "Notifikasi email resmi telah dikirim ke {$user->email}."
+            : "Email notifikasi tidak terkirim (periksa konfigurasi MAIL_MAILER / layanan email HTTP di Railway).";
+
+        return back()->with('success', "Akun {$user->name} berhasil diaktifkan kembali. {$mailNote}");
     }
 
     public function resetUserPassword(Request $request, int $id): RedirectResponse
@@ -612,11 +622,12 @@ class WebSuperAdminController extends Controller
         }
 
         // Kirim email pemberitahuan resmi ke email akun terkait
+        $mailSent = false;
         try {
             $changes = [
                 'Kata Sandi' => 'Direset ke sandi default ("password") melalui Quick Action oleh Super Administrator. Pengguna diwajibkan mengganti kata sandi saat masuk kembali.',
             ];
-            app(\App\Services\SecurityMailService::class)->sendProfileUpdatedByAdminAlert(
+            $mailSent = app(\App\Services\SecurityMailService::class)->sendProfileUpdatedByAdminAlert(
                 $user, 
                 $changes, 
                 $user->email
@@ -625,7 +636,11 @@ class WebSuperAdminController extends Controller
             \Illuminate\Support\Facades\Log::warning("Gagal mengirim email reset kata sandi ke {$user->email}: " . $e->getMessage());
         }
 
-        return back()->with('success', "Kata sandi akun {$user->name} berhasil direset ke default ('password'). Email pemberitahuan resmi telah otomatis dikirimkan ke {$user->email}.");
+        $mailNote = $mailSent && config('mail.default') !== 'log'
+            ? "Email pemberitahuan resmi telah dikirim ke {$user->email}."
+            : "Email gagal terkirim (periksa konfigurasi MAIL_MAILER / layanan email HTTP di Railway).";
+
+        return back()->with('success', "Kata sandi akun {$user->name} berhasil direset ke default ('password'). {$mailNote}");
     }
 
     public function rejectComplaint(Request $request, int $id): RedirectResponse

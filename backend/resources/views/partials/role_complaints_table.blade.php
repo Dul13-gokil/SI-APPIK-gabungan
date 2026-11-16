@@ -2,7 +2,7 @@
 @php
     $isPetugas = str_starts_with($mode ?? '', 'petugas-');
     $detailFn = $isPetugas ? 'openPetugasDetailModal' : 'openOperatorModal';
-    $hasAction = in_array($mode ?? '', ['operator-verify', 'operator-validation', 'petugas-assigned', 'petugas-tasks']);
+    $hasAction = in_array($mode ?? '', ['operator-verify', 'operator-dispatched', 'operator-validation', 'petugas-assigned', 'petugas-tasks']);
 @endphp
 <div id="{{ $wrapId }}" class="rounded-xl border border-[#E2E8F0] overflow-hidden md:overflow-x-auto bg-white {{ !empty($hidden) ? 'hidden' : '' }}">
     <table class="block md:table w-full text-left text-xs text-slate-600">
@@ -112,6 +112,17 @@
                                         <i data-lucide="send" class="w-3 h-3"></i>
                                         <span>Verifikasi</span>
                                     </button>
+                                @elseif($mode === 'operator-dispatched')
+                                    @if(($dispatchMode ?? 'HYBRID') === 'SELF_CLAIM_ONLY')
+                                        <span class="text-[10px] text-slate-400 italic whitespace-nowrap">Klaim Mandiri</span>
+                                    @else
+                                        @php $dispItem = $item->latestDisposition; @endphp
+                                        <button type="button" onclick="openAssignTeamModal({{ $item->id }}, '{{ $item->public_code }}', '{{ addslashes($item->title) }}', '{{ $dispItem?->team_id ?? '' }}', '{{ addslashes($dispItem?->instruction ?? '') }}')"
+                                            class="px-2.5 py-1.5 rounded-lg bg-[#1E3A8A] hover:bg-[#172554] text-white font-semibold text-[11px] inline-flex items-center gap-1 transition cursor-pointer whitespace-nowrap">
+                                            <i data-lucide="user-plus" class="w-3 h-3"></i>
+                                            <span>{{ $dispItem?->team_id ? 'Ubah Regu' : 'Tempatkan Regu' }}</span>
+                                        </button>
+                                    @endif
                                 @elseif($mode === 'operator-validation')
                                     <button type="button" onclick="openValidationModal({{ $item->id }})"
                                         class="px-2.5 py-1.5 rounded-lg bg-[#1E3A8A] hover:bg-[#172554] text-white font-semibold text-[11px] inline-flex items-center gap-1 transition cursor-pointer">

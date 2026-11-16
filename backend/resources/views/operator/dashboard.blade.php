@@ -500,7 +500,7 @@
                     Belum ada laporan yang berstatus ditugaskan.
                 </div>
             @else
-                @include('partials.role_complaints_table', ['wrapId' => 'operatorTableWrap-dispatched', 'rowClass' => 'operator-dispatched-row', 'items' => $dispatched, 'mode' => 'operator-dispatched', 'hidden' => false])
+                @include('partials.role_complaints_table', ['wrapId' => 'operatorTableWrap-dispatched', 'rowClass' => 'operator-dispatched-row', 'items' => $dispatched, 'mode' => 'operator-dispatched', 'dispatchMode' => $dispatchMode ?? 'HYBRID', 'hidden' => false])
                 <div id="dispatchedCardsContainer" class="hidden grid grid-cols-1 lg:grid-cols-2 gap-5">
                     @foreach($dispatched as $c)
                         @php
