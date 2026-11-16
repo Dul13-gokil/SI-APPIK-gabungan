@@ -270,11 +270,19 @@ class WebSuperAdminController extends Controller
         $hasBupati = User::whereIn('role', ['KEPALA_DAERAH', 'BUPATI'])->exists();
         $hasSuperAdmin = User::whereIn('role', ['SUPERADMIN', 'ADMIN'])->exists();
 
+        // Arsip laporan yang ditolak khusus oleh Super Admin (hanya tampil untuk Super Admin)
+        $adminRejectedComplaints = Complaint::withoutGlobalScope('excludeAdminRejected')
+            ->where('rejected_by_superadmin', true)
+            ->with(['category', 'user', 'citizen', 'photos', 'adminRejector'])
+            ->latest('admin_rejected_at')
+            ->get();
+
         return view('admin.dashboard', compact(
             'summary', 'complaints', 'users', 'bupati', 'categories', 'departments', 
             'activeTab', 'regions', 'districtStats', 'mapPoints', 'complaintsDetailMap',
             'teams', 'dispatchMode', 'availableOfficers', 'unassignedOfficers', 'districts',
-            'avgPerformance', 'allComplaintsForReport', 'hasBupati', 'hasSuperAdmin'
+            'avgPerformance', 'allComplaintsForReport', 'hasBupati', 'hasSuperAdmin',
+            'adminRejectedComplaints'
         ));
     }
 
@@ -485,29 +493,105 @@ class WebSuperAdminController extends Controller
         return back()->with('success', 'Data Kepala Daerah Kabupaten berhasil diperbarui!');
     }
 
-    public function deleteUser(Request $request, int $id): RedirectResponse
+    public function deactivateUser(Request $request, int $id): RedirectResponse
     {
         $user = User::findOrFail($id);
 
         // 1. Anti-Self-Lockout Protection
         if ($user->id === auth()->id()) {
-            return back()->with('error', 'Proteksi Anti-Self-Lockout: Super Admin tidak dapat menonaktifkan atau menghapus akun dirinya sendiri.');
+            return back()->with('error', 'Proteksi Keamanan: Super Admin tidak dapat menonaktifkan akun dirinya sendiri.');
         }
 
-        // 2. Peer Protection (Re-Authentication untuk Akun Petinggi / Sesama Admin)
+        // 2. Peer Protection (Re-Authentication untuk Akun Pimpinan / Sesama Admin)
         $isHighPrivilege = in_array(strtoupper($user->role), ['ADMIN', 'SUPERADMIN', 'BUPATI', 'KEPALA_DAERAH'], true);
         if ($isHighPrivilege) {
             $adminPassword = $request->input('admin_password');
             if (empty($adminPassword) || !Hash::check($adminPassword, auth()->user()->password)) {
-                return back()->with('error', 'Otentikasi Ulang Gagal: Kata sandi Super Admin yang Anda masukkan salah. Penghapusan akun pimpinan/sesama administrator dibatalkan demi keamanan.');
+                return back()->with('error', 'Verifikasi Gagal: Kata sandi Super Admin yang Anda masukkan salah. Penonaktifan akun pimpinan/administrator dibatalkan.');
             }
         }
 
-        $deletedName = $user->name;
-        $deletedRole = $user->role;
-        $user->delete();
+        $validated = $request->validate([
+            'reason'                 => 'required|string|min:10|max:500',
+            'confirmation_statement' => 'required|string',
+        ], [
+            'reason.required'                 => 'Alasan penonaktifan wajib diisi.',
+            'reason.min'                      => 'Alasan penonaktifan minimal 10 karakter agar dapat dipertanggungjawabkan.',
+            'confirmation_statement.required' => 'Pernyataan konfirmasi wajib diketik ulang.',
+        ]);
 
-        return back()->with('success', "Akun {$deletedName} ({$deletedRole}) berhasil dihapus dari sistem.");
+        $expectedStatement = 'NONAKTIFKAN ' . $user->email;
+        if (strcasecmp(trim($validated['confirmation_statement']), $expectedStatement) !== 0) {
+            return back()->with('error', "Pernyataan konfirmasi tidak sesuai. Harap ketik persis: {$expectedStatement}");
+        }
+
+        $reason = trim($validated['reason']);
+        $user->update([
+            'is_active'           => false,
+            'deactivation_reason' => $reason,
+            'deactivated_at'      => now(),
+            'deactivated_by'      => auth()->id(),
+        ]);
+
+        // Cabut seluruh sesi aktif mobile/web pengguna
+        try {
+            $user->tokens()->delete();
+        } catch (\Throwable $e) {
+            // Abaikan jika token belum ada
+        }
+
+        // Catat di Audit Trail
+        \App\Models\AuditLog::create([
+            'user_id'    => auth()->id(),
+            'action'     => 'user.deactivated',
+            'model_type' => User::class,
+            'model_id'   => $user->id,
+            'new_values' => ['is_active' => false, 'reason' => $reason],
+            'ip_address' => $request->ip(),
+        ]);
+
+        // Kirim email pemberitahuan resmi ke pengguna
+        try {
+            app(\App\Services\SecurityMailService::class)->sendAccountStatusChangedAlert($user, false, $reason);
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning("Gagal mengirim email penonaktifan ke {$user->email}: " . $e->getMessage());
+        }
+
+        return back()->with('success', "Akun {$user->name} berhasil dinonaktifkan. Notifikasi email resmi telah dikirim ke {$user->email}.");
+    }
+
+    public function reactivateUser(Request $request, int $id): RedirectResponse
+    {
+        $user = User::findOrFail($id);
+        $reason = trim((string) $request->input('reason', ''));
+
+        $user->update([
+            'is_active'           => true,
+            'deactivation_reason' => null,
+            'deactivated_at'      => null,
+            'deactivated_by'      => null,
+        ]);
+
+        \App\Models\AuditLog::create([
+            'user_id'    => auth()->id(),
+            'action'     => 'user.reactivated',
+            'model_type' => User::class,
+            'model_id'   => $user->id,
+            'new_values' => ['is_active' => true, 'reason' => $reason ?: 'Diaktifkan kembali oleh Super Admin'],
+            'ip_address' => $request->ip(),
+        ]);
+
+        try {
+            app(\App\Services\SecurityMailService::class)->sendAccountStatusChangedAlert(
+                $user,
+                true,
+                $reason ?: 'Akun telah diaktifkan kembali oleh Super Administrator.'
+            );
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning("Gagal mengirim email pengaktifan ke {$user->email}: " . $e->getMessage());
+        }
+
+        return back()->with('success', "Akun {$user->name} berhasil diaktifkan kembali. Notifikasi email resmi telah dikirim ke {$user->email}.");
     }
 
     public function resetUserPassword(Request $request, int $id): RedirectResponse
@@ -542,22 +626,60 @@ class WebSuperAdminController extends Controller
         return back()->with('success', "Kata sandi akun {$user->name} berhasil direset ke default ('password'). Email pemberitahuan resmi telah otomatis dikirimkan ke {$user->email}.");
     }
 
-    public function deleteComplaint(int $id): RedirectResponse
+    public function rejectComplaint(Request $request, int $id): RedirectResponse
     {
-        $complaint = Complaint::with('photos')->findOrFail($id);
+        $complaint = Complaint::withoutGlobalScope('excludeAdminRejected')->findOrFail($id);
 
-        foreach ($complaint->photos as $photo) {
-            if ($photo->storage_key) {
-                \Illuminate\Support\Facades\Storage::disk('public')->delete($photo->storage_key);
-            }
-            $photo->delete();
+        $validated = $request->validate([
+            'reason'                 => 'required|string|min:10|max:500',
+            'confirmation_statement' => 'required|string',
+        ], [
+            'reason.required'                 => 'Alasan penolakan wajib diisi.',
+            'reason.min'                      => 'Alasan penolakan minimal 10 karakter agar dapat dipertanggungjawabkan.',
+            'confirmation_statement.required' => 'Pernyataan konfirmasi wajib diketik ulang.',
+        ]);
+
+        $expectedCode = '#' . $complaint->public_code;
+        $typed = trim($validated['confirmation_statement']);
+        if (strcasecmp($typed, $expectedCode) !== 0 && strcasecmp($typed, $complaint->public_code) !== 0) {
+            return back()->with('error', "Pernyataan konfirmasi tidak sesuai. Harap ketik persis kode laporan: {$expectedCode}");
         }
 
-        $complaint->statusHistories()->delete();
-        $complaint->dispositions()->delete();
-        $complaint->supports()->delete();
-        $complaint->delete();
+        try {
+            \App\Domain\Complaints\Services\ComplaintStateMachine::validateAdminRejection($complaint->status);
+        } catch (\InvalidArgumentException $e) {
+            return back()->with('error', $e->getMessage());
+        }
 
-        return back()->with('success', 'Laporan berhasil dihapus oleh Super Admin.');
+        $fromStatus = $complaint->status;
+        $reason = trim($validated['reason']);
+
+        $complaint->update([
+            'status'                 => \App\Domain\Complaints\Enums\ComplaintStatus::REJECTED->value,
+            'rejected_by_superadmin' => true,
+            'admin_rejection_reason' => $reason,
+            'admin_rejected_at'      => now(),
+            'admin_rejected_by'      => auth()->id(),
+        ]);
+
+        \App\Models\ComplaintStatusHistory::create([
+            'complaint_id' => $complaint->id,
+            'user_id'      => auth()->id(),
+            'from_status'  => $fromStatus,
+            'to_status'    => \App\Domain\Complaints\Enums\ComplaintStatus::REJECTED->value,
+            'note'         => "Ditolak oleh Super Admin: {$reason}",
+        ]);
+
+        \App\Models\AuditLog::create([
+            'user_id'    => auth()->id(),
+            'action'     => 'complaint.admin_rejected',
+            'model_type' => Complaint::class,
+            'model_id'   => $complaint->id,
+            'old_values' => ['status' => $fromStatus],
+            'new_values' => ['status' => 'REJECTED', 'rejected_by_superadmin' => true, 'reason' => $reason],
+            'ip_address' => $request->ip(),
+        ]);
+
+        return back()->with('success', "Laporan #{$complaint->public_code} telah ditolak dan dipindahkan ke Arsip Ditolak (khusus Super Admin).");
     }
 }

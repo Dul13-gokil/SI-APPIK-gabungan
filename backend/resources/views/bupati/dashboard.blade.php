@@ -403,7 +403,7 @@
                     </div>
 
                     <!-- Dropdown Status -->
-                    <div class="flex flex-col sm:flex-row sm:items-center gap-1 min-w-0">
+                    <div class="col-span-2 sm:col-span-1 flex flex-col sm:flex-row sm:items-center gap-1 min-w-0">
                         <div class="flex items-center gap-1 text-[11px] sm:text-xs text-slate-500 shrink-0 font-medium whitespace-nowrap">
                             <i data-lucide="check-square" class="w-3.5 h-3.5 text-[#1E3A8A]"></i>
                             <span>Status:</span>
@@ -420,7 +420,7 @@
                         </select>
                     </div>
 
-                    <div class="flex items-end sm:items-center justify-end gap-1.5 self-end sm:self-auto">
+                    <div class="col-span-2 sm:col-span-1 flex items-end sm:items-center justify-end gap-1.5 self-end sm:self-auto">
                         <!-- Tombol Reset Filter (Muncul saat filter aktif) -->
                         <button type="button" id="bupatiResetBtn" onclick="resetBupatiFilters()"
                             class="hidden px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition flex items-center gap-1 shrink-0 cursor-pointer">
@@ -711,8 +711,8 @@
                         </select>
                     </div>
 
-                    <!-- Dropdown Status Arsip (Selesai vs Ditolak Sesuai Gambar 2) -->
-                    <div class="flex flex-col sm:flex-row sm:items-center gap-1 min-w-0">
+                    <!-- Dropdown Status Arsip (Selesai vs Ditolak) -->
+                    <div class="col-span-2 sm:col-span-1 flex flex-col sm:flex-row sm:items-center gap-1 min-w-0">
                         <div class="flex items-center gap-1 text-[11px] sm:text-xs text-slate-500 shrink-0 font-medium whitespace-nowrap">
                             <i data-lucide="check-square" class="w-3.5 h-3.5 text-[#1E3A8A]"></i>
                             <span>Status:</span>
@@ -720,12 +720,12 @@
                         <select id="bupatiArchiveStatusSelect" onchange="filterBupatiArchive()" 
                             class="w-full sm:w-auto text-xs font-semibold rounded-xl border border-slate-200 py-1.5 px-2 bg-slate-50 text-slate-700 focus:outline-none focus:border-[#1E3A8A] focus:bg-white transition">
                             <option value="ALL">Semua Status</option>
-                            <option value="COMPLETED">Selesai / Tuntas</option>
-                            <option value="REJECTED">Ditolak (Hoax / Palsu)</option>
+                            <option value="COMPLETED">Selesai</option>
+                            <option value="REJECTED">Ditolak</option>
                         </select>
                     </div>
 
-                    <div class="flex items-end sm:items-center justify-end gap-1.5 self-end sm:self-auto">
+                    <div class="col-span-2 sm:col-span-1 flex items-end sm:items-center justify-end gap-1.5 self-end sm:self-auto">
                         <!-- Tombol Reset Filter (Muncul saat filter aktif) -->
                         <button type="button" id="bupatiArchiveResetBtn" onclick="resetBupatiArchiveFilters()"
                             class="hidden px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition flex items-center gap-1 shrink-0 cursor-pointer">

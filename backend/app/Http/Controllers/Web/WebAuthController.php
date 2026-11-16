@@ -37,6 +37,15 @@ class WebAuthController extends Controller
         })->first();
 
         if ($user && Hash::check($request->password, $user->password)) {
+            if (!($user->is_active ?? true)) {
+                $reasonText = $user->deactivation_reason
+                    ? " Alasan: {$user->deactivation_reason}"
+                    : '';
+                return back()->withErrors([
+                    'email' => "Akun Anda telah dinonaktifkan oleh Super Admin.{$reasonText} Silakan hubungi administrator untuk pengaktifan kembali.",
+                ])->withInput($request->only('email'));
+            }
+
             // Pengecekan Khusus Role WARGA:
             // Role warga di website sama sekali tidak bisa digunakan. 
             // Tampilkan pop-up pemberitahuan resmi untuk unduh aplikasi mobile (PlayStore & AppStore).

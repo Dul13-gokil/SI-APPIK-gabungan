@@ -53,4 +53,20 @@ class ComplaintStateMachine
             throw new InvalidArgumentException("Perubahan status tidak sah: dari {$fromKey} ke {$toKey}.");
         }
     }
+
+    /**
+     * Validasi penolakan resmi oleh Super Admin dari status non-arsip.
+     */
+    public static function validateAdminRejection(string|ComplaintStatus $from): void
+    {
+        $fromKey = $from instanceof ComplaintStatus ? $from->value : $from;
+
+        if ($fromKey === ComplaintStatus::REJECTED->value) {
+            throw new InvalidArgumentException('Laporan sudah berada pada status ditolak.');
+        }
+
+        if ($fromKey === ComplaintStatus::CLOSED->value) {
+            throw new InvalidArgumentException('Laporan yang sudah ditutup permanen tidak dapat ditolak.');
+        }
+    }
 }

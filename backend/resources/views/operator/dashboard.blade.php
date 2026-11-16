@@ -329,7 +329,7 @@
             </div>
 
             <!-- Dropdown Status Khusus Tab Arsip (Selesai vs Ditolak) -->
-            <div id="filterArchiveStatusContainer" class="flex-col sm:flex-row sm:items-center gap-1 min-w-0 {{ $activeTab === 'archive' ? 'flex' : 'hidden' }} shrink-0">
+            <div id="filterArchiveStatusContainer" class="col-span-2 sm:col-span-1 flex-col sm:flex-row sm:items-center gap-1 min-w-0 {{ $activeTab === 'archive' ? 'flex' : 'hidden' }} shrink-0">
                 <div class="flex items-center gap-1 text-[11px] sm:text-xs text-slate-500 shrink-0 font-medium whitespace-nowrap">
                     <i data-lucide="check-square" class="w-3.5 h-3.5 text-[#1E3A8A]"></i>
                     <span>Status:</span>
@@ -337,8 +337,8 @@
                 <select id="filterArchiveStatusSelect" onchange="applyFilters()" 
                     class="w-full sm:w-auto text-xs font-semibold rounded-xl border border-slate-200 py-2 px-2.5 lg:max-w-[130px] bg-slate-50 text-slate-700 focus:outline-none focus:border-[#1E3A8A] focus:bg-white transition shrink-0">
                     <option value="ALL">Semua Status</option>
-                    <option value="COMPLETED">Selesai / Tuntas</option>
-                    <option value="REJECTED">Ditolak (Hoax / Palsu)</option>
+                    <option value="COMPLETED">Selesai</option>
+                    <option value="REJECTED">Ditolak</option>
                 </select>
             </div>
 
@@ -2033,7 +2033,7 @@
 <!-- Form Tolak Cepat (Hoax) -->
 <form id="quickRejectForm" method="POST" action="" class="hidden">
     @csrf
-    <input type="hidden" name="reason" value="Laporan tidak memenuhi kriteria kelayakan fisik atau informasi palsu (Hoax).">
+    <input type="hidden" name="reason" value="Laporan tidak memenuhi kriteria kelayakan atau bukti lapangan tidak sesuai.">
 </form>
 
 <!-- MODAL KONFIRMASI TOLAK LAPORAN (CLEAN, ELEGAN & SNAP-RESPONSE) -->
@@ -2054,7 +2054,7 @@
                     Tolak Laporan Pengaduan
                 </h3>
                 <p class="text-xs text-slate-500 leading-relaxed">
-                    Pengaduan akan ditandai sebagai tidak valid / hoax dan proses penugasan ke dinas terkait akan dihentikan.
+                    Pengaduan akan ditandai sebagai ditolak karena tidak memenuhi syarat kelayakan dan proses penugasan ke dinas terkait akan dihentikan.
                 </p>
             </div>
         </div>
@@ -2071,7 +2071,7 @@
                 <label for="rejectModalReasonInput" class="block font-semibold text-slate-700 mb-1 text-[11px]">
                     Alasan Penolakan Kedinasan:
                 </label>
-                <input type="text" id="rejectModalReasonInput" value="Laporan tidak memenuhi kriteria kelayakan fisik atau informasi palsu (Hoax)." 
+                <input type="text" id="rejectModalReasonInput" value="Laporan tidak memenuhi kriteria kelayakan atau bukti lapangan tidak sesuai." 
                     class="w-full text-xs rounded-xl border border-slate-200 py-2 px-3 bg-white focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 text-slate-800">
             </div>
         </div>
@@ -3636,7 +3636,7 @@
         const codeEl = document.getElementById('rejectModalCode');
         if (codeEl) codeEl.innerText = '#' + code;
         const reasonInput = document.getElementById('rejectModalReasonInput');
-        if (reasonInput) reasonInput.value = 'Laporan tidak memenuhi kriteria kelayakan fisik atau informasi palsu (Hoax).';
+        if (reasonInput) reasonInput.value = 'Laporan tidak memenuhi kriteria kelayakan atau bukti lapangan tidak sesuai.';
 
         const modal = document.getElementById('rejectConfirmModal');
         if (modal) {

@@ -28,6 +28,10 @@ class User extends Authenticatable
         'role',
         'region_id',
         'is_anonymous',
+        'is_active',
+        'deactivation_reason',
+        'deactivated_at',
+        'deactivated_by',
         'last_login_ip',
         'last_login_user_agent',
         'last_login_at',
@@ -57,7 +61,9 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'last_login_at'     => 'datetime',
+            'deactivated_at'    => 'datetime',
             'is_anonymous'      => 'boolean',
+            'is_active'         => 'boolean',
         ];
     }
 

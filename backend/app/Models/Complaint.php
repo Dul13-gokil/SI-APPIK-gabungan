@@ -30,6 +30,10 @@ class Complaint extends Model
         'end_longitude',
         'route_coordinates',
         'status',
+        'rejected_by_superadmin',
+        'admin_rejection_reason',
+        'admin_rejected_at',
+        'admin_rejected_by',
         'priority_score',
         'priority_level',
         'ai_category',
@@ -47,6 +51,8 @@ class Complaint extends Model
         'priority_score' => 'float',
         'ai_confidence' => 'float',
         'is_anonymous' => 'boolean',
+        'rejected_by_superadmin' => 'boolean',
+        'admin_rejected_at' => 'datetime',
     ];
 
     protected $appends = [
@@ -54,6 +60,18 @@ class Complaint extends Model
         'severity_text',
         'severity_badge_label',
     ];
+
+    protected static function booted(): void
+    {
+        static::addGlobalScope('excludeAdminRejected', function (\Illuminate\Database\Eloquent\Builder $builder) {
+            $builder->where($builder->qualifyColumn('rejected_by_superadmin'), false);
+        });
+    }
+
+    public function adminRejector(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'admin_rejected_by');
+    }
 
     public function getSeverityLevelAttribute(): int
     {

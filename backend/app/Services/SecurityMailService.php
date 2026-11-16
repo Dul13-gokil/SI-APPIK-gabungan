@@ -520,6 +520,66 @@ HTML;
     }
 
     /**
+     * Kirim email pemberitahuan resmi saat akun dinonaktifkan atau diaktifkan kembali oleh Super Admin.
+     */
+    public function sendAccountStatusChangedAlert(User $user, bool $isActive, ?string $reason = null): bool
+    {
+        $targetEmail = strtolower(trim($user->email));
+        if (empty($targetEmail)) {
+            return false;
+        }
+
+        $timeString = now('Asia/Makassar')->translatedFormat('d F Y, H:i') . ' WITA';
+        $safeName = htmlspecialchars($user->name, ENT_QUOTES, 'UTF-8');
+        $safeReason = htmlspecialchars($reason ?: 'Kebijakan tata kelola dan keamanan sistem.', ENT_QUOTES, 'UTF-8');
+
+        if ($isActive) {
+            $subject = 'Pemberitahuan Pengaktifan Kembali Akun SI-APPIK';
+            $badgeBg = '#ecfdf5';
+            $badgeBorder = '#a7f3d0';
+            $badgeColor = '#047857';
+            $statusTitle = 'Akun Diaktifkan Kembali';
+            $leadText = 'Akun SI-APPIK Anda telah <strong>diaktifkan kembali</strong> oleh Super Administrator. Anda kini dapat masuk kembali ke sistem menggunakan kredensial resmi Anda.';
+            $reasonLabel = 'Catatan Pengaktifan';
+        } else {
+            $subject = 'Pemberitahuan Penonaktifan Akun SI-APPIK';
+            $badgeBg = '#fef2f2';
+            $badgeBorder = '#fecaca';
+            $badgeColor = '#b91c1c';
+            $statusTitle = 'Akun Dinonaktifkan';
+            $leadText = 'Akun SI-APPIK Anda telah <strong>dinonaktifkan sementara</strong> oleh Super Administrator sehingga akses masuk ke aplikasi mobile maupun portal web dibatasi.';
+            $reasonLabel = 'Alasan Penonaktifan';
+        }
+
+        $htmlBody = "
+        <div style=\"font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; max-width: 580px; margin: 0 auto; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; overflow: hidden;\">
+            <div style=\"background: #1e3a8a; padding: 20px 24px; color: #ffffff;\">
+                <div style=\"font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #bfdbfe; font-weight: 700;\">SI-APPIK &bull; Kabupaten Kolaka Utara</div>
+                <div style=\"font-size: 18px; font-weight: 800; margin-top: 4px;\">{$statusTitle}</div>
+            </div>
+            <div style=\"padding: 24px; color: #334155; font-size: 13.5px; line-height: 1.6;\">
+                <p style=\"margin: 0 0 12px;\">Yth. <strong>{$safeName}</strong>,</p>
+                <p style=\"margin: 0 0 16px;\">{$leadText}</p>
+                <div style=\"background: {$badgeBg}; border: 1px solid {$badgeBorder}; border-radius: 10px; padding: 14px 16px; margin-bottom: 16px;\">
+                    <div style=\"font-size: 11px; font-weight: 700; text-transform: uppercase; color: {$badgeColor}; margin-bottom: 4px;\">{$reasonLabel}</div>
+                    <div style=\"font-size: 13px; color: #0f172a; font-weight: 600;\">{$safeReason}</div>
+                    <div style=\"font-size: 11.5px; color: #64748b; margin-top: 6px;\">Waktu Perubahan: {$timeString}</div>
+                </div>
+                <p style=\"margin: 0; font-size: 12px; color: #64748b;\">Apabila Anda memerlukan informasi lebih lanjut, silakan menghubungi Administrator Dinas PUPR Kabupaten Kolaka Utara.</p>
+            </div>
+        </div>";
+
+        $plainText = "Yth. {$user->name},\n\n"
+            . ($isActive
+                ? "Akun SI-APPIK Anda telah diaktifkan kembali oleh Super Administrator pada {$timeString}.\n"
+                : "Akun SI-APPIK Anda telah dinonaktifkan oleh Super Administrator pada {$timeString}.\n")
+            . "{$reasonLabel}: " . ($reason ?: 'Kebijakan tata kelola dan keamanan sistem.') . "\n\n"
+            . "Pemerintah Kabupaten Kolaka Utara - Dinas PUPR";
+
+        return $this->sendPriorityMail($targetEmail, $subject, $htmlBody, $plainText);
+    }
+
+    /**
      * Kirim email pemberitahuan ketika pengguna memperbarui profil akun mereka
      * (Nama, Email, Nomor Telepon, atau Kata Sandi) melalui aplikasi mobile atau web.
      */

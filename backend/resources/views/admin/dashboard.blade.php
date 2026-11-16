@@ -31,6 +31,10 @@
             'title' => 'Laporan Kinerja & Rekapitulasi Eksekutif',
             'subtitle' => 'Ringkasan capaian penanganan aduan, sebaran kategori kerusakan, dan cetak laporan resmi.',
         ],
+        'admin-rejected' => [
+            'title' => 'Arsip Pengaduan Ditolak (Khusus Super Admin)',
+            'subtitle' => 'Daftar laporan yang ditolak langsung oleh Super Admin beserta alasan resmi penolakan.',
+        ],
     ];
     $currentMeta = $tabMeta[$activeTab] ?? $tabMeta['users-management'];
 @endphp
@@ -171,7 +175,7 @@
     </div>
 
     <!-- 3. MENU FITUR ADMIN (TERSTRUKTUR & MUDAH DIKENALI) -->
-    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-2.5 w-full">
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-2 sm:gap-2.5 w-full">
         <!-- 1. Tab Pengaturan Akun -->
         <button type="button" onclick="switchAdminTab('users-management')" id="tabBtn-users-management"
             class="admin-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'users-management' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
@@ -236,6 +240,18 @@
             <div class="min-w-0 flex-1">
                 <span class="text-[11px] sm:text-xs font-bold block leading-tight">Laporan Kinerja</span>
             </div>
+        </button>
+
+        <!-- 7. Tab Arsip Ditolak (Khusus Super Admin) -->
+        <button type="button" onclick="switchAdminTab('admin-rejected')" id="tabBtn-admin-rejected"
+            class="admin-tab-btn col-span-2 sm:col-span-1 text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'admin-rejected' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
+            <i data-lucide="archive-x" class="w-4 h-4 shrink-0 text-current"></i>
+            <div class="min-w-0 flex-1">
+                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Arsip Ditolak</span>
+            </div>
+            <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'admin-rejected' ? 'bg-white text-[#1E3A8A]' : 'bg-red-50 text-red-700 border border-red-200' }}">
+                {{ ($adminRejectedComplaints ?? collect())->count() }}
+            </span>
         </button>
     </div>
 
@@ -477,6 +493,9 @@
                                         <div class="min-w-0 flex-1">
                                             <div class="flex items-center gap-1.5 flex-wrap">
                                                 <span class="font-bold text-slate-900 text-xs truncate">{{ $u->name }}</span>
+                                                @if(!($u->is_active ?? true))
+                                                    <span class="px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-red-50 text-red-700 border border-red-200">Nonaktif</span>
+                                                @endif
                                                 <span class="md:hidden px-1.5 py-0.5 rounded-full text-[9px] font-bold border {{ $roleBadgeClass }}">{{ $roleDisplay }}</span>
                                             </div>
                                             <div class="text-[11px] text-slate-400">ID #{{ $u->id }}</div>
@@ -521,21 +540,19 @@
                                             @php
                                                 $isLeaderAccount = in_array($roleUpper, ['ADMIN', 'SUPERADMIN', 'BUPATI', 'KEPALA_DAERAH']);
                                             @endphp
-                                            @if($isLeaderAccount)
-                                                <!-- Hapus Akun Petinggi / Sesama Super Admin (Wajib Re-Authentication Sandi) -->
-                                                <button type="button" 
-                                                    onclick="openConfirmDeleteLeaderModal({{ $u->id }}, '{{ addslashes($u->name) }}', '{{ $roleDisplay }}')"
-                                                    class="p-1.5 rounded-lg border border-red-200 text-red-600 hover:bg-red-50 transition cursor-pointer" 
-                                                    title="Hapus Akun Petinggi (Wajib Konfirmasi Sandi Super Admin)">
-                                                    <i data-lucide="shield-alert" class="w-3.5 h-3.5"></i>
+                                            @if($u->is_active ?? true)
+                                                <button type="button"
+                                                    onclick="openDeactivateUserModal({{ $u->id }}, '{{ addslashes($u->name) }}', '{{ addslashes($u->email) }}', '{{ $roleDisplay }}', {{ $isLeaderAccount ? 'true' : 'false' }})"
+                                                    class="p-1.5 rounded-lg border border-red-200 text-red-600 hover:bg-red-50 transition cursor-pointer"
+                                                    title="Nonaktifkan Akun Pengguna">
+                                                    <i data-lucide="user-x" class="w-3.5 h-3.5"></i>
                                                 </button>
                                             @else
-                                                <!-- Hapus User Reguler (Modal Konfirmasi Cantik Konsisten Gambar 4) -->
-                                                <button type="button" 
-                                                    onclick="openConfirmDeleteUserModal({{ $u->id }}, '{{ addslashes($u->name) }}', '{{ addslashes($u->email) }}', '{{ $roleDisplay }}')"
-                                                    class="p-1.5 rounded-lg border border-red-200 text-red-600 hover:bg-red-50 transition cursor-pointer" 
-                                                    title="Hapus Akun Pengguna">
-                                                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                                <button type="button"
+                                                    onclick="openReactivateUserModal({{ $u->id }}, '{{ addslashes($u->name) }}', '{{ addslashes($u->email) }}', '{{ $roleDisplay }}')"
+                                                    class="p-1.5 rounded-lg border border-emerald-200 text-emerald-700 hover:bg-emerald-50 transition cursor-pointer"
+                                                    title="Aktifkan Kembali Akun">
+                                                    <i data-lucide="user-check" class="w-3.5 h-3.5"></i>
                                                 </button>
                                             @endif
                                         @else
@@ -589,7 +606,12 @@
                                         {{ strtoupper(substr($u->name, 0, 1)) }}
                                     </div>
                                     <div class="min-w-0">
-                                        <div class="font-bold text-[#0F172A] text-xs truncate">{{ $u->name }}</div>
+                                        <div class="flex items-center gap-1.5 flex-wrap">
+                                            <span class="font-bold text-[#0F172A] text-xs truncate">{{ $u->name }}</span>
+                                            @if(!($u->is_active ?? true))
+                                                <span class="px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-red-50 text-red-700 border border-red-200">Nonaktif</span>
+                                            @endif
+                                        </div>
                                         <div class="text-[11px] text-[#475569] font-mono">ID #{{ $u->id }}</div>
                                     </div>
                                 </div>
@@ -605,15 +627,31 @@
                         </div>
                         <div class="flex items-center justify-end gap-1.5 pt-2 border-t border-[#E2E8F0]">
                             <button type="button"
-                                onclick="openEditUserModal({{ $u->id }}, '{{ addslashes($u->name) }}', '{{ addslashes($u->email) }}', '{{ addslashes($u->phone ?? '') }}', '{{ $roleUpper }}')"
+                                onclick="openEditUserModal({{ $u->id }}, '{{ addslashes($u->name) }}', '{{ addslashes($u->email) }}', '{{ addslashes($u->phone ?? '') }}', '{{ $roleUpper == 'BUPATI' ? 'KEPALA_DAERAH' : $roleUpper }}')"
                                 class="px-2.5 py-1 rounded-lg border border-[#E2E8F0] text-[#0F172A] hover:bg-slate-100 text-[11px] font-semibold transition cursor-pointer">
                                 Edit
                             </button>
                             <button type="button"
-                                onclick="openResetPassModal({{ $u->id }}, '{{ addslashes($u->name) }}', '{{ $roleDisplay }}')"
+                                onclick="openQuickResetModal({{ $u->id }}, '{{ addslashes($u->name) }}', '{{ addslashes($u->email) }}', '{{ $roleDisplay }}')"
                                 class="px-2.5 py-1 rounded-lg border border-blue-200 text-[#1E3A8A] hover:bg-blue-50 text-[11px] font-semibold transition cursor-pointer">
                                 Sandi
                             </button>
+                            @if($u->id !== auth()->id())
+                                @php $isLeaderAccount = in_array($roleUpper, ['ADMIN', 'SUPERADMIN', 'BUPATI', 'KEPALA_DAERAH']); @endphp
+                                @if($u->is_active ?? true)
+                                    <button type="button"
+                                        onclick="openDeactivateUserModal({{ $u->id }}, '{{ addslashes($u->name) }}', '{{ addslashes($u->email) }}', '{{ $roleDisplay }}', {{ $isLeaderAccount ? 'true' : 'false' }})"
+                                        class="px-2.5 py-1 rounded-lg border border-red-200 text-red-600 hover:bg-red-50 text-[11px] font-semibold transition cursor-pointer">
+                                        Nonaktifkan
+                                    </button>
+                                @else
+                                    <button type="button"
+                                        onclick="openReactivateUserModal({{ $u->id }}, '{{ addslashes($u->name) }}', '{{ addslashes($u->email) }}', '{{ $roleDisplay }}')"
+                                        class="px-2.5 py-1 rounded-lg border border-emerald-200 text-emerald-700 hover:bg-emerald-50 text-[11px] font-semibold transition cursor-pointer">
+                                        Aktifkan
+                                    </button>
+                                @endif
+                            @endif
                         </div>
                     </div>
                 @endforeach
@@ -688,7 +726,7 @@
                 </div>
 
                 <!-- Dropdown Status -->
-                <div class="flex flex-col sm:flex-row sm:items-center gap-1 min-w-0">
+                <div class="col-span-2 sm:col-span-1 flex flex-col sm:flex-row sm:items-center gap-1 min-w-0">
                     <div class="flex items-center gap-1 text-[11px] sm:text-xs text-slate-500 shrink-0 font-medium whitespace-nowrap">
                         <i data-lucide="check-square" class="w-3.5 h-3.5 text-[#1E3A8A]"></i>
                         <span>Status:</span>
@@ -705,7 +743,7 @@
                     </select>
                 </div>
 
-                <div class="flex items-end sm:items-center justify-end gap-1.5 self-end sm:self-auto">
+                <div class="col-span-2 sm:col-span-1 flex items-end sm:items-center justify-end gap-1.5 self-end sm:self-auto">
                     <!-- Tombol Reset Filter (Muncul hanya saat filter aktif) -->
                     <button type="button" id="complaintResetBtn" onclick="resetComplaintFilters()" 
                         class="hidden px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition flex items-center gap-1 shrink-0 cursor-pointer">
@@ -854,10 +892,10 @@
                             <td onclick="event.stopPropagation();" class="block md:table-cell p-0 md:py-2.5 md:px-3 text-right md:text-center whitespace-nowrap shrink-0 md:w-auto cursor-default">
                                 <div class="flex items-center justify-end md:justify-center gap-1.5">
                                     <button type="button" 
-                                        onclick="openDeleteComplaintModal('{{ route('admin.complaints.delete', $c->id) }}', '{{ $c->public_code }}', '{{ addslashes($c->title) }}')"
-                                        title="Hapus Aduan"
+                                        onclick="openRejectComplaintAdminModal('{{ route('admin.complaints.reject', $c->id) }}', '{{ $c->public_code }}', '{{ addslashes($c->title) }}')"
+                                        title="Tolak Laporan"
                                         class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-red-50 hover:bg-red-600 text-red-600 hover:text-white border border-red-200 transition inline-flex items-center justify-center shadow-2xs cursor-pointer">
-                                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                        <i data-lucide="x-circle" class="w-3.5 h-3.5"></i>
                                     </button>
                                 </div>
                             </td>
@@ -928,11 +966,11 @@
                                         <i data-lucide="arrow-right" class="w-3 h-3"></i>
                                     </button>
                                     <button type="button"
-                                        onclick="event.stopPropagation(); openDeleteComplaintModal('{{ route('admin.complaints.delete', $c->id) }}', '{{ $c->public_code }}', '{{ addslashes($c->title) }}')"
-                                        title="Hapus Aduan"
+                                        onclick="event.stopPropagation(); openRejectComplaintAdminModal('{{ route('admin.complaints.reject', $c->id) }}', '{{ $c->public_code }}', '{{ addslashes($c->title) }}')"
+                                        title="Tolak Laporan"
                                         class="px-2.5 py-1 rounded-lg bg-red-50 hover:bg-red-600 text-red-600 hover:text-white border border-red-200 transition inline-flex items-center gap-1 text-[11px] font-bold cursor-pointer">
-                                        <i data-lucide="trash-2" class="w-3 h-3"></i>
-                                        <span>Hapus</span>
+                                        <i data-lucide="x-circle" class="w-3 h-3"></i>
+                                        <span>Tolak</span>
                                     </button>
                                 </div>
                             </div>
@@ -1642,44 +1680,135 @@
         @include('partials.executive_monitoring_reporting')
     </div>
 
-@push('modals')
-    <!-- MODAL KUSTOM KONFIRMASI HAPUS LAPORAN -->
-    <div id="deleteComplaintModal" class="fixed inset-0 z-[99999] hidden items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs transition-opacity duration-200">
-        <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-100 overflow-hidden transform transition-all scale-95 opacity-0 duration-200" id="deleteModalContent">
-            <div class="p-6 text-center space-y-4">
-                <div class="w-14 h-14 rounded-2xl bg-red-50 border border-red-200 text-red-600 flex items-center justify-center mx-auto shadow-inner">
-                    <i data-lucide="alert-triangle" class="w-7 h-7"></i>
-                </div>
-                <div>
-                    <h3 class="font-outfit font-extrabold text-base sm:text-lg text-slate-900">
-                        Konfirmasi Hapus Laporan Permanen
-                    </h3>
-                    <p class="text-xs text-slate-500 mt-1">
-                        Apakah Anda yakin ingin menghapus laporan <strong id="deleteModalComplaintCode" class="text-red-600 font-mono">#ADU-0001</strong>?
-                    </p>
-                    <div class="mt-2.5 p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-[11px] text-slate-600 text-left italic truncate" id="deleteModalComplaintTitle">
-                        -
+    <!-- Tab Panel 7: Arsip Pengaduan Ditolak oleh Super Admin (Eksklusif Super Admin) -->
+    <div id="tabPanel-admin-rejected" class="admin-tab-panel {{ $activeTab === 'admin-rejected' ? '' : 'hidden' }} space-y-4">
+        <div class="card-white rounded-2xl bg-white border border-[#E2E8F0] overflow-hidden">
+            <div class="p-4 sm:p-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-red-50 text-red-600 border border-red-200 flex items-center justify-center shrink-0">
+                        <i data-lucide="archive-x" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-outfit font-bold text-sm sm:text-base text-slate-900">Arsip Pengaduan Ditolak Super Admin</h3>
                     </div>
                 </div>
-                <div class="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-[11px] text-left flex items-start gap-2">
-                    <i data-lucide="info" class="w-4 h-4 text-amber-600 shrink-0 mt-0.5"></i>
-                    <span>Tindakan ini tidak dapat dibatalkan. Seluruh data foto kerusakan, disposisi, dan riwayat status akan dihapus secara permanen dari server.</span>
-                </div>
-                <div class="flex items-center justify-end gap-2.5 pt-2">
-                    <button type="button" onclick="closeDeleteComplaintModal()"
-                        class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer">
-                        Batal
+                <span class="px-2.5 py-1 rounded-lg bg-red-50 text-red-700 border border-red-200 text-xs font-bold self-start sm:self-auto">
+                    Total: {{ ($adminRejectedComplaints ?? collect())->count() }} Laporan
+                </span>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs text-slate-600">
+                    <thead class="bg-slate-50 text-slate-700 font-bold border-b border-slate-200 uppercase tracking-wider text-[10.5px]">
+                        <tr>
+                            <th class="py-3 px-4 whitespace-nowrap">Kode</th>
+                            <th class="py-3 px-4">Judul &amp; Lokasi</th>
+                            <th class="py-3 px-4 whitespace-nowrap">Kategori</th>
+                            <th class="py-3 px-4">Pelapor</th>
+                            <th class="py-3 px-4">Alasan Penolakan Resmi</th>
+                            <th class="py-3 px-4 whitespace-nowrap">Waktu Ditolak</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 bg-white">
+                        @forelse(($adminRejectedComplaints ?? collect()) as $rc)
+                            <tr class="hover:bg-slate-50/70 transition">
+                                <td class="py-3 px-4 font-mono font-bold text-red-700 whitespace-nowrap align-top">
+                                    #{{ $rc->public_code }}
+                                </td>
+                                <td class="py-3 px-4 align-top min-w-[200px]">
+                                    <div class="font-bold text-slate-900">{{ $rc->title }}</div>
+                                    <div class="text-[11px] text-slate-500 mt-0.5">{{ $rc->address ?? '-' }}</div>
+                                </td>
+                                <td class="py-3 px-4 whitespace-nowrap align-top">
+                                    <span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 text-[10.5px] font-semibold border border-slate-200">
+                                        {{ $rc->category?->name ?? 'Infrastruktur' }}
+                                    </span>
+                                </td>
+                                <td class="py-3 px-4 align-top font-semibold text-slate-800 whitespace-nowrap">
+                                    {{ $rc->user?->name ?? $rc->citizen?->name ?? 'Warga' }}
+                                </td>
+                                <td class="py-3 px-4 align-top min-w-[220px] text-slate-700">
+                                    {{ $rc->admin_rejection_reason ?? '-' }}
+                                </td>
+                                <td class="py-3 px-4 whitespace-nowrap align-top text-[11px] text-slate-500">
+                                    <div>{{ $rc->admin_rejected_at ? \Illuminate\Support\Carbon::parse($rc->admin_rejected_at)->locale('id')->isoFormat('D MMM Y, HH:mm') : '-' }}</div>
+                                    <div class="text-[10px] text-slate-400">Oleh: {{ $rc->adminRejector?->name ?? 'Super Admin' }}</div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="py-10 text-center text-slate-400 text-xs">
+                                    Belum ada laporan yang ditolak oleh Super Admin.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+@push('modals')
+    <!-- MODAL TOLAK LAPORAN RESMI (PENGGANTI HARD DELETE — WAJIB ALASAN & PERNYATAAN) -->
+    <div id="rejectComplaintAdminModal" class="fixed inset-0 z-[99999] hidden items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs transition-opacity duration-200">
+        <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden transform transition-all scale-95 opacity-0 duration-200" id="rejectComplaintAdminContent">
+            <div class="p-6 space-y-4">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-10 h-10 rounded-xl bg-red-50 text-red-600 border border-red-200 flex items-center justify-center shrink-0">
+                            <i data-lucide="x-circle" class="w-5 h-5"></i>
+                        </div>
+                        <h3 class="font-outfit font-extrabold text-base text-slate-900">
+                            Tolak Laporan Pengaduan
+                        </h3>
+                    </div>
+                    <button type="button" onclick="closeRejectComplaintAdminModal()" class="p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition cursor-pointer">
+                        <i data-lucide="x" class="w-4 h-4"></i>
                     </button>
-                    <form id="deleteComplaintForm" method="POST" action="">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit"
-                            class="px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs transition flex items-center gap-1.5 shadow-md shadow-red-200 cursor-pointer">
-                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                            <span>Ya, Hapus Permanen</span>
-                        </button>
-                    </form>
                 </div>
+
+                <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs space-y-1">
+                    <div class="font-mono font-bold text-red-600" id="rejectAdminModalCode">#0001</div>
+                    <div class="font-semibold text-slate-800 line-clamp-2" id="rejectAdminModalTitle">-</div>
+                </div>
+
+                <div class="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-[11px] flex items-start gap-2">
+                    <i data-lucide="info" class="w-4 h-4 text-amber-600 shrink-0 mt-0.5"></i>
+                    <span>Laporan yang ditolak akan dipindahkan ke <strong>Arsip Ditolak</strong> khusus Super Admin dan tidak akan tampil pada halaman peran lainnya.</span>
+                </div>
+
+                <form id="rejectComplaintAdminForm" method="POST" action="" class="space-y-3.5">
+                    @csrf
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Alasan Penolakan <span class="text-red-500">*</span></label>
+                        <textarea id="rejectAdminReasonInput" name="reason" rows="2" required minlength="10"
+                            oninput="validateRejectAdminForm()"
+                            placeholder="Tuliskan alasan logis dan resmi penolakan (minimal 10 karakter)..."
+                            class="w-full text-xs px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-red-600 focus:ring-1 focus:ring-red-600 transition"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">
+                            Ketik ulang kode laporan <span id="rejectAdminExpectedCode" class="font-mono text-red-600 bg-red-50 px-1.5 py-0.5 rounded border border-red-200"></span> sebagai pernyataan tanggung jawab <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="rejectAdminConfirmInput" name="confirmation_statement" required
+                            oninput="validateRejectAdminForm()"
+                            placeholder="Ketik kode laporan di atas"
+                            class="w-full text-xs font-mono px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-red-600 focus:ring-1 focus:ring-red-600 transition">
+                    </div>
+
+                    <div class="flex items-center justify-end gap-2.5 pt-2 border-t border-slate-100">
+                        <button type="button" onclick="closeRejectComplaintAdminModal()"
+                            class="px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs transition cursor-pointer">
+                            Batal
+                        </button>
+                        <button type="submit" id="rejectAdminSubmitBtn" disabled
+                            class="px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 disabled:opacity-45 disabled:cursor-not-allowed text-white font-bold text-xs transition flex items-center gap-1.5 cursor-pointer">
+                            <i data-lucide="x-circle" class="w-3.5 h-3.5"></i>
+                            <span>Konfirmasi Tolak Laporan</span>
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -1690,21 +1819,16 @@
 
     <!-- MODAL EDIT PROFIL & KATA SANDI PENGGUNA (SUPER ADMIN) -->
     <div id="editUserModal" class="fixed inset-0 z-[99999] hidden items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs transition-opacity duration-200">
-        <div class="bg-white rounded-3xl max-w-lg w-full shadow-2xl border border-slate-100 overflow-hidden transform transition-all scale-95 opacity-0 duration-200" id="editUserModalContent">
+        <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden transform transition-all scale-95 opacity-0 duration-200" id="editUserModalContent">
             <div class="p-6 space-y-5">
                 <div class="flex items-center justify-between pb-3 border-b border-slate-100">
                     <div class="flex items-center gap-2.5">
-                        <div class="w-10 h-10 rounded-xl bg-blue-50 text-[#1E3A8A] flex items-center justify-center font-bold">
+                        <div class="w-10 h-10 rounded-xl bg-blue-50 text-[#1E3A8A] border border-blue-100 flex items-center justify-center font-bold">
                             <i data-lucide="user-cog" class="w-5 h-5"></i>
                         </div>
-                        <div>
-                            <h3 class="font-outfit font-extrabold text-base text-slate-900">
-                                Edit Akun & Profil Pengguna
-                            </h3>
-                            <p class="text-xs text-slate-400">
-                                Kelola identitas, nomor telepon, peran sistem, dan kata sandi
-                            </p>
-                        </div>
+                        <h3 class="font-outfit font-extrabold text-base text-slate-900">
+                            Edit Akun &amp; Profil Pengguna
+                        </h3>
                     </div>
                     <button type="button" onclick="closeEditUserModal()" class="p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition cursor-pointer">
                         <i data-lucide="x" class="w-4 h-4"></i>
@@ -1758,10 +1882,6 @@
                                 </div>
                             </div>
                             <input type="hidden" id="editUserRoleHidden" name="role" value="">
-                            <p class="text-[10.5px] text-slate-400 mt-1 flex items-center gap-1">
-                                <i data-lucide="info" class="w-3 h-3 text-slate-400 shrink-0"></i>
-                                <span>Peran akun telah dikunci demi integritas keamanan & hak akses sistem (RBAC).</span>
-                            </p>
                         </div>
 
                         <!-- Reset Kata Sandi Default -->
@@ -1792,59 +1912,134 @@
         </div>
     </div>
 
-    <!-- MODAL PROTEKSI SESAMA AKUN PETINGGI (RE-AUTHENTICATION SUPER ADMIN) -->
-    <div id="confirmDeleteLeaderModal" class="fixed inset-0 z-[99999] hidden items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs transition-opacity duration-200">
-        <div id="confirmDeleteLeaderCard" class="bg-white rounded-3xl max-w-md w-full shadow-2xl border border-slate-100 overflow-hidden transform scale-95 opacity-0 transition-all duration-200">
+    <!-- MODAL NONAKTIFKAN AKUN PENGGUNA (WAJIB ALASAN LOGIS & PERNYATAAN TANGGUNG JAWAB) -->
+    <div id="deactivateUserModal" class="fixed inset-0 z-[99999] hidden items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs transition-opacity duration-200">
+        <div id="deactivateUserCard" class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden transform scale-95 opacity-0 transition-all duration-200">
             <div class="p-6 space-y-4">
-                <div class="flex items-center gap-3 pb-3 border-b border-slate-100">
-                    <div class="w-11 h-11 rounded-2xl bg-red-50 text-red-600 border border-red-200 flex items-center justify-center font-bold shrink-0">
-                        <i data-lucide="shield-alert" class="w-6 h-6"></i>
-                    </div>
-                    <div>
+                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-10 h-10 rounded-xl bg-red-50 text-red-600 border border-red-200 flex items-center justify-center shrink-0">
+                            <i data-lucide="user-x" class="w-5 h-5"></i>
+                        </div>
                         <h3 class="font-outfit font-extrabold text-base text-slate-900">
-                            Konfirmasi Keamanan Petinggi
+                            Nonaktifkan Akun Pengguna
                         </h3>
-                        <p class="text-[11px] text-slate-500">
-                            Proteksi Hak Akses Pimpinan & Sesama Administrator
-                        </p>
+                    </div>
+                    <button type="button" onclick="closeDeactivateUserModal()" class="p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition cursor-pointer">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                </div>
+
+                <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs space-y-1">
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-500">Nama Akun:</span>
+                        <strong id="deactivateUserNameTarget" class="text-slate-900"></strong>
+                    </div>
+                    <div class="flex items-center justify-between pt-1 border-t border-slate-100">
+                        <span class="text-slate-500">Email:</span>
+                        <span id="deactivateUserEmailTarget" class="font-mono text-slate-800 font-semibold"></span>
+                    </div>
+                    <div class="flex items-center justify-between pt-1 border-t border-slate-100">
+                        <span class="text-slate-500">Peran:</span>
+                        <span id="deactivateUserRoleTarget" class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-200 text-slate-700"></span>
                     </div>
                 </div>
 
-                <div class="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs space-y-1">
-                    <p class="font-bold flex items-center gap-1.5">
-                        <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-600 shrink-0"></i>
-                        <span>Peringatan Dampak Operasional:</span>
-                    </p>
-                    <p class="text-[11px] leading-relaxed">
-                        Anda akan menghapus akun petinggi: <strong id="deleteLeaderTargetName" class="text-slate-900"></strong> (<span id="deleteLeaderTargetRole" class="font-bold text-red-600"></span>).
-                        Tindakan ini memerlukan verifikasi ulang kata sandi Super Admin Anda yang sedang bertugas.
-                    </p>
+                <div class="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-[11px] flex items-start gap-2">
+                    <i data-lucide="mail-warning" class="w-4 h-4 text-amber-600 shrink-0 mt-0.5"></i>
+                    <span>Pengguna yang dinonaktifkan tidak dapat masuk ke aplikasi mobile maupun portal web, dan akan menerima <strong>email pemberitahuan resmi</strong>.</span>
                 </div>
 
-                <form id="confirmDeleteLeaderForm" method="POST" action="" class="space-y-4">
+                <form id="deactivateUserForm" method="POST" action="" class="space-y-3.5">
                     @csrf
-                    @method('DELETE')
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Alasan Penonaktifan <span class="text-red-500">*</span></label>
+                        <textarea id="deactivateReasonInput" name="reason" rows="2" required minlength="10"
+                            oninput="validateDeactivateForm()"
+                            placeholder="Tuliskan alasan logis penonaktifan (minimal 10 karakter)..."
+                            class="w-full text-xs px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-red-600 focus:ring-1 focus:ring-red-600 transition"></textarea>
+                    </div>
+
+                    <div id="deactivateLeaderPasswordWrap" class="hidden">
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Kata Sandi Super Admin <span class="text-red-500">*</span></label>
+                        <input type="password" id="deactivateAdminPasswordInput" name="admin_password"
+                            oninput="validateDeactivateForm()"
+                            placeholder="Masukkan kata sandi Super Admin Anda"
+                            class="w-full text-xs px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-red-600 focus:ring-1 focus:ring-red-600 transition">
+                    </div>
+
                     <div>
                         <label class="block text-xs font-bold text-slate-700 mb-1">
-                            Masukkan Kata Sandi Anda Saat Ini <span class="text-red-500">*</span>
+                            Ketik ulang pernyataan <span id="deactivateExpectedStatement" class="font-mono text-red-600 bg-red-50 px-1.5 py-0.5 rounded border border-red-200 break-all"></span> <span class="text-red-500">*</span>
                         </label>
-                        <div class="relative">
-                            <i data-lucide="lock" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
-                            <input type="password" name="admin_password" required placeholder="Kata sandi Super Admin Anda"
-                                class="w-full pl-9 pr-3 py-2.5 text-xs rounded-xl border border-slate-300 focus:border-red-600 focus:ring-1 focus:ring-red-600 transition">
-                        </div>
-                        <p class="text-[10px] text-slate-400 mt-1">Konfirmasi sandi diperlukan demi mencegah penghapusan sepihak / penyalahgunaan akun.</p>
+                        <input type="text" id="deactivateConfirmInput" name="confirmation_statement" required
+                            oninput="validateDeactivateForm()"
+                            placeholder="Ketik pernyataan konfirmasi di atas"
+                            class="w-full text-xs font-mono px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-red-600 focus:ring-1 focus:ring-red-600 transition">
                     </div>
 
-                    <div class="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100">
-                        <button type="button" onclick="closeConfirmDeleteLeaderModal()"
-                            class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer">
+                    <div class="flex items-center justify-end gap-2.5 pt-2 border-t border-slate-100">
+                        <button type="button" onclick="closeDeactivateUserModal()"
+                            class="px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs transition cursor-pointer">
+                            Batal
+                        </button>
+                        <button type="submit" id="deactivateSubmitBtn" disabled
+                            class="px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 disabled:opacity-45 disabled:cursor-not-allowed text-white font-bold text-xs transition flex items-center gap-1.5 cursor-pointer">
+                            <i data-lucide="user-x" class="w-3.5 h-3.5"></i>
+                            <span>Nonaktifkan Akun</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL AKTIFKAN KEMBALI AKUN PENGGUNA -->
+    <div id="reactivateUserModal" class="fixed inset-0 z-[99999] hidden items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs transition-opacity duration-200">
+        <div id="reactivateUserCard" class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden transform scale-95 opacity-0 transition-all duration-200">
+            <div class="p-6 space-y-4">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center justify-center shrink-0">
+                            <i data-lucide="user-check" class="w-5 h-5"></i>
+                        </div>
+                        <h3 class="font-outfit font-extrabold text-base text-slate-900">
+                            Aktifkan Kembali Akun
+                        </h3>
+                    </div>
+                    <button type="button" onclick="closeReactivateUserModal()" class="p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition cursor-pointer">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                </div>
+
+                <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs space-y-1">
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-500">Nama Akun:</span>
+                        <strong id="reactivateUserNameTarget" class="text-slate-900"></strong>
+                    </div>
+                    <div class="flex items-center justify-between pt-1 border-t border-slate-100">
+                        <span class="text-slate-500">Email:</span>
+                        <span id="reactivateUserEmailTarget" class="font-mono text-slate-800 font-semibold"></span>
+                    </div>
+                </div>
+
+                <form id="reactivateUserForm" method="POST" action="" class="space-y-3.5">
+                    @csrf
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Catatan Pengaktifan (Opsional)</label>
+                        <input type="text" name="reason" placeholder="Contoh: Masa evaluasi selesai, akses dipulihkan."
+                            class="w-full text-xs px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-[#1E3A8A] focus:ring-1 focus:ring-[#1E3A8A] transition">
+                    </div>
+
+                    <div class="flex items-center justify-end gap-2.5 pt-2 border-t border-slate-100">
+                        <button type="button" onclick="closeReactivateUserModal()"
+                            class="px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs transition cursor-pointer">
                             Batal
                         </button>
                         <button type="submit"
-                            class="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs transition flex items-center gap-1.5 shadow-md shadow-red-600/20 cursor-pointer">
-                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                            <span>Konfirmasi & Hapus Akun</span>
+                            class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition flex items-center gap-1.5 cursor-pointer">
+                            <i data-lucide="user-check" class="w-3.5 h-3.5"></i>
+                            <span>Ya, Aktifkan Akun</span>
                         </button>
                     </div>
                 </form>
@@ -1852,66 +2047,9 @@
         </div>
     </div>
 
-    <!-- MODAL KONFIRMASI HAPUS PENGGUNA (GAYA KONSISTEN SESUAI GAMBAR 4) -->
-    <div id="deleteUserConfirmModal" class="fixed inset-0 z-[99999] hidden items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs transition-opacity duration-200">
-        <div id="deleteUserConfirmCard" class="bg-white rounded-3xl max-w-md w-full shadow-2xl border border-slate-100 overflow-hidden transform scale-95 opacity-0 transition-all duration-200 p-6 sm:p-7 text-center space-y-4">
-            <!-- Icon Segitiga Merah Lingkaran Lembut -->
-            <div class="w-16 h-16 rounded-full bg-red-50 text-red-500 border border-red-100 mx-auto flex items-center justify-center shadow-xs">
-                <i data-lucide="alert-triangle" class="w-8 h-8"></i>
-            </div>
-
-            <!-- Header Text -->
-            <div class="space-y-1.5">
-                <h3 class="font-outfit font-extrabold text-lg sm:text-xl text-slate-900 leading-tight">
-                    Konfirmasi Hapus Akun Pengguna
-                </h3>
-                <p class="text-xs text-slate-500">
-                    Apakah Anda yakin ingin menghapus akun <span id="deleteUserNameTarget" class="font-bold text-red-600"></span>?
-                </p>
-            </div>
-
-            <!-- Detail Akun Target Box -->
-            <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-left space-y-1.5">
-                <div class="flex items-center justify-between text-xs">
-                    <span class="text-slate-400 text-[11px]">Email Akun:</span>
-                    <span id="deleteUserEmailTarget" class="font-mono text-slate-700 font-semibold text-[11.5px]"></span>
-                </div>
-                <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-100">
-                    <span class="text-slate-400 text-[11px]">Peran Pengguna:</span>
-                    <span id="deleteUserRoleTarget" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-200 text-slate-700"></span>
-                </div>
-            </div>
-
-            <!-- Notice Box Peringatan Amber persis Gambar 4 -->
-            <div class="p-3.5 rounded-2xl bg-amber-50/90 border border-amber-200/90 text-left flex items-start gap-2.5">
-                <i data-lucide="info" class="w-4 h-4 text-amber-600 shrink-0 mt-0.5"></i>
-                <p class="text-[11.5px] text-amber-900 leading-relaxed font-normal">
-                    Tindakan ini tidak dapat dibatalkan. Seluruh data profil, penugasan, dan riwayat aktivitas akun ini akan dihapus secara permanen dari server.
-                </p>
-            </div>
-
-            <!-- Actions Buttons -->
-            <div class="flex items-center justify-end gap-2.5 pt-2">
-                <button type="button" onclick="closeConfirmDeleteUserModal()"
-                    class="px-5 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs transition cursor-pointer">
-                    Batal
-                </button>
-                <form id="deleteUserFormAction" method="POST" action="">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit"
-                        class="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs transition flex items-center gap-1.5 shadow-md shadow-red-600/20 cursor-pointer">
-                        <i data-lucide="trash-2" class="w-4 h-4"></i>
-                        <span>Ya, Hapus Permanen</span>
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL QUICK ACTION RESET PASSWORD (SIMPEL, CANTIK, & KONSISTEN) -->
+    <!-- MODAL QUICK ACTION RESET PASSWORD -->
     <div id="quickResetPasswordModal" class="fixed inset-0 z-[99999] hidden items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs transition-opacity duration-200">
-        <div id="quickResetPasswordCard" class="bg-white rounded-3xl max-w-md w-full shadow-2xl border border-slate-100 overflow-hidden transform scale-95 opacity-0 transition-all duration-200 p-6 sm:p-7 text-center space-y-4">
+        <div id="quickResetPasswordCard" class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden transform scale-95 opacity-0 transition-all duration-200 p-6 text-center space-y-4">
             <!-- Icon Kunci Lingkaran Biru Lembut -->
             <div class="w-16 h-16 rounded-full bg-blue-50 text-[#1E3A8A] border border-blue-100 mx-auto flex items-center justify-center shadow-xs">
                 <i data-lucide="key" class="w-8 h-8"></i>
@@ -2362,6 +2500,10 @@
         'reporting': {
             title: 'Laporan Kinerja & Rekapitulasi Eksekutif',
             subtitle: 'Ringkasan capaian penanganan aduan, sebaran kategori kerusakan, dan cetak laporan resmi.'
+        },
+        'admin-rejected': {
+            title: 'Arsip Pengaduan Ditolak (Khusus Super Admin)',
+            subtitle: 'Daftar laporan yang ditolak langsung oleh Super Admin beserta alasan resmi penolakan.'
         }
     };
 
@@ -2715,17 +2857,27 @@
         filterComplaintsTable();
     }
 
-    // Modal Kustom Konfirmasi Hapus Laporan
-    function openDeleteComplaintModal(actionUrl, publicCode, title) {
-        const modal = document.getElementById('deleteComplaintModal');
-        const content = document.getElementById('deleteModalContent');
-        const form = document.getElementById('deleteComplaintForm');
-        const codeEl = document.getElementById('deleteModalComplaintCode');
-        const titleEl = document.getElementById('deleteModalComplaintTitle');
+    // Modal Tolak Laporan Resmi (Super Admin — Alasan & Pernyataan Kode)
+    let rejectAdminExpectedCodeValue = '';
 
+    function openRejectComplaintAdminModal(actionUrl, publicCode, title) {
+        const modal = document.getElementById('rejectComplaintAdminModal');
+        const content = document.getElementById('rejectComplaintAdminContent');
+        const form = document.getElementById('rejectComplaintAdminForm');
+        const codeEl = document.getElementById('rejectAdminModalCode');
+        const titleEl = document.getElementById('rejectAdminModalTitle');
+        const expectedEl = document.getElementById('rejectAdminExpectedCode');
+        const reasonInput = document.getElementById('rejectAdminReasonInput');
+        const confirmInput = document.getElementById('rejectAdminConfirmInput');
+
+        rejectAdminExpectedCodeValue = '#' + publicCode;
         if (form) form.action = actionUrl;
-        if (codeEl) codeEl.innerText = '#' + publicCode;
+        if (codeEl) codeEl.innerText = rejectAdminExpectedCodeValue;
         if (titleEl) titleEl.innerText = title || '-';
+        if (expectedEl) expectedEl.innerText = rejectAdminExpectedCodeValue;
+        if (reasonInput) reasonInput.value = '';
+        if (confirmInput) confirmInput.value = '';
+        validateRejectAdminForm();
 
         if (modal && content) {
             modal.classList.remove('hidden');
@@ -2738,9 +2890,20 @@
         if (window.lucide) lucide.createIcons();
     }
 
-    function closeDeleteComplaintModal() {
-        const modal = document.getElementById('deleteComplaintModal');
-        const content = document.getElementById('deleteModalContent');
+    function validateRejectAdminForm() {
+        const reason = (document.getElementById('rejectAdminReasonInput')?.value || '').trim();
+        const confirm = (document.getElementById('rejectAdminConfirmInput')?.value || '').trim();
+        const btn = document.getElementById('rejectAdminSubmitBtn');
+        const rawCode = rejectAdminExpectedCodeValue.replace(/^#/, '').toLowerCase();
+        const match = confirm.toLowerCase() === rejectAdminExpectedCodeValue.toLowerCase() || confirm.toLowerCase() === rawCode;
+        if (btn) {
+            btn.disabled = !(reason.length >= 10 && match);
+        }
+    }
+
+    function closeRejectComplaintAdminModal() {
+        const modal = document.getElementById('rejectComplaintAdminModal');
+        const content = document.getElementById('rejectComplaintAdminContent');
 
         if (modal && content) {
             content.classList.remove('scale-100', 'opacity-100');
@@ -3302,7 +3465,10 @@
         openEditUserModal(user);
     }
 
-    function openEditUserModal(user) {
+    function openEditUserModal(userOrId, name, email, phone, role) {
+        const user = (typeof userOrId === 'object' && userOrId !== null)
+            ? userOrId
+            : { id: userOrId, name: name, email: email, phone: phone, role: role };
         const modal = document.getElementById('editUserModal');
         const content = document.getElementById('editUserModalContent');
         const form = document.getElementById('editUserForm');
@@ -3355,14 +3521,41 @@
         }
     }
 
-    // Modal Proteksi Sesama Akun Petinggi
-    function openConfirmDeleteLeaderModal(userId, userName, userRole) {
-        const modal = document.getElementById('confirmDeleteLeaderModal');
-        const card = document.getElementById('confirmDeleteLeaderCard');
-        const form = document.getElementById('confirmDeleteLeaderForm');
-        document.getElementById('deleteLeaderTargetName').innerText = userName;
-        document.getElementById('deleteLeaderTargetRole').innerText = userRole;
-        form.action = '{{ url("/admin/users") }}/' + userId + '/delete';
+    // Modal Nonaktifkan & Aktifkan Kembali Akun Pengguna
+    let deactivateExpectedStatementValue = '';
+    let deactivateRequiresLeaderPass = false;
+
+    function openDeactivateUserModal(userId, userName, userEmail, userRole, isLeader) {
+        const modal = document.getElementById('deactivateUserModal');
+        const card = document.getElementById('deactivateUserCard');
+        const form = document.getElementById('deactivateUserForm');
+        const leaderWrap = document.getElementById('deactivateLeaderPasswordWrap');
+        const adminPassInput = document.getElementById('deactivateAdminPasswordInput');
+        const reasonInput = document.getElementById('deactivateReasonInput');
+        const confirmInput = document.getElementById('deactivateConfirmInput');
+
+        deactivateExpectedStatementValue = 'NONAKTIFKAN ' + userEmail;
+        deactivateRequiresLeaderPass = !!isLeader;
+
+        if (document.getElementById('deactivateUserNameTarget')) document.getElementById('deactivateUserNameTarget').innerText = userName;
+        if (document.getElementById('deactivateUserEmailTarget')) document.getElementById('deactivateUserEmailTarget').innerText = userEmail;
+        if (document.getElementById('deactivateUserRoleTarget')) document.getElementById('deactivateUserRoleTarget').innerText = userRole;
+        if (document.getElementById('deactivateExpectedStatement')) document.getElementById('deactivateExpectedStatement').innerText = deactivateExpectedStatementValue;
+        if (form) form.action = `{{ url('/admin/users') }}/${userId}/deactivate`;
+
+        if (leaderWrap && adminPassInput) {
+            if (deactivateRequiresLeaderPass) {
+                leaderWrap.classList.remove('hidden');
+                adminPassInput.setAttribute('required', 'required');
+            } else {
+                leaderWrap.classList.add('hidden');
+                adminPassInput.removeAttribute('required');
+            }
+            adminPassInput.value = '';
+        }
+        if (reasonInput) reasonInput.value = '';
+        if (confirmInput) confirmInput.value = '';
+        validateDeactivateForm();
 
         if (modal && card) {
             modal.classList.remove('hidden');
@@ -3375,9 +3568,21 @@
         if (window.lucide) lucide.createIcons();
     }
 
-    function closeConfirmDeleteLeaderModal() {
-        const modal = document.getElementById('confirmDeleteLeaderModal');
-        const card = document.getElementById('confirmDeleteLeaderCard');
+    function validateDeactivateForm() {
+        const reason = (document.getElementById('deactivateReasonInput')?.value || '').trim();
+        const confirm = (document.getElementById('deactivateConfirmInput')?.value || '').trim();
+        const adminPass = (document.getElementById('deactivateAdminPasswordInput')?.value || '').trim();
+        const btn = document.getElementById('deactivateSubmitBtn');
+        const match = confirm.toLowerCase() === deactivateExpectedStatementValue.toLowerCase();
+        const passOk = !deactivateRequiresLeaderPass || adminPass.length > 0;
+        if (btn) {
+            btn.disabled = !(reason.length >= 10 && match && passOk);
+        }
+    }
+
+    function closeDeactivateUserModal() {
+        const modal = document.getElementById('deactivateUserModal');
+        const card = document.getElementById('deactivateUserCard');
         if (modal && card) {
             card.classList.remove('scale-100', 'opacity-100');
             card.classList.add('scale-95', 'opacity-0');
@@ -3388,24 +3593,13 @@
         }
     }
 
-    // Modal Konfirmasi Hapus Pengguna Reguler (Konsisten Gambar 4)
-    function openConfirmDeleteUserModal(userId, userName, userEmail, userRole) {
-        const modal = document.getElementById('deleteUserConfirmModal');
-        const card  = document.getElementById('deleteUserConfirmCard');
-        const form  = document.getElementById('deleteUserFormAction');
-        
-        if (document.getElementById('deleteUserNameTarget')) {
-            document.getElementById('deleteUserNameTarget').innerText = userName;
-        }
-        if (document.getElementById('deleteUserEmailTarget')) {
-            document.getElementById('deleteUserEmailTarget').innerText = userEmail;
-        }
-        if (document.getElementById('deleteUserRoleTarget')) {
-            document.getElementById('deleteUserRoleTarget').innerText = userRole;
-        }
-        if (form) {
-            form.action = `/admin/users/${userId}/delete`;
-        }
+    function openReactivateUserModal(userId, userName, userEmail, userRole) {
+        const modal = document.getElementById('reactivateUserModal');
+        const card = document.getElementById('reactivateUserCard');
+        const form = document.getElementById('reactivateUserForm');
+        if (document.getElementById('reactivateUserNameTarget')) document.getElementById('reactivateUserNameTarget').innerText = userName;
+        if (document.getElementById('reactivateUserEmailTarget')) document.getElementById('reactivateUserEmailTarget').innerText = userEmail;
+        if (form) form.action = `{{ url('/admin/users') }}/${userId}/reactivate`;
 
         if (modal && card) {
             modal.classList.remove('hidden');
@@ -3418,9 +3612,9 @@
         if (window.lucide) lucide.createIcons();
     }
 
-    function closeConfirmDeleteUserModal() {
-        const modal = document.getElementById('deleteUserConfirmModal');
-        const card  = document.getElementById('deleteUserConfirmCard');
+    function closeReactivateUserModal() {
+        const modal = document.getElementById('reactivateUserModal');
+        const card = document.getElementById('reactivateUserCard');
         if (modal && card) {
             card.classList.remove('scale-100', 'opacity-100');
             card.classList.add('scale-95', 'opacity-0');

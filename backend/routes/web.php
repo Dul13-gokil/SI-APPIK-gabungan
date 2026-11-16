@@ -68,8 +68,9 @@ Route::prefix('admin')->middleware(['auth', 'role:SUPERADMIN,ADMIN'])->group(fun
     Route::post('/users', [WebSuperAdminController::class, 'storeUser'])->name('admin.users.store');
     Route::match(['post', 'put'], '/users/{id}', [WebSuperAdminController::class, 'updateUser'])->name('admin.users.update');
     Route::post('/users/{id}/reset', [WebSuperAdminController::class, 'resetUserPassword'])->name('admin.users.reset');
-    Route::match(['post', 'delete'], '/users/{id}/delete', [WebSuperAdminController::class, 'deleteUser'])->name('admin.users.delete');
-    Route::match(['post', 'delete'], '/complaints/{id}/delete', [WebSuperAdminController::class, 'deleteComplaint'])->name('admin.complaints.delete');
+    Route::post('/users/{id}/deactivate', [WebSuperAdminController::class, 'deactivateUser'])->name('admin.users.deactivate');
+    Route::post('/users/{id}/reactivate', [WebSuperAdminController::class, 'reactivateUser'])->name('admin.users.reactivate');
+    Route::post('/complaints/{id}/reject', [WebSuperAdminController::class, 'rejectComplaint'])->name('admin.complaints.reject');
 
     // Pengaturan Dispatch Mode & Manajemen Regu Tim Lapangan
     Route::post('/settings/dispatch-mode', [WebTeamController::class, 'updateDispatchMode'])->name('admin.settings.dispatch-mode');

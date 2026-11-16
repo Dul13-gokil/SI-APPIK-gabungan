@@ -225,6 +225,17 @@ class AuthController extends Controller
             return ApiResponse::error('Kredensial tidak cocok dengan data kami.', [], 401);
         }
 
+        if (!($user->is_active ?? true)) {
+            $reasonText = $user->deactivation_reason
+                ? " Alasan: {$user->deactivation_reason}"
+                : '';
+            return ApiResponse::error(
+                "Akun Anda telah dinonaktifkan oleh Super Admin.{$reasonText} Silakan hubungi administrator untuk pengaktifan kembali.",
+                ['account_deactivated' => true, 'deactivation_reason' => $user->deactivation_reason],
+                403
+            );
+        }
+
         $currentIp        = $request->ip();
         $currentUserAgent = $request->userAgent();
 
@@ -288,6 +299,17 @@ class AuthController extends Controller
             $currentUserAgent = $request->userAgent();
 
             if (!$isNewUser) {
+                if (!($user->is_active ?? true)) {
+                    $reasonText = $user->deactivation_reason
+                        ? " Alasan: {$user->deactivation_reason}"
+                        : '';
+                    return ApiResponse::error(
+                        "Akun Anda telah dinonaktifkan oleh Super Admin.{$reasonText} Silakan hubungi administrator untuk pengaktifan kembali.",
+                        ['account_deactivated' => true, 'deactivation_reason' => $user->deactivation_reason],
+                        403
+                    );
+                }
+
                 $user->update([
                     'last_login_ip'         => $currentIp,
                     'last_login_user_agent' => $currentUserAgent,
