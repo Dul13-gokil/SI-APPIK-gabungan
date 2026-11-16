@@ -239,7 +239,7 @@
             </p>
         </div>
 
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-4">
             <div data-reveal style="transition-delay: 0ms;" class="bg-white rounded-xl border border-[#E2E8F0] p-3 sm:p-5 flex flex-col justify-between gap-2 sm:gap-3">
                 <div class="flex items-start justify-between gap-1.5 sm:gap-2">
                     <div class="w-7 h-7 sm:w-9 sm:h-9 rounded-lg bg-blue-50 text-[#1E3A8A] border border-blue-200 flex items-center justify-center shrink-0">
@@ -258,21 +258,6 @@
             <div data-reveal style="transition-delay: 90ms;" class="bg-white rounded-xl border border-[#E2E8F0] p-3 sm:p-5 flex flex-col justify-between gap-2 sm:gap-3">
                 <div class="flex items-start justify-between gap-1.5 sm:gap-2">
                     <div class="w-7 h-7 sm:w-9 sm:h-9 rounded-lg bg-blue-50 text-[#1E3A8A] border border-blue-200 flex items-center justify-center shrink-0">
-                        <i data-lucide="waves" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
-                    </div>
-                    <span id="catCountDrainase" class="px-1.5 sm:px-2.5 py-0.5 rounded-md bg-[#F8FAFC] border border-[#E2E8F0] text-[10px] sm:text-[11px] font-bold text-[#0F172A] whitespace-nowrap">
-                        {{ $categoryStats['drainase'] ?? 0 }} Laporan
-                    </span>
-                </div>
-                <div>
-                    <h3 class="font-outfit font-bold text-xs sm:text-sm text-[#0F172A] leading-snug">Drainase &amp; Saluran</h3>
-                    <p class="text-[11px] sm:text-xs text-[#475569] mt-1 leading-snug sm:leading-relaxed line-clamp-3 sm:line-clamp-none">Saluran air tersumbat, talud rusak, atau genangan akibat drainase pecah.</p>
-                </div>
-            </div>
-
-            <div data-reveal style="transition-delay: 180ms;" class="bg-white rounded-xl border border-[#E2E8F0] p-3 sm:p-5 flex flex-col justify-between gap-2 sm:gap-3">
-                <div class="flex items-start justify-between gap-1.5 sm:gap-2">
-                    <div class="w-7 h-7 sm:w-9 sm:h-9 rounded-lg bg-blue-50 text-[#1E3A8A] border border-blue-200 flex items-center justify-center shrink-0">
                         <i data-lucide="lightbulb" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
                     </div>
                     <span id="catCountPju" class="px-1.5 sm:px-2.5 py-0.5 rounded-md bg-[#F8FAFC] border border-[#E2E8F0] text-[10px] sm:text-[11px] font-bold text-[#0F172A] whitespace-nowrap">
@@ -285,7 +270,7 @@
                 </div>
             </div>
 
-            <div data-reveal style="transition-delay: 270ms;" class="bg-white rounded-xl border border-[#E2E8F0] p-3 sm:p-5 flex flex-col justify-between gap-2 sm:gap-3">
+            <div data-reveal style="transition-delay: 180ms;" class="bg-white rounded-xl border border-[#E2E8F0] p-3 sm:p-5 flex flex-col justify-between gap-2 sm:gap-3">
                 <div class="flex items-start justify-between gap-1.5 sm:gap-2">
                     <div class="w-7 h-7 sm:w-9 sm:h-9 rounded-lg bg-blue-50 text-[#1E3A8A] border border-blue-200 flex items-center justify-center shrink-0">
                         <i data-lucide="building-2" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
@@ -408,7 +393,7 @@
                     Laporkan Kerusakan Infrastruktur Langsung dari Lokasi
                 </h3>
                 <p class="text-xs sm:text-sm text-blue-100 leading-relaxed max-w-xl">
-                    Sampaikan laporan jalan rusak, jembatan, drainase, atau penerangan jalan umum di Kabupaten Kolaka Utara dilengkapi foto kondisi langsung dari lokasi agar segera ditangani Dinas PUPR.
+                    Sampaikan laporan jalan rusak, jembatan, fasilitas umum, atau penerangan jalan umum di Kabupaten Kolaka Utara dilengkapi foto kondisi langsung dari lokasi agar segera ditangani Dinas PUPR.
                 </p>
             </div>
 
@@ -455,6 +440,17 @@
 
 <!-- Modal Detail Pengaduan Publik -->
 @include('partials.modals.landing_complaint_detail_modal')
+
+<!-- Tombol Mengambang Unduh APK (Muncul saat berada di section Unduh Aplikasi, selalu di atas footer) -->
+<a id="floatingDownloadApkBtn" href="{{ route('download.apk') }}"
+    aria-label="Unduh APK Android SI-APPIK"
+    style="bottom: 24px;"
+    class="fixed right-4 sm:right-6 z-40 inline-flex items-center gap-2.5 bg-[#0F172A] hover:bg-[#1E3A8A] text-white px-4 py-3 rounded-xl border border-white/20 shadow-lg transition-[opacity,transform] duration-300 opacity-0 translate-y-3 pointer-events-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1E3A8A]">
+    <svg class="w-5 h-5 fill-[#3DDC84] shrink-0" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M17.6 9.48l1.84-3.18c.16-.31.04-.69-.26-.85-.29-.15-.65-.06-.83.22l-1.88 3.24c-1.4-.63-2.96-.98-4.47-.98s-3.07.35-4.47.98L5.65 5.67c-.19-.29-.55-.38-.84-.22-.3.16-.42.54-.26.85l1.84 3.18C4.07 10.94 2.5 13.38 2.13 16.25h19.74c-.37-2.87-1.94-5.31-4.27-6.77zM8.5 13.5c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm7 0c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z"/>
+    </svg>
+    <span class="font-outfit font-bold text-xs sm:text-sm tracking-tight whitespace-nowrap">Unduh APK</span>
+</a>
 
 
 
@@ -597,17 +593,15 @@
 
     function updateCategoryCounts(data) {
         if (!Array.isArray(data)) return;
-        const counts = { jalan: 0, drainase: 0, pju: 0, fasilitas: 0 };
+        const counts = { jalan: 0, pju: 0, fasilitas: 0 };
         data.forEach(item => {
             const text = ((item.category_name || item.category || '') + ' ' + (item.title || '')).toLowerCase();
             if (text.includes('jalan') || text.includes('aspal') || text.includes('jembatan') || text.includes('paving')) counts.jalan++;
-            if (text.includes('drainase') || text.includes('saluran') || text.includes('got') || text.includes('banjir')) counts.drainase++;
             if (text.includes('penerangan') || text.includes('pju') || text.includes('lampu')) counts.pju++;
             if (text.includes('fasilitas') || text.includes('umum') || text.includes('taman') || text.includes('trotoar')) counts.fasilitas++;
         });
         const mapIds = {
             catCountJalan: counts.jalan,
-            catCountDrainase: counts.drainase,
             catCountPju: counts.pju,
             catCountFasilitas: counts.fasilitas
         };
@@ -1420,6 +1414,47 @@
             });
         }, { threshold: 0.12, rootMargin: '0px 0px -24px 0px' });
         items.forEach(el => observer.observe(el));
+    })();
+
+    // Tombol Mengambang Unduh APK saat berada di Section #download-app (Selalu di atas Footer)
+    (function initFloatingDownloadApk() {
+        const section = document.getElementById('download-app');
+        const btn = document.getElementById('floatingDownloadApkBtn');
+        const footer = document.querySelector('footer');
+        if (!section || !btn || !('IntersectionObserver' in window)) return;
+
+        function updateFloatingApkPosition() {
+            const baseBottom = 24;
+            if (!footer) {
+                btn.style.bottom = `${baseBottom}px`;
+                return;
+            }
+            const footerRect = footer.getBoundingClientRect();
+            const overlap = window.innerHeight - footerRect.top;
+            if (overlap > 0) {
+                btn.style.bottom = `${Math.max(baseBottom, overlap + 16)}px`;
+            } else {
+                btn.style.bottom = `${baseBottom}px`;
+            }
+        }
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    updateFloatingApkPosition();
+                    btn.classList.remove('opacity-0', 'translate-y-3', 'pointer-events-none');
+                    btn.classList.add('opacity-100', 'translate-y-0', 'pointer-events-auto');
+                } else {
+                    btn.classList.add('opacity-0', 'translate-y-3', 'pointer-events-none');
+                    btn.classList.remove('opacity-100', 'translate-y-0', 'pointer-events-auto');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        observer.observe(section);
+        window.addEventListener('scroll', updateFloatingApkPosition, { passive: true });
+        window.addEventListener('resize', updateFloatingApkPosition, { passive: true });
+        updateFloatingApkPosition();
     })();
 </script>
 @endpush

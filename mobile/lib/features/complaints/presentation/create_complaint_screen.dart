@@ -308,7 +308,7 @@ class _CreateComplaintScreenState extends State<CreateComplaintScreen> {
   final List<Map<String, dynamic>> _categories = [
     {'id': 1, 'name': 'Jalan & Jembatan', 'icon': LucideIcons.truck},
     {'id': 2, 'name': 'Penerangan Jalan Umum (PJU)', 'icon': LucideIcons.lightbulb},
-    {'id': 3, 'name': 'Kerusakan Trotoar', 'icon': LucideIcons.footprints},
+    {'id': 3, 'name': 'Fasilitas Umum', 'icon': LucideIcons.building2},
   ];
 
   @override
@@ -596,7 +596,7 @@ class _CreateComplaintScreenState extends State<CreateComplaintScreen> {
               SnackBar(
                 content: Text(
                   data['damage_detail'] as String? ??
-                      'Peringatan AI: Foto tidak terdeteksi sebagai objek infrastruktur fisik (jalan, jembatan, lampu penerangan, atau trotoar). Silakan pastikan foto menampilkan objek yang jelas.',
+                      'Peringatan AI: Foto tidak terdeteksi sebagai objek infrastruktur fisik (jalan, jembatan, lampu penerangan, atau fasilitas umum). Silakan pastikan foto menampilkan objek yang jelas.',
                 ),
                 backgroundColor: Colors.red,
                 duration: const Duration(seconds: 4),

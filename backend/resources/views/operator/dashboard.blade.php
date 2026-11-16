@@ -1098,7 +1098,7 @@
                         <i data-lucide="map-pin" class="w-4 h-4 text-[#1E3A8A] shrink-0"></i>
                         <span>Peta Sebaran Infrastruktur Rusak Seluruh Kabupaten</span>
                     </h3>
-                    <p class="text-xs text-slate-500 mt-0.5">Visualisasi titik kerusakan jalan, jembatan, drainase, dan fasilitas umum.</p>
+                    <p class="text-xs text-slate-500 mt-0.5">Visualisasi titik kerusakan jalan, jembatan, penerangan jalan umum, dan fasilitas umum.</p>
                 </div>
                 <div class="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs font-semibold shrink-0">
                     <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#EF4444] shrink-0"></span> Verifikasi</span>

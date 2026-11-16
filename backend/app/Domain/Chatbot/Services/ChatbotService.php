@@ -172,10 +172,10 @@ class ChatbotService
                 'next_state' => self::STATE_START,
                 'reply' => "🛣️ **Perbedaan 2 Tipe Pelaporan Kerusakan:**\n\n"
                     . "1. **Kerusakan Ringan (< 500 Meter):**\n"
-                    . "   • **Peruntukan:** Kerusakan skala lokal (lubang jalan tunggal/spot, retak lokal, amblas kecil, lampu jalan PJU padam, trotoar & saluran drainase).\n"
-                    . "   • **Kategori:** Jalan & Jembatan, Penerangan Jalan Umum (PJU), Trotoar & Saluran.\n"
+                    . "   • **Peruntukan:** Kerusakan skala lokal (lubang jalan tunggal/spot, retak lokal, amblas kecil, lampu jalan PJU padam, fasilitas umum).\n"
+                    . "   • **Kategori:** Jalan & Jembatan, Penerangan Jalan Umum (PJU), Fasilitas Umum.\n"
                     . "   • **Titik GPS:** Cukup menentukan **1 titik koordinat** lokasi kejadian di peta.\n"
-                    . "   • **Dukungan AI:** Multi-model YOLOv8 ONNX memeriksa foto bukti (deteksi lubang, retak, lampu, trotoar, atau jalan mulus).\n\n"
+                    . "   • **Dukungan AI:** Multi-model YOLOv8 ONNX memeriksa foto bukti (deteksi lubang, retak, lampu, fasilitas umum, atau jalan mulus).\n\n"
                     . "2. **Kerusakan Berat (≥ 500 Meter):**\n"
                     . "   • **Peruntukan:** Kerusakan jalan berkelanjutan/panjang (minimal 500 meter hingga berkilo-kilometer).\n"
                     . "   • **Kategori:** **Terkunci khusus Jalan & Jembatan** (tidak dapat untuk lampu jalan/fasilitas lain).\n"

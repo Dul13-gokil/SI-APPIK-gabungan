@@ -97,7 +97,7 @@ class DatabaseSeeder extends Seeder
         $deptPupr = Department::create([
             'name' => 'Dinas Pekerjaan Umum dan Penataan Ruang (PUPR)',
             'code' => 'PUPR',
-            'description' => 'Penanganan jalan, jembatan, drainase, irigasi, dan tata ruang.',
+            'description' => 'Penanganan jalan, jembatan, penerangan jalan umum, dan fasilitas umum.',
         ]);
 
         // 4. Master Categories with Default Severity & AI Label (Seluruhnya di bawah naungan Dinas PUPR)
@@ -121,29 +121,11 @@ class DatabaseSeeder extends Seeder
 
         Category::create([
             'id' => 3,
-            'name' => 'Drainase & Pengendalian Banjir',
+            'name' => 'Fasilitas Umum',
             'department_id' => $deptPupr->id,
             'severity_default' => 3,
-            'ai_label' => 'drainage_clogged',
-            'sla_hours' => 48,
-        ]);
-
-        Category::create([
-            'id' => 4,
-            'name' => 'Pengelolaan Sampah & Kebersihan',
-            'department_id' => $deptPupr->id,
-            'severity_default' => 3,
-            'ai_label' => 'illegal_dumping',
-            'sla_hours' => 48,
-        ]);
-
-        Category::create([
-            'id' => 5,
-            'name' => 'Fasilitas Gedung & Ruang Publik',
-            'department_id' => $deptPupr->id,
-            'severity_default' => 3,
-            'ai_label' => 'public_facility_damaged',
-            'sla_hours' => 48,
+            'ai_label' => 'sidewalk_damaged',
+            'sla_hours' => 72,
         ]);
 
         // 5. System Settings (SAP Section 32)

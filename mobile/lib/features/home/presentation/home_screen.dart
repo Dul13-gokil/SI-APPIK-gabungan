@@ -4,6 +4,7 @@ import '../../../core/auth/auth_service.dart';
 import '../../../core/network/api_client.dart';
 import '../../../shared/models/complaint_model.dart';
 import '../../../shared/theme/app_colors.dart';
+import '../../../shared/widgets/report_pagination_controls.dart';
 import '../../../shared/widgets/status_badge.dart';
 import '../../complaints/presentation/complaint_detail_screen.dart';
 import '../../complaints/presentation/create_complaint_screen.dart';
@@ -37,6 +38,9 @@ class _HomeScreenState extends State<HomeScreen> {
   String _feedTab = 'ALL'; // 'ALL' = Semua Laporan, 'MY' = Laporan Saya
   String _searchQuery = '';
   int _unreadNotifications = 0;
+  bool _isGridView = false;
+  int _currentPage = 1;
+  int _pageSize = 5;
 
   @override
   void initState() {
@@ -165,7 +169,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return const {
       1: 'Jalan & Jembatan',
       2: 'Penerangan Jalan Umum (PJU)',
-      3: 'Kerusakan Trotoar',
+      3: 'Fasilitas Umum',
     };
   }
 
@@ -231,6 +235,44 @@ class _HomeScreenState extends State<HomeScreen> {
 
       return true;
     }).toList();
+  }
+
+  List<ComplaintModel> get _paginatedComplaints {
+    final all = _filteredComplaints;
+    if (all.isEmpty) return [];
+    final totalPages = (all.length / _pageSize).ceil().clamp(1, 9999);
+    final safePage = _currentPage.clamp(1, totalPages);
+    final start = (safePage - 1) * _pageSize;
+    final end = (start + _pageSize).clamp(0, all.length);
+    return all.sublist(start, end);
+  }
+
+  Widget _buildComplaintGridRows(List<ComplaintModel> items) {
+    final rows = <Widget>[];
+    for (int i = 0; i < items.length; i += 2) {
+      final first = items[i];
+      final second = (i + 1 < items.length) ? items[i + 1] : null;
+      rows.add(
+        Padding(
+          padding: const EdgeInsets.only(bottom: 10),
+          child: IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(child: _buildComplaintGridCard(first)),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: second != null
+                      ? _buildComplaintGridCard(second)
+                      : const SizedBox.shrink(),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+    return Column(children: rows);
   }
 
   @override
@@ -447,19 +489,33 @@ class _HomeScreenState extends State<HomeScreen> {
             _buildFilterSection(),
             const SizedBox(height: 16),
 
-            // Feed Header
+            // Feed Header + Toggle Daftar / Petak di Kanan Atas
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(
-                  _feedTab == 'MY'
-                      ? 'Riwayat Laporan Saya'
-                      : 'Laporan Terkini Warga',
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        _feedTab == 'MY'
+                            ? 'Riwayat Laporan Saya'
+                            : 'Laporan Terkini Warga',
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        '${_filteredComplaints.length} Laporan ditemukan',
+                        style: const TextStyle(fontSize: 11.5, color: AppColors.textSecondary),
+                      ),
+                    ],
+                  ),
                 ),
-                Text(
-                  '${_filteredComplaints.length} Laporan',
-                  style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                const SizedBox(width: 8),
+                ReportLayoutToggle(
+                  isGrid: _isGridView,
+                  onChanged: (val) => setState(() => _isGridView = val),
                 ),
               ],
             ),
@@ -498,8 +554,23 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
               )
-            else
-              ..._filteredComplaints.map((c) => _buildComplaintCard(c)),
+            else ...[
+              if (_isGridView)
+                _buildComplaintGridRows(_paginatedComplaints)
+              else
+                ..._paginatedComplaints.map((c) => _buildComplaintCard(c)),
+              ReportPaginationBar(
+                totalItems: _filteredComplaints.length,
+                currentPage: _currentPage,
+                pageSize: _pageSize,
+                itemUnitLabel: 'laporan',
+                onPageChanged: (page) => setState(() => _currentPage = page),
+                onPageSizeChanged: (size) => setState(() {
+                  _pageSize = size;
+                  _currentPage = 1;
+                }),
+              ),
+            ],
 
             const SizedBox(height: 80),
           ],
@@ -944,6 +1015,132 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ],
+    );
+  }
+
+  Widget _buildComplaintGridCard(ComplaintModel c) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: InkWell(
+        onTap: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => ComplaintDetailScreen(complaintId: c.id),
+            ),
+          ).then((_) => _loadData());
+        },
+        borderRadius: BorderRadius.circular(14),
+        child: Padding(
+          padding: const EdgeInsets.all(11),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          c.publicCode,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 10.5,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      StatusBadge(status: c.status),
+                    ],
+                  ),
+                  const SizedBox(height: 7),
+                  Text(
+                    c.title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                      height: 1.25,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    c.address,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 10.5,
+                      color: AppColors.textSecondary,
+                      height: 1.3,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (c.categoryName != null)
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: AppColors.background,
+                        borderRadius: BorderRadius.circular(5),
+                        border: Border.all(color: AppColors.border),
+                      ),
+                      child: Text(
+                        c.categoryName!,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(fontSize: 9.5, color: AppColors.textSecondary),
+                      ),
+                    ),
+                  const SizedBox(height: 6),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        c.damageType == 'major' ? 'Berat' : 'Ringan',
+                        style: TextStyle(
+                          fontSize: 9.5,
+                          fontWeight: FontWeight.w700,
+                          color: c.damageType == 'major' ? AppColors.damageTypeMajor : AppColors.textSecondary,
+                        ),
+                      ),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(LucideIcons.thumbsUp, size: 11, color: AppColors.primaryLight),
+                          const SizedBox(width: 3),
+                          Text(
+                            '${c.supportsCount}',
+                            style: const TextStyle(
+                              fontSize: 10,
+                              color: AppColors.textSecondary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 

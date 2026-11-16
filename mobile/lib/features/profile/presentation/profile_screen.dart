@@ -1518,7 +1518,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   icon: LucideIcons.route,
                   color: AppColors.primary,
                   content:
-                      '• **Kerusakan Ringan (< 500m):** Untuk lubang jalan tunggal/spot, lampu jalan PJU mati, atau trotoar/saluran drainase (cukup 1 titik koordinat GPS).\n'
+                      '• **Kerusakan Ringan (< 500m):** Untuk lubang jalan tunggal/spot, lampu jalan PJU mati, atau fasilitas umum (cukup 1 titik koordinat GPS).\n'
                       '• **Kerusakan Berat (≥ 500m):** Khusus jalan rusak parah berskala panjang kontinu. Wajib menentukan **Titik Awal Ruas** dan **Titik Akhir Ruas** di peta.',
                 ),
                 const SizedBox(height: 12),

@@ -42,7 +42,6 @@ Route::get('/', function () {
     $haystack = fn($c) => strtolower(($c->category?->name ?? '') . ' ' . ($c->title ?? ''));
     $categoryStats = [
         'jalan' => $allComplaints->filter(fn($c) => str_contains($haystack($c), 'jalan') || str_contains($haystack($c), 'aspal') || str_contains($haystack($c), 'jembatan') || str_contains($haystack($c), 'paving'))->count(),
-        'drainase' => $allComplaints->filter(fn($c) => str_contains($haystack($c), 'drainase') || str_contains($haystack($c), 'saluran') || str_contains($haystack($c), 'got') || str_contains($haystack($c), 'banjir'))->count(),
         'pju' => $allComplaints->filter(fn($c) => str_contains($haystack($c), 'penerangan') || str_contains($haystack($c), 'pju') || str_contains($haystack($c), 'lampu'))->count(),
         'fasilitas' => $allComplaints->filter(fn($c) => str_contains($haystack($c), 'fasilitas') || str_contains($haystack($c), 'umum') || str_contains($haystack($c), 'taman') || str_contains($haystack($c), 'trotoar'))->count(),
     ];

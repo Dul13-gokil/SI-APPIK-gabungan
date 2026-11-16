@@ -244,7 +244,7 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
 
       if (lower.contains('foto') || lower.contains('validasi') || lower.contains('bukti') || lower.contains('kamera')) {
         return '📸 **Tips Foto Bukti yang Baik untuk Validasi Operator:**\n\n'
-            '1. **Sudut & Ketinggian:** Ambil foto dengan sudut yang memperlihatkan permukaan perbaikan yang telah rata dan menyatu dengan bidang jalan/trotoar.\n'
+            '1. **Sudut & Ketinggian:** Ambil foto dengan sudut yang memperlihatkan permukaan perbaikan yang telah rata dan menyatu dengan bidang jalan atau fasilitas umum.\n'
             '2. **Pencahayaan Jelas:** Pastikan pencahayaan terang dan foto tidak blur/goyang.\n'
             '3. **Bebas Hambatan:** Hindari objek manusia/selfie di depan kamera, pastikan fokus pada hasil fisik infrastruktur.\n'
             '4. **Catatan Teknis Ringkas:** Sertakan informasi material (contoh: "Penambalan hotmix AC-WC 2x3m padat tuntas").\n'
@@ -379,9 +379,9 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
     if (lower.contains('beda') || lower.contains('ruas') || lower.contains('titik') || lower.contains('500') || lower.contains('panjang') || lower.contains('ringan') || lower.contains('berat')) {
       return '🛣️ **Perbedaan 2 Tipe Pelaporan Kerusakan:**\n\n'
           '1. **Kerusakan Ringan (< 500m):**\n'
-          '• Untuk lubang/retak jalan lokal, lampu PJU padam, atau drainase.\n'
+          '• Untuk lubang/retak jalan lokal, lampu PJU padam, atau fasilitas umum.\n'
           '• Cukup tentukan **1 titik koordinat GPS** di peta.\n'
-          '• Didukung AI YOLOv8 mendeteksi lubang, retakan, lampu, trotoar, dan jalan mulus.\n\n'
+          '• Didukung AI YOLOv8 mendeteksi lubang, retakan, lampu, fasilitas umum, dan jalan mulus.\n\n'
           '2. **Kerusakan Berat (≥ 500m):**\n'
           '• Khusus jalan rusak parah/panjang berskala masif (≥ 500 meter).\n'
           '• **Terkunci khusus kategori Jalan & Jembatan** 🔒.\n'
