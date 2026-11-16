@@ -341,16 +341,19 @@ class WorkflowController extends Controller
             }
 
             foreach ($photos as $photo) {
+                $realPath = $photo->getRealPath();
+                $fileData = $realPath && file_exists($realPath) ? base64_encode(file_get_contents($realPath)) : null;
                 $path = $photo->store('resolutions', 'public');
                 ComplaintPhoto::create([
                     'complaint_id' => $complaint->id,
                     'storage_key'  => $path,
                     'url'          => null,
+                    'file_data'    => $fileData,
                     'caption'      => 'Bukti Pekerjaan Selesai (Petugas Lapangan)',
                     'type'         => 'resolution_after',
                     'mime'         => $photo->getClientMimeType(),
                     'size'         => $photo->getSize(),
-                    'checksum'     => md5_file($photo->getRealPath()),
+                    'checksum'     => $realPath ? md5_file($realPath) : null,
                     'captured_at'  => now(),
                 ]);
             }

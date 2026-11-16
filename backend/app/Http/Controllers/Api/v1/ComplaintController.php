@@ -436,16 +436,19 @@ class ComplaintController extends Controller
             }
 
             foreach ($uploadedPhotos as $index => $photo) {
+                $realPath = $photo->getRealPath();
+                $fileData = $realPath && file_exists($realPath) ? base64_encode(file_get_contents($realPath)) : null;
                 $path = $photo->store('complaints', 'public');
                 ComplaintPhoto::create([
                     'complaint_id' => $complaint->id,
                     'storage_key'  => $path,
                     'url'          => null, // Di-resolve dinamis di ComplaintResource
+                    'file_data'    => $fileData,
                     'caption'      => 'Foto Bukti ' . ($index + 1),
                     'type'         => 'evidence_before',
                     'mime'         => $photo->getClientMimeType(),
                     'size'         => $photo->getSize(),
-                    'checksum'     => md5_file($photo->getRealPath()),
+                    'checksum'     => $realPath ? md5_file($realPath) : null,
                     'captured_at'  => now(),
                 ]);
             }

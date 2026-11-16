@@ -108,3 +108,24 @@ Route::prefix('petugas')->middleware(['auth', 'active', 'role:PETUGAS,SUPERADMIN
     Route::post('/complaints/{id}/finish', [WebPetugasController::class, 'finishWork'])->name('petugas.complaints.finish');
     Route::post('/profile', [WebPetugasController::class, 'updateProfile'])->name('petugas.profile.update');
 });
+
+// 7. Fallback Permanen Media Foto Pengaduan dari PostgreSQL (jika file disk ephemeral Railway ter-reset saat redeploy)
+Route::get('/storage/{path}', function (string $path) {
+    $cleanPath = ltrim($path, '/');
+    $diskPath = storage_path('app/public/' . $cleanPath);
+    if (is_file($diskPath)) {
+        return response()->file($diskPath);
+    }
+
+    $photo = \App\Models\ComplaintPhoto::where('storage_key', $cleanPath)->first();
+    if ($photo && !empty($photo->file_data)) {
+        $binary = base64_decode($photo->file_data, true);
+        if ($binary !== false) {
+            return response($binary, 200)
+                ->header('Content-Type', $photo->mime ?: 'image/jpeg')
+                ->header('Cache-Control', 'public, max-age=86400');
+        }
+    }
+
+    abort(404);
+})->where('path', '.*');

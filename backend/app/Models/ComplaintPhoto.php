@@ -14,11 +14,16 @@ class ComplaintPhoto extends Model
         'complaint_id',
         'storage_key',
         'url',
+        'file_data',
         'type', // evidence_before, progress, resolution_after (SAP Section 15)
         'mime',
         'size',
         'checksum',
         'captured_at',
+    ];
+
+    protected $hidden = [
+        'file_data',
     ];
 
     protected $casts = [

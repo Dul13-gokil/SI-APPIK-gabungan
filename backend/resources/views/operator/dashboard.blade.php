@@ -1530,7 +1530,8 @@
             <div class="p-3 sm:p-3.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] space-y-2.5">
                 <div class="flex items-start gap-3">
                     <div class="relative w-14 h-14 rounded-xl overflow-hidden border border-[#E2E8F0] bg-white shrink-0">
-                        <img id="dispatchModalPhoto" src="" alt="Foto Kerusakan" class="w-full h-full object-cover">
+                        <img id="dispatchModalPhoto" src="" alt="Foto Kerusakan" class="w-full h-full object-cover"
+                             onerror="this.classList.add('hidden'); document.getElementById('dispatchModalNoPhoto')?.classList.remove('hidden');">
                         <div id="dispatchModalNoPhoto" class="hidden w-full h-full flex flex-col items-center justify-center text-slate-400 text-[9px] p-1 text-center bg-slate-100">
                             <i data-lucide="image-off" class="w-3.5 h-3.5 text-slate-300"></i>
                             <span>Kosong</span>
@@ -3266,7 +3267,7 @@
         if (defaultRadio) {
             defaultRadio.checked = true;
         }
-        updateDispatchSlaPreview(3, '3 Hari (SOP Standar)');
+        updateDispatchSlaPreview(3, '3 Hari');
 
         // 6. Reset Template Instruksi
         const instructionInput = document.getElementById('dispatchInstructionInput');
