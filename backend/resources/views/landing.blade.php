@@ -411,7 +411,7 @@
                 </div>
 
                 <div class="flex flex-col sm:flex-row items-center gap-2.5 w-full sm:w-auto">
-                    <a href="{{ route('download.apk') }}" 
+                    <a href="{{ route('download.apk') }}" download="SI-APPIK.APK"
                         class="flex items-center gap-3 bg-[#0F172A] hover:bg-slate-800 text-white px-4 min-h-[48px] rounded-lg border border-slate-700 transition w-full sm:w-44 justify-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
                         <svg class="w-5 h-5 fill-current shrink-0" viewBox="0 0 24 24">
                             <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.6 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.5,12.92 20.16,13.19L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z" />
@@ -442,7 +442,7 @@
 @include('partials.modals.landing_complaint_detail_modal')
 
 <!-- Tombol Mengambang Unduh APK (Muncul saat berada di section Unduh Aplikasi, selalu di atas footer) -->
-<a id="floatingDownloadApkBtn" href="{{ route('download.apk') }}"
+<a id="floatingDownloadApkBtn" href="{{ route('download.apk') }}" download="SI-APPIK.APK"
     aria-label="Unduh APK Android SI-APPIK"
     style="bottom: 24px;"
     class="fixed right-4 sm:right-6 z-40 inline-flex items-center gap-2.5 bg-[#0F172A] hover:bg-[#1E3A8A] text-white px-4 py-3 rounded-xl border border-white/20 shadow-lg transition-[opacity,transform] duration-300 opacity-0 translate-y-3 pointer-events-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1E3A8A]">
@@ -595,10 +595,23 @@
         if (!Array.isArray(data)) return;
         const counts = { jalan: 0, pju: 0, fasilitas: 0 };
         data.forEach(item => {
-            const text = ((item.category_name || item.category || '') + ' ' + (item.title || '')).toLowerCase();
-            if (text.includes('jalan') || text.includes('aspal') || text.includes('jembatan') || text.includes('paving')) counts.jalan++;
-            if (text.includes('penerangan') || text.includes('pju') || text.includes('lampu')) counts.pju++;
-            if (text.includes('fasilitas') || text.includes('umum') || text.includes('taman') || text.includes('trotoar')) counts.fasilitas++;
+            const catId = Number(item.category_id || 0);
+            if (catId === 1) {
+                counts.jalan++;
+            } else if (catId === 2) {
+                counts.pju++;
+            } else if (catId === 3) {
+                counts.fasilitas++;
+            } else {
+                const catName = (item.category_name || item.category || '').toLowerCase();
+                if (catName.includes('penerangan') || catName.includes('pju')) {
+                    counts.pju++;
+                } else if (catName.includes('fasilitas') || catName.includes('trotoar')) {
+                    counts.fasilitas++;
+                } else if (catName.includes('jalan') || catName.includes('jembatan')) {
+                    counts.jalan++;
+                }
+            }
         });
         const mapIds = {
             catCountJalan: counts.jalan,

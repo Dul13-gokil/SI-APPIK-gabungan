@@ -144,14 +144,14 @@
     </div>
 
     <!-- 3. MENU TAB EKSEKUTIF (TERSTRUKTUR SERAGAM ADMIN) -->
-    <div class="grid grid-cols-3 gap-2 sm:gap-2.5 w-full">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-2.5 w-full">
         <!-- 1. Tab Peta Spasial & Analitik -->
         <button type="button" onclick="switchBupatiTab('executive')" id="tabBtn-executive"
             class="bupati-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer bg-[#1E3A8A] text-white border-[#1E3A8A]">
             <i data-lucide="map" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
-                <span class="text-[11px] sm:text-xs font-bold block truncate leading-tight">Peta &amp; Analitik</span>
-                <span class="tab-sub hidden sm:block text-[10px] mt-0.5 truncate text-blue-100">Sebaran wilayah &amp; grafik</span>
+                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Peta &amp; Analitik</span>
+                <span class="tab-sub hidden md:block text-[10px] mt-0.5 truncate text-blue-100">Sebaran wilayah &amp; grafik</span>
             </div>
         </button>
 
@@ -160,8 +160,8 @@
             class="bupati-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]">
             <i data-lucide="layers" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
-                <span class="text-[11px] sm:text-xs font-bold block truncate leading-tight">Semua Pengaduan</span>
-                <span class="tab-sub hidden sm:block text-[10px] mt-0.5 truncate text-[#475569]">Monitor lintas status</span>
+                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Semua Pengaduan</span>
+                <span class="tab-sub hidden md:block text-[10px] mt-0.5 truncate text-[#475569]">Monitor lintas status</span>
             </div>
             <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 bg-blue-50 text-[#1E3A8A] border border-blue-200">{{ $allComplaints->count() }}</span>
         </button>
@@ -171,8 +171,8 @@
             class="bupati-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]">
             <i data-lucide="archive" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
-                <span class="text-[11px] sm:text-xs font-bold block truncate leading-tight">Arsip Laporan</span>
-                <span class="tab-sub hidden sm:block text-[10px] mt-0.5 truncate text-[#475569]">Selesai &amp; ditolak</span>
+                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Arsip Laporan</span>
+                <span class="tab-sub hidden md:block text-[10px] mt-0.5 truncate text-[#475569]">Selesai &amp; ditolak</span>
             </div>
             <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 bg-blue-50 text-[#1E3A8A] border border-blue-200">{{ $archivedComplaints->count() }}</span>
         </button>
@@ -1374,9 +1374,9 @@
 
         const infoEl = document.getElementById(infoId);
         if (infoEl) {
-            infoEl.textContent = total === 0
-                ? 'Menampilkan 0 dari 0 laporan'
-                : `Menampilkan ${startIdx + 1}–${endIdx} dari ${total} laporan`;
+            infoEl.innerHTML = total === 0
+                ? '<span class="hidden sm:inline">Menampilkan </span>0 dari 0 laporan'
+                : `<span class="hidden sm:inline">Menampilkan </span>${startIdx + 1}–${endIdx} dari ${total} laporan`;
         }
 
         const controlsEl = document.getElementById(controlsId);

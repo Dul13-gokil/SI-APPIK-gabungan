@@ -177,57 +177,57 @@
     </div>
 
     <!-- Navigasi Tab Petugas (Seragam Desain Admin) -->
-    <div class="grid grid-cols-6 sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-2.5 w-full">
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-2.5 w-full">
         <!-- 1. Tab Peta Spasial Penanganan Fisik -->
         <button type="button" onclick="switchPetugasTab('spatial')" id="petugasTabBtn-spatial"
-            class="petugas-tab-btn col-span-2 sm:col-span-1 text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer bg-[#1E3A8A] text-white border-[#1E3A8A]">
+            class="petugas-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer bg-[#1E3A8A] text-white border-[#1E3A8A]">
             <i data-lucide="map" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
-                <span class="text-[11px] sm:text-xs font-bold block truncate leading-tight">Peta Lapangan</span>
-                <span class="tab-sub text-[10px] block mt-0.5 truncate text-blue-100">Sebaran titik tugas</span>
+                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Peta Lapangan</span>
+                <span class="tab-sub hidden md:block text-[10px] mt-0.5 truncate text-blue-100">Sebaran titik tugas</span>
             </div>
         </button>
 
         <!-- 2. Tab Penugasan -->
         <button type="button" onclick="switchPetugasTab('assigned')" id="petugasTabBtn-assigned"
-            class="petugas-tab-btn col-span-2 sm:col-span-1 text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]">
+            class="petugas-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]">
             <i data-lucide="send" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
-                <span class="text-[11px] sm:text-xs font-bold block truncate leading-tight">Penugasan</span>
-                <span class="tab-sub text-[10px] block mt-0.5 truncate text-[#475569]">Tugas baru masuk</span>
+                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Penugasan</span>
+                <span class="tab-sub hidden md:block text-[10px] mt-0.5 truncate text-[#475569]">Tugas baru masuk</span>
             </div>
             <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 bg-blue-50 text-[#1E3A8A] border border-blue-200">{{ $dispatchedTasks->count() }}</span>
         </button>
 
         <!-- 3. Tab Pengerjaan -->
         <button type="button" onclick="switchPetugasTab('tasks')" id="petugasTabBtn-tasks"
-            class="petugas-tab-btn col-span-2 sm:col-span-1 text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]">
+            class="petugas-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]">
             <i data-lucide="hard-hat" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
-                <span class="text-[11px] sm:text-xs font-bold block truncate leading-tight">Pengerjaan</span>
-                <span class="tab-sub text-[10px] block mt-0.5 truncate text-[#475569]">Sedang dikerjakan</span>
+                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Pengerjaan</span>
+                <span class="tab-sub hidden md:block text-[10px] mt-0.5 truncate text-[#475569]">Sedang dikerjakan</span>
             </div>
             <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 bg-blue-50 text-[#1E3A8A] border border-blue-200">{{ $inProgressTasks->count() }}</span>
         </button>
 
         <!-- 4. Tab Validasi -->
         <button type="button" onclick="switchPetugasTab('validation')" id="petugasTabBtn-validation"
-            class="petugas-tab-btn col-span-3 sm:col-span-1 text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]">
+            class="petugas-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]">
             <i data-lucide="shield-check" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
-                <span class="text-[11px] sm:text-xs font-bold block truncate leading-tight">Validasi</span>
-                <span class="tab-sub text-[10px] block mt-0.5 truncate text-[#475569]">Menunggu operator</span>
+                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Validasi</span>
+                <span class="tab-sub hidden md:block text-[10px] mt-0.5 truncate text-[#475569]">Menunggu operator</span>
             </div>
             <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 bg-blue-50 text-[#1E3A8A] border border-blue-200">{{ $waitingVerificationTasks->count() }}</span>
         </button>
 
         <!-- 5. Tab Riwayat Tugas Selesai -->
         <button type="button" onclick="switchPetugasTab('history')" id="petugasTabBtn-history"
-            class="petugas-tab-btn col-span-3 sm:col-span-1 text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]">
+            class="petugas-tab-btn col-span-2 sm:col-span-1 text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]">
             <i data-lucide="check-circle-2" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
-                <span class="text-[11px] sm:text-xs font-bold block truncate leading-tight">Riwayat Selesai</span>
-                <span class="tab-sub text-[10px] block mt-0.5 truncate text-[#475569]">Tugas telah tuntas</span>
+                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Riwayat Selesai</span>
+                <span class="tab-sub hidden md:block text-[10px] mt-0.5 truncate text-[#475569]">Tugas telah tuntas</span>
             </div>
             <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 bg-blue-50 text-[#1E3A8A] border border-blue-200">{{ $completedTasks->count() }}</span>
         </button>
@@ -1077,9 +1077,9 @@
 
         const infoEl = document.getElementById('petugasPageInfo');
         if (infoEl) {
-            infoEl.textContent = total === 0
-                ? 'Menampilkan 0 dari 0 tugas'
-                : `Menampilkan ${startIdx + 1}–${endIdx} dari ${total} tugas`;
+            infoEl.innerHTML = total === 0
+                ? '<span class="hidden sm:inline">Menampilkan </span>0 dari 0 tugas'
+                : `<span class="hidden sm:inline">Menampilkan </span>${startIdx + 1}–${endIdx} dari ${total} tugas`;
         }
 
         const controlsEl = document.getElementById('petugasPageControls');

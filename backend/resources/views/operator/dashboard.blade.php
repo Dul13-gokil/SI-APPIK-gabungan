@@ -216,14 +216,14 @@
     </div>
 
     <!-- Sub Menu Tab Navigation (Seragam Desain Admin) -->
-    <div class="grid grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-2.5 w-full">
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-2.5 w-full">
         <!-- 1. Verifikasi -->
         <button type="button" onclick="switchTab('verify')" id="tabBtn-verify"
             class="tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'verify' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
             <i data-lucide="filter" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
-                <span class="text-[11px] sm:text-xs font-bold block truncate leading-tight">Verifikasi</span>
-                <span class="tab-sub text-[10px] block mt-0.5 truncate {{ $activeTab === 'verify' ? 'text-blue-100' : 'text-[#475569]' }}">Telaah aduan masuk</span>
+                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Verifikasi</span>
+                <span class="tab-sub hidden md:block text-[10px] mt-0.5 truncate {{ $activeTab === 'verify' ? 'text-blue-100' : 'text-[#475569]' }}">Telaah aduan masuk</span>
             </div>
             <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'verify' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
                 {{ $pendingVerification->count() }}
@@ -235,8 +235,8 @@
             class="tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'dispatched' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
             <i data-lucide="send" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
-                <span class="text-[11px] sm:text-xs font-bold block truncate leading-tight">Ditugaskan</span>
-                <span class="tab-sub text-[10px] block mt-0.5 truncate {{ $activeTab === 'dispatched' ? 'text-blue-100' : 'text-[#475569]' }}">Menunggu regu turun</span>
+                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Ditugaskan</span>
+                <span class="tab-sub hidden md:block text-[10px] mt-0.5 truncate {{ $activeTab === 'dispatched' ? 'text-blue-100' : 'text-[#475569]' }}">Menunggu regu turun</span>
             </div>
             <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'dispatched' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
                 {{ $dispatched->count() }}
@@ -248,8 +248,8 @@
             class="tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'inprogress' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
             <i data-lucide="hard-hat" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
-                <span class="text-[11px] sm:text-xs font-bold block truncate leading-tight">Dikerjakan</span>
-                <span class="tab-sub text-[10px] block mt-0.5 truncate {{ $activeTab === 'inprogress' ? 'text-blue-100' : 'text-[#475569]' }}">Progres fisik &amp; SLA</span>
+                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Dikerjakan</span>
+                <span class="tab-sub hidden md:block text-[10px] mt-0.5 truncate {{ $activeTab === 'inprogress' ? 'text-blue-100' : 'text-[#475569]' }}">Progres fisik &amp; SLA</span>
             </div>
             <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'inprogress' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
                 {{ $inProgress->count() }}
@@ -261,8 +261,8 @@
             class="tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'validation' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
             <i data-lucide="check-square" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
-                <span class="text-[11px] sm:text-xs font-bold block truncate leading-tight">Validasi</span>
-                <span class="tab-sub text-[10px] block mt-0.5 truncate {{ $activeTab === 'validation' ? 'text-blue-100' : 'text-[#475569]' }}">Uji hasil pekerjaan</span>
+                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Validasi</span>
+                <span class="tab-sub hidden md:block text-[10px] mt-0.5 truncate {{ $activeTab === 'validation' ? 'text-blue-100' : 'text-[#475569]' }}">Uji hasil pekerjaan</span>
             </div>
             <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'validation' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
                 {{ $waitingValidation->count() }}
@@ -274,8 +274,8 @@
             class="tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'archive' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
             <i data-lucide="archive" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
-                <span class="text-[11px] sm:text-xs font-bold block truncate leading-tight">Arsip</span>
-                <span class="tab-sub text-[10px] block mt-0.5 truncate {{ $activeTab === 'archive' ? 'text-blue-100' : 'text-[#475569]' }}">Selesai &amp; ditolak</span>
+                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Arsip</span>
+                <span class="tab-sub hidden md:block text-[10px] mt-0.5 truncate {{ $activeTab === 'archive' ? 'text-blue-100' : 'text-[#475569]' }}">Selesai &amp; ditolak</span>
             </div>
             <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'archive' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
                 {{ $completed->count() }}
@@ -287,8 +287,8 @@
             class="tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'monitoring' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
             <i data-lucide="bar-chart-2" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
-                <span class="text-[11px] sm:text-xs font-bold block truncate leading-tight">Monitoring</span>
-                <span class="tab-sub text-[10px] block mt-0.5 truncate {{ $activeTab === 'monitoring' ? 'text-blue-100' : 'text-[#475569]' }}">Peta &amp; evaluasi OPD</span>
+                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Monitoring</span>
+                <span class="tab-sub hidden md:block text-[10px] mt-0.5 truncate {{ $activeTab === 'monitoring' ? 'text-blue-100' : 'text-[#475569]' }}">Peta &amp; evaluasi OPD</span>
             </div>
         </button>
     </div>
@@ -3472,9 +3472,9 @@
 
         const infoEl = document.getElementById('operatorPageInfo');
         if (infoEl) {
-            infoEl.textContent = total === 0
-                ? 'Menampilkan 0 dari 0 laporan'
-                : `Menampilkan ${startIdx + 1}–${endIdx} dari ${total} laporan`;
+            infoEl.innerHTML = total === 0
+                ? '<span class="hidden sm:inline">Menampilkan </span>0 dari 0 laporan'
+                : `<span class="hidden sm:inline">Menampilkan </span>${startIdx + 1}–${endIdx} dari ${total} laporan`;
         }
 
         const controlsEl = document.getElementById('operatorPageControls');

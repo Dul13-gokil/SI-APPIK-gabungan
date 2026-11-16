@@ -171,14 +171,14 @@
     </div>
 
     <!-- 3. MENU FITUR ADMIN (TERSTRUKTUR & MUDAH DIKENALI) -->
-    <div class="grid grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-2.5 w-full">
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-2.5 w-full">
         <!-- 1. Tab Pengaturan Akun -->
         <button type="button" onclick="switchAdminTab('users-management')" id="tabBtn-users-management"
             class="admin-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'users-management' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
             <i data-lucide="user-plus" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
-                <span class="text-[11px] sm:text-xs font-bold block truncate leading-tight">Tambah &amp; Pimpinan</span>
-                <span class="tab-sub text-[10px] block mt-0.5 truncate {{ $activeTab === 'users-management' ? 'text-blue-100' : 'text-[#475569]' }}">Bupati &amp; akun baru</span>
+                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Tambah &amp; Pimpinan</span>
+                <span class="tab-sub hidden md:block text-[10px] mt-0.5 truncate {{ $activeTab === 'users-management' ? 'text-blue-100' : 'text-[#475569]' }}">Bupati &amp; akun baru</span>
             </div>
         </button>
 
@@ -187,8 +187,8 @@
             class="admin-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'users-list' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
             <i data-lucide="users" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
-                <span class="text-[11px] sm:text-xs font-bold block truncate leading-tight">Direktori Akun</span>
-                <span class="tab-sub text-[10px] block mt-0.5 truncate {{ $activeTab === 'users-list' ? 'text-blue-100' : 'text-[#475569]' }}">Daftar &amp; reset sandi</span>
+                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Direktori Akun</span>
+                <span class="tab-sub hidden md:block text-[10px] mt-0.5 truncate {{ $activeTab === 'users-list' ? 'text-blue-100' : 'text-[#475569]' }}">Daftar &amp; reset sandi</span>
             </div>
             <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'users-list' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
                 {{ $users->count() }}
@@ -200,8 +200,8 @@
             class="admin-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'complaints-list' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
             <i data-lucide="layers" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
-                <span class="text-[11px] sm:text-xs font-bold block truncate leading-tight">Semua Aduan</span>
-                <span class="tab-sub text-[10px] block mt-0.5 truncate {{ $activeTab === 'complaints-list' ? 'text-blue-100' : 'text-[#475569]' }}">Monitor lintas status</span>
+                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Semua Aduan</span>
+                <span class="tab-sub hidden md:block text-[10px] mt-0.5 truncate {{ $activeTab === 'complaints-list' ? 'text-blue-100' : 'text-[#475569]' }}">Monitor lintas status</span>
             </div>
             <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'complaints-list' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
                 {{ $complaints->count() }}
@@ -213,8 +213,8 @@
             class="admin-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'regions-gis' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
             <i data-lucide="map" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
-                <span class="text-[11px] sm:text-xs font-bold block truncate leading-tight">Wilayah &amp; GIS</span>
-                <span class="tab-sub text-[10px] block mt-0.5 truncate {{ $activeTab === 'regions-gis' ? 'text-blue-100' : 'text-[#475569]' }}">15 kec. &amp; geofence</span>
+                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Wilayah &amp; GIS</span>
+                <span class="tab-sub hidden md:block text-[10px] mt-0.5 truncate {{ $activeTab === 'regions-gis' ? 'text-blue-100' : 'text-[#475569]' }}">15 kec. &amp; geofence</span>
             </div>
             <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'regions-gis' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
                 {{ count($districtStats ?? $regions) }}
@@ -226,8 +226,8 @@
             class="admin-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'teams-management' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
             <i data-lucide="users-2" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
-                <span class="text-[11px] sm:text-xs font-bold block truncate leading-tight">Regu &amp; Tugas</span>
-                <span class="tab-sub text-[10px] block mt-0.5 truncate {{ $activeTab === 'teams-management' ? 'text-blue-100' : 'text-[#475569]' }}">Tim &amp; mode disposisi</span>
+                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Regu &amp; Tugas</span>
+                <span class="tab-sub hidden md:block text-[10px] mt-0.5 truncate {{ $activeTab === 'teams-management' ? 'text-blue-100' : 'text-[#475569]' }}">Tim &amp; mode disposisi</span>
             </div>
             <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'teams-management' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
                 {{ $teams->count() }}
@@ -239,8 +239,8 @@
             class="admin-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'reporting' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
             <i data-lucide="bar-chart-3" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
-                <span class="text-[11px] sm:text-xs font-bold block truncate leading-tight">Laporan</span>
-                <span class="tab-sub text-[10px] block mt-0.5 truncate {{ $activeTab === 'reporting' ? 'text-blue-100' : 'text-[#475569]' }}">Rekap &amp; statistik</span>
+                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Laporan</span>
+                <span class="tab-sub hidden md:block text-[10px] mt-0.5 truncate {{ $activeTab === 'reporting' ? 'text-blue-100' : 'text-[#475569]' }}">Rekap &amp; statistik</span>
             </div>
         </button>
     </div>
@@ -264,7 +264,7 @@
                                 <p class="text-[11px] text-slate-500">Pimpinan daerah pemegang hak monitoring eksekutif aduan.</p>
                             </div>
                         </div>
-                        <span class="px-2.5 py-0.5 rounded-full bg-blue-50 text-[#1E3A8A] border border-blue-200 text-[10px] font-bold">
+                        <span class="px-2.5 py-1 rounded-full bg-blue-50 text-[#1E3A8A] border border-blue-200 text-[10px] font-bold text-center shrink-0 whitespace-nowrap">
                             KEPALA DAERAH
                         </span>
                     </div>
@@ -323,8 +323,8 @@
                                 <p class="text-[11px] text-slate-500">Daftarkan akun Operator Verifikasi atau Petugas Lapangan baru.</p>
                             </div>
                         </div>
-                        <span class="px-2.5 py-0.5 rounded-full bg-blue-50 text-[#1E3A8A] border border-blue-200 text-[10px] font-bold">
-                            PETUGAS & OPERATOR
+                        <span class="px-2.5 py-1 rounded-full bg-blue-50 text-[#1E3A8A] border border-blue-200 text-[10px] font-bold text-center shrink-0 whitespace-nowrap">
+                            PETUGAS &amp; OPERATOR
                         </span>
                     </div>
 
@@ -2467,9 +2467,9 @@
 
         const infoEl = document.getElementById(infoId);
         if (infoEl) {
-            infoEl.textContent = total === 0
-                ? `Menampilkan 0 dari 0 ${unitLabel}`
-                : `Menampilkan ${startIdx + 1}–${endIdx} dari ${total} ${unitLabel}`;
+            infoEl.innerHTML = total === 0
+                ? `<span class="hidden sm:inline">Menampilkan </span>0 dari 0 ${unitLabel}`
+                : `<span class="hidden sm:inline">Menampilkan </span>${startIdx + 1}–${endIdx} dari ${total} ${unitLabel}`;
         }
 
         const controlsEl = document.getElementById(controlsId);

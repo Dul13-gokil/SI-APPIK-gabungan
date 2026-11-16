@@ -501,7 +501,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Text(
                         _feedTab == 'MY'
                             ? 'Riwayat Laporan Saya'
-                            : 'Laporan Terkini Warga',
+                            : 'Riwayat Laporan Warga',
                         style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
                       ),
                       const SizedBox(height: 2),

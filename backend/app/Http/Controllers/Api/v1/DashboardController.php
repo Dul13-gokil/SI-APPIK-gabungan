@@ -181,6 +181,7 @@ class DashboardController extends Controller
                 'priority_level' => $p->priority_level,
                 'priority_score' => (float) $p->priority_score,
                 'ai_category' => $p->ai_category,
+                'category_id' => $p->category_id,
                 'category_name' => $p->category?->name ?? 'Infrastruktur',
                 'photo_url' => $photoUrl,
                 'completion_photo_url' => $completionPhotoUrl,

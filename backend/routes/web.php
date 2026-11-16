@@ -38,12 +38,13 @@ Route::get('/', function () {
 
     $districts = Region::pluck('district')->filter()->unique()->sort()->values();
 
-    $allComplaints = Complaint::with('category:id,name')->select('id', 'category_id', 'title')->get();
-    $haystack = fn($c) => strtolower(($c->category?->name ?? '') . ' ' . ($c->title ?? ''));
+    $allComplaints = Complaint::whereNotIn('status', ['REJECTED'])
+        ->select('id', 'category_id')
+        ->get();
     $categoryStats = [
-        'jalan' => $allComplaints->filter(fn($c) => str_contains($haystack($c), 'jalan') || str_contains($haystack($c), 'aspal') || str_contains($haystack($c), 'jembatan') || str_contains($haystack($c), 'paving'))->count(),
-        'pju' => $allComplaints->filter(fn($c) => str_contains($haystack($c), 'penerangan') || str_contains($haystack($c), 'pju') || str_contains($haystack($c), 'lampu'))->count(),
-        'fasilitas' => $allComplaints->filter(fn($c) => str_contains($haystack($c), 'fasilitas') || str_contains($haystack($c), 'umum') || str_contains($haystack($c), 'taman') || str_contains($haystack($c), 'trotoar'))->count(),
+        'jalan' => $allComplaints->where('category_id', 1)->count(),
+        'pju' => $allComplaints->where('category_id', 2)->count(),
+        'fasilitas' => $allComplaints->where('category_id', 3)->count(),
     ];
 
     return view('landing', compact('stats', 'districts', 'categoryStats'));

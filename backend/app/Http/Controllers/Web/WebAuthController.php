@@ -304,19 +304,18 @@ class WebAuthController extends Controller
      */
     public function downloadApk(): \Symfony\Component\HttpFoundation\BinaryFileResponse|RedirectResponse
     {
-        $apkPath = public_path('downloads/Aduan-Kolaka-Utara.apk');
-        if (!file_exists($apkPath)) {
-            $sourceApk = base_path('../mobile/build/app/outputs/apk/debug/app-debug.apk');
-            if (file_exists($sourceApk)) {
-                if (!is_dir(public_path('downloads'))) {
-                    mkdir(public_path('downloads'), 0777, true);
-                }
-                copy($sourceApk, $apkPath);
+        $apkPath = public_path('downloads/SI-APPIK.APK');
+        $sourceApk = base_path('../mobile/build/app/outputs/apk/debug/app-debug.apk');
+
+        if (file_exists($sourceApk) && (!file_exists($apkPath) || filemtime($sourceApk) > filemtime($apkPath))) {
+            if (!is_dir(public_path('downloads'))) {
+                mkdir(public_path('downloads'), 0777, true);
             }
+            copy($sourceApk, $apkPath);
         }
 
         if (file_exists($apkPath)) {
-            return response()->download($apkPath, 'Aduan-Kolaka-Utara.apk', [
+            return response()->download($apkPath, 'SI-APPIK.APK', [
                 'Content-Type' => 'application/vnd.android.package-archive',
             ]);
         }
