@@ -931,7 +931,7 @@ class _FieldTasksScreenState extends State<FieldTasksScreen> {
                         ),
                         child: Center(
                           child: Text(
-                            'Semua Tugas',
+                            'Daftar Penugasan',
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
@@ -1022,7 +1022,7 @@ class _FieldTasksScreenState extends State<FieldTasksScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        _taskScope == 'MY' ? 'Daftar Aduan Dikerjakan Regu' : 'Daftar Aduan yang Ditugaskan',
+                        _taskScope == 'MY' ? 'Daftar Tugas Regu' : 'Daftar Aduan Ditugaskan',
                         style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
                       ),
                       const SizedBox(height: 2),
@@ -1674,7 +1674,7 @@ class _FieldTasksScreenState extends State<FieldTasksScreen> {
           isStartAllowed = true;
         } else {
           isStartAllowed = false;
-          startBlockedReason = 'Menunggu Penunjukan Regu oleh Operator (Komando Terpusat)';
+          startBlockedReason = 'Menunggu penunjukan regu oleh Operator Dinas';
         }
       } else {
         isStartAllowed = true;

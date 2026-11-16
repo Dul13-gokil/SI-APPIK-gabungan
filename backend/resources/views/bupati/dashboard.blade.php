@@ -14,10 +14,10 @@
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
         <div>
             <h2 class="font-outfit font-bold text-lg sm:text-xl text-[#0F172A] leading-tight">
-                Pemantauan Eksekutif Pengaduan &amp; Infrastruktur Daerah
+                Pemantauan Eksekutif Pengaduan Infrastruktur
             </h2>
             <p class="text-xs text-[#475569] mt-0.5">
-                Pantau sebaran laporan, progres penanganan regu lapangan, serta rekap arsip infrastruktur Kabupaten Kolaka Utara.
+                Pantau sebaran laporan, progres penanganan regu lapangan, dan arsip aduan Kabupaten Kolaka Utara.
             </p>
         </div>
         <div class="flex items-center gap-2 shrink-0">
@@ -145,31 +145,31 @@
 
     <!-- 3. MENU TAB EKSEKUTIF (TERSTRUKTUR SERAGAM ADMIN) -->
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-2.5 w-full">
-        <!-- 1. Tab Peta Spasial & Analitik -->
+        <!-- 1. Tab Peta & Laporan -->
         <button type="button" onclick="switchBupatiTab('executive')" id="tabBtn-executive"
             class="bupati-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer bg-[#1E3A8A] text-white border-[#1E3A8A]">
             <i data-lucide="map" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
-                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Peta &amp; Analitik</span>
+                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Peta &amp; Laporan</span>
             </div>
         </button>
 
-        <!-- 2. Tab Daftar Seluruh Pengaduan -->
+        <!-- 2. Tab Daftar Aduan -->
         <button type="button" onclick="switchBupatiTab('complaints')" id="tabBtn-complaints"
             class="bupati-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]">
             <i data-lucide="layers" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
-                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Semua Pengaduan</span>
+                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Daftar Aduan</span>
             </div>
             <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 bg-blue-50 text-[#1E3A8A] border border-blue-200">{{ $allComplaints->count() }}</span>
         </button>
 
-        <!-- 3. Tab Arsip Laporan -->
+        <!-- 3. Tab Arsip Aduan -->
         <button type="button" onclick="switchBupatiTab('archive')" id="tabBtn-archive"
             class="bupati-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]">
             <i data-lucide="archive" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
-                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Arsip Laporan</span>
+                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Arsip Aduan</span>
             </div>
             <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 bg-blue-50 text-[#1E3A8A] border border-blue-200">{{ $archivedComplaints->count() }}</span>
         </button>
@@ -186,13 +186,13 @@
                         <span>Peta Sebaran Infrastruktur Rusak Seluruh Kabupaten</span>
                     </h3>
                 </div>
-                <div class="flex flex-wrap items-center gap-3 text-xs font-semibold">
-                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#EF4444]"></span> Verifikasi</span>
-                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#1E40AF]"></span> Ditugaskan</span>
-                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#F59E0B]"></span> Sedang Dikerjakan</span>
-                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#F59E0B]"></span> Validasi</span>
-                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#10B981]"></span> Selesai</span>
-                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#DC2626]"></span> Ditolak</span>
+                <div class="flex items-center gap-2 sm:gap-3 text-[10px] sm:text-xs font-semibold overflow-x-auto whitespace-nowrap w-full sm:w-auto pb-0.5 sm:pb-0">
+                    <span class="inline-flex items-center gap-1 shrink-0"><span class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#EF4444]"></span> Verifikasi</span>
+                    <span class="inline-flex items-center gap-1 shrink-0"><span class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#1E40AF]"></span> Ditugaskan</span>
+                    <span class="inline-flex items-center gap-1 shrink-0"><span class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#F59E0B]"></span> <span class="hidden sm:inline">Sedang </span>Dikerjakan</span>
+                    <span class="inline-flex items-center gap-1 shrink-0"><span class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#F59E0B]"></span> Validasi</span>
+                    <span class="inline-flex items-center gap-1 shrink-0"><span class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#10B981]"></span> Selesai</span>
+                    <span class="inline-flex items-center gap-1 shrink-0"><span class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#DC2626]"></span> Ditolak</span>
                 </div>
             </div>
 

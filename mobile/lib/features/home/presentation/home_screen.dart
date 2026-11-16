@@ -428,7 +428,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         child: Center(
                           child: Text(
-                            'Semua Laporan',
+                            'Daftar Aduan',
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
@@ -467,7 +467,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                               const SizedBox(width: 6),
                               Text(
-                                'Laporan Saya',
+                                'Aduan Saya',
                                 style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
@@ -594,7 +594,7 @@ class _HomeScreenState extends State<HomeScreen> {
         // Baris 1: Semua Laporan (Full Width)
         Row(
           children: [
-            _buildKpiCard('Semua Laporan', '$total', AppColors.primary, LucideIcons.layers, 'Total aduan masuk'),
+            _buildKpiCard('Total Aduan', '$total', AppColors.primary, LucideIcons.layers, 'Total aduan masuk'),
           ],
         ),
         const SizedBox(height: 8),

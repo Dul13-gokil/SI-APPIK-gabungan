@@ -32,49 +32,49 @@
 
 <!-- 1. TOOLBAR AKSI LAPORAN RESMI (PDF) — BERSIH, KONSISTEN, TANPA GRADIENT -->
 <div class="card-white rounded-2xl p-4 sm:p-5 bg-white border border-[#E2E8F0] flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-    <div class="flex items-start gap-3.5">
-        <div class="w-10 h-10 rounded-xl bg-slate-50 border border-slate-200 text-[#1E3A8A] flex items-center justify-center shrink-0 mt-0.5">
+    <div class="flex items-center gap-3 min-w-0">
+        <div class="w-10 h-10 rounded-xl bg-slate-50 border border-slate-200 text-[#1E3A8A] flex items-center justify-center shrink-0">
             <i data-lucide="file-check-2" class="w-5 h-5"></i>
         </div>
-        <div class="space-y-1">
-            <div class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-[#1E3A8A]">
-                <span>Dokumen Rekapitulasi Eksekutif</span>
-                <span class="text-slate-300">&bull;</span>
-                <span class="text-slate-500 font-semibold">Dinas PUPR Kab. Kolaka Utara</span>
-            </div>
-            <h3 class="font-outfit font-bold text-base sm:text-lg text-slate-900 tracking-tight leading-snug">
-                Pelaporan &amp; Evaluasi Kinerja Penanganan Infrastruktur
+        <div class="min-w-0 space-y-0.5">
+            <span class="text-[10.5px] font-bold uppercase tracking-wider text-[#1E3A8A] block truncate">
+                Dokumen Rekapitulasi &bull; Dinas PUPR
+            </span>
+            <h3 class="font-outfit font-bold text-sm sm:text-lg text-slate-900 tracking-tight leading-snug">
+                Pelaporan &amp; Evaluasi Kinerja Infrastruktur
             </h3>
         </div>
     </div>
 
     <!-- Tombol Aksi & Pilih Format Dokumen -->
-    <div class="flex flex-wrap items-center gap-2 shrink-0">
+    <div class="flex flex-col sm:flex-row sm:items-center gap-2 w-full lg:w-auto shrink-0">
         <!-- Switcher Format Cepat -->
-        <div class="inline-flex items-center p-1 rounded-xl bg-slate-100 border border-slate-200" role="group" aria-label="Pilih Format Laporan">
+        <div class="grid grid-cols-2 sm:inline-flex items-center p-1 rounded-xl bg-slate-100 border border-slate-200 w-full sm:w-auto" role="group" aria-label="Pilih Format Laporan">
             <button type="button" onclick="setReportFormat('professional')" data-format-btn="professional"
-                class="px-2.5 py-1.5 rounded-lg text-[11px] font-bold transition cursor-pointer bg-white text-[#1E3A8A] border border-slate-200 shadow-2xs">
+                class="px-3 py-1.5 rounded-lg text-[11px] font-bold transition cursor-pointer text-center bg-white text-[#1E3A8A] border border-slate-200 shadow-2xs">
                 Profesional
             </button>
             <button type="button" onclick="setReportFormat('ats')" data-format-btn="ats"
-                class="px-2.5 py-1.5 rounded-lg text-[11px] font-bold transition cursor-pointer text-slate-600 hover:text-slate-900 border border-transparent">
+                class="px-3 py-1.5 rounded-lg text-[11px] font-bold transition cursor-pointer text-center text-slate-600 hover:text-slate-900 border border-transparent">
                 Format ATS
             </button>
         </div>
 
-        <!-- Pratinjau Dokumen -->
-        <button type="button" onclick="openReportPreviewModal()"
-            class="px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 transition flex items-center gap-2 cursor-pointer">
-            <i data-lucide="eye" class="w-4 h-4 text-[#1E3A8A]"></i>
-            <span>Pratinjau Dokumen</span>
-        </button>
+        <div class="grid grid-cols-2 sm:flex items-center gap-2 w-full sm:w-auto">
+            <!-- Pratinjau Dokumen -->
+            <button type="button" onclick="openReportPreviewModal()"
+                class="px-3 py-2 rounded-xl text-xs font-bold bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 transition flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap">
+                <i data-lucide="eye" class="w-4 h-4 text-[#1E3A8A] shrink-0"></i>
+                <span>Pratinjau</span>
+            </button>
 
-        <!-- Cetak Dokumen PDF -->
-        <button type="button" onclick="printOfficialReportPdf()"
-            class="px-3.5 py-2 rounded-xl text-xs font-bold bg-[#1E3A8A] hover:bg-[#172554] text-white transition flex items-center gap-2 cursor-pointer">
-            <i data-lucide="printer" class="w-4 h-4"></i>
-            <span>Cetak PDF</span>
-        </button>
+            <!-- Cetak Dokumen PDF -->
+            <button type="button" onclick="printOfficialReportPdf()"
+                class="px-3.5 py-2 rounded-xl text-xs font-bold bg-[#1E3A8A] hover:bg-[#172554] text-white transition flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap">
+                <i data-lucide="printer" class="w-4 h-4 shrink-0"></i>
+                <span>Cetak PDF</span>
+            </button>
+        </div>
     </div>
 </div>
 
@@ -390,8 +390,8 @@
         </div>
 
         <!-- Body Pratinjau Dokumen -->
-        <div id="reportModalScrollArea" class="flex-1 overflow-y-auto bg-white p-5 sm:p-8">
-            <div id="printableOfficialDocument" class="w-full text-black font-sans text-xs pb-6">
+        <div id="reportModalScrollArea" class="flex-1 overflow-y-auto overflow-x-hidden bg-white p-3.5 sm:p-8">
+            <div id="printableOfficialDocument" class="w-full min-w-0 max-w-full text-black font-sans text-xs pb-6">
 
                 <!-- ========================================================= -->
                 <!-- FORMAT A: FORMAT PROFESIONAL (KEDINASAN RESMI PEMKAB)     -->
@@ -458,30 +458,32 @@
                         <h4 class="font-outfit font-bold text-xs uppercase tracking-wider text-black border-b border-slate-300 pb-1">
                             II. Rekapitulasi Siklus Status Penanganan Pengaduan
                         </h4>
-                        <table class="w-full text-left border-collapse border border-slate-400 text-[11px]">
-                            <thead class="bg-slate-100 text-black font-bold uppercase text-[10px]">
-                                <tr>
-                                    <th class="border border-slate-400 py-1.5 px-2.5">Total Laporan</th>
-                                    <th class="border border-slate-400 py-1.5 px-2 text-center">Verifikasi</th>
-                                    <th class="border border-slate-400 py-1.5 px-2 text-center">Ditugaskan</th>
-                                    <th class="border border-slate-400 py-1.5 px-2 text-center">Dikerjakan</th>
-                                    <th class="border border-slate-400 py-1.5 px-2 text-center">Validasi</th>
-                                    <th class="border border-slate-400 py-1.5 px-2 text-center">Selesai</th>
-                                    <th class="border border-slate-400 py-1.5 px-2 text-center">Ditolak</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td class="border border-slate-400 py-2 px-2.5 font-bold text-black">{{ $summary['total'] }} (100%)</td>
-                                    <td class="border border-slate-400 py-2 px-2 text-center font-semibold">{{ $summary['pending'] }}</td>
-                                    <td class="border border-slate-400 py-2 px-2 text-center font-semibold">{{ $summary['dispatched'] }}</td>
-                                    <td class="border border-slate-400 py-2 px-2 text-center font-semibold">{{ $summary['in_progress'] }}</td>
-                                    <td class="border border-slate-400 py-2 px-2 text-center font-semibold">{{ $summary['waiting_verification'] ?? 0 }}</td>
-                                    <td class="border border-slate-400 py-2 px-2 text-center font-bold">{{ $summary['completed'] }} ({{ $summary['completion_rate'] }}%)</td>
-                                    <td class="border border-slate-400 py-2 px-2 text-center font-semibold">{{ $summary['rejected'] ?? 0 }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <div class="w-full overflow-x-auto">
+                            <table class="w-full text-left border-collapse border border-slate-400 text-[9.5px] sm:text-[11px]">
+                                <thead class="bg-slate-100 text-black font-bold uppercase text-[8.5px] sm:text-[10px]">
+                                    <tr>
+                                        <th class="border border-slate-400 py-1.5 px-1.5 sm:px-2.5">Total</th>
+                                        <th class="border border-slate-400 py-1.5 px-1 sm:px-2 text-center">Verifikasi</th>
+                                        <th class="border border-slate-400 py-1.5 px-1 sm:px-2 text-center">Ditugaskan</th>
+                                        <th class="border border-slate-400 py-1.5 px-1 sm:px-2 text-center">Dikerjakan</th>
+                                        <th class="border border-slate-400 py-1.5 px-1 sm:px-2 text-center">Validasi</th>
+                                        <th class="border border-slate-400 py-1.5 px-1 sm:px-2 text-center">Selesai</th>
+                                        <th class="border border-slate-400 py-1.5 px-1 sm:px-2 text-center">Ditolak</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="border border-slate-400 py-2 px-1.5 sm:px-2.5 font-bold text-black">{{ $summary['total'] }} (100%)</td>
+                                        <td class="border border-slate-400 py-2 px-1 sm:px-2 text-center font-semibold">{{ $summary['pending'] }}</td>
+                                        <td class="border border-slate-400 py-2 px-1 sm:px-2 text-center font-semibold">{{ $summary['dispatched'] }}</td>
+                                        <td class="border border-slate-400 py-2 px-1 sm:px-2 text-center font-semibold">{{ $summary['in_progress'] }}</td>
+                                        <td class="border border-slate-400 py-2 px-1 sm:px-2 text-center font-semibold">{{ $summary['waiting_verification'] ?? 0 }}</td>
+                                        <td class="border border-slate-400 py-2 px-1 sm:px-2 text-center font-bold">{{ $summary['completed'] }} ({{ $summary['completion_rate'] }}%)</td>
+                                        <td class="border border-slate-400 py-2 px-1 sm:px-2 text-center font-semibold">{{ $summary['rejected'] ?? 0 }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
 
                     <!-- III. EVALUASI KETEPATAN WAKTU DINAS (SLA) & KONTRIBUSI PERAN -->

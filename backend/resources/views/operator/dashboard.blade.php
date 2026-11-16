@@ -49,33 +49,33 @@
 
         $tabMetaPhp = [
             'verify' => [
-                'title' => 'Verifikasi & Telaah Kelayakan Pengaduan Masuk',
-                'subtitle' => 'Pemeriksaan keabsahan data dan kelayakan laporan sebelum penerbitan penugasan teknis',
+                'title' => 'Verifikasi & Telaah Kelayakan Aduan',
+                'subtitle' => 'Periksa keabsahan data dan kelayakan laporan sebelum penerbitan penugasan teknis.',
                 'count' => $pendingVerification->count(),
             ],
             'dispatched' => [
-                'title' => 'Daftar Pengaduan Telah Ditugaskan ke Petugas',
-                'subtitle' => 'Laporan yang telah diverifikasi dan diterbitkan instruksi penugasan, menunggu dimulainya pengerjaan fisik di lapangan',
+                'title' => 'Daftar Aduan yang Telah Ditugaskan',
+                'subtitle' => 'Laporan yang telah diverifikasi dan diterbitkan surat tugas, menunggu pengerjaan di lapangan.',
                 'count' => $dispatched->count(),
             ],
             'inprogress' => [
-                'title' => 'Pemantauan Pelaksanaan Penanganan Lapangan',
-                'subtitle' => 'Pengawasan progres fisik penanganan dan kepatuhan batas waktu Service Level Agreement (SLA)',
+                'title' => 'Pemantauan Pengerjaan Lapangan',
+                'subtitle' => 'Awasi progres fisik perbaikan dan kepatuhan batas waktu penyelesaian (SLA).',
                 'count' => $inProgress->count(),
             ],
             'validation' => [
-                'title' => 'Validasi Kelayakan Hasil Pekerjaan Teknis',
-                'subtitle' => 'Verifikasi komparasi visual sebelum-sesudah dan pemeriksaan berita acara penyelesaian lapangan',
+                'title' => 'Validasi Hasil Pekerjaan Lapangan',
+                'subtitle' => 'Periksa foto bukti sebelum dan sesudah perbaikan sebelum laporan dinyatakan selesai.',
                 'count' => $waitingValidation->count(),
             ],
             'archive' => [
-                'title' => 'Arsip Resmi Pengaduan & Rekam Jejak Pelayanan',
-                'subtitle' => 'Dokumentasi permanen laporan yang telah tuntas ditangani demi akuntabilitas dan transparansi publik',
+                'title' => 'Arsip Aduan & Rekam Jejak Penanganan',
+                'subtitle' => 'Dokumentasi permanen laporan yang telah selesai ditangani maupun ditolak.',
                 'count' => $completed->count(),
             ],
             'monitoring' => [
-                'title' => 'Pemantauan Eksekutif & Evaluasi Kinerja Penanganan',
-                'subtitle' => 'Analisis sebaran spasial infrastruktur dan evaluasi indeks respon Organisasi Perangkat Daerah (OPD)',
+                'title' => 'Pemantauan Eksekutif & Laporan Kinerja',
+                'subtitle' => 'Analisis sebaran wilayah kerusakan, evaluasi ketepatan waktu dinas, dan cetak laporan resmi.',
                 'count' => 0,
             ],
         ];
@@ -265,24 +265,24 @@
             </span>
         </button>
 
-        <!-- 5. Arsip -->
+        <!-- 5. Arsip Aduan -->
         <button type="button" onclick="switchTab('archive')" id="tabBtn-archive"
             class="tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'archive' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
             <i data-lucide="archive" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
-                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Arsip</span>
+                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Arsip Aduan</span>
             </div>
             <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'archive' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
                 {{ $completed->count() }}
             </span>
         </button>
 
-        <!-- 6. Monitoring -->
+        <!-- 6. Laporan Kinerja -->
         <button type="button" onclick="switchTab('monitoring')" id="tabBtn-monitoring"
             class="tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'monitoring' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
             <i data-lucide="bar-chart-2" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
-                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Monitoring</span>
+                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Laporan Kinerja</span>
             </div>
         </button>
     </div>
@@ -1093,13 +1093,13 @@
                         <span>Peta Sebaran Infrastruktur Rusak Seluruh Kabupaten</span>
                     </h3>
                 </div>
-                <div class="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs font-semibold shrink-0">
-                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#EF4444] shrink-0"></span> Verifikasi</span>
-                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#1E40AF] shrink-0"></span> Ditugaskan</span>
-                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#F59E0B] shrink-0"></span> Sedang Dikerjakan</span>
-                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#F59E0B] shrink-0"></span> Validasi</span>
-                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#10B981] shrink-0"></span> Selesai</span>
-                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#DC2626] shrink-0"></span> Ditolak</span>
+                <div class="flex items-center gap-2 sm:gap-3 text-[10px] sm:text-xs font-semibold overflow-x-auto whitespace-nowrap w-full sm:w-auto pb-0.5 sm:pb-0 shrink-0">
+                    <span class="inline-flex items-center gap-1 shrink-0"><span class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#EF4444] shrink-0"></span> Verifikasi</span>
+                    <span class="inline-flex items-center gap-1 shrink-0"><span class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#1E40AF] shrink-0"></span> Ditugaskan</span>
+                    <span class="inline-flex items-center gap-1 shrink-0"><span class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#F59E0B] shrink-0"></span> <span class="hidden sm:inline">Sedang </span>Dikerjakan</span>
+                    <span class="inline-flex items-center gap-1 shrink-0"><span class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#F59E0B] shrink-0"></span> Validasi</span>
+                    <span class="inline-flex items-center gap-1 shrink-0"><span class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#10B981] shrink-0"></span> Selesai</span>
+                    <span class="inline-flex items-center gap-1 shrink-0"><span class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#DC2626] shrink-0"></span> Ditolak</span>
                 </div>
             </div>
 

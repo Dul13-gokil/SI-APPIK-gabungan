@@ -62,7 +62,7 @@ class _FieldCompletedTasksScreenState extends State<FieldCompletedTasksScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Riwayat Pekerjaan Selesai',
+              'Tugas Selesai',
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: AppColors.textPrimary),
             ),
             Text(
@@ -143,7 +143,7 @@ class _FieldCompletedTasksScreenState extends State<FieldCompletedTasksScreen> {
                                     Icon(LucideIcons.checkCheck, size: 56, color: AppColors.statusCompleted),
                                     SizedBox(height: 16),
                                     Text(
-                                      'Belum Ada Riwayat Selesai',
+                                      'Belum Ada Tugas Selesai',
                                       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: AppColors.textPrimary),
                                     ),
                                     SizedBox(height: 6),

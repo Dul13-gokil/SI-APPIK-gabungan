@@ -8,28 +8,28 @@
     $todayStr = \Carbon\Carbon::now('Asia/Makassar')->locale('id')->isoFormat('dddd, D MMMM Y • HH:mm:ss') . ' WITA';
     $tabMeta = [
         'users-management' => [
-            'title' => 'Pengaturan Akun Pimpinan & Tambah Petugas',
-            'subtitle' => 'Perbarui data akun Kepala Daerah (Bupati) serta tambah akun Operator atau Petugas Lapangan.',
+            'title' => 'Pengelolaan Akun Pimpinan & Petugas',
+            'subtitle' => 'Perbarui akun Kepala Daerah serta daftarkan akun Operator dan Petugas Lapangan baru.',
         ],
         'users-list' => [
-            'title' => 'Direktori Seluruh Pengguna Sistem',
-            'subtitle' => 'Lihat daftar akun berdasarkan peran, cari pengguna, dan lakukan reset kata sandi.',
+            'title' => 'Daftar Pengguna & Pengaturan Kata Sandi',
+            'subtitle' => 'Lihat daftar seluruh akun berdasarkan peran, cari pengguna, dan atur ulang kata sandi.',
         ],
         'complaints-list' => [
-            'title' => 'Monitoring Seluruh Pengaduan Infrastruktur',
-            'subtitle' => 'Pantau seluruh laporan masyarakat lintas status, lokasi, dan progres penanganan regu.',
+            'title' => 'Daftar Seluruh Pengaduan Infrastruktur',
+            'subtitle' => 'Pantau seluruh laporan masyarakat lintas status, lokasi, dan perkembangan penanganan regu.',
         ],
         'regions-gis' => [
-            'title' => 'Manajemen Wilayah & Geofencing GIS Kolaka Utara',
-            'subtitle' => 'Atur batas wilayah administratif, koordinat 15 kecamatan & desa, serta geofencing laporan.',
+            'title' => 'Pengelolaan Wilayah & Batas Geografis',
+            'subtitle' => 'Atur batas wilayah administratif, koordinat 15 kecamatan, dan cakupan lokasi laporan.',
         ],
         'teams-management' => [
-            'title' => 'Manajemen Regu Lapangan & Mode Penugasan',
-            'subtitle' => 'Kelola regu kerja lapangan, koordinator regu, dan mode distribusi tugas sistem.',
+            'title' => 'Pengelolaan Regu Lapangan & Penugasan',
+            'subtitle' => 'Kelola regu kerja lapangan, koordinator regu, dan mekanisme pembagian tugas.',
         ],
         'reporting' => [
-            'title' => 'Laporan Eksekutif & Statistik Kinerja',
-            'subtitle' => 'Ringkasan capaian penanganan aduan, distribusi kategori kerusakan, dan ekspor laporan.',
+            'title' => 'Laporan Kinerja & Rekapitulasi Eksekutif',
+            'subtitle' => 'Ringkasan capaian penanganan aduan, sebaran kategori kerusakan, dan cetak laporan resmi.',
         ],
     ];
     $currentMeta = $tabMeta[$activeTab] ?? $tabMeta['users-management'];
@@ -177,47 +177,47 @@
             class="admin-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'users-management' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
             <i data-lucide="user-plus" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
-                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Tambah &amp; Pimpinan</span>
+                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Kelola Akun</span>
             </div>
         </button>
 
-        <!-- 2. Tab Direktori Pengguna -->
+        <!-- 2. Tab Daftar Pengguna -->
         <button type="button" onclick="switchAdminTab('users-list')" id="tabBtn-users-list"
             class="admin-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'users-list' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
             <i data-lucide="users" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
-                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Direktori Akun</span>
+                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Daftar Pengguna</span>
             </div>
             <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'users-list' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
                 {{ $users->count() }}
             </span>
         </button>
 
-        <!-- 3. Tab Semua Pengaduan -->
+        <!-- 3. Tab Daftar Aduan -->
         <button type="button" onclick="switchAdminTab('complaints-list')" id="tabBtn-complaints-list"
             class="admin-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'complaints-list' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
             <i data-lucide="layers" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
-                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Semua Aduan</span>
+                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Daftar Aduan</span>
             </div>
             <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'complaints-list' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
                 {{ $complaints->count() }}
             </span>
         </button>
 
-        <!-- 4. Tab Wilayah & Peta GIS -->
+        <!-- 4. Tab Peta Wilayah -->
         <button type="button" onclick="switchAdminTab('regions-gis')" id="tabBtn-regions-gis"
             class="admin-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'regions-gis' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
             <i data-lucide="map" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
-                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Wilayah &amp; GIS</span>
+                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Peta Wilayah</span>
             </div>
             <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'regions-gis' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
                 {{ count($districtStats ?? $regions) }}
             </span>
         </button>
 
-        <!-- 5. Tab Regu & Mode Penugasan -->
+        <!-- 5. Tab Regu & Tugas -->
         <button type="button" onclick="switchAdminTab('teams-management')" id="tabBtn-teams-management"
             class="admin-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'teams-management' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
             <i data-lucide="users-2" class="w-4 h-4 shrink-0 text-current"></i>
@@ -229,12 +229,12 @@
             </span>
         </button>
 
-        <!-- 6. Tab Laporan Eksekutif -->
+        <!-- 6. Tab Laporan Kinerja -->
         <button type="button" onclick="switchAdminTab('reporting')" id="tabBtn-reporting"
             class="admin-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'reporting' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
             <i data-lucide="bar-chart-3" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
-                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Laporan</span>
+                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Laporan Kinerja</span>
             </div>
         </button>
     </div>
@@ -981,15 +981,15 @@
                         </h4>
                     </div>
                 </div>
-                <div class="flex flex-wrap items-center gap-3 text-xs font-semibold">
-                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#EF4444]"></span> Verifikasi</span>
-                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#1E40AF]"></span> Ditugaskan</span>
-                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#F59E0B]"></span> Sedang Dikerjakan</span>
-                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#F59E0B]"></span> Validasi</span>
-                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#10B981]"></span> Selesai</span>
-                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#DC2626]"></span> Ditolak</span>
-                    <button type="button" onclick="resetAdminRegionMapView()" class="ml-2 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition flex items-center gap-1.5 cursor-pointer">
-                        <i data-lucide="focus" class="w-3.5 h-3.5"></i>
+                <div class="flex items-center gap-2 sm:gap-3 text-[10px] sm:text-xs font-semibold overflow-x-auto whitespace-nowrap w-full sm:w-auto pb-0.5 sm:pb-0">
+                    <span class="inline-flex items-center gap-1 shrink-0"><span class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#EF4444]"></span> Verifikasi</span>
+                    <span class="inline-flex items-center gap-1 shrink-0"><span class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#1E40AF]"></span> Ditugaskan</span>
+                    <span class="inline-flex items-center gap-1 shrink-0"><span class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#F59E0B]"></span> <span class="hidden sm:inline">Sedang </span>Dikerjakan</span>
+                    <span class="inline-flex items-center gap-1 shrink-0"><span class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#F59E0B]"></span> Validasi</span>
+                    <span class="inline-flex items-center gap-1 shrink-0"><span class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#10B981]"></span> Selesai</span>
+                    <span class="inline-flex items-center gap-1 shrink-0"><span class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#DC2626]"></span> Ditolak</span>
+                    <button type="button" onclick="resetAdminRegionMapView()" class="ml-1 sm:ml-2 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[10px] sm:text-xs transition inline-flex items-center gap-1.5 cursor-pointer shrink-0">
+                        <i data-lucide="focus" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                         <span>Fokus Lasusua</span>
                     </button>
                 </div>
@@ -2340,28 +2340,28 @@
 <script>
     const adminMeta = {
         'users-management': {
-            title: 'Pengaturan Akun Pimpinan & Tambah Petugas',
-            subtitle: 'Perbarui data akun Kepala Daerah (Bupati) serta tambah akun Operator atau Petugas Lapangan.'
+            title: 'Pengelolaan Akun Pimpinan & Petugas',
+            subtitle: 'Perbarui akun Kepala Daerah serta daftarkan akun Operator dan Petugas Lapangan baru.'
         },
         'users-list': {
-            title: 'Direktori Seluruh Pengguna Sistem',
-            subtitle: 'Lihat daftar akun berdasarkan peran, cari pengguna, dan lakukan reset kata sandi.'
+            title: 'Daftar Pengguna & Pengaturan Kata Sandi',
+            subtitle: 'Lihat daftar seluruh akun berdasarkan peran, cari pengguna, dan atur ulang kata sandi.'
         },
         'complaints-list': {
-            title: 'Monitoring Seluruh Pengaduan Infrastruktur',
-            subtitle: 'Pantau seluruh laporan masyarakat lintas status, lokasi, dan progres penanganan regu.'
+            title: 'Daftar Seluruh Pengaduan Infrastruktur',
+            subtitle: 'Pantau seluruh laporan masyarakat lintas status, lokasi, dan perkembangan penanganan regu.'
         },
         'regions-gis': {
-            title: 'Manajemen Wilayah & Geofencing GIS Kolaka Utara',
-            subtitle: 'Atur batas wilayah administratif, koordinat 15 kecamatan & desa, serta geofencing laporan.'
+            title: 'Pengelolaan Wilayah & Batas Geografis',
+            subtitle: 'Atur batas wilayah administratif, koordinat 15 kecamatan, dan cakupan lokasi laporan.'
         },
         'teams-management': {
-            title: 'Manajemen Regu Lapangan & Mode Penugasan',
-            subtitle: 'Kelola regu kerja lapangan, koordinator regu, dan mode distribusi tugas sistem.'
+            title: 'Pengelolaan Regu Lapangan & Penugasan',
+            subtitle: 'Kelola regu kerja lapangan, koordinator regu, dan mekanisme pembagian tugas.'
         },
         'reporting': {
-            title: 'Laporan Eksekutif & Statistik Kinerja',
-            subtitle: 'Ringkasan capaian penanganan aduan, distribusi kategori kerusakan, dan ekspor laporan.'
+            title: 'Laporan Kinerja & Rekapitulasi Eksekutif',
+            subtitle: 'Ringkasan capaian penanganan aduan, sebaran kategori kerusakan, dan cetak laporan resmi.'
         }
     };
 
