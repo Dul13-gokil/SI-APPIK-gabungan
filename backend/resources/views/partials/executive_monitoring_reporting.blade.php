@@ -1,5 +1,68 @@
 <!-- Modul Monitoring Eksekutif & Pelaporan Resmi -->
 @php
+    $rawReports = $allComplaintsForReport ?? collect();
+    $availableReportPeriods = $rawReports
+        ->filter(fn($c) => !empty($c->created_at))
+        ->map(fn($c) => \Carbon\Carbon::parse($c->created_at)->format('Y-m'))
+        ->unique()
+        ->sortDesc()
+        ->values()
+        ->mapWithKeys(function($ym) {
+            $dt = \Carbon\Carbon::createFromFormat('Y-m', $ym)->locale('id');
+            return [$ym => $dt->translatedFormat('F Y')];
+        });
+
+    $selectedReportPeriod = request('report_period', 'all');
+    if ($selectedReportPeriod !== 'all' && !$availableReportPeriods->has($selectedReportPeriod)) {
+        $selectedReportPeriod = 'all';
+    }
+
+    $repPeriodLabel = $selectedReportPeriod === 'all'
+        ? 'Semua Periode'
+        : ($availableReportPeriods->get($selectedReportPeriod) ?? 'Semua Periode');
+
+    $allReports = $selectedReportPeriod === 'all'
+        ? $rawReports
+        : $rawReports->filter(fn($c) => $c->created_at && \Carbon\Carbon::parse($c->created_at)->format('Y-m') === $selectedReportPeriod)->values();
+
+    if ($selectedReportPeriod !== 'all') {
+        $rTotal = $allReports->count();
+        $rDone = $allReports->whereIn('status', ['COMPLETED', 'CLOSED'])->count();
+        $summary = [
+            'total'                => $rTotal,
+            'pending'              => $allReports->whereIn('status', ['SUBMITTED', 'VERIFICATION', 'VERIFIED'])->count(),
+            'dispatched'           => $allReports->where('status', 'DISPATCHED')->count(),
+            'in_progress'          => $allReports->whereIn('status', ['IN_PROGRESS', 'REVISION_REQUIRED'])->count(),
+            'waiting_verification' => $allReports->where('status', 'WAITING_VERIFICATION')->count(),
+            'completed'            => $rDone,
+            'rejected'             => $allReports->where('status', 'REJECTED')->count(),
+            'completion_rate'      => $rTotal > 0 ? round(($rDone / $rTotal) * 100) : 0,
+        ];
+
+        $categories = $categories->map(function($cat) use ($allReports) {
+            $clone = clone $cat;
+            $clone->complaints_count = $allReports->where('category_id', $cat->id)->count();
+            return $clone;
+        });
+
+        $activeDistricts = collect($districtStats ?? [])->map(function($d) use ($allReports) {
+            $distName = strtolower(str_replace('kecamatan ', '', $d['district'] ?? ''));
+            $villName = strtolower(str_replace(['desa ', 'kelurahan '], '', $d['village'] ?? ''));
+            $matched = $allReports->filter(function($cmp) use ($d, $distName, $villName) {
+                $addr = strtolower($cmp->address ?? '');
+                return (isset($d['id']) && $cmp->region_id === $d['id'])
+                    || ($distName && str_contains($addr, $distName))
+                    || ($villName && str_contains($addr, $villName));
+            });
+            $d['total'] = $matched->count();
+            $d['completed'] = $matched->whereIn('status', ['COMPLETED', 'CLOSED'])->count();
+            $d['rejected'] = $matched->where('status', 'REJECTED')->count();
+            return $d;
+        })->filter(fn($d) => ($d['total'] ?? 0) > 0)->values();
+    } else {
+        $activeDistricts = collect($districtStats ?? [])->filter(fn($d) => ($d['total'] ?? 0) > 0)->values();
+    }
+
     $totalOnTime = $departments->sum('completed_tasks');
     $totalLate = $departments->sum(fn($d) => max(0, ($d->total_tasks ?? 0) - ($d->completed_tasks ?? 0)));
     $totalAssigned = $departments->sum('total_tasks');
@@ -13,10 +76,8 @@
     $operatorPercent = round(($operatorCount / $totalWorkload) * 100);
     $deptPercent = max(0, 100 - $fieldPercent - $operatorPercent);
 
-    $allReports = $allComplaintsForReport ?? collect();
     $minorCount = $allReports->where('damage_type', '!=', 'major')->count();
     $majorCount = $allReports->where('damage_type', 'major')->count();
-    $activeDistricts = collect($districtStats ?? [])->filter(fn($d) => ($d['total'] ?? 0) > 0)->values();
 
     $avgDays = $avgPerformance['overall_days'] ?? 4.1;
     $sopTargetDays = $avgPerformance['sop_target_days'] ?? 5.0;
@@ -27,50 +88,63 @@
         'OPERATOR' => 'Operator Verifikasi PUPR',
         default => 'Pejabat Berwenang',
     };
-    $docNumber = 'LAP-PUPR/' . now()->format('Y/m') . '/' . str_pad((string)($summary['total'] ?? 0), 3, '0', STR_PAD_LEFT);
+    $docNumber = 'LAP-PUPR/' . ($selectedReportPeriod === 'all' ? now()->format('Y/m') : str_replace('-', '/', $selectedReportPeriod)) . '/' . str_pad((string)($summary['total'] ?? 0), 3, '0', STR_PAD_LEFT);
+    $totalRep = max(1, (int)($summary['total'] ?? 0));
+    $minorPct = ($minorCount + $majorCount) > 0 ? round(($minorCount / ($minorCount + $majorCount)) * 100) : 100;
+    $reportTeams = isset($teams) ? $teams : \App\Models\Team::with('leader')->get();
 @endphp
 
-<!-- 1. TOOLBAR AKSI LAPORAN RESMI (PDF) — BERSIH, KONSISTEN, TANPA GRADIENT -->
-<div class="card-white rounded-2xl p-4 sm:p-5 bg-white border border-[#E2E8F0] flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+<!-- 1. TOOLBAR AKSI LAPORAN RESMI (PDF) — SI-APPIK V2 -->
+<div class="card-white rounded-[20px] p-4 sm:p-5 bg-white border border-[#E2E8F0] flex flex-col xl:flex-row xl:items-center justify-between gap-4">
     <div class="flex items-center gap-3 min-w-0">
-        <div class="w-10 h-10 rounded-xl bg-slate-50 border border-slate-200 text-[#1E3A8A] flex items-center justify-center shrink-0">
+        <div class="w-10 h-10 rounded-xl bg-[#EFF6FF] border border-[#BFDBFE] text-[#2563EB] flex items-center justify-center shrink-0">
             <i data-lucide="file-check-2" class="w-5 h-5"></i>
         </div>
         <div class="min-w-0 space-y-0.5">
-            <span class="text-[10.5px] font-bold uppercase tracking-wider text-[#1E3A8A] block truncate">
-                Dokumen Rekapitulasi &bull; Dinas PUPR
+            <span class="text-[10px] font-bold uppercase tracking-wider text-[#2563EB] block truncate">
+                Dokumen Rekapitulasi &bull; Dinas PUPR &bull; {{ $docNumber }}
             </span>
-            <h3 class="font-outfit font-bold text-sm sm:text-lg text-slate-900 tracking-tight leading-snug">
-                Pelaporan &amp; Evaluasi Kinerja Infrastruktur
+            <h3 class="font-outfit font-bold text-base sm:text-lg text-[#0F172A] tracking-tight leading-snug">
+                Laporan &amp; Evaluasi Kinerja Infrastruktur
             </h3>
         </div>
     </div>
 
-    <!-- Tombol Aksi & Pilih Format Dokumen -->
-    <div class="flex flex-col sm:flex-row sm:items-center gap-2 w-full lg:w-auto shrink-0">
-        <!-- Switcher Format Cepat -->
-        <div class="grid grid-cols-2 sm:inline-flex items-center p-1 rounded-xl bg-slate-100 border border-slate-200 w-full sm:w-auto" role="group" aria-label="Pilih Format Laporan">
+    <!-- Filter Periode (Bulan & Tahun) + Tombol Aksi & Pilih Format Dokumen -->
+    <div class="flex flex-col sm:flex-row sm:items-center gap-2 w-full xl:w-auto shrink-0 flex-wrap">
+        <!-- Filter Periode Bulan & Tahun (Hanya periode yang memiliki laporan masuk) -->
+        <div class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] w-full sm:w-auto">
+            <i data-lucide="calendar" class="w-3.5 h-3.5 text-[#2563EB] shrink-0"></i>
+            <select id="reportPeriodSelect" onchange="applyReportPeriodFilter(this.value)"
+                class="bg-transparent text-xs font-bold text-[#0F172A] focus:outline-none cursor-pointer pr-1 w-full sm:w-auto"
+                aria-label="Pilih Periode Bulan dan Tahun Laporan">
+                <option value="all" {{ $selectedReportPeriod === 'all' ? 'selected' : '' }}>Semua Periode</option>
+                @foreach($availableReportPeriods as $ymVal => $ymLabel)
+                    <option value="{{ $ymVal }}" {{ $selectedReportPeriod === $ymVal ? 'selected' : '' }}>{{ $ymLabel }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="grid grid-cols-2 sm:inline-flex items-center p-1 rounded-xl bg-[#F1F5F9] border border-[#E2E8F0] w-full sm:w-auto" role="group" aria-label="Pilih Format Laporan">
             <button type="button" onclick="setReportFormat('professional')" data-format-btn="professional"
-                class="px-3 py-1.5 rounded-lg text-[11px] font-bold transition cursor-pointer text-center bg-white text-[#1E3A8A] border border-slate-200 shadow-2xs">
+                class="px-3 py-1.5 rounded-lg text-[11px] font-bold transition cursor-pointer text-center bg-white text-[#2563EB] border border-[#E2E8F0]">
                 Profesional
             </button>
             <button type="button" onclick="setReportFormat('ats')" data-format-btn="ats"
-                class="px-3 py-1.5 rounded-lg text-[11px] font-bold transition cursor-pointer text-center text-slate-600 hover:text-slate-900 border border-transparent">
+                class="px-3 py-1.5 rounded-lg text-[11px] font-bold transition cursor-pointer text-center text-[#475569] hover:text-[#0F172A] border border-transparent">
                 Format ATS
             </button>
         </div>
 
         <div class="grid grid-cols-2 sm:flex items-center gap-2 w-full sm:w-auto">
-            <!-- Pratinjau Dokumen -->
             <button type="button" onclick="openReportPreviewModal()"
-                class="px-3 py-2 rounded-xl text-xs font-bold bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 transition flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap">
-                <i data-lucide="eye" class="w-4 h-4 text-[#1E3A8A] shrink-0"></i>
+                class="px-3.5 py-2 rounded-xl text-xs font-bold bg-[#F8FAFC] hover:bg-slate-100 text-[#334155] border border-[#E2E8F0] transition flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap">
+                <i data-lucide="eye" class="w-4 h-4 text-[#2563EB] shrink-0"></i>
                 <span>Pratinjau</span>
             </button>
 
-            <!-- Cetak Dokumen PDF -->
             <button type="button" onclick="printOfficialReportPdf()"
-                class="px-3.5 py-2 rounded-xl text-xs font-bold bg-[#1E3A8A] hover:bg-[#172554] text-white transition flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap">
+                class="px-4 py-2 rounded-xl text-xs font-bold bg-[#2563EB] hover:bg-[#1D4ED8] text-white transition flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap">
                 <i data-lucide="printer" class="w-4 h-4 shrink-0"></i>
                 <span>Cetak PDF</span>
             </button>
@@ -78,122 +152,104 @@
     </div>
 </div>
 
-<!-- 2. BARIS 1 GRAFIK: STATUS PROGRES SIKLUS PENANGANAN (KIRI) & SEBARAN KATEGORI (KANAN) -->
-<div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
-    <!-- 1. STATUS PROGRES SIKLUS PENANGANAN PENGADUAN (7 Kolom) -->
-    <div class="lg:col-span-7 card-white rounded-2xl p-5 bg-white border border-[#E2E8F0] flex flex-col justify-between space-y-4">
-        <div class="space-y-3">
-            <div class="flex items-start justify-between gap-3 border-b border-slate-100 pb-3">
-                <div class="flex items-start gap-2.5 min-w-0">
-                    <div class="w-9 h-9 rounded-xl bg-slate-50 border border-slate-200 text-[#1E3A8A] flex items-center justify-center shrink-0">
-                        <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
-                    </div>
-                    <div class="min-w-0">
-                        <h3 class="font-outfit font-bold text-sm sm:text-base text-slate-900 leading-tight">
-                            Status Progres Siklus Penanganan Pengaduan
-                        </h3>
-                    </div>
-                </div>
-                <span class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-50 text-slate-700 border border-slate-200 shrink-0">
-                    Total: {{ $summary['total'] }} Laporan
-                </span>
-            </div>
+<!-- 2. 4-CARD EXECUTIVE PERFORMANCE KPI STRIP -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="rounded-2xl p-4 bg-white border border-[#E2E8F0] space-y-1">
+        <span class="text-[10px] font-bold uppercase tracking-wider text-[#64748B] block">Total Aduan Masuk</span>
+        <span class="font-outfit font-bold text-2xl text-[#0F172A] block">{{ $summary['total'] ?? 0 }} Laporan</span>
+        <span class="text-[11px] text-[#64748B] block">Periode: {{ $repPeriodLabel }}</span>
+    </div>
 
-            <!-- Canvas Chart.js Status Bar Chart -->
-            <div class="relative h-60 sm:h-64 w-full">
-                <canvas id="complaintStatusChart"></canvas>
-            </div>
+    <div class="rounded-2xl p-4 bg-white border border-[#E2E8F0] space-y-1">
+        <span class="text-[10px] font-bold uppercase tracking-wider text-[#64748B] block">Tingkat Penyelesaian</span>
+        <span class="font-outfit font-bold text-2xl text-[#10B981] block">{{ $summary['completion_rate'] ?? 0 }}%</span>
+        <span class="text-[11px] text-[#64748B] block">{{ $summary['completed'] ?? 0 }} dari {{ $summary['total'] ?? 0 }} aduan tuntas</span>
+    </div>
+
+    <div class="rounded-2xl p-4 bg-white border border-[#E2E8F0] space-y-1">
+        <span class="text-[10px] font-bold uppercase tracking-wider text-[#64748B] block">Kepatuhan SLA (&le; {{ $sopTargetDays }} Hari)</span>
+        <span class="font-outfit font-bold text-2xl text-[#2563EB] block">{{ $slaComplianceRate }}%</span>
+        <span class="text-[11px] text-[#64748B] block">Rata-rata {{ $avgDays }} hari / aduan</span>
+    </div>
+
+    <div class="rounded-2xl p-4 bg-white border border-[#E2E8F0] space-y-1">
+        <span class="text-[10px] font-bold uppercase tracking-wider text-[#64748B] block">Klasifikasi Kerusakan</span>
+        <span class="font-outfit font-bold text-xl text-[#0F172A] block pt-0.5">{{ $minorCount }} Ringan / {{ $majorCount }} Berat</span>
+        <span class="text-[11px] text-[#64748B] block">{{ $minorPct }}% kerusakan titik minor</span>
+    </div>
+</div>
+
+<!-- 3. BARIS ANALITIK: STATUS SIKLUS PENANGANAN (7 KOLOM) & SEBARAN KATEGORI (5 KOLOM) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+    <!-- Kiri: Status Progres Siklus Penanganan -->
+    <div class="lg:col-span-7 rounded-[20px] p-5 bg-white border border-[#E2E8F0] flex flex-col justify-between space-y-4">
+        <div class="flex items-center justify-between gap-2">
+            <h3 class="font-outfit font-bold text-[15px] text-[#0F172A]">
+                Status Progres Siklus Penanganan Pengaduan
+            </h3>
+            <span class="text-xs font-bold text-[#2563EB]">
+                Total: {{ $summary['total'] ?? 0 }} Laporan
+            </span>
         </div>
 
-        <!-- Mini Summary 6 Status Card Grid (Netral & Seragam) -->
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 pt-2.5 border-t border-slate-100">
-            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 flex flex-col justify-between">
-                <span class="text-[9.5px] font-bold text-slate-500 uppercase tracking-wider">Total Laporan</span>
-                <div class="flex items-baseline justify-between mt-1">
-                    <span class="font-outfit font-extrabold text-lg text-slate-900">{{ $summary['total'] }}</span>
-                    <span class="text-[9.5px] font-bold text-slate-400">100%</span>
+        @php
+            $stageRows = [
+                ['label' => 'Verifikasi', 'count' => $summary['pending'] ?? 0, 'color' => '#EF4444'],
+                ['label' => 'Ditugaskan', 'count' => $summary['dispatched'] ?? 0, 'color' => '#2563EB'],
+                ['label' => 'Dikerjakan', 'count' => $summary['in_progress'] ?? 0, 'color' => '#F59E0B'],
+                ['label' => 'Validasi', 'count' => $summary['waiting_verification'] ?? 0, 'color' => '#F59E0B'],
+                ['label' => 'Selesai', 'count' => $summary['completed'] ?? 0, 'color' => '#10B981'],
+                ['label' => 'Ditolak', 'count' => $summary['rejected'] ?? 0, 'color' => '#DC2626'],
+            ];
+        @endphp
+
+        <div class="space-y-3.5 my-auto">
+            @foreach($stageRows as $st)
+                @php $pct = ($summary['total'] ?? 0) > 0 ? round(($st['count'] / $totalRep) * 100) : 0; @endphp
+                <div class="grid grid-cols-12 items-center gap-3">
+                    <div class="col-span-4 sm:col-span-3 text-xs font-semibold text-[#334155]">
+                        {{ $st['label'] }}
+                    </div>
+                    <div class="col-span-5 sm:col-span-6">
+                        <div class="w-full h-2.5 rounded-full bg-[#F1F5F9] overflow-hidden">
+                            <div class="h-full rounded-full transition-all duration-300" style="width: {{ $pct }}%; background-color: {{ $st['color'] }};"></div>
+                        </div>
+                    </div>
+                    <div class="col-span-3 text-right text-[11px] font-bold {{ $pct > 0 ? 'text-[#0F172A]' : 'text-[#64748B]' }} whitespace-nowrap">
+                        {{ $st['count'] }} dari {{ $summary['total'] ?? 0 }} ({{ $pct }}%)
+                    </div>
                 </div>
-            </div>
-            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 flex flex-col justify-between">
-                <span class="text-[9.5px] font-bold text-slate-500 uppercase tracking-wider">Verifikasi</span>
-                <div class="flex items-baseline justify-between mt-1">
-                    <span class="font-outfit font-extrabold text-lg text-slate-900">{{ $summary['pending'] }}</span>
-                    <span class="text-[9.5px] font-bold text-slate-400">{{ $summary['total'] > 0 ? round(($summary['pending'] / $summary['total']) * 100) : 0 }}%</span>
-                </div>
-            </div>
-            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 flex flex-col justify-between">
-                <span class="text-[9.5px] font-bold text-slate-500 uppercase tracking-wider">Ditugaskan</span>
-                <div class="flex items-baseline justify-between mt-1">
-                    <span class="font-outfit font-extrabold text-lg text-slate-900">{{ $summary['dispatched'] }}</span>
-                    <span class="text-[9.5px] font-bold text-slate-400">{{ $summary['total'] > 0 ? round(($summary['dispatched'] / $summary['total']) * 100) : 0 }}%</span>
-                </div>
-            </div>
-            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 flex flex-col justify-between">
-                <span class="text-[9.5px] font-bold text-slate-500 uppercase tracking-wider">Dikerjakan</span>
-                <div class="flex items-baseline justify-between mt-1">
-                    <span class="font-outfit font-extrabold text-lg text-slate-900">{{ $summary['in_progress'] }}</span>
-                    <span class="text-[9.5px] font-bold text-slate-400">{{ $summary['total'] > 0 ? round(($summary['in_progress'] / $summary['total']) * 100) : 0 }}%</span>
-                </div>
-            </div>
-            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 flex flex-col justify-between">
-                <span class="text-[9.5px] font-bold text-slate-500 uppercase tracking-wider">Selesai</span>
-                <div class="flex items-baseline justify-between mt-1">
-                    <span class="font-outfit font-extrabold text-lg text-slate-900">{{ $summary['completed'] }}</span>
-                    <span class="text-[9.5px] font-bold text-slate-400">{{ $summary['completion_rate'] }}%</span>
-                </div>
-            </div>
-            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 flex flex-col justify-between">
-                <span class="text-[9.5px] font-bold text-slate-500 uppercase tracking-wider">Ditolak</span>
-                <div class="flex items-baseline justify-between mt-1">
-                    <span class="font-outfit font-extrabold text-lg text-slate-900">{{ $summary['rejected'] ?? 0 }}</span>
-                    <span class="text-[9.5px] font-bold text-slate-400">{{ ($summary['total'] ?? 0) > 0 ? round((($summary['rejected'] ?? 0) / $summary['total']) * 100) : 0 }}%</span>
-                </div>
-            </div>
+            @endforeach
         </div>
     </div>
 
-    <!-- 2. SEBARAN MASALAH PER KATEGORI INFRASTRUKTUR (5 Kolom) -->
-    <div class="lg:col-span-5 card-white rounded-2xl p-5 bg-white border border-[#E2E8F0] flex flex-col justify-between space-y-4">
-        <div class="space-y-3">
-            <div class="flex items-start justify-between gap-3 border-b border-slate-100 pb-3">
-                <div class="flex items-start gap-2.5 min-w-0">
-                    <div class="w-9 h-9 rounded-xl bg-slate-50 border border-slate-200 text-[#1E3A8A] flex items-center justify-center shrink-0">
-                        <i data-lucide="layers" class="w-4 h-4"></i>
-                    </div>
-                    <div class="min-w-0">
-                        <h3 class="font-outfit font-bold text-sm sm:text-base text-slate-900 leading-tight">
-                            Sebaran Masalah per Kategori Infrastruktur
-                        </h3>
-                    </div>
-                </div>
-                <span class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-50 text-slate-700 border border-slate-200 shrink-0">
-                    {{ $categories->count() }} Kategori
-                </span>
-            </div>
-
-            <!-- Canvas Chart.js Doughnut Kategori -->
-            <div class="relative h-56 w-full flex items-center justify-center">
-                <canvas id="categoryDistributionChart"></canvas>
-            </div>
+    <!-- Kanan: Sebaran Kategori Infrastruktur -->
+    <div class="lg:col-span-5 rounded-[20px] p-5 bg-white border border-[#E2E8F0] flex flex-col justify-between space-y-4">
+        <div class="flex items-center justify-between gap-2">
+            <h3 class="font-outfit font-bold text-[15px] text-[#0F172A]">
+                Sebaran Kategori Infrastruktur
+            </h3>
+            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#F8FAFC] text-[#475569] border border-[#E2E8F0]">
+                {{ $categories->count() }} Kategori
+            </span>
         </div>
 
-        <!-- List Legend Kategori Rapi -->
         @php
-            $bluePalette = ['#1E3A8A', '#2563EB', '#3B82F6', '#60A5FA', '#93C5FD', '#BFDBFE'];
+            $catColors = ['#2563EB', '#10B981', '#F59E0B', '#EF4444', '#6366F1'];
         @endphp
-        <div class="space-y-2 pt-2.5 border-t border-slate-100 max-h-48 overflow-y-auto">
+        <div class="space-y-2.5 flex-1 max-h-[250px] overflow-y-auto pr-1">
             @foreach($categories as $cat)
                 @php
-                    $catColor = $bluePalette[$loop->index % count($bluePalette)];
+                    $cColor = $catColors[$loop->index % count($catColors)];
+                    $cPct = ($summary['total'] ?? 0) > 0 ? round(($cat->complaints_count / $totalRep) * 100) : 0;
                 @endphp
-                <div class="flex items-center justify-between py-2 px-3 rounded-xl bg-slate-50 border border-slate-200/80">
-                    <div class="flex items-center gap-2.5 min-w-0 pr-3">
-                        <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color: {{ $catColor }};"></span>
-                        <span class="font-semibold text-slate-800 text-xs truncate">{{ $cat->name }}</span>
+                <div class="p-3.5 rounded-[14px] bg-[#F8FAFC] border border-[#E2E8F0] space-y-2">
+                    <div class="flex items-center justify-between gap-2 text-xs">
+                        <span class="font-bold text-[#0F172A] truncate">{{ $cat->name }}</span>
+                        <span class="font-bold shrink-0" style="color: {{ $cColor }};">{{ $cat->complaints_count }} Aduan ({{ $cPct }}%)</span>
                     </div>
-                    <div class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-white border border-slate-200 shrink-0">
-                        <span class="font-outfit font-extrabold text-xs text-slate-900">{{ $cat->complaints_count }}</span>
-                        <span class="text-[10.5px] font-medium text-slate-500">Laporan</span>
+                    <div class="w-full h-2 rounded-full bg-[#E2E8F0] overflow-hidden">
+                        <div class="h-full rounded-full" style="width: {{ $cPct }}%; background-color: {{ $cColor }};"></div>
                     </div>
                 </div>
             @endforeach
@@ -201,189 +257,126 @@
     </div>
 </div>
 
-<!-- 3. BARIS 2 GRAFIK: KINERJA KETEPATAN WAKTU DINAS OPD (KIRI) & PERSENTASE KINERJA PENANGANAN TUGAS (KANAN) -->
-<div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
-    <!-- 3. KINERJA KETEPATAN WAKTU PENANGANAN DINAS (OPD) (7 Kolom) -->
-    <div class="lg:col-span-7 card-white rounded-2xl p-5 bg-white border border-[#E2E8F0] flex flex-col justify-between space-y-4">
-        <div class="space-y-3">
-            <div class="flex items-start justify-between gap-3 border-b border-slate-100 pb-3">
-                <div class="flex items-start gap-2.5 min-w-0">
-                    <div class="w-9 h-9 rounded-xl bg-slate-50 border border-slate-200 text-[#1E3A8A] flex items-center justify-center shrink-0">
-                        <i data-lucide="briefcase" class="w-4 h-4"></i>
-                    </div>
-                    <div class="min-w-0">
-                        <h3 class="font-outfit font-bold text-sm sm:text-base text-slate-900 leading-tight">
-                            Kinerja Ketepatan Waktu Penanganan Dinas (OPD)
-                        </h3>
-                    </div>
-                </div>
-                <span class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-50 text-slate-700 border border-slate-200 shrink-0">
-                    SLA: {{ $slaComplianceRate }}%
-                </span>
-            </div>
-
-            <!-- Canvas Chart.js OPD Bar Chart -->
-            <div class="relative h-60 sm:h-64 w-full">
-                <canvas id="opdPerformanceChart"></canvas>
-            </div>
+<!-- 4. BARIS TABEL EKSEKUTIF: KINERJA REGU PUPR (KIRI) & REKAPITULASI ADUAN PDF (KANAN) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+    <!-- Kiri: Evaluasi Kinerja Regu Lapangan PUPR -->
+    <div class="lg:col-span-6 rounded-[20px] p-5 bg-white border border-[#E2E8F0] flex flex-col space-y-3.5">
+        <div class="flex items-center justify-between gap-2">
+            <h3 class="font-outfit font-bold text-[15px] text-[#0F172A]">
+                Evaluasi Kinerja Regu Lapangan PUPR
+            </h3>
+            <span class="text-[11px] font-semibold text-[#64748B]">{{ $reportTeams->count() }} Regu</span>
         </div>
 
-        <!-- Ringkasan Angka Metrik di Bawah Grafik (Seragam 3 Kolom Netral) -->
-        <div class="grid grid-cols-3 gap-2.5 pt-2.5 border-t border-slate-100">
-            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 text-center">
-                <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Tepat Waktu</span>
-                <span class="font-outfit font-extrabold text-xl text-slate-900 block mt-0.5">{{ $totalOnTime }}</span>
-                <span class="text-[10px] text-slate-400 font-medium">Laporan Tuntas</span>
-            </div>
-            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 text-center">
-                <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Terlambat</span>
-                <span class="font-outfit font-extrabold text-xl text-slate-900 block mt-0.5">{{ $totalLate }}</span>
-                <span class="text-[10px] text-slate-400 font-medium">Melewati Batas SLA</span>
-            </div>
-            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 text-center">
-                <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Rasio SLA</span>
-                <span class="font-outfit font-extrabold text-xl text-slate-900 block mt-0.5">{{ $slaComplianceRate }}%</span>
-                <span class="text-[10px] text-slate-400 font-medium">Dinas PUPR</span>
-            </div>
+        <div class="space-y-2.5 flex-1">
+            @forelse($reportTeams as $rt)
+                @php
+                    $rtActive = \App\Models\Disposition::where('team_id', $rt->id)
+                        ->whereHas('complaint', fn($q) => $q->whereIn('status', ['DISPATCHED', 'IN_PROGRESS', 'WAITING_VERIFICATION', 'REVISION_REQUIRED']))
+                        ->count();
+                    $rtDone = \App\Models\Disposition::where('team_id', $rt->id)
+                        ->whereHas('complaint', fn($q) => $q->whereIn('status', ['COMPLETED', 'CLOSED']))
+                        ->count();
+                @endphp
+                <div class="p-3.5 rounded-[14px] bg-[#F8FAFC] border border-[#E2E8F0] flex items-center justify-between gap-3">
+                    <div class="min-w-0">
+                        <span class="font-outfit font-bold text-[13px] text-[#0F172A] block truncate">
+                            [{{ $rt->code }}] {{ $rt->name }}
+                        </span>
+                        <span class="text-[11px] text-[#64748B] block mt-0.5 truncate">
+                            Ketua: {{ $rt->leader?->name ?? 'Belum ditunjuk' }} &bull; {{ $rtActive }} Tugas Aktif &bull; {{ $rtDone }} Tuntas
+                        </span>
+                    </div>
+                    @if($rtDone > 0)
+                        <span class="text-xs font-bold text-[#10B981] shrink-0 whitespace-nowrap">SLA 100%</span>
+                    @else
+                        <span class="text-xs font-bold text-[#2563EB] shrink-0 whitespace-nowrap">Siap {{ max(0, 3 - $rtActive) }}/3</span>
+                    @endif
+                </div>
+            @empty
+                <div class="p-6 text-center text-xs text-[#64748B] bg-[#F8FAFC] rounded-xl border border-[#E2E8F0]">
+                    Belum ada regu lapangan terdaftar.
+                </div>
+            @endforelse
         </div>
     </div>
 
-    <!-- 4. PERSENTASE KINERJA PENANGANAN TUGAS (5 Kolom) -->
-    <div class="lg:col-span-5 card-white rounded-2xl p-5 bg-white border border-[#E2E8F0] flex flex-col justify-between space-y-4">
-        <div class="space-y-3">
-            <div class="flex items-start justify-between gap-3 border-b border-slate-100 pb-3">
-                <div class="flex items-start gap-2.5 min-w-0">
-                    <div class="w-9 h-9 rounded-xl bg-slate-50 border border-slate-200 text-[#1E3A8A] flex items-center justify-center shrink-0">
-                        <i data-lucide="pie-chart" class="w-4 h-4"></i>
-                    </div>
-                    <div class="min-w-0">
-                        <h3 class="font-outfit font-bold text-sm sm:text-base text-slate-900 leading-tight">
-                            Persentase Kinerja Penanganan Tugas
-                        </h3>
-                    </div>
-                </div>
-                <span class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-50 text-slate-700 border border-slate-200 shrink-0">
-                    {{ $fieldCount + $operatorCount + $deptCount }} Aksi
-                </span>
-            </div>
-
-            <!-- Canvas Chart.js Doughnut Kinerja Peran -->
-            <div class="relative h-56 sm:h-60 w-full flex items-center justify-center">
-                <canvas id="stakeholderPerformanceChart"></canvas>
-            </div>
+    <!-- Kanan: Rekapitulasi Kinerja per Wilayah Kecamatan -->
+    <div class="lg:col-span-6 rounded-[20px] p-5 bg-white border border-[#E2E8F0] flex flex-col space-y-3.5">
+        <div class="flex items-center justify-between gap-2">
+            <h3 class="font-outfit font-bold text-[15px] text-[#0F172A]">
+                Rekapitulasi Kinerja per Wilayah Kecamatan
+            </h3>
+            <span class="text-[11px] font-semibold text-[#64748B]">{{ $activeDistricts->count() }} Kec. Aktif</span>
         </div>
 
-        <!-- 3 Legend Box Bersih & Netral -->
-        <div class="grid grid-cols-3 gap-2 pt-2.5 border-t border-slate-100">
-            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 text-center">
-                <div class="flex items-center justify-center gap-1.5 mb-1">
-                    <span class="w-2 h-2 rounded-full bg-[#3B82F6]"></span>
-                    <span class="text-[10px] font-bold text-slate-600 uppercase">Petugas</span>
+        <div class="space-y-2.5 flex-1 max-h-[300px] overflow-y-auto pr-1">
+            @forelse($activeDistricts as $dist)
+                @php
+                    $dTotal = (int)($dist['total'] ?? 0);
+                    $dDone = (int)($dist['completed'] ?? 0);
+                    $dRejected = (int)($dist['rejected'] ?? 0);
+                    $dProcess = max(0, $dTotal - $dDone - $dRejected);
+                    $dRate = $dTotal > 0 ? round(($dDone / $dTotal) * 100) : 0;
+                @endphp
+                <div class="p-3.5 rounded-[14px] bg-[#F8FAFC] border border-[#E2E8F0] flex items-center justify-between gap-3">
+                    <div class="min-w-0">
+                        <span class="font-outfit font-bold text-[13px] text-[#0F172A] block truncate">
+                            {{ $dist['district'] }}
+                        </span>
+                        <span class="text-[11px] text-[#64748B] block mt-0.5 truncate">
+                            {{ $dTotal }} Masuk &bull; {{ $dProcess }} Diproses &bull; {{ $dDone }} Selesai
+                        </span>
+                    </div>
+                    <span class="text-xs font-bold {{ $dRate >= 50 ? 'text-[#10B981]' : 'text-[#2563EB]' }} shrink-0 whitespace-nowrap">
+                        {{ $dRate }}% Tuntas
+                    </span>
                 </div>
-                <span class="font-outfit font-extrabold text-lg text-slate-900 block">{{ $fieldPercent }}%</span>
-                <span class="text-[10px] text-slate-400 font-medium">{{ $fieldCount }} Tindakan</span>
-            </div>
-            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 text-center">
-                <div class="flex items-center justify-center gap-1.5 mb-1">
-                    <span class="w-2 h-2 rounded-full bg-[#1E3A8A]"></span>
-                    <span class="text-[10px] font-bold text-slate-600 uppercase">Operator</span>
+            @empty
+                <div class="p-6 text-center text-xs text-[#64748B] bg-[#F8FAFC] rounded-xl border border-[#E2E8F0]">
+                    Belum ada aduan masuk per wilayah kecamatan.
                 </div>
-                <span class="font-outfit font-extrabold text-lg text-slate-900 block">{{ $operatorPercent }}%</span>
-                <span class="text-[10px] text-slate-400 font-medium">{{ $operatorCount }} Telaah</span>
-            </div>
-            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 text-center">
-                <div class="flex items-center justify-center gap-1.5 mb-1">
-                    <span class="w-2 h-2 rounded-full bg-[#10B981]"></span>
-                    <span class="text-[10px] font-bold text-slate-600 uppercase">Dinas PUPR</span>
-                </div>
-                <span class="font-outfit font-extrabold text-lg text-slate-900 block">{{ $deptPercent }}%</span>
-                <span class="text-[10px] text-slate-400 font-medium">{{ $deptCount }} Tuntas</span>
-            </div>
+            @endforelse
         </div>
     </div>
 </div>
 
-<!-- 4. RINGKASAN INDIKATOR KINERJA UTAMA (KPI), BENCHMARK SLA & TIPOLOGI KERUSAKAN -->
-<div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
-    <div class="card-white rounded-2xl p-4 bg-white border border-[#E2E8F0] space-y-1">
-        <span class="text-[10.5px] font-bold uppercase tracking-wider text-slate-500 block">Tingkat Ketuntasan</span>
-        <div class="flex items-baseline justify-between gap-2">
-            <span class="font-outfit font-extrabold text-2xl text-slate-900">{{ $summary['completion_rate'] ?? 0 }}%</span>
-            <span class="text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md">
-                {{ $summary['completed'] ?? 0 }}/{{ $summary['total'] ?? 0 }}
-            </span>
-        </div>
-    </div>
-
-    <div class="card-white rounded-2xl p-4 bg-white border border-[#E2E8F0] space-y-1">
-        <span class="text-[10.5px] font-bold uppercase tracking-wider text-slate-500 block">Rata-Rata Durasi Siklus</span>
-        <div class="flex items-baseline justify-between gap-2">
-            <span class="font-outfit font-extrabold text-2xl text-slate-900">{{ $avgDays }} <span class="text-sm font-bold text-slate-500">Hari</span></span>
-            <span class="text-[11px] font-semibold text-[#1E3A8A] bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-md">
-                SOP &le; {{ $sopTargetDays }} hr
-            </span>
-        </div>
-    </div>
-
-    <div class="card-white rounded-2xl p-4 bg-white border border-[#E2E8F0] space-y-1">
-        <span class="text-[10.5px] font-bold uppercase tracking-wider text-slate-500 block">Tipologi Kerusakan</span>
-        <div class="flex items-baseline justify-between gap-2">
-            <span class="font-outfit font-extrabold text-xl text-slate-900">{{ $minorCount }} Titik &bull; {{ $majorCount }} Ruas</span>
-        </div>
-    </div>
-
-    <div class="card-white rounded-2xl p-4 bg-white border border-[#E2E8F0] space-y-1">
-        <span class="text-[10.5px] font-bold uppercase tracking-wider text-slate-500 block">Wilayah Terdampak</span>
-        <div class="flex items-baseline justify-between gap-2">
-            <span class="font-outfit font-extrabold text-2xl text-slate-900">{{ $activeDistricts->count() }} <span class="text-sm font-bold text-slate-500">Kec.</span></span>
-            <span class="text-[11px] font-semibold text-slate-600 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md">
-                dari 15 Kec.
-            </span>
-        </div>
-    </div>
-</div>
-
-<!-- 5. MODAL PRATINJAU DOKUMEN REKAPITULASI (FORMAT PROFESIONAL & FORMAT ATS) -->
+<!-- 5. MODAL PRATINJAU DOKUMEN REKAPITULASI (FORMAT PROFESIONAL & FORMAT ATS — SI-APPIK V2) -->
 <div id="officialReportModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/65 flex items-center justify-center p-3 sm:p-5 overscroll-contain">
-    <div class="card-white rounded-2xl bg-white border border-slate-200 shadow-2xl max-w-4xl w-full max-h-[92vh] overflow-hidden flex flex-col relative">
+    <div class="card-white rounded-[24px] bg-white border border-[#E2E8F0] shadow-2xl max-w-4xl w-full max-h-[92vh] overflow-hidden flex flex-col relative">
 
         <!-- Header Modal Preview -->
-        <div class="px-4 sm:px-5 py-3 border-b border-slate-200 flex flex-wrap items-center justify-between bg-slate-50 gap-2.5 shrink-0 rounded-t-2xl">
-            <div class="flex items-center gap-2.5">
-                <div class="w-8 h-8 rounded-lg bg-[#1E3A8A] text-white flex items-center justify-center font-bold text-xs shrink-0">
-                    <i data-lucide="file-text" class="w-4 h-4"></i>
+        <div class="px-6 py-4 border-b border-[#E2E8F0] flex flex-wrap items-center justify-between bg-white gap-3 shrink-0">
+            <div class="flex items-center gap-3 min-w-0">
+                <div class="w-10 h-10 rounded-xl bg-[#EFF6FF] border border-blue-100 text-[#2563EB] flex items-center justify-center shrink-0">
+                    <i data-lucide="file-text" class="w-5 h-5"></i>
                 </div>
-                <div>
-                    <h4 class="font-outfit font-bold text-sm text-slate-900">
-                        Pratinjau Dokumen Rekapitulasi Resmi
+                <div class="min-w-0">
+                    <h4 class="font-outfit font-bold text-base text-[#0F172A] truncate">
+                        Pratinjau Dokumen Laporan Kinerja
                     </h4>
-                    <p id="modalReportFormatSubtitle" class="text-[11px] text-slate-500">
+                    <p id="modalReportFormatSubtitle" class="text-[11px] text-[#64748B] truncate">
                         Format Profesional Kedinasan &bull; Kabupaten Kolaka Utara
                     </p>
                 </div>
             </div>
 
-            <div class="flex flex-wrap items-center gap-2">
+            <div class="flex flex-wrap items-center gap-2.5 shrink-0">
                 <!-- Toggle Format Profesional vs Format ATS -->
-                <div class="inline-flex items-center p-1 rounded-xl bg-slate-200/70 border border-slate-200">
+                <div class="inline-flex items-center p-1 rounded-xl bg-[#F1F5F9] border border-[#E2E8F0]">
                     <button type="button" onclick="setReportFormat('professional')" data-format-btn="professional"
-                        class="px-2.5 py-1 rounded-lg text-[11px] font-bold transition cursor-pointer bg-white text-[#1E3A8A] border border-slate-200 shadow-2xs">
+                        class="px-3 py-1.5 rounded-lg text-[11px] font-bold transition cursor-pointer bg-white text-[#2563EB] border border-[#E2E8F0]">
                         Format Profesional
                     </button>
                     <button type="button" onclick="setReportFormat('ats')" data-format-btn="ats"
-                        class="px-2.5 py-1 rounded-lg text-[11px] font-bold transition cursor-pointer text-slate-600 hover:text-slate-900 border border-transparent">
+                        class="px-3 py-1.5 rounded-lg text-[11px] font-bold transition cursor-pointer text-[#475569] hover:text-[#0F172A] border border-transparent">
                         Format ATS
                     </button>
                 </div>
 
-                <button type="button" onclick="printOfficialReportPdf()"
-                    class="px-3.5 py-1.5 rounded-xl bg-[#1E3A8A] hover:bg-[#172554] text-white text-xs font-bold transition flex items-center gap-1.5 cursor-pointer">
-                    <i data-lucide="printer" class="w-3.5 h-3.5"></i>
-                    <span>Cetak PDF</span>
-                </button>
                 <button type="button" onclick="closeReportPreviewModal()"
-                    class="w-8 h-8 rounded-full bg-slate-200/70 hover:bg-slate-300 text-slate-700 flex items-center justify-center transition cursor-pointer shrink-0"
-                    title="Tutup">
+                    class="w-9 h-9 rounded-[10px] bg-white hover:bg-slate-100 text-slate-500 border border-[#E2E8F0] flex items-center justify-center transition cursor-pointer shrink-0"
+                    aria-label="Tutup">
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
             </div>
@@ -415,7 +408,7 @@
                                 Laporan Rekapitulasi Penanganan Pengaduan Infrastruktur
                             </h3>
                             <p class="text-[11px] text-slate-700">
-                                Periode Pelaporan: <strong>{{ now()->translatedFormat('F Y') }}</strong> &bull; No. Dokumen: <span class="font-mono font-semibold">{{ $docNumber }}</span>
+                                Periode Pelaporan: <strong>{{ $repPeriodLabel }}</strong> &bull; No. Dokumen: <span class="font-mono font-semibold">{{ $docNumber }}</span>
                             </p>
                         </div>
                         <div class="sm:text-right text-[10.5px] text-slate-700 shrink-0 space-y-0.5">
@@ -533,10 +526,51 @@
                         </div>
                     </div>
 
-                    <!-- V. REKAPITULASI PER KATEGORI INFRASTRUKTUR -->
+                    <!-- V. EVALUASI KINERJA REGU LAPANGAN PUPR -->
                     <div class="space-y-2">
                         <h4 class="font-outfit font-bold text-xs uppercase tracking-wider text-black border-b border-slate-300 pb-1">
-                            V. Rekapitulasi per Kategori Infrastruktur
+                            V. Evaluasi Kinerja Regu Lapangan PUPR
+                        </h4>
+                        <table class="w-full text-left border-collapse border border-slate-400 text-[11px]">
+                            <thead class="bg-slate-100 text-black font-bold">
+                                <tr>
+                                    <th class="border border-slate-400 py-1.5 px-2.5">Regu Lapangan</th>
+                                    <th class="border border-slate-400 py-1.5 px-2.5">Ketua Regu</th>
+                                    <th class="border border-slate-400 py-1.5 px-2.5 text-center">Aktif</th>
+                                    <th class="border border-slate-400 py-1.5 px-2.5 text-center">Tuntas</th>
+                                    <th class="border border-slate-400 py-1.5 px-2.5 text-right">Status Kinerja</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($reportTeams as $rt)
+                                    @php
+                                        $rtActive = \App\Models\Disposition::where('team_id', $rt->id)
+                                            ->whereHas('complaint', fn($q) => $q->whereIn('status', ['DISPATCHED', 'IN_PROGRESS', 'WAITING_VERIFICATION', 'REVISION_REQUIRED']))
+                                            ->count();
+                                        $rtDone = \App\Models\Disposition::where('team_id', $rt->id)
+                                            ->whereHas('complaint', fn($q) => $q->whereIn('status', ['COMPLETED', 'CLOSED']))
+                                            ->count();
+                                    @endphp
+                                    <tr>
+                                        <td class="border border-slate-400 py-1.5 px-2.5 font-semibold">[{{ $rt->code }}] {{ $rt->name }}</td>
+                                        <td class="border border-slate-400 py-1.5 px-2.5">{{ $rt->leader?->name ?? 'Belum ditunjuk' }}</td>
+                                        <td class="border border-slate-400 py-1.5 px-2.5 text-center">{{ $rtActive }}</td>
+                                        <td class="border border-slate-400 py-1.5 px-2.5 text-center font-bold">{{ $rtDone }}</td>
+                                        <td class="border border-slate-400 py-1.5 px-2.5 text-right font-bold">{{ $rtDone > 0 ? 'SLA 100%' : 'Siap ' . max(0, 3 - $rtActive) . '/3' }}</td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="5" class="border border-slate-400 py-2 px-2.5 text-center text-slate-500">Belum ada regu terdaftar.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- VI. REKAPITULASI PER KATEGORI INFRASTRUKTUR -->
+                    <div class="space-y-2">
+                        <h4 class="font-outfit font-bold text-xs uppercase tracking-wider text-black border-b border-slate-300 pb-1">
+                            VI. Rekapitulasi per Kategori Infrastruktur
                         </h4>
                         <table class="w-full text-left border-collapse border border-slate-400 text-[11px]">
                             <thead class="bg-slate-100 text-black font-bold uppercase text-[10px]">
@@ -715,6 +749,45 @@
                         </div>
                     </div>
 
+                    <!-- 4B. EVALUASI KINERJA REGU LAPANGAN PUPR -->
+                    <div>
+                        <h3 class="text-xs font-bold uppercase border-b border-black pb-0.5 mb-1.5">4B. EVALUASI KINERJA REGU LAPANGAN PUPR</h3>
+                        <table class="w-full text-left border-collapse border border-black text-[11px]">
+                            <thead>
+                                <tr>
+                                    <th class="border border-black py-1 px-2">Regu Lapangan</th>
+                                    <th class="border border-black py-1 px-2">Ketua Regu</th>
+                                    <th class="border border-black py-1 px-2 text-right">Aktif</th>
+                                    <th class="border border-black py-1 px-2 text-right">Tuntas</th>
+                                    <th class="border border-black py-1 px-2 text-right">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($reportTeams as $rt)
+                                    @php
+                                        $rtActive = \App\Models\Disposition::where('team_id', $rt->id)
+                                            ->whereHas('complaint', fn($q) => $q->whereIn('status', ['DISPATCHED', 'IN_PROGRESS', 'WAITING_VERIFICATION', 'REVISION_REQUIRED']))
+                                            ->count();
+                                        $rtDone = \App\Models\Disposition::where('team_id', $rt->id)
+                                            ->whereHas('complaint', fn($q) => $q->whereIn('status', ['COMPLETED', 'CLOSED']))
+                                            ->count();
+                                    @endphp
+                                    <tr>
+                                        <td class="border border-black py-1 px-2">[{{ $rt->code }}] {{ $rt->name }}</td>
+                                        <td class="border border-black py-1 px-2">{{ $rt->leader?->name ?? 'Belum ditunjuk' }}</td>
+                                        <td class="border border-black py-1 px-2 text-right">{{ $rtActive }}</td>
+                                        <td class="border border-black py-1 px-2 text-right">{{ $rtDone }}</td>
+                                        <td class="border border-black py-1 px-2 text-right">{{ $rtDone > 0 ? 'SLA 100%' : 'Siap ' . max(0, 3 - $rtActive) . '/3' }}</td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="5" class="border border-black py-1 px-2">Belum ada regu terdaftar.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+
                     <!-- 5. REKAPITULASI PER KATEGORI -->
                     <div>
                         <h3 class="text-xs font-bold uppercase border-b border-black pb-0.5 mb-1.5">5. REKAPITULASI PER KATEGORI INFRASTRUKTUR</h3>
@@ -786,8 +859,40 @@
             </div>
         </div>
 
+        <!-- Footer Modal SI-APPIK V2 -->
+        <div class="px-6 py-3.5 border-t border-[#E2E8F0] bg-white flex items-center justify-end gap-2.5 shrink-0">
+            <button type="button" onclick="closeReportPreviewModal()"
+                class="px-5 py-2.5 rounded-xl bg-[#F1F5F9] hover:bg-slate-200 text-[#334155] font-bold text-xs transition cursor-pointer">
+                Tutup
+            </button>
+            <button type="button" onclick="printOfficialReportPdf()"
+                class="px-5 py-2.5 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold text-xs transition flex items-center gap-1.5 cursor-pointer">
+                <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+                <span>Cetak PDF</span>
+            </button>
+        </div>
+
     </div>
 </div>
+
+<script>
+    function applyReportPeriodFilter(period) {
+        const url = new URL(window.location.href);
+        if (!url.searchParams.get('tab')) {
+            if (window.location.pathname.includes('/operator')) {
+                url.searchParams.set('tab', 'monitoring');
+            } else {
+                url.searchParams.set('tab', 'reporting');
+            }
+        }
+        if (period && period !== 'all') {
+            url.searchParams.set('report_period', period);
+        } else {
+            url.searchParams.delete('report_period');
+        }
+        window.location.href = url.toString();
+    }
+</script>
 
 <!-- STYLES KHUSUS CETAK DOKUMEN (PRINT TO PDF A4) -->
 <style>

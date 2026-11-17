@@ -1,48 +1,56 @@
 <!DOCTYPE html>
-<html lang="id" class="h-full bg-[#F8FAFC] scroll-smooth">
+<html lang="id" class="bg-[#F8FAFC] scroll-smooth overscroll-y-none">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Portal resmi pengaduan dan pemantauan infrastruktur jalan, jembatan, dan fasilitas umum Kabupaten Kolaka Utara (Dinas PUPR).">
     <meta name="format-detection" content="telephone=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'SI-APPIK')</title>
-    <link rel="icon" type="image/png" href="{{ asset('images/logo-pin.png') }}?v=3">
-    <link rel="shortcut icon" type="image/png" href="{{ asset('images/logo-pin.png') }}?v=3">
-    <link rel="apple-touch-icon" href="{{ asset('images/logo-pin.png') }}?v=3">
+    @if(request()->routeIs('home'))
+        <link rel="preload" as="image" href="{{ asset('images/hero/hero-1.webp') }}" fetchpriority="high">
+    @endif
+    <link rel="icon" type="image/png" href="{{ asset('images/logo-pin.png') }}?v=5">
+    <link rel="shortcut icon" type="image/png" href="{{ asset('images/logo-pin.png') }}?v=5">
+    <link rel="apple-touch-icon" href="{{ asset('images/logo-pin.png') }}?v=5">
 
     <!-- Google Fonts: Inter & Outfit -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        outfit: ['Outfit', 'sans-serif'],
-                    },
-                    colors: {
-                        primary: '#1E3A8A',    /* Mobile AppColors.primary (Deep Slate Blue) */
-                        primaryLight: '#3B82F6',
-                        primaryDark: '#172554',
-                        secondary: '#0D9488',  /* Teal */
-                        accent: '#F59E0B',     /* Amber */
-                        textPrimary: '#0F172A',
-                        textSecondary: '#64748B',
-                        borderSlate: '#E2E8F0',
-                        bgSlate: '#F8FAFC',
+    <!-- Tailwind CSS (Precompiled Vite CSS jika tersedia, fallback ke CDN) -->
+    @if(file_exists(public_path('build/manifest.json')))
+        @vite(['resources/css/app.css'])
+    @else
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        fontFamily: {
+                            sans: ['Inter', 'sans-serif'],
+                            outfit: ['Outfit', 'sans-serif'],
+                        },
+                        colors: {
+                            primary: '#2563EB',
+                            primaryLight: '#3B82F6',
+                            primaryDark: '#1D4ED8',
+                            secondary: '#0D9488',
+                            accent: '#F59E0B',
+                            textPrimary: '#0F172A',
+                            textSecondary: '#64748B',
+                            borderSlate: '#E2E8F0',
+                            bgSlate: '#F8FAFC',
+                        }
                     }
                 }
             }
-        }
-    </script>
+        </script>
+    @endif
 
     <!-- Lucide Icons CDN -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <script defer src="https://unpkg.com/lucide@latest"></script>
 
     <!-- Leaflet GIS Map CSS & JS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -114,7 +122,7 @@
         }
     </style>
 </head>
-<body class="h-full bg-[#F8FAFC] antialiased overflow-x-hidden">
+<body class="min-h-screen bg-[#F8FAFC] antialiased overflow-x-clip overscroll-y-none">
 
 @php
     // Cek apakah halaman ini adalah halaman publik (Landing / Login)
@@ -130,11 +138,11 @@
         <!-- Backdrop for Mobile Sidebar -->
         <div id="sidebarBackdrop" onclick="toggleSidebar()" class="fixed inset-0 bg-slate-900/50 z-40 hidden lg:hidden transition-opacity"></div>
 
-        <!-- Left Sidebar Navigation -->
-        <aside id="mainSidebar" class="fixed inset-y-0 left-0 z-50 w-[264px] bg-white border-r border-[#E2E8F0] flex flex-col justify-between transform -translate-x-full lg:translate-x-0 transition-transform duration-200 ease-in-out shrink-0">
-            <div>
+        <!-- Left Sidebar Navigation (Fixed drawer di Mobile, Sticky flex-item di Desktop agar tidak pernah memotong konten) -->
+        <aside id="mainSidebar" class="fixed lg:sticky top-0 inset-y-0 left-0 z-50 w-64 lg:h-screen bg-white border-r border-[#E2E8F0] flex flex-col justify-between transform -translate-x-full lg:translate-x-0 transition-transform duration-200 ease-in-out shrink-0">
+            <div class="flex-1 min-h-0 flex flex-col">
                 <!-- Brand Top -->
-                <div class="h-16 flex items-center px-4 border-b border-[#E2E8F0] gap-3">
+                <div class="h-16 flex items-center px-4 border-b border-[#E2E8F0] gap-3 shrink-0">
                     <div class="w-9 h-9 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] flex items-center justify-center shrink-0">
                         <img src="{{ asset('images/logo-pin.png') }}" class="w-6 h-6 object-contain" alt="Logo SI-APPIK">
                     </div>
@@ -147,46 +155,169 @@
                 </div>
 
                 <!-- Navigation List -->
-                <nav class="p-3 space-y-1">
-                    <div class="px-3 pt-2 pb-1 text-[10px] font-bold uppercase tracking-wider text-[#64748B]">
+                @php
+                    $isAdminRoute = request()->routeIs('admin.*');
+                    $isOperatorRoute = request()->routeIs('operator.*');
+                    $isBupatiRoute = request()->routeIs('bupati.*');
+                    $isPetugasRoute = request()->routeIs('petugas.*');
+                    $currentQueryTab = request()->get('tab', $isAdminRoute ? 'overview' : ($isOperatorRoute ? 'verify' : ($isBupatiRoute ? 'executive' : ($isPetugasRoute ? 'spatial' : ''))));
+                @endphp
+                <nav class="p-3 space-y-1.5 flex-1 overflow-y-auto">
+                    <div class="px-3 pt-1 pb-1 text-[10px] font-bold uppercase tracking-wider text-[#64748B]">
                         Menu Utama
                     </div>
 
-                    <a href="{{ url('/') }}" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-xs font-semibold {{ request()->is('/') ? 'bg-[#1E3A8A] text-white' : 'text-[#475569] hover:bg-[#F8FAFC] hover:text-[#0F172A]' }} transition">
+                    <a href="{{ url('/') }}" class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold {{ request()->is('/') ? 'bg-[#2563EB] text-white shadow-xs' : 'text-[#475569] hover:bg-[#F8FAFC] hover:text-[#0F172A]' }} transition">
                         <i data-lucide="map" class="w-4 h-4 shrink-0 {{ request()->is('/') ? 'text-white' : 'text-[#64748B]' }}"></i>
                         <span class="truncate">Peta Sebaran Laporan</span>
                     </a>
 
-                    <div class="px-3 pt-3.5 pb-1 text-[10px] font-bold uppercase tracking-wider text-[#64748B]">
-                        Portal Kerja
+                    <div class="px-3 pt-3 pb-1 text-[10px] font-bold uppercase tracking-wider text-[#64748B]">
+                        Portal Kerja &amp; Role
                     </div>
 
                     @if(auth()->user()->isSuperAdmin())
-                        <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-xs font-semibold {{ request()->routeIs('admin.*') ? 'bg-[#1E3A8A] text-white' : 'text-[#475569] hover:bg-[#F8FAFC] hover:text-[#0F172A]' }} transition">
-                            <i data-lucide="shield" class="w-4 h-4 shrink-0 {{ request()->routeIs('admin.*') ? 'text-white' : 'text-[#64748B]' }}"></i>
-                            <span class="truncate">Pusat Kendali Super Admin</span>
-                        </a>
+                        <div class="role-accordion-group rounded-xl transition">
+                            <button type="button" onclick="toggleRoleAccordion('admin')" aria-expanded="{{ $isAdminRoute ? 'true' : 'false' }}"
+                                class="w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl text-xs font-bold border {{ $isAdminRoute ? 'bg-[#EFF6FF] text-[#2563EB] border-[#BFDBFE]' : 'bg-white text-[#334155] border-[#E2E8F0] hover:bg-[#F8FAFC] hover:text-[#0F172A]' }} transition">
+                                <span class="flex items-center gap-2.5 min-w-0">
+                                    <i data-lucide="shield" class="w-4 h-4 shrink-0 {{ $isAdminRoute ? 'text-[#2563EB]' : 'text-[#64748B]' }}"></i>
+                                    <span class="truncate">Super Admin</span>
+                                </span>
+                                <i data-lucide="chevron-down" id="accordionChevron-admin" class="w-3.5 h-3.5 shrink-0 transition-transform duration-200 {{ $isAdminRoute ? 'rotate-180 text-[#2563EB]' : 'text-[#64748B]' }}"></i>
+                            </button>
+                            <div id="accordionBody-admin" class="{{ $isAdminRoute ? 'block' : 'hidden' }} py-1.5 px-1 space-y-1">
+                                @php
+                                    $adminMenuItems = [
+                                        ['tab' => 'overview', 'label' => 'Dashboard Admin', 'icon' => 'layout-dashboard'],
+                                        ['tab' => 'users-management', 'label' => 'Kelola Akun & Pengguna', 'icon' => 'users'],
+                                        ['tab' => 'complaints-list', 'label' => 'Daftar Aduan', 'icon' => 'layers'],
+                                        ['tab' => 'admin-rejected', 'label' => 'Aduan Ditolak', 'icon' => 'archive-x'],
+                                        ['tab' => 'teams-management', 'label' => 'Regu & Tugas', 'icon' => 'hard-hat'],
+                                        ['tab' => 'regions-gis', 'label' => 'Peta Wilayah GIS', 'icon' => 'map-pin'],
+                                        ['tab' => 'reporting', 'label' => 'Laporan Kinerja', 'icon' => 'bar-chart-3'],
+                                    ];
+                                @endphp
+                                @foreach($adminMenuItems as $item)
+                                    @php
+                                        $isSubActive = $isAdminRoute && (
+                                            $currentQueryTab === $item['tab'] ||
+                                            ($item['tab'] === 'users-management' && $currentQueryTab === 'users-list')
+                                        );
+                                    @endphp
+                                    <a href="{{ route('admin.dashboard', ['tab' => $item['tab']]) }}"
+                                       onclick="return handleSidebarTabClick(event, 'admin', '{{ $item['tab'] }}')"
+                                       data-sidebar-role="admin" data-sidebar-tab="{{ $item['tab'] }}"
+                                       class="sidebar-subitem flex items-center gap-2 px-3 py-2 rounded-xl text-[11px] font-semibold transition {{ $isSubActive ? 'bg-[#2563EB] text-white font-bold shadow-xs' : 'text-[#475569] hover:bg-[#F8FAFC] hover:text-[#0F172A]' }}">
+                                        <i data-lucide="{{ $item['icon'] }}" class="w-3.5 h-3.5 shrink-0 {{ $isSubActive ? 'text-white' : 'text-[#64748B]' }}"></i>
+                                        <span class="truncate">{{ $item['label'] }}</span>
+                                    </a>
+                                @endforeach
+                            </div>
+                        </div>
                     @endif
 
                     @if(auth()->user()->isOperator() || auth()->user()->isSuperAdmin())
-                        <a href="{{ route('operator.dashboard') }}" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-xs font-semibold {{ request()->routeIs('operator.*') ? 'bg-[#1E3A8A] text-white' : 'text-[#475569] hover:bg-[#F8FAFC] hover:text-[#0F172A]' }} transition">
-                            <i data-lucide="clipboard-check" class="w-4 h-4 shrink-0 {{ request()->routeIs('operator.*') ? 'text-white' : 'text-[#64748B]' }}"></i>
-                            <span class="truncate">Pusat Kendali Operator</span>
-                        </a>
+                        <div class="role-accordion-group rounded-xl transition">
+                            <button type="button" onclick="toggleRoleAccordion('operator')" aria-expanded="{{ $isOperatorRoute ? 'true' : 'false' }}"
+                                class="w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl text-xs font-bold border {{ $isOperatorRoute ? 'bg-[#EFF6FF] text-[#2563EB] border-[#BFDBFE]' : 'bg-white text-[#334155] border-[#E2E8F0] hover:bg-[#F8FAFC] hover:text-[#0F172A]' }} transition">
+                                <span class="flex items-center gap-2.5 min-w-0">
+                                    <i data-lucide="clipboard-check" class="w-4 h-4 shrink-0 {{ $isOperatorRoute ? 'text-[#2563EB]' : 'text-[#64748B]' }}"></i>
+                                    <span class="truncate">Operator PUPR</span>
+                                </span>
+                                <i data-lucide="chevron-down" id="accordionChevron-operator" class="w-3.5 h-3.5 shrink-0 transition-transform duration-200 {{ $isOperatorRoute ? 'rotate-180 text-[#2563EB]' : 'text-[#64748B]' }}"></i>
+                            </button>
+                            <div id="accordionBody-operator" class="{{ $isOperatorRoute ? 'block' : 'hidden' }} py-1.5 px-1 space-y-1">
+                                @php
+                                    $operatorMenuItems = [
+                                        ['tab' => 'verify', 'label' => 'Verifikasi Aduan', 'icon' => 'filter'],
+                                        ['tab' => 'dispatched', 'label' => 'Ditugaskan', 'icon' => 'send'],
+                                        ['tab' => 'inprogress', 'label' => 'Dikerjakan', 'icon' => 'hammer'],
+                                        ['tab' => 'validation', 'label' => 'Validasi Hasil', 'icon' => 'check-square'],
+                                        ['tab' => 'archive', 'label' => 'Arsip Aduan', 'icon' => 'archive'],
+                                        ['tab' => 'regions-gis', 'label' => 'Peta Wilayah GIS', 'icon' => 'map-pin'],
+                                        ['tab' => 'monitoring', 'label' => 'Laporan Kinerja', 'icon' => 'bar-chart-3'],
+                                    ];
+                                @endphp
+                                @foreach($operatorMenuItems as $item)
+                                    @php $isSubActive = $isOperatorRoute && $currentQueryTab === $item['tab']; @endphp
+                                    <a href="{{ route('operator.dashboard', ['tab' => $item['tab']]) }}"
+                                       onclick="return handleSidebarTabClick(event, 'operator', '{{ $item['tab'] }}')"
+                                       data-sidebar-role="operator" data-sidebar-tab="{{ $item['tab'] }}"
+                                       class="sidebar-subitem flex items-center gap-2 px-3 py-2 rounded-xl text-[11px] font-semibold transition {{ $isSubActive ? 'bg-[#2563EB] text-white font-bold shadow-xs' : 'text-[#475569] hover:bg-[#F8FAFC] hover:text-[#0F172A]' }}">
+                                        <i data-lucide="{{ $item['icon'] }}" class="w-3.5 h-3.5 shrink-0 {{ $isSubActive ? 'text-white' : 'text-[#64748B]' }}"></i>
+                                        <span class="truncate">{{ $item['label'] }}</span>
+                                    </a>
+                                @endforeach
+                            </div>
+                        </div>
                     @endif
 
                     @if(auth()->user()->isBupati() || auth()->user()->isSuperAdmin())
-                        <a href="{{ route('bupati.dashboard') }}" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-xs font-semibold {{ request()->routeIs('bupati.*') ? 'bg-[#1E3A8A] text-white' : 'text-[#475569] hover:bg-[#F8FAFC] hover:text-[#0F172A]' }} transition">
-                            <i data-lucide="landmark" class="w-4 h-4 shrink-0 {{ request()->routeIs('bupati.*') ? 'text-white' : 'text-[#64748B]' }}"></i>
-                            <span class="truncate">Pusat Kendali Kepala Daerah</span>
-                        </a>
+                        <div class="role-accordion-group rounded-xl transition">
+                            <button type="button" onclick="toggleRoleAccordion('bupati')" aria-expanded="{{ $isBupatiRoute ? 'true' : 'false' }}"
+                                class="w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl text-xs font-bold border {{ $isBupatiRoute ? 'bg-[#EFF6FF] text-[#2563EB] border-[#BFDBFE]' : 'bg-white text-[#334155] border-[#E2E8F0] hover:bg-[#F8FAFC] hover:text-[#0F172A]' }} transition">
+                                <span class="flex items-center gap-2.5 min-w-0">
+                                    <i data-lucide="landmark" class="w-4 h-4 shrink-0 {{ $isBupatiRoute ? 'text-[#2563EB]' : 'text-[#64748B]' }}"></i>
+                                    <span class="truncate">Kepala Daerah</span>
+                                </span>
+                                <i data-lucide="chevron-down" id="accordionChevron-bupati" class="w-3.5 h-3.5 shrink-0 transition-transform duration-200 {{ $isBupatiRoute ? 'rotate-180 text-[#2563EB]' : 'text-[#64748B]' }}"></i>
+                            </button>
+                            <div id="accordionBody-bupati" class="{{ $isBupatiRoute ? 'block' : 'hidden' }} py-1.5 px-1 space-y-1">
+                                @php
+                                    $bupatiMenuItems = [
+                                        ['tab' => 'complaints', 'label' => 'Daftar Aduan', 'icon' => 'layers'],
+                                        ['tab' => 'archive', 'label' => 'Arsip Aduan', 'icon' => 'archive'],
+                                        ['tab' => 'executive', 'label' => 'Peta Wilayah GIS', 'icon' => 'map-pin'],
+                                        ['tab' => 'reporting', 'label' => 'Laporan Kinerja', 'icon' => 'bar-chart-3'],
+                                    ];
+                                @endphp
+                                @foreach($bupatiMenuItems as $item)
+                                    @php $isSubActive = $isBupatiRoute && $currentQueryTab === $item['tab']; @endphp
+                                    <a href="{{ route('bupati.dashboard', ['tab' => $item['tab']]) }}"
+                                       onclick="return handleSidebarTabClick(event, 'bupati', '{{ $item['tab'] }}')"
+                                       data-sidebar-role="bupati" data-sidebar-tab="{{ $item['tab'] }}"
+                                       class="sidebar-subitem flex items-center gap-2 px-3 py-2 rounded-xl text-[11px] font-semibold transition {{ $isSubActive ? 'bg-[#2563EB] text-white font-bold shadow-xs' : 'text-[#475569] hover:bg-[#F8FAFC] hover:text-[#0F172A]' }}">
+                                        <i data-lucide="{{ $item['icon'] }}" class="w-3.5 h-3.5 shrink-0 {{ $isSubActive ? 'text-white' : 'text-[#64748B]' }}"></i>
+                                        <span class="truncate">{{ $item['label'] }}</span>
+                                    </a>
+                                @endforeach
+                            </div>
+                        </div>
                     @endif
 
                     @if(auth()->user()->isPetugas() || auth()->user()->isSuperAdmin())
-                        <a href="{{ route('petugas.dashboard') }}" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-xs font-semibold {{ request()->routeIs('petugas.*') ? 'bg-[#1E3A8A] text-white' : 'text-[#475569] hover:bg-[#F8FAFC] hover:text-[#0F172A]' }} transition">
-                            <i data-lucide="wrench" class="w-4 h-4 shrink-0 {{ request()->routeIs('petugas.*') ? 'text-white' : 'text-[#64748B]' }}"></i>
-                            <span class="truncate">Pusat Kendali Pekerja Lapangan</span>
-                        </a>
+                        <div class="role-accordion-group rounded-xl transition">
+                            <button type="button" onclick="toggleRoleAccordion('petugas')" aria-expanded="{{ $isPetugasRoute ? 'true' : 'false' }}"
+                                class="w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl text-xs font-bold border {{ $isPetugasRoute ? 'bg-[#EFF6FF] text-[#2563EB] border-[#BFDBFE]' : 'bg-white text-[#334155] border-[#E2E8F0] hover:bg-[#F8FAFC] hover:text-[#0F172A]' }} transition">
+                                <span class="flex items-center gap-2.5 min-w-0">
+                                    <i data-lucide="wrench" class="w-4 h-4 shrink-0 {{ $isPetugasRoute ? 'text-[#2563EB]' : 'text-[#64748B]' }}"></i>
+                                    <span class="truncate">Pekerja Lapangan</span>
+                                </span>
+                                <i data-lucide="chevron-down" id="accordionChevron-petugas" class="w-3.5 h-3.5 shrink-0 transition-transform duration-200 {{ $isPetugasRoute ? 'rotate-180 text-[#2563EB]' : 'text-[#64748B]' }}"></i>
+                            </button>
+                            <div id="accordionBody-petugas" class="{{ $isPetugasRoute ? 'block' : 'hidden' }} py-1.5 px-1 space-y-1">
+                                @php
+                                    $petugasMenuItems = [
+                                        ['tab' => 'assigned', 'label' => 'Penugasan', 'icon' => 'send'],
+                                        ['tab' => 'tasks', 'label' => 'Dikerjakan', 'icon' => 'hard-hat'],
+                                        ['tab' => 'validation', 'label' => 'Validasi', 'icon' => 'shield-check'],
+                                        ['tab' => 'history', 'label' => 'Tugas Selesai', 'icon' => 'check-circle'],
+                                        ['tab' => 'spatial', 'label' => 'Peta Wilayah GIS', 'icon' => 'map-pin'],
+                                    ];
+                                @endphp
+                                @foreach($petugasMenuItems as $item)
+                                    @php $isSubActive = $isPetugasRoute && $currentQueryTab === $item['tab']; @endphp
+                                    <a href="{{ route('petugas.dashboard', ['tab' => $item['tab']]) }}"
+                                       onclick="return handleSidebarTabClick(event, 'petugas', '{{ $item['tab'] }}')"
+                                       data-sidebar-role="petugas" data-sidebar-tab="{{ $item['tab'] }}"
+                                       class="sidebar-subitem flex items-center gap-2 px-3 py-2 rounded-xl text-[11px] font-semibold transition {{ $isSubActive ? 'bg-[#2563EB] text-white font-bold shadow-xs' : 'text-[#475569] hover:bg-[#F8FAFC] hover:text-[#0F172A]' }}">
+                                        <i data-lucide="{{ $item['icon'] }}" class="w-3.5 h-3.5 shrink-0 {{ $isSubActive ? 'text-white' : 'text-[#64748B]' }}"></i>
+                                        <span class="truncate">{{ $item['label'] }}</span>
+                                    </a>
+                                @endforeach
+                            </div>
+                        </div>
                     @endif
                 </nav>
             </div>
@@ -194,19 +325,19 @@
             <!-- Profile Tile -->
             <div class="p-3 border-t border-[#E2E8F0] bg-[#F8FAFC]">
                 <div class="p-2.5 rounded-lg bg-white border border-[#E2E8F0] flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-lg bg-[#1E3A8A] text-white flex items-center justify-center font-outfit font-bold text-xs shrink-0">
+                    <div class="w-8 h-8 rounded-lg bg-[#2563EB] text-white flex items-center justify-center font-outfit font-bold text-xs shrink-0">
                         {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                     </div>
                     <div class="min-w-0">
                         <span class="block text-xs font-bold text-[#0F172A] truncate">{{ auth()->user()->name }}</span>
-                        <span class="block text-[10px] font-semibold text-[#1E3A8A] uppercase tracking-wide">{{ auth()->user()->role }}</span>
+                        <span class="block text-[10px] font-semibold text-[#2563EB] uppercase tracking-wide">{{ str_replace('_', ' ', auth()->user()->role) }}</span>
                     </div>
                 </div>
             </div>
         </aside>
 
         <!-- Content Area -->
-        <div class="flex-1 flex flex-col min-w-0 lg:pl-[264px]">
+        <div class="flex-1 flex flex-col min-w-0">
             <!-- Top Header Bar -->
             <header class="sticky top-0 z-30 bg-white border-b border-[#E2E8F0] h-16 flex items-center justify-between px-4 sm:px-6">
                 <div class="flex items-center gap-3">
@@ -226,41 +357,8 @@
                 </div>
             </header>
 
-            <!-- Alerts -->
-            <div class="max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 pt-4">
-                @if(session('success'))
-                    <div class="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center justify-between shadow-xs mb-3">
-                        <div class="flex items-center gap-2">
-                            <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600 shrink-0"></i>
-                            <span>{{ session('success') }}</span>
-                        </div>
-                        <button onclick="this.parentElement.remove()" class="text-emerald-500 hover:text-emerald-700">✕</button>
-                    </div>
-                @endif
-
-                @if(session('info'))
-                    <div class="p-3.5 rounded-xl bg-blue-50 border border-blue-200 text-blue-800 text-xs flex items-center justify-between shadow-xs mb-3">
-                        <div class="flex items-center gap-2">
-                            <i data-lucide="info" class="w-4 h-4 text-blue-600 shrink-0"></i>
-                            <span>{{ session('info') }}</span>
-                        </div>
-                        <button onclick="this.parentElement.remove()" class="text-blue-500 hover:text-blue-700">✕</button>
-                    </div>
-                @endif
-
-                @if(session('error'))
-                    <div class="p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-800 text-xs flex items-center justify-between shadow-xs mb-3">
-                        <div class="flex items-center gap-2">
-                            <i data-lucide="alert-circle" class="w-4 h-4 text-red-600 shrink-0"></i>
-                            <span>{{ session('error') }}</span>
-                        </div>
-                        <button onclick="this.parentElement.remove()" class="text-red-500 hover:text-red-700">✕</button>
-                    </div>
-                @endif
-            </div>
-
             <!-- Main Page Content -->
-            <main class="flex-1 w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+            <main class="flex-1 w-full {{ request()->is('/') ? '' : 'max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 pb-12' }}">
                 @yield('content')
             </main>
 
@@ -274,87 +372,117 @@
     <!-- Halaman Publik (Tanpa Sidebar) -->
     <div class="min-h-full flex flex-col justify-between">
         @if(!request()->routeIs('login'))
-            <!-- Public Top Navbar (Putih Bersih, Proporsional & Responsif dengan Burger Menu) -->
-            <header class="sticky top-0 z-40 bg-white text-[#0F172A] border-b border-[#E2E8F0] w-full">
-                <div class="max-w-[1440px] mx-auto px-5 sm:px-8 lg:px-10 h-16 flex items-center justify-between gap-4">
-                    <!-- Brand & Kepanjangan -->
-                    <a href="{{ url('/') }}#top" class="flex items-center gap-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1E3A8A] rounded-lg min-w-0">
-                        <div class="w-9 h-9 rounded-lg bg-white border border-[#E2E8F0] flex items-center justify-center p-1 shrink-0">
-                            <img src="{{ asset('images/logo-pin.png') }}" class="w-full h-full object-contain" alt="Logo SI-APPIK">
-                        </div>
-                        <div class="leading-none min-w-0">
-                            <span class="font-outfit font-bold text-lg sm:text-xl text-[#0F172A] tracking-tight block">
-                                SI-APPIK
-                            </span>
-                            <span class="hidden lg:block text-[11px] text-[#475569] font-medium mt-0.5 truncate">
-                                Sistem Informasi Aduan &amp; Penanganan Prasarana Infrastruktur Kabupaten Kolaka Utara
-                            </span>
-                        </div>
-                    </a>
+            <!-- Public Top Navbar (Floating Pill di Desktop, Sticky App Bar di Mobile) -->
+            <div class="sticky top-0 z-40 w-full md:pt-3 md:px-6 pointer-events-none">
+                <header class="pointer-events-auto bg-white/95 backdrop-blur-md text-[#0F172A] border-b md:border border-[#E2E8F0] md:rounded-full md:max-w-7xl md:mx-auto md:shadow-sm w-full">
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+                        <!-- Brand & Kepanjangan -->
+                        <a href="{{ url('/') }}#top" class="flex items-center gap-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2563EB] rounded-full min-w-0">
+                            <div class="w-9 h-9 rounded-full bg-[#EFF6FF] border border-[#BFDBFE] flex items-center justify-center p-1.5 shrink-0">
+                                <img src="{{ asset('images/logo-pin.png') }}" class="w-full h-full object-contain" alt="Logo SI-APPIK">
+                            </div>
+                            <div class="leading-none min-w-0">
+                                <span class="font-outfit font-bold text-lg text-[#0F172A] tracking-tight block">
+                                    SI-APPIK
+                                </span>
+                                <span class="hidden lg:block text-[11px] text-[#475569] font-medium mt-0.5 truncate">
+                                    Kabupaten Kolaka Utara &bull; Dinas PUPR
+                                </span>
+                            </div>
+                        </a>
 
-                    <!-- Nav Links + CTA + Mobile Burger -->
-                    <div class="flex items-center gap-3 lg:gap-6 shrink-0">
-                        <nav id="publicDesktopNav" class="hidden md:flex items-center gap-5 lg:gap-6 text-[13px] font-semibold text-[#475569]" aria-label="Navigasi Utama">
-                            <a href="{{ url('/') }}#top" data-nav-target="top" class="public-nav-link relative py-1.5 text-[#1E3A8A] border-b-2 border-[#1E3A8A] transition-colors duration-200">Beranda</a>
-                            <a href="{{ url('/') }}#mapSectionContainer" data-nav-target="mapSectionContainer" class="public-nav-link relative py-1.5 border-b-2 border-transparent hover:text-[#1E3A8A] transition-colors duration-200">Peta Sebaran</a>
-                            <a href="{{ url('/') }}#kategori-infrastruktur" data-nav-target="kategori-infrastruktur" class="public-nav-link relative py-1.5 border-b-2 border-transparent hover:text-[#1E3A8A] transition-colors duration-200 whitespace-nowrap">Kategori &amp; Layanan</a>
-                            <a href="{{ url('/') }}#download-app" data-nav-target="download-app" class="public-nav-link relative py-1.5 border-b-2 border-transparent hover:text-[#1E3A8A] transition-colors duration-200">Unduh Aplikasi</a>
-                        </nav>
+                        <!-- Nav Links + CTA + Mobile Burger -->
+                        <div class="flex items-center gap-3 lg:gap-6 shrink-0">
+                            <nav id="publicDesktopNav" class="hidden md:flex items-center gap-5 lg:gap-6 text-[13px] font-semibold text-[#475569]" aria-label="Navigasi Utama">
+                                <a href="{{ url('/') }}#top" data-nav-target="top" class="public-nav-link relative py-1.5 text-[#2563EB] border-b-2 border-[#2563EB] transition-colors duration-200">Beranda</a>
+                                <a href="{{ url('/') }}#mapSectionContainer" data-nav-target="mapSectionContainer" class="public-nav-link relative py-1.5 border-b-2 border-transparent hover:text-[#2563EB] transition-colors duration-200">Peta Sebaran</a>
+                                <a href="{{ url('/') }}#kategori-infrastruktur" data-nav-target="kategori-infrastruktur" class="public-nav-link relative py-1.5 border-b-2 border-transparent hover:text-[#2563EB] transition-colors duration-200 whitespace-nowrap">Kategori &amp; Layanan</a>
+                                <a href="{{ url('/') }}#download-app" data-nav-target="download-app" class="public-nav-link relative py-1.5 border-b-2 border-transparent hover:text-[#2563EB] transition-colors duration-200">Unduh Aplikasi</a>
+                            </nav>
 
-                        @auth
-                            <a href="{{ auth()->user()->isSuperAdmin() ? route('admin.dashboard') : (auth()->user()->isOperator() ? route('operator.dashboard') : (auth()->user()->isBupati() ? route('bupati.dashboard') : route('petugas.dashboard'))) }}" 
-                                class="px-4 h-10 rounded-lg bg-[#1E3A8A] hover:bg-[#172554] text-white font-semibold text-xs sm:text-[13px] transition inline-flex items-center gap-2 whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1E3A8A]">
-                                <i data-lucide="layout-dashboard" class="w-4 h-4 shrink-0"></i>
-                                <span class="whitespace-nowrap">Dashboard Petugas</span>
-                            </a>
-                        @else
-                            <a href="{{ route('login') }}" title="Masuk" aria-label="Masuk"
-                                class="w-10 md:w-auto md:px-4 h-10 rounded-lg bg-[#1E3A8A] hover:bg-[#172554] text-white font-semibold text-xs sm:text-[13px] transition inline-flex items-center justify-center gap-1.5 whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1E3A8A]">
-                                <i data-lucide="external-link" class="w-4 h-4 shrink-0"></i>
-                                <span class="hidden md:inline whitespace-nowrap">Masuk</span>
-                            </a>
-                        @endauth
+                            @auth
+                                <a href="{{ auth()->user()->isSuperAdmin() ? route('admin.dashboard') : (auth()->user()->isOperator() ? route('operator.dashboard') : (auth()->user()->isBupati() ? route('bupati.dashboard') : route('petugas.dashboard'))) }}" 
+                                    class="px-5 h-10 rounded-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-semibold text-xs sm:text-[13px] transition inline-flex items-center gap-2 whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2563EB]">
+                                    <i data-lucide="layout-dashboard" class="w-4 h-4 shrink-0"></i>
+                                    <span class="whitespace-nowrap">Dashboard Petugas</span>
+                                </a>
+                            @else
+                                <a href="{{ route('login') }}" title="Masuk" aria-label="Masuk"
+                                    class="w-10 md:w-auto md:px-6 h-10 rounded-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold text-xs sm:text-[13px] transition inline-flex items-center justify-center gap-1.5 whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2563EB]">
+                                    <i data-lucide="external-link" class="w-4 h-4 shrink-0 md:hidden"></i>
+                                    <span class="hidden md:inline whitespace-nowrap">Masuk</span>
+                                </a>
+                            @endauth
 
-                        <!-- Burger Menu Button (Mobile / Tablet) -->
+                        <!-- Burger Menu Button (Mobile / Tablet) dengan Animasi 3 Garis <-> X -->
                         <button type="button" id="publicBurgerBtn" onclick="togglePublicMobileMenu()" aria-label="Buka Menu Navigasi" aria-expanded="false" aria-controls="publicMobileMenu"
-                            class="md:hidden w-10 h-10 rounded-lg border border-[#E2E8F0] bg-white hover:bg-[#F8FAFC] text-[#0F172A] flex items-center justify-center transition cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1E3A8A]">
-                            <i id="publicBurgerIcon" data-lucide="menu" class="w-5 h-5"></i>
+                            class="md:hidden w-10 h-10 rounded-lg border border-[#E2E8F0] bg-white hover:bg-[#F8FAFC] text-[#0F172A] flex items-center justify-center transition cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2563EB]">
+                            <span class="relative w-5 h-4 flex flex-col justify-between items-center pointer-events-none" aria-hidden="true">
+                                <span id="burgerLine1" class="block w-5 h-0.5 bg-[#0F172A] rounded-full transition-all duration-300 ease-in-out origin-center"></span>
+                                <span id="burgerLine2" class="block w-5 h-0.5 bg-[#0F172A] rounded-full transition-all duration-200 ease-in-out"></span>
+                                <span id="burgerLine3" class="block w-5 h-0.5 bg-[#0F172A] rounded-full transition-all duration-300 ease-in-out origin-center"></span>
+                            </span>
                         </button>
                     </div>
                 </div>
 
-                <!-- Mobile Dropdown Menu -->
-                <div id="publicMobileMenu" class="hidden md:hidden bg-white border-t border-[#E2E8F0] px-5 py-3 space-y-1">
-                    <a href="{{ url('/') }}#top" data-nav-target="top" onclick="closePublicMobileMenu()" class="public-mobile-link block px-3 py-2.5 rounded-lg text-sm font-semibold text-[#1E3A8A] bg-[#F8FAFC] transition-colors">Beranda</a>
-                    <a href="{{ url('/') }}#mapSectionContainer" data-nav-target="mapSectionContainer" onclick="closePublicMobileMenu()" class="public-mobile-link block px-3 py-2.5 rounded-lg text-sm font-medium text-[#0F172A] hover:bg-[#F8FAFC] hover:text-[#1E3A8A] transition-colors">Peta Sebaran</a>
-                    <a href="{{ url('/') }}#kategori-infrastruktur" data-nav-target="kategori-infrastruktur" onclick="closePublicMobileMenu()" class="public-mobile-link block px-3 py-2.5 rounded-lg text-sm font-medium text-[#0F172A] hover:bg-[#F8FAFC] hover:text-[#1E3A8A] transition-colors">Kategori &amp; Layanan</a>
-                    <a href="{{ url('/') }}#download-app" data-nav-target="download-app" onclick="closePublicMobileMenu()" class="public-mobile-link block px-3 py-2.5 rounded-lg text-sm font-medium text-[#0F172A] hover:bg-[#F8FAFC] hover:text-[#1E3A8A] transition-colors">Unduh Aplikasi</a>
+                <!-- Mobile Dropdown Menu (Animasi Buka-Tutup ke Bawah & Atas) -->
+                <div id="publicMobileMenu" class="md:hidden overflow-hidden bg-white border-t border-transparent px-5 transition-all duration-300 ease-in-out" style="max-height: 0px; opacity: 0; padding-top: 0px; padding-bottom: 0px; transform: translateY(-6px);">
+                    <div class="space-y-1">
+                        <a href="{{ url('/') }}#top" data-nav-target="top" onclick="closePublicMobileMenu()" class="public-mobile-link block px-3 py-2.5 rounded-lg text-sm font-semibold text-[#2563EB] bg-[#EFF6FF] transition-colors">Beranda</a>
+                        <a href="{{ url('/') }}#mapSectionContainer" data-nav-target="mapSectionContainer" onclick="closePublicMobileMenu()" class="public-mobile-link block px-3 py-2.5 rounded-lg text-sm font-medium text-[#0F172A] hover:bg-[#EFF6FF] hover:text-[#2563EB] transition-colors">Peta Sebaran</a>
+                        <a href="{{ url('/') }}#kategori-infrastruktur" data-nav-target="kategori-infrastruktur" onclick="closePublicMobileMenu()" class="public-mobile-link block px-3 py-2.5 rounded-lg text-sm font-medium text-[#0F172A] hover:bg-[#EFF6FF] hover:text-[#2563EB] transition-colors">Kategori &amp; Layanan</a>
+                        <a href="{{ url('/') }}#download-app" data-nav-target="download-app" onclick="closePublicMobileMenu()" class="public-mobile-link block px-3 py-2.5 rounded-lg text-sm font-medium text-[#0F172A] hover:bg-[#EFF6FF] hover:text-[#2563EB] transition-colors">Unduh Aplikasi</a>
+                    </div>
                 </div>
             </header>
+            </div>
             <script>
-                function togglePublicMobileMenu() {
+                let isPublicMobileMenuOpen = false;
+                function applyPublicMobileMenuState(open) {
                     const menu = document.getElementById('publicMobileMenu');
                     const btn = document.getElementById('publicBurgerBtn');
-                    const icon = document.getElementById('publicBurgerIcon');
-                    if (!menu || !btn) return;
-                    const isOpen = !menu.classList.contains('hidden');
-                    menu.classList.toggle('hidden', isOpen);
-                    btn.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
-                    if (icon && window.lucide) {
-                        icon.setAttribute('data-lucide', isOpen ? 'menu' : 'x');
-                        lucide.createIcons({ root: btn });
+                    const l1 = document.getElementById('burgerLine1');
+                    const l2 = document.getElementById('burgerLine2');
+                    const l3 = document.getElementById('burgerLine3');
+                    isPublicMobileMenuOpen = open;
+                    if (menu) {
+                        if (open) {
+                            menu.style.maxHeight = '260px';
+                            menu.style.opacity = '1';
+                            menu.style.paddingTop = '12px';
+                            menu.style.paddingBottom = '12px';
+                            menu.style.transform = 'translateY(0)';
+                            menu.style.borderTopColor = '#E2E8F0';
+                        } else {
+                            menu.style.maxHeight = '0px';
+                            menu.style.opacity = '0';
+                            menu.style.paddingTop = '0px';
+                            menu.style.paddingBottom = '0px';
+                            menu.style.transform = 'translateY(-6px)';
+                            menu.style.borderTopColor = 'transparent';
+                        }
+                    }
+                    if (btn) btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+                    if (l1 && l2 && l3) {
+                        if (open) {
+                            l1.style.transform = 'translateY(7px) rotate(45deg)';
+                            l2.style.opacity = '0';
+                            l2.style.transform = 'scaleX(0)';
+                            l3.style.transform = 'translateY(-7px) rotate(-45deg)';
+                        } else {
+                            l1.style.transform = '';
+                            l2.style.opacity = '1';
+                            l2.style.transform = '';
+                            l3.style.transform = '';
+                        }
                     }
                 }
+                function togglePublicMobileMenu() {
+                    applyPublicMobileMenuState(!isPublicMobileMenuOpen);
+                }
                 function closePublicMobileMenu() {
-                    const menu = document.getElementById('publicMobileMenu');
-                    const btn = document.getElementById('publicBurgerBtn');
-                    const icon = document.getElementById('publicBurgerIcon');
-                    if (menu) menu.classList.add('hidden');
-                    if (btn) btn.setAttribute('aria-expanded', 'false');
-                    if (icon && window.lucide) {
-                        icon.setAttribute('data-lucide', 'menu');
-                        lucide.createIcons({ root: btn });
-                    }
+                    applyPublicMobileMenuState(false);
                 }
 
                 // Scroll-Spy Navbar (Desktop & Mobile)
@@ -367,20 +495,20 @@
                         document.querySelectorAll('.public-nav-link').forEach(link => {
                             const isMatch = link.getAttribute('data-nav-target') === activeId;
                             if (isMatch) {
-                                link.classList.add('text-[#1E3A8A]', 'border-[#1E3A8A]');
+                                link.classList.add('text-[#2563EB]', 'border-[#2563EB]');
                                 link.classList.remove('border-transparent');
                             } else {
-                                link.classList.remove('text-[#1E3A8A]', 'border-[#1E3A8A]');
+                                link.classList.remove('text-[#2563EB]', 'border-[#2563EB]');
                                 link.classList.add('border-transparent');
                             }
                         });
                         document.querySelectorAll('.public-mobile-link').forEach(link => {
                             const isMatch = link.getAttribute('data-nav-target') === activeId;
                             if (isMatch) {
-                                link.classList.add('text-[#1E3A8A]', 'bg-[#F8FAFC]', 'font-semibold');
+                                link.classList.add('text-[#2563EB]', 'bg-[#EFF6FF]', 'font-semibold');
                                 link.classList.remove('text-[#0F172A]', 'font-medium');
                             } else {
-                                link.classList.remove('text-[#1E3A8A]', 'bg-[#F8FAFC]', 'font-semibold');
+                                link.classList.remove('text-[#2563EB]', 'bg-[#EFF6FF]', 'font-semibold');
                                 link.classList.add('text-[#0F172A]', 'font-medium');
                             }
                         });
@@ -425,64 +553,33 @@
             </script>
         @endif
 
-        <!-- Alerts -->
-        @if(session('success') || session('info') || session('error'))
-            <div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 pt-4 w-full">
-                @if(session('success'))
-                    <div class="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center justify-between shadow-xs mb-3">
-                        <div class="flex items-center gap-2">
-                            <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600 shrink-0"></i>
-                            <span>{{ session('success') }}</span>
-                        </div>
-                        <button onclick="this.parentElement.remove()" class="text-emerald-500 hover:text-emerald-700">✕</button>
-                    </div>
-                @endif
-
-                @if(session('info'))
-                    <div class="p-3.5 rounded-xl bg-blue-50 border border-blue-200 text-blue-800 text-xs flex items-center justify-between shadow-xs mb-3">
-                        <div class="flex items-center gap-2">
-                            <i data-lucide="info" class="w-4 h-4 text-blue-600 shrink-0"></i>
-                            <span>{{ session('info') }}</span>
-                        </div>
-                        <button onclick="this.parentElement.remove()" class="text-blue-500 hover:text-blue-700">✕</button>
-                    </div>
-                @endif
-
-                @if(session('error'))
-                    <div class="p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-800 text-xs flex items-center justify-between shadow-xs mb-3">
-                        <div class="flex items-center gap-2">
-                            <i data-lucide="alert-circle" class="w-4 h-4 text-red-600 shrink-0"></i>
-                            <span>{{ session('error') }}</span>
-                        </div>
-                        <button onclick="this.parentElement.remove()" class="text-red-500 hover:text-red-700">✕</button>
-                    </div>
-                @endif
-            </div>
-        @endif
-
-        <!-- Main Content (Full-width on landing page for hero, container on other pages) -->
-        <main class="flex-1 w-full {{ request()->is('/') ? '' : 'max-w-7xl mx-auto px-6 sm:px-8 lg:px-10' }} pb-12">
+        <!-- Main Content (Full-width on landing page & login split-screen, container on other pages) -->
+        <main class="flex-1 w-full {{ (request()->is('/') || request()->routeIs('login')) ? '' : 'max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 pb-12' }}">
             @yield('content')
         </main>
 
+        @if(!request()->routeIs('login'))
         <footer class="border-t border-[#E2E8F0] bg-white py-6 px-6 text-center text-xs text-[#475569]">
             <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
                 <span>© 2026 Pemerintah Kabupaten Kolaka Utara • Dinas Pekerjaan Umum dan Penataan Ruang (PUPR)</span>
                 <div class="flex items-center gap-4 text-xs font-semibold text-[#475569]">
-                    <a href="#download-app" class="text-[#1E3A8A] hover:text-[#172554] flex items-center gap-1.5 transition font-bold">
-                        <i data-lucide="smartphone" class="w-3.5 h-3.5 text-[#1E3A8A]"></i>
+                    <a href="#download-app" class="text-[#2563EB] hover:text-[#1D4ED8] flex items-center gap-1.5 transition font-bold">
+                        <i data-lucide="smartphone" class="w-3.5 h-3.5 text-[#2563EB]"></i>
                         <span>Aplikasi Warga</span>
                     </a>
-                    <a href="https://play.google.com" target="_blank" rel="noopener noreferrer" class="hover:text-[#1E3A8A] transition">Google Play</a>
-                    <a href="https://www.apple.com/app-store/" target="_blank" rel="noopener noreferrer" class="hover:text-[#1E3A8A] transition">App Store</a>
+                    <a href="https://play.google.com" target="_blank" rel="noopener noreferrer" class="hover:text-[#2563EB] transition">Google Play</a>
+                    <a href="https://www.apple.com/app-store/" target="_blank" rel="noopener noreferrer" class="hover:text-[#2563EB] transition">App Store</a>
                 </div>
             </div>
         </footer>
+        @endif
     </div>
 @endif
 
     <script>
-        lucide.createIcons();
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.lucide) lucide.createIcons();
+        });
 
         function toggleSidebar() {
             const sidebar = document.getElementById('mainSidebar');
@@ -496,6 +593,64 @@
                     backdrop.classList.add('hidden');
                 }
             }
+        }
+
+        function toggleRoleAccordion(roleKey) {
+            const body = document.getElementById('accordionBody-' + roleKey);
+            const chevron = document.getElementById('accordionChevron-' + roleKey);
+            if (!body) return;
+            const isHidden = body.classList.contains('hidden');
+            body.classList.toggle('hidden', !isHidden);
+            if (chevron) {
+                chevron.classList.toggle('rotate-180', isHidden);
+            }
+            const btn = body.previousElementSibling;
+            if (btn) btn.setAttribute('aria-expanded', isHidden ? 'true' : 'false');
+        }
+
+        function syncSidebarSubItemActive(roleKey, tabId) {
+            const normalizedTab = (roleKey === 'admin' && tabId === 'users-list') ? 'users-management' : tabId;
+            document.querySelectorAll(`.sidebar-subitem[data-sidebar-role="${roleKey}"]`).forEach(el => {
+                const isMatch = el.getAttribute('data-sidebar-tab') === normalizedTab;
+                el.classList.toggle('bg-[#2563EB]', isMatch);
+                el.classList.toggle('text-white', isMatch);
+                el.classList.toggle('font-bold', isMatch);
+                el.classList.toggle('shadow-xs', isMatch);
+                el.classList.toggle('text-[#475569]', !isMatch);
+                el.classList.toggle('hover:bg-[#F8FAFC]', !isMatch);
+                el.classList.toggle('hover:text-[#0F172A]', !isMatch);
+                const icon = el.querySelector('svg, i');
+                if (icon) {
+                    icon.classList.toggle('text-white', isMatch);
+                    icon.classList.toggle('text-[#64748B]', !isMatch);
+                }
+            });
+        }
+
+        function handleSidebarTabClick(event, roleKey, tabId) {
+            if (roleKey === 'admin' && typeof window.switchAdminTab === 'function') {
+                event.preventDefault();
+                window.switchAdminTab(tabId);
+            } else if (roleKey === 'operator' && typeof window.switchTab === 'function') {
+                event.preventDefault();
+                window.switchTab(tabId);
+            } else if (roleKey === 'bupati' && typeof window.switchBupatiTab === 'function') {
+                event.preventDefault();
+                window.switchBupatiTab(tabId);
+            } else if (roleKey === 'petugas' && typeof window.switchPetugasTab === 'function') {
+                event.preventDefault();
+                window.switchPetugasTab(tabId);
+            } else {
+                return true;
+            }
+            syncSidebarSubItemActive(roleKey, tabId);
+            if (window.innerWidth < 1024) {
+                const sidebar = document.getElementById('mainSidebar');
+                if (sidebar && !sidebar.classList.contains('-translate-x-full')) {
+                    toggleSidebar();
+                }
+            }
+            return false;
         }
 
         // Jam Realtime Berjalan Akurat Waktu Indonesia Tengah (WITA / Kolaka Utara, UTC+8)
@@ -540,25 +695,35 @@
 
     @if(auth()->check() && auth()->user()->needsFirstLoginSetup())
     <!-- Modal Aktivasi Login Pertama Kali -->
-    <div id="firstLoginModal" class="fixed inset-0 z-[999999] flex items-center justify-center p-4 bg-slate-900/70 select-none overflow-y-auto">
-        <div class="bg-white rounded-2xl max-w-md w-full shadow-xl border border-slate-200 overflow-hidden my-auto">
-            <!-- Modal Header: Bersih & Rapi Tanpa Kotak Ikon -->
-            <div class="p-5 border-b border-slate-100 bg-slate-50/60">
-                <div class="flex items-center gap-2">
-                    <h3 class="font-outfit font-extrabold text-base text-slate-900">
-                        Verifikasi Akun Baru
-                    </h3>
-                    <span class="px-2 py-0.5 rounded-md bg-blue-100 text-[#1E3A8A] text-[10px] font-bold">
-                        {{ auth()->user()->role }}
-                    </span>
+    <div id="firstLoginModal" class="fixed inset-0 z-[999999] flex items-center justify-center p-3 sm:p-5 bg-slate-900/65 select-none overflow-y-auto overscroll-contain">
+        <div class="bg-white rounded-[24px] max-w-lg w-full shadow-2xl border border-[#E2E8F0] overflow-hidden my-auto">
+            <!-- Modal Header -->
+            <div class="px-6 py-4 border-b border-[#E2E8F0] bg-white flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-10 h-10 rounded-xl bg-[#EFF6FF] text-[#2563EB] border border-blue-100 flex items-center justify-center shrink-0">
+                        <i data-lucide="shield-check" class="w-5 h-5"></i>
+                    </div>
+                    <div class="min-w-0">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <h3 class="font-outfit font-bold text-base text-[#0F172A] leading-tight">
+                                Verifikasi Akun Baru
+                            </h3>
+                            <span class="px-2 py-0.5 rounded-md bg-[#EFF6FF] text-[#2563EB] border border-blue-100 text-[10px] font-bold uppercase tracking-wide">
+                                {{ str_replace('_', ' ', auth()->user()->role) }}
+                            </span>
+                        </div>
+                        <p class="text-[11px] text-[#64748B] mt-0.5 truncate">
+                            Lengkapi nomor WhatsApp dan buat kata sandi baru Anda
+                        </p>
+                    </div>
                 </div>
-                <p class="text-xs text-slate-500 mt-1 leading-relaxed">
-                    Demi keamanan akun dinas, silakan lengkapi no. WhatsApp dan buat kata sandi baru Anda.
-                </p>
+                <button type="button" onclick="document.getElementById('firstLoginLogoutForm').submit()" class="w-9 h-9 rounded-[10px] bg-white hover:bg-slate-100 text-slate-500 border border-[#E2E8F0] flex items-center justify-center transition cursor-pointer shrink-0" aria-label="Tutup">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
             </div>
 
             <!-- Modal Form Body -->
-            <form method="POST" action="{{ route('profile.first-login.setup') }}" class="p-5 space-y-4">
+            <form method="POST" action="{{ route('profile.first-login.setup') }}" class="p-6 space-y-4">
                 @csrf
 
                 @if($errors->any())
@@ -578,20 +743,20 @@
                 <input type="hidden" name="latitude" id="firstLoginLat" value="">
                 <input type="hidden" name="longitude" id="firstLoginLon" value="">
 
-                <div class="space-y-3">
+                <div class="space-y-3.5">
                     <!-- 1. Nama Lengkap -->
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">
+                        <label class="block text-xs font-bold text-[#334155] mb-1.5">
                             Nama Lengkap <span class="text-red-500">*</span>
                         </label>
                         <input type="text" name="name" value="{{ old('name', auth()->user()->name) }}" required
                             placeholder="Nama sesuai SK / identitas"
-                            class="w-full px-3 py-2.5 text-xs font-semibold rounded-xl border border-slate-200 bg-white focus:border-[#1E3A8A] focus:ring-1 focus:ring-[#1E3A8A] transition">
+                            class="w-full px-3.5 py-2.5 text-xs font-semibold rounded-xl border border-[#CBD5E1] bg-white text-[#0F172A] focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 focus:outline-none transition">
                     </div>
 
                     <!-- 2. Nomor Handphone / WhatsApp (Standar Indonesia) -->
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">
+                        <label class="block text-xs font-bold text-[#334155] mb-1.5">
                             Nomor WhatsApp Aktif <span class="text-red-500">*</span>
                         </label>
                         <div class="relative">
@@ -600,35 +765,35 @@
                                 maxlength="13"
                                 oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                                 placeholder="Contoh: 081234567890"
-                                class="w-full px-3 py-2.5 text-xs font-mono font-semibold rounded-xl border border-slate-200 bg-white focus:border-[#1E3A8A] focus:ring-1 focus:ring-[#1E3A8A] transition">
+                                class="w-full px-3.5 py-2.5 text-xs font-mono font-semibold rounded-xl border border-[#CBD5E1] bg-white text-[#0F172A] focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 focus:outline-none transition">
                         </div>
-                        <p class="text-[10px] text-slate-400 mt-1">Format standar Indonesia diawali 08 (10-13 digit angka).</p>
+                        <p class="text-[11px] text-[#64748B] mt-1">Format standar Indonesia diawali 08 (10–13 digit angka).</p>
                     </div>
 
                     <!-- 3. Kata Sandi Baru & Ulangi Sandi (Dengan Ikon Mata) -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-0.5">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-0.5">
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">
+                            <label class="block text-xs font-bold text-[#334155] mb-1.5">
                                 Sandi Baru <span class="text-red-500">*</span>
                             </label>
                             <div class="relative">
                                 <input type="password" name="password" id="setupNewPassInput" required minlength="8"
                                     placeholder="Min. 8 karakter (A-Z, a-z, 0-9)"
-                                    class="w-full pl-3 pr-9 py-2.5 text-xs rounded-xl border border-slate-200 bg-white focus:border-[#1E3A8A] focus:ring-1 focus:ring-[#1E3A8A] transition">
-                                <button type="button" onclick="toggleSetupPass('setupNewPassInput', 'eyeIconSetup1')" class="absolute inset-y-0 right-0 pr-2.5 flex items-center text-slate-400 hover:text-slate-600 cursor-pointer">
+                                    class="w-full pl-3.5 pr-9 py-2.5 text-xs rounded-xl border border-[#CBD5E1] bg-white text-[#0F172A] focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 focus:outline-none transition">
+                                <button type="button" onclick="toggleSetupPass('setupNewPassInput', 'eyeIconSetup1')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 cursor-pointer">
                                     <i id="eyeIconSetup1" data-lucide="eye" class="w-4 h-4"></i>
                                 </button>
                             </div>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">
+                            <label class="block text-xs font-bold text-[#334155] mb-1.5">
                                 Ulangi Sandi <span class="text-red-500">*</span>
                             </label>
                             <div class="relative">
                                 <input type="password" name="password_confirmation" id="setupConfirmPassInput" required minlength="8"
                                     placeholder="Ulangi sandi baru"
-                                    class="w-full pl-3 pr-9 py-2.5 text-xs rounded-xl border border-slate-200 bg-white focus:border-[#1E3A8A] focus:ring-1 focus:ring-[#1E3A8A] transition">
-                                <button type="button" onclick="toggleSetupPass('setupConfirmPassInput', 'eyeIconSetup2')" class="absolute inset-y-0 right-0 pr-2.5 flex items-center text-slate-400 hover:text-slate-600 cursor-pointer">
+                                    class="w-full pl-3.5 pr-9 py-2.5 text-xs rounded-xl border border-[#CBD5E1] bg-white text-[#0F172A] focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 focus:outline-none transition">
+                                <button type="button" onclick="toggleSetupPass('setupConfirmPassInput', 'eyeIconSetup2')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 cursor-pointer">
                                     <i id="eyeIconSetup2" data-lucide="eye" class="w-4 h-4"></i>
                                 </button>
                             </div>
@@ -636,16 +801,16 @@
                     </div>
                 </div>
 
-                <!-- Tombol Aksi: Simetris, Rapi & Seimbang -->
-                <div class="pt-3 border-t border-slate-100 grid grid-cols-2 gap-3">
+                <!-- Footer Tombol -->
+                <div class="pt-4 border-t border-[#E2E8F0] flex items-center justify-end gap-2.5">
                     <button type="button" onclick="document.getElementById('firstLoginLogoutForm').submit()"
-                        class="w-full py-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 font-bold text-xs text-center transition cursor-pointer">
+                        class="px-5 py-2.5 rounded-xl bg-[#F1F5F9] hover:bg-slate-200 text-[#334155] font-bold text-xs transition cursor-pointer">
                         Nanti Saja
                     </button>
                     <button type="submit"
-                        class="w-full py-2.5 rounded-xl bg-[#1E3A8A] hover:bg-blue-900 text-white font-bold text-xs text-center shadow-xs transition flex items-center justify-center gap-1.5 cursor-pointer">
+                        class="px-5 py-2.5 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold text-xs transition flex items-center justify-center gap-1.5 cursor-pointer">
                         <i data-lucide="check" class="w-4 h-4"></i>
-                        <span>Simpan & Aktifkan</span>
+                        <span>Simpan &amp; Aktifkan</span>
                     </button>
                 </div>
             </form>
@@ -679,6 +844,65 @@
                 if (lonEl) lonEl.value = pos.coords.longitude;
             }, function() {}, { timeout: 6000, maximumAge: 300000 });
         }
+    </script>
+    @endif
+
+    @if(session('success') || session('info') || session('error'))
+    <!-- Floating Bottom-Right Toast Notification (Auto-Dismiss 4s) -->
+    <div id="globalToastStack" class="fixed bottom-5 right-5 z-[999999] flex flex-col gap-2.5 max-w-sm w-[calc(100vw-2.5rem)] pointer-events-none">
+        @if(session('success'))
+        <div class="global-toast pointer-events-auto flex items-start gap-3 bg-white border border-emerald-200 shadow-lg rounded-2xl px-4 py-3 transition-all duration-300">
+            <div class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center shrink-0">
+                <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+                <p class="text-xs font-bold text-[#0F172A]">Berhasil</p>
+                <p class="text-[11px] text-[#475569] mt-0.5 leading-snug">{{ session('success') }}</p>
+            </div>
+            <button type="button" onclick="this.closest('.global-toast').remove()" class="w-6 h-6 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center shrink-0 cursor-pointer" aria-label="Tutup">
+                <i data-lucide="x" class="w-3.5 h-3.5"></i>
+            </button>
+        </div>
+        @endif
+
+        @if(session('info'))
+        <div class="global-toast pointer-events-auto flex items-start gap-3 bg-white border border-blue-200 shadow-lg rounded-2xl px-4 py-3 transition-all duration-300">
+            <div class="w-8 h-8 rounded-xl bg-[#EFF6FF] text-[#2563EB] border border-blue-100 flex items-center justify-center shrink-0">
+                <i data-lucide="info" class="w-4 h-4"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+                <p class="text-xs font-bold text-[#0F172A]">Informasi</p>
+                <p class="text-[11px] text-[#475569] mt-0.5 leading-snug">{{ session('info') }}</p>
+            </div>
+            <button type="button" onclick="this.closest('.global-toast').remove()" class="w-6 h-6 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center shrink-0 cursor-pointer" aria-label="Tutup">
+                <i data-lucide="x" class="w-3.5 h-3.5"></i>
+            </button>
+        </div>
+        @endif
+
+        @if(session('error'))
+        <div class="global-toast pointer-events-auto flex items-start gap-3 bg-white border border-red-200 shadow-lg rounded-2xl px-4 py-3 transition-all duration-300">
+            <div class="w-8 h-8 rounded-xl bg-red-50 text-red-600 border border-red-100 flex items-center justify-center shrink-0">
+                <i data-lucide="alert-circle" class="w-4 h-4"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+                <p class="text-xs font-bold text-red-700">Perhatian</p>
+                <p class="text-[11px] text-[#475569] mt-0.5 leading-snug">{{ session('error') }}</p>
+            </div>
+            <button type="button" onclick="this.closest('.global-toast').remove()" class="w-6 h-6 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center shrink-0 cursor-pointer" aria-label="Tutup">
+                <i data-lucide="x" class="w-3.5 h-3.5"></i>
+            </button>
+        </div>
+        @endif
+    </div>
+    <script>
+        setTimeout(() => {
+            document.querySelectorAll('#globalToastStack .global-toast').forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(8px)';
+                setTimeout(() => el.remove(), 300);
+            });
+        }, 4000);
     </script>
     @endif
 

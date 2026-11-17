@@ -40,7 +40,7 @@
                         'COMPLETED', 'CLOSED' => 'bg-emerald-50 text-emerald-800 border-emerald-200',
                         'WAITING_VERIFICATION' => 'bg-amber-50 text-amber-700 border-amber-300',
                         'IN_PROGRESS', 'REVISION_REQUIRED' => 'bg-amber-50 text-amber-800 border-amber-300',
-                        'DISPATCHED' => 'bg-blue-50 text-[#1E3A8A] border-blue-200',
+                        'DISPATCHED' => 'bg-blue-50 text-[#2563EB] border-blue-200',
                         default => 'bg-red-50 text-red-700 border-red-200',
                     };
                     $officerName = $item->latestDisposition?->team?->name
@@ -54,7 +54,7 @@
                     data-search="{{ $searchStr }}"
                     data-status="{{ $stVal }}">
                     <td class="hidden md:table-cell py-3 px-3 align-middle whitespace-nowrap">
-                        <button type="button" onclick="event.stopPropagation(); {{ $detailFn }}({{ $item->id }})" class="font-mono font-bold text-[#1E3A8A] hover:underline cursor-pointer">
+                        <button type="button" onclick="event.stopPropagation(); {{ $detailFn }}({{ $item->id }})" class="font-mono font-bold text-[#2563EB] hover:underline cursor-pointer">
                             #{{ $item->public_code }}
                         </button>
                         <span class="block text-[10px] text-[#475569]">{{ $item->created_at?->diffForHumans() }}</span>
@@ -70,10 +70,10 @@
                             </div>
                             <div class="min-w-0 flex-1">
                                 <div class="md:hidden flex items-center gap-1.5 flex-wrap mb-0.5">
-                                    <span class="font-mono font-bold text-[#1E3A8A] text-[10px]">#{{ $item->public_code }}</span>
+                                    <span class="font-mono font-bold text-[#2563EB] text-[10px]">#{{ $item->public_code }}</span>
                                     <span class="px-1.5 py-0.5 rounded text-[9.5px] font-bold border {{ $stClass }}">{{ $stLabel }}</span>
                                 </div>
-                                <button type="button" onclick="{{ $detailFn }}({{ $item->id }})" class="font-bold text-[#0F172A] hover:text-[#1E3A8A] truncate block w-full md:max-w-[240px] text-left cursor-pointer" title="{{ $item->title }}">
+                                <button type="button" onclick="{{ $detailFn }}({{ $item->id }})" class="font-bold text-[#0F172A] hover:text-[#2563EB] truncate block w-full md:max-w-[240px] text-left cursor-pointer" title="{{ $item->title }}">
                                     {{ $item->title }}
                                 </button>
                                 <span class="text-[11px] text-[#475569] truncate block w-full md:max-w-[240px]" title="{{ $item->address }}">
@@ -108,7 +108,7 @@
                             <div class="flex md:inline-flex items-center gap-1.5 justify-end flex-wrap">
                                 @if($mode === 'operator-verify')
                                     <button type="button" onclick="openDispatchModal({{ $item->id }})"
-                                        class="px-2.5 py-1.5 rounded-lg bg-[#1E3A8A] hover:bg-[#172554] text-white font-semibold text-[11px] inline-flex items-center gap-1 transition cursor-pointer">
+                                        class="px-2.5 py-1.5 rounded-lg bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-semibold text-[11px] inline-flex items-center gap-1 transition cursor-pointer">
                                         <i data-lucide="send" class="w-3 h-3"></i>
                                         <span>Verifikasi</span>
                                     </button>
@@ -118,14 +118,14 @@
                                     @else
                                         @php $dispItem = $item->latestDisposition; @endphp
                                         <button type="button" onclick="openAssignTeamModal({{ $item->id }}, '{{ $item->public_code }}', '{{ addslashes($item->title) }}', '{{ $dispItem?->team_id ?? '' }}', '{{ addslashes($dispItem?->instruction ?? '') }}')"
-                                            class="px-2.5 py-1.5 rounded-lg bg-[#1E3A8A] hover:bg-[#172554] text-white font-semibold text-[11px] inline-flex items-center gap-1 transition cursor-pointer whitespace-nowrap">
+                                            class="px-2.5 py-1.5 rounded-lg bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-semibold text-[11px] inline-flex items-center gap-1 transition cursor-pointer whitespace-nowrap">
                                             <i data-lucide="user-plus" class="w-3 h-3"></i>
                                             <span>{{ $dispItem?->team_id ? 'Ubah Regu' : 'Tempatkan Regu' }}</span>
                                         </button>
                                     @endif
                                 @elseif($mode === 'operator-validation')
                                     <button type="button" onclick="openValidationModal({{ $item->id }})"
-                                        class="px-2.5 py-1.5 rounded-lg bg-[#1E3A8A] hover:bg-[#172554] text-white font-semibold text-[11px] inline-flex items-center gap-1 transition cursor-pointer">
+                                        class="px-2.5 py-1.5 rounded-lg bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-semibold text-[11px] inline-flex items-center gap-1 transition cursor-pointer">
                                         <i data-lucide="check-square" class="w-3 h-3"></i>
                                         <span>Validasi</span>
                                     </button>
@@ -133,14 +133,14 @@
                                     <form method="POST" action="{{ route('petugas.complaints.start', $item->id) }}" class="inline">
                                         @csrf
                                         <button type="submit"
-                                            class="px-2.5 py-1.5 rounded-lg bg-[#1E3A8A] hover:bg-[#172554] text-white font-semibold text-[11px] inline-flex items-center gap-1 transition cursor-pointer">
+                                            class="px-2.5 py-1.5 rounded-lg bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-semibold text-[11px] inline-flex items-center gap-1 transition cursor-pointer">
                                             <i data-lucide="play" class="w-3 h-3"></i>
                                             <span>Mulai</span>
                                         </button>
                                     </form>
                                 @elseif($mode === 'petugas-tasks')
                                     <button type="button" onclick="openPetugasFinishModal({{ $item->id }}, '{{ $item->public_code }}', '{{ addslashes($item->title) }}')"
-                                        class="px-2.5 py-1.5 rounded-lg bg-[#1E3A8A] hover:bg-[#172554] text-white font-semibold text-[11px] inline-flex items-center gap-1 transition cursor-pointer">
+                                        class="px-2.5 py-1.5 rounded-lg bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-semibold text-[11px] inline-flex items-center gap-1 transition cursor-pointer">
                                         <i data-lucide="upload-cloud" class="w-3 h-3"></i>
                                         <span>Selesai</span>
                                     </button>

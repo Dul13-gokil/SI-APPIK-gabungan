@@ -1,195 +1,206 @@
-<!-- Modal Detail Pengaduan Publik: Nomor pelapor disamarkan (3 digit terakhir) -->
-<div id="landingComplaintDetailModal" class="fixed inset-0 z-[9999] hidden flex items-center justify-center p-3 sm:p-5 bg-slate-900/65 transition-opacity duration-150 overscroll-contain">
-    <div class="bg-white w-full max-w-xl rounded-xl shadow-md border border-[#E2E8F0] overflow-hidden flex flex-col max-h-[92vh]">
+<!-- Modal Detail Pengaduan Publik (Ringan, Responsif, Desktop 760px & Mobile Gap Lega) -->
+<div id="landingComplaintDetailModal" class="fixed inset-0 z-[9999] hidden flex items-end sm:items-center justify-center p-3.5 sm:p-5 bg-slate-900/65 overscroll-contain">
+    <div id="landingModalCard" class="bg-white w-full sm:max-w-[760px] rounded-[24px] shadow-[0_20px_50px_rgba(15,23,42,0.22)] border border-[#E2E8F0] overflow-hidden flex flex-col max-h-[86vh] sm:max-h-[90vh]">
         
-        <!-- Modal Top Header (Selaras 1 Baris: Kerusakan -> Kategori -> Status) -->
-        <div class="px-4 sm:px-5 py-3 sm:py-3.5 border-b border-[#E2E8F0] flex items-center justify-between bg-[#F8FAFC] gap-2">
-            <div class="flex items-center gap-1.5 sm:gap-2 flex-nowrap min-w-0 overflow-x-auto no-scrollbar py-0.5">
-                <!-- 1. Tingkat Kerusakan -->
-                <span id="landingModalTypeBadge" class="shrink-0 px-2.5 py-1 rounded-md text-xs font-semibold bg-red-50 text-red-700 border border-red-200 inline-flex items-center gap-1.5 whitespace-nowrap">
-                    <span class="w-1.5 h-1.5 rounded-full bg-red-600 shrink-0"></span>
-                    <span id="landingModalTypeText">Kerusakan Ringan</span>
-                </span>
-                <!-- 2. Kategori Infrastruktur -->
-                <span id="landingModalCategoryBadge" class="shrink-0 px-2.5 py-1 rounded-md bg-slate-100 text-[#0F172A] font-semibold text-xs border border-[#E2E8F0] inline-flex items-center whitespace-nowrap">
-                    Infrastruktur
-                </span>
-                <!-- 3. Status Pengerjaan -->
-                <span id="landingModalStatusBadge" class="shrink-0 px-2.5 py-1 rounded-md text-xs font-bold whitespace-nowrap border">
-                    STATUS
-                </span>
+        <!-- Drag Handle Khusus Mobile Bottom Sheet -->
+        <div class="sm:hidden flex justify-center pt-3 pb-1 bg-white shrink-0">
+            <span class="w-11 h-1 rounded-full bg-[#CBD5E1]"></span>
+        </div>
+
+        <!-- Sticky Modal Top Header (3 Badge 1 Baris + Tanggal & Kode Aduan + Tombol X di Tengah Kanan) -->
+        <div class="px-4 sm:px-7 pt-2.5 pb-3.5 sm:py-5 border-b border-[#E2E8F0] bg-white flex items-center justify-between gap-2.5 shrink-0">
+            <div class="min-w-0 flex-1 space-y-2">
+                <!-- Baris 1: Selalu 1 Baris di Mobile & Desktop -->
+                <div class="flex items-center gap-1 sm:gap-2 flex-nowrap overflow-x-auto no-scrollbar">
+                    <!-- 1. Tingkat Kerusakan -->
+                    <span id="landingModalTypeBadge" class="shrink-0 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10.5px] sm:text-xs font-bold bg-[#FEF2F2] text-[#DC2626] border border-[#FECACA] inline-flex items-center gap-1 whitespace-nowrap">
+                        <span class="w-1.5 h-1.5 rounded-full bg-[#DC2626] shrink-0"></span>
+                        <span id="landingModalTypeText">Kerusakan Ringan</span>
+                    </span>
+                    <!-- 2. Kategori Infrastruktur -->
+                    <span id="landingModalCategoryBadge" class="shrink min-w-0 truncate px-2 sm:px-3 py-0.5 sm:py-1 rounded-full bg-[#F1F5F9] text-[#475569] font-semibold text-[10.5px] sm:text-xs border border-[#E2E8F0]">
+                        Infrastruktur
+                    </span>
+                    <!-- 3. Status Pengerjaan -->
+                    <span id="landingModalStatusBadge" class="shrink-0 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10.5px] sm:text-xs font-bold whitespace-nowrap border bg-[#ECFDF5] text-[#047857] border-[#A7F3D0]">
+                        STATUS
+                    </span>
+                </div>
+
+                <!-- Baris 2: Tanggal Aduan + Kode Aduan -->
+                <div class="flex items-center flex-wrap gap-2 text-[11.5px] sm:text-[13px] text-[#475569]">
+                    <div class="flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-3.5 h-3.5 text-[#64748B] shrink-0"></i>
+                        <span id="landingModalDate">01 Jan 2026, 00:00 WITA</span>
+                    </div>
+                    <span class="text-slate-300">&bull;</span>
+                    <span id="landingModalCode" class="font-mono font-bold text-[#2563EB] bg-[#EFF6FF] border border-[#BFDBFE] px-2 py-0.5 rounded-full text-[10.5px] sm:text-[11px]">#ADU-0000</span>
+                </div>
             </div>
-            <button type="button" onclick="closeLandingDetailModal()" class="w-9 h-9 rounded-lg bg-white hover:bg-slate-100 text-[#475569] hover:text-[#0F172A] border border-[#E2E8F0] flex items-center justify-center transition cursor-pointer shrink-0 ml-1 focus-visible:outline-2 focus-visible:outline-[#1E3A8A]" title="Tutup Detail" aria-label="Tutup Rincian">
+
+            <!-- Tombol Tutup X di Tengah Kanan -->
+            <button type="button" onclick="closeLandingDetailModal()" class="w-8 h-8 sm:w-9 sm:h-9 rounded-[10px] bg-[#F8FAFC] hover:bg-slate-100 text-[#475569] hover:text-[#0F172A] border border-[#E2E8F0] flex items-center justify-center transition cursor-pointer shrink-0 focus-visible:outline-2 focus-visible:outline-[#2563EB]" title="Tutup Detail" aria-label="Tutup Rincian">
                 <i data-lucide="x" class="w-4 h-4"></i>
             </button>
         </div>
 
         <!-- Modal Scrollable Body -->
-        <div class="p-4 sm:p-5 overflow-y-auto space-y-4 flex-1 overscroll-contain" style="-webkit-overflow-scrolling: touch;">
+        <div class="px-5 py-4 sm:px-7 sm:py-5 overflow-y-auto space-y-4 flex-1 overscroll-contain bg-white" style="-webkit-overflow-scrolling: touch;">
             
-            <!-- 1. Foto Bukti Kerusakan Awal (Warga) -->
-            <div id="landingModalPhotoContainer" class="space-y-2">
-                <div class="rounded-xl overflow-hidden border border-[#E2E8F0] bg-slate-100 relative max-h-64 sm:max-h-72 flex items-center justify-center">
-                    <img id="landingModalPhoto" src="" alt="Foto Kerusakan" class="w-full h-full object-cover max-h-64 sm:max-h-72">
-                    <div class="absolute bottom-2.5 left-2.5 bg-[#0F172A] text-white text-[11px] font-semibold px-2.5 py-1 rounded-md flex items-center gap-1.5 border border-slate-700">
-                        <i data-lucide="camera" class="w-3.5 h-3.5 text-white"></i>
-                        <span id="landingModalPhotoLabel">Foto Kondisi Lokasi</span>
-                    </div>
-                </div>
-                <!-- Strip Thumbnail Galeri Warga -->
-                <div id="landingModalCitizenGallery" class="flex items-center gap-2 overflow-x-auto pb-1 hidden"></div>
-            </div>
+            <!-- Judul Aduan -->
+            <h3 id="landingModalTitle" class="font-outfit font-bold text-lg sm:text-xl text-[#0F172A] leading-snug">
+                Judul Pengaduan
+            </h3>
 
-            <!-- 2. Foto Bukti Hasil Pengerjaan Fisik (Petugas Lapangan) -->
-            <div id="landingModalCompletionPhotoContainer" class="space-y-2 hidden">
-                <div class="rounded-xl overflow-hidden border border-emerald-300 bg-emerald-50 relative max-h-64 sm:max-h-72 flex items-center justify-center">
-                    <img id="landingModalCompletionPhoto" src="" alt="Foto Hasil Pengerjaan" class="w-full h-full object-cover max-h-64 sm:max-h-72">
-                    <div class="absolute bottom-2.5 left-2.5 bg-[#064E3B] text-white text-[11px] font-semibold px-2.5 py-1 rounded-md flex items-center gap-1.5 border border-emerald-800">
-                        <i data-lucide="badge-check" class="w-3.5 h-3.5 text-emerald-300"></i>
-                        <span>Bukti Penyelesaian Lapangan</span>
-                    </div>
-                </div>
-                <!-- Strip Thumbnail Galeri Petugas -->
-                <div id="landingModalOfficerGallery" class="flex items-center gap-2 overflow-x-auto pb-1 hidden"></div>
-            </div>
-
-            <!-- 3. Judul & Info Waktu Laporan -->
-            <div>
-                <span id="landingModalCode" class="text-[11px] font-mono font-semibold text-[#475569] block tracking-wide mb-0.5">#ADU-0000</span>
-                <h3 id="landingModalTitle" class="font-outfit font-bold text-lg sm:text-xl text-[#0F172A] leading-snug">
-                    Judul Pengaduan
-                </h3>
-                <div class="flex items-center gap-1.5 text-xs text-[#475569] pt-1">
-                    <i data-lucide="calendar" class="w-3.5 h-3.5 text-[#475569]"></i>
-                    <span id="landingModalDate">01 Jan 2026, 00:00 WITA</span>
-                </div>
-            </div>
-
-            <!-- 4. Identitas Pelapor (Disensor Ketat untuk Publik / UU PDP) -->
-            <div class="p-3 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] flex items-center justify-between gap-3">
-                <div class="flex items-center gap-2.5 min-w-0">
-                    <div class="w-8 h-8 rounded-lg bg-blue-100 text-[#1E3A8A] flex items-center justify-center font-bold text-xs shrink-0">
-                        <i data-lucide="user" class="w-4 h-4"></i>
-                    </div>
-                    <div class="min-w-0">
-                        <span class="text-[10px] text-[#475569] block font-bold uppercase tracking-wider">PELAPOR ADUAN</span>
-                        <div class="flex items-center gap-2 flex-wrap">
-                            <span id="landingModalReporter" class="font-outfit font-bold text-xs sm:text-sm text-[#0F172A] leading-tight truncate">
-                                Warga Terdaftar
-                            </span>
-                            <span id="landingModalAnonymousBadge" class="hidden text-[9px] font-bold px-1.5 py-0.5 rounded bg-slate-200 text-[#0F172A]">Anonim</span>
+            <!-- 1. Galeri Foto Berdampingan 2 Kolom (Rasio 16:10 Side-by-Side) -->
+            <div class="grid grid-cols-2 gap-2.5 sm:gap-3.5">
+                <!-- Kiri: Foto Kondisi Lokasi -->
+                <div id="landingModalPhotoContainer" class="space-y-1.5">
+                    <div class="aspect-[16/10] rounded-xl sm:rounded-2xl overflow-hidden border border-[#E2E8F0] bg-[#1E293B] relative flex items-center justify-center">
+                        <img id="landingModalPhoto" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Foto Kondisi Lokasi" onclick="openLandingImageLightbox(this.src)" class="w-full h-full object-cover cursor-zoom-in">
+                        <div class="absolute bottom-2 left-2 sm:bottom-3 sm:left-3 bg-[#0F172A]/85 text-white text-[10px] sm:text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5 pointer-events-none">
+                            <i data-lucide="camera" class="w-3 h-3 shrink-0 hidden sm:inline"></i>
+                            <span id="landingModalPhotoLabel">Foto Kondisi Lokasi</span>
                         </div>
                     </div>
+                    <div id="landingModalCitizenGallery" class="flex items-center gap-1.5 overflow-x-auto pb-0.5 hidden"></div>
                 </div>
-                <!-- Nomor Telepon Pelapor Disensor: Karakter Bintang + Hanya 3 Digit Terakhir Kelihatan (UU PDP) -->
-                <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white border border-[#E2E8F0] text-[#475569] shrink-0" title="Nomor telepon pelapor disamarkan demi melindungi privasi (hanya 3 digit terakhir terlihat)">
-                    <i data-lucide="shield-check" class="w-3.5 h-3.5 text-[#475569]"></i>
-                    <span id="landingModalReporterPhone" class="font-mono text-xs font-bold text-[#0F172A] tracking-wider">********---</span>
+
+                <!-- Kanan: Foto Hasil Pengerjaan (Selalu tampil berdampingan, fallback rapi bila belum selesai) -->
+                <div id="landingModalCompletionPhotoContainer" class="space-y-1.5">
+                    <div class="aspect-[16/10] rounded-xl sm:rounded-2xl overflow-hidden border border-[#A7F3D0] bg-[#ECFDF5] relative flex items-center justify-center">
+                        <img id="landingModalCompletionPhoto" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Foto Hasil Pengerjaan" onclick="openLandingImageLightbox(this.src)" class="w-full h-full object-cover cursor-zoom-in">
+                        <div id="landingModalCompletionPlaceholder" class="hidden inset-0 absolute flex flex-col items-center justify-center text-center p-3 text-[#047857] bg-[#ECFDF5]">
+                            <i data-lucide="clock" class="w-5 h-5 mb-1 text-[#10B981]"></i>
+                            <span class="text-[11px] sm:text-xs font-semibold leading-tight">Menunggu Foto Hasil Pengerjaan</span>
+                        </div>
+                        <div class="absolute bottom-2 left-2 sm:bottom-3 sm:left-3 bg-[#047857]/90 text-white text-[10px] sm:text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5 pointer-events-none">
+                            <i data-lucide="badge-check" class="w-3 h-3 shrink-0 hidden sm:inline"></i>
+                            <span>Foto Hasil Pengerjaan</span>
+                        </div>
+                    </div>
+                    <div id="landingModalOfficerGallery" class="flex items-center gap-1.5 overflow-x-auto pb-0.5 hidden"></div>
                 </div>
             </div>
 
-            <!-- 5. Kartu Regu Lapangan Pelaksana -->
-            <div id="landingModalOfficerCard" class="hidden p-3.5 rounded-xl bg-blue-50 border border-blue-200 space-y-2.5">
-                <div class="flex items-start justify-between gap-3">
+            <!-- 2. Grid Informasi Pelapor & Lokasi (2 Kolom Seimbang di Desktop, Bertumpuk di Mobile) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-3.5">
+                <!-- Kartu Kiri: Pelapor Aduan -->
+                <div class="p-4 rounded-2xl bg-[#F8FAFC] border border-[#E2E8F0] space-y-1.5">
+                    <div class="flex items-center gap-1.5 text-[11px] font-bold text-[#475569] uppercase tracking-wider">
+                        <i data-lucide="user" class="w-3.5 h-3.5 text-[#2563EB]"></i>
+                        <span>PELAPOR ADUAN</span>
+                    </div>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span id="landingModalReporter" class="font-outfit font-bold text-base text-[#0F172A] leading-tight">
+                            Warga Terdaftar
+                        </span>
+                        <span id="landingModalAnonymousBadge" class="hidden text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-200 text-[#0F172A]">Anonim</span>
+                    </div>
+                    <div class="flex items-center gap-1.5 text-[13px] font-semibold text-[#047857]" title="Nomor telepon pelapor disamarkan demi melindungi privasi (hanya 3 digit terakhir terlihat)">
+                        <i data-lucide="shield-check" class="w-3.5 h-3.5 shrink-0"></i>
+                        <span id="landingModalReporterPhone" class="font-mono tracking-wide">********---</span>
+                        <span class="text-xs font-medium">(Terverifikasi)</span>
+                    </div>
+                </div>
+
+                <!-- Kartu Kanan: Lokasi Kerusakan -->
+                <div class="p-4 rounded-2xl bg-[#F8FAFC] border border-[#E2E8F0] space-y-2">
+                    <div class="flex items-center gap-1.5 text-[11px] font-bold text-[#475569] uppercase tracking-wider">
+                        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#2563EB]"></i>
+                        <span>LOKASI KERUSAKAN</span>
+                    </div>
+                    <p id="landingModalFullAddress" class="text-[13.5px] font-semibold text-[#0F172A] leading-snug">
+                        Alamat lokasi kerusakan...
+                    </p>
+                    <a id="landingModalMapsLink" href="#" target="_blank" rel="noopener noreferrer"
+                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#EFF6FF] hover:bg-[#DBEAFE] text-[#2563EB] border border-[#BFDBFE] text-xs font-bold transition cursor-pointer" title="Buka titik lokasi di Google Maps">
+                        <i data-lucide="map" class="w-3.5 h-3.5 shrink-0"></i>
+                        <span>Buka di Peta</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 3. Kartu Regu Lapangan Pelaksana -->
+            <div id="landingModalOfficerCard" class="hidden p-4 rounded-2xl bg-[#EFF6FF] border border-[#BFDBFE] space-y-3">
+                <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-2.5">
                     <div class="flex items-start gap-2.5 min-w-0">
-                        <div class="w-8 h-8 rounded-lg bg-[#1E3A8A] text-white flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
+                        <div class="w-8 h-8 rounded-xl bg-[#2563EB] text-white flex items-center justify-center shrink-0 mt-0.5">
                             <i data-lucide="hard-hat" class="w-4 h-4"></i>
                         </div>
                         <div class="min-w-0">
-                            <span class="text-[10px] text-[#1E3A8A] font-bold uppercase tracking-wider block">REGU LAPANGAN PELAKSANA</span>
-                            <h4 id="landingModalOfficerName" class="font-outfit font-bold text-xs sm:text-sm text-[#0F172A] truncate leading-tight">
+                            <h4 id="landingModalOfficerName" class="font-outfit font-bold text-[15px] text-[#0F172A] leading-snug">
                                 Regu Aspal 01 - Lasusua
                             </h4>
-                            <span id="landingModalOfficerDept" class="text-[11px] font-semibold text-[#475569] block truncate">
+                            <span id="landingModalOfficerDept" class="text-xs font-medium text-[#475569] block mt-0.5">
                                 Dinas Pekerjaan Umum dan Penataan Ruang (PUPR)
                             </span>
                         </div>
                     </div>
-                    <div id="landingModalDeadlineBox" class="text-right shrink-0">
-                        <span class="text-[10px] text-[#475569] font-bold block">Batas Waktu:</span>
-                        <span id="landingModalOfficerDeadline" class="text-xs font-bold text-[#1E3A8A] bg-white px-2 py-0.5 rounded-md border border-blue-200 inline-block mt-0.5">
-                            -
+                    <div id="landingModalDeadlineBox" class="shrink-0 self-start">
+                        <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white border border-[#BFDBFE] text-[11px] font-bold text-[#1D4ED8]">
+                            <span>Batas Waktu:</span>
+                            <span id="landingModalOfficerDeadline">-</span>
                         </span>
                     </div>
                 </div>
 
-                <!-- Kontak Ketua Regu (Koordinator Lapangan Resmi) -->
-                <div class="p-2.5 rounded-lg bg-white border border-[#E2E8F0] flex items-center justify-between gap-3">
-                    <div class="flex items-center gap-2 min-w-0">
-                        <div class="w-6 h-6 rounded-md bg-blue-50 text-[#1E3A8A] flex items-center justify-center shrink-0">
-                            <i data-lucide="crown" class="w-3.5 h-3.5"></i>
-                        </div>
-                        <div class="min-w-0">
-                            <span class="text-[10px] text-[#475569] font-bold block leading-none">Ketua Regu (Koordinator Lapangan):</span>
-                            <span id="landingModalTeamLeader" class="font-bold text-[#0F172A] truncate block mt-0.5 text-xs">Petugas Lapangan</span>
-                        </div>
+                <!-- Kontak Ketua Regu -->
+                <div class="flex flex-wrap items-center justify-between gap-2 pt-0.5">
+                    <div class="text-[13px] font-semibold text-[#0F172A]">
+                        <span class="text-[#475569] font-medium">Ketua Regu (Koordinator Lapangan):</span>
+                        <span id="landingModalTeamLeader" class="font-bold text-[#0F172A] ml-1">Petugas Lapangan</span>
                     </div>
-                    <a id="landingModalOfficerPhone" href="#" class="px-2.5 py-1 rounded-md bg-blue-50 hover:bg-blue-100 text-[#1E3A8A] font-bold font-mono text-xs flex items-center gap-1.5 transition shrink-0" title="Hubungi Petugas Lapangan">
-                        <i data-lucide="phone-call" class="w-3 h-3"></i>
+                    <a id="landingModalOfficerPhone" href="#" class="px-3 py-1.5 rounded-full bg-white hover:bg-blue-100/70 border border-[#BFDBFE] text-[#2563EB] font-bold font-mono text-xs inline-flex items-center gap-1.5 transition shrink-0" title="Hubungi Petugas Lapangan">
+                        <i data-lucide="phone" class="w-3 h-3"></i>
                         <span id="landingModalOfficerPhoneText">081100000004</span>
                     </a>
                 </div>
 
-                <!-- Instruksi Teknis Pengerjaan -->
-                <div id="landingModalInstructionRow" class="pt-1.5 text-[11px] text-[#475569] flex items-start gap-1.5 border-t border-blue-200">
-                    <i data-lucide="clipboard-list" class="w-3.5 h-3.5 text-[#1E3A8A] shrink-0 mt-0.5"></i>
-                    <span>Instruksi: <em id="landingModalOfficerInstruction" class="text-[#0F172A] font-medium">Lakukan penanganan fisik sesuai SOP dinas terkait</em></span>
+                <!-- Instruksi Teknis -->
+                <div id="landingModalInstructionRow" class="px-3 py-2.5 rounded-xl bg-white border border-[#DBEAFE] text-[13px] text-[#334155] flex items-start gap-2">
+                    <i data-lucide="clipboard-list" class="w-4 h-4 text-[#2563EB] shrink-0 mt-0.5"></i>
+                    <span>Instruksi: <span id="landingModalOfficerInstruction" class="font-medium text-[#0F172A]">Lakukan perbaikan dan penanganan fisik sesuai standar teknis</span></span>
                 </div>
             </div>
 
-            <!-- 6. Lokasi Kerusakan & GIS Spasial -->
-            <div class="p-3.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] space-y-1.5">
-                <div class="flex items-center justify-between text-xs font-bold text-[#0F172A]">
-                    <span class="flex items-center gap-1.5">
-                        <i data-lucide="map-pin" class="w-4 h-4 text-[#1E3A8A]"></i>
-                        <span>Lokasi Kerusakan</span>
-                    </span>
-                    <span id="landingModalCoords" class="font-mono text-[11px] font-bold text-[#1E3A8A] bg-white px-2 py-0.5 rounded-md border border-[#E2E8F0]">
-                        -
-                    </span>
-                </div>
-                <p id="landingModalFullAddress" class="text-xs font-semibold text-[#0F172A] leading-relaxed">
-                    Alamat lokasi kerusakan...
-                </p>
-            </div>
-
-            <!-- 7. Spesifikasi Ruas Jalan Rusak Panjang (> 500 Meter / Parah) -->
-            <div id="landingModalMajorRoadBox" class="hidden rounded-xl p-4 bg-blue-50 border border-blue-200 text-[#1E3A8A] space-y-2">
+            <!-- 4. Spesifikasi Ruas Jalan Rusak Panjang -->
+            <div id="landingModalMajorRoadBox" class="hidden rounded-2xl p-4 bg-[#EFF6FF] border border-[#BFDBFE] text-[#2563EB] space-y-2">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-2">
-                        <i data-lucide="route" class="w-4 h-4 text-[#1E3A8A]"></i>
+                        <i data-lucide="route" class="w-4 h-4 text-[#2563EB]"></i>
                         <span class="text-xs font-bold uppercase tracking-wider">Kerusakan Ruas Panjang</span>
                     </div>
-                    <span class="px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-[#1E3A8A] text-white">Berat</span>
+                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#2563EB] text-white">Berat</span>
                 </div>
-                <div class="grid grid-cols-2 gap-2 text-xs pt-1">
-                    <div class="p-2.5 rounded-lg bg-white border border-blue-200">
-                        <span class="text-[10px] text-[#475569] block">Kondisi Kerusakan:</span>
+                <div class="grid grid-cols-2 gap-2.5 text-xs pt-1">
+                    <div class="p-2.5 rounded-xl bg-white border border-[#BFDBFE]">
+                        <span class="text-[11px] text-[#475569] block">Kondisi Kerusakan:</span>
                         <span id="landingModalRoadCondition" class="font-bold text-[#0F172A]">-</span>
                     </div>
-                    <div class="p-2.5 rounded-lg bg-white border border-blue-200">
-                        <span class="text-[10px] text-[#475569] block">Estimasi Panjang:</span>
+                    <div class="p-2.5 rounded-xl bg-white border border-[#BFDBFE]">
+                        <span class="text-[11px] text-[#475569] block">Estimasi Panjang:</span>
                         <span id="landingModalRoadLength" class="font-bold text-[#0F172A]">-</span>
                     </div>
                 </div>
             </div>
 
-            <!-- 8. Deskripsi Lengkap Kerusakan -->
-            <div class="space-y-2">
-                <h4 class="text-xs font-bold text-[#0F172A] flex items-center gap-1.5">
-                    <i data-lucide="file-text" class="w-4 h-4 text-[#475569]"></i>
+            <!-- 5. Deskripsi Kondisi Kerusakan -->
+            <div class="space-y-1.5">
+                <h4 class="text-[11px] font-bold text-[#475569] uppercase tracking-wider flex items-center gap-1.5">
+                    <i data-lucide="file-text" class="w-3.5 h-3.5 text-[#64748B]"></i>
                     <span>Deskripsi Kondisi Kerusakan</span>
                 </h4>
-                <div id="landingModalDescription" class="p-4 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] text-xs text-[#0F172A] leading-relaxed whitespace-pre-line font-sans">
+                <div id="landingModalDescription" class="p-4 rounded-2xl bg-[#F8FAFC] border border-[#E2E8F0] text-xs sm:text-[13px] text-[#334155] leading-relaxed whitespace-pre-line font-sans">
                     Kondisi kerusakan infrastruktur...
                 </div>
             </div>
 
         </div>
 
-        <!-- Modal Footer Actions -->
-        <div class="px-5 py-3 border-t border-[#E2E8F0] bg-[#F8FAFC] flex items-center justify-end gap-2">
-            <button type="button" onclick="closeLandingDetailModal()" class="px-5 min-h-[44px] rounded-lg bg-[#1E3A8A] hover:bg-[#172554] text-white font-semibold text-xs transition flex items-center gap-1.5 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1E3A8A]">
+        <!-- Modal Footer Actions (Seragam Modal Admin & Role) -->
+        <div class="px-5 py-3.5 sm:px-7 border-t border-[#E2E8F0] bg-white flex items-center justify-end shrink-0">
+            <button type="button" onclick="closeLandingDetailModal()" class="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold text-xs shadow-xs transition flex items-center justify-center gap-1.5 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2563EB]">
                 <span>Tutup Rincian</span>
             </button>
         </div>
@@ -283,7 +294,7 @@
 
         if (statusBadge) {
             statusBadge.innerText = statusLabel;
-            statusBadge.className = `shrink-0 px-2.5 py-1 rounded-full text-xs font-bold whitespace-nowrap border ${statusClass}`;
+            statusBadge.className = `shrink-0 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10.5px] sm:text-xs font-bold whitespace-nowrap border ${statusClass}`;
         }
 
         // 4. Foto Bukti Kerusakan Warga
@@ -320,18 +331,24 @@
             photoContainer.classList.add('hidden');
         }
 
-        // 5. Foto Pengerjaan Petugas Lapangan
+        // 5. Foto Pengerjaan Petugas Lapangan (Selalu tampil 2 kolom sejajar; fallback placeholder bila belum selesai)
         const compContainer = document.getElementById('landingModalCompletionPhotoContainer');
         const compImg = document.getElementById('landingModalCompletionPhoto');
+        const compPlaceholder = document.getElementById('landingModalCompletionPlaceholder');
         const officerGallery = document.getElementById('landingModalOfficerGallery');
 
         const officerPhotos = (item.officer_photos && item.officer_photos.length > 0)
             ? item.officer_photos
             : (item.completion_photo_url ? [item.completion_photo_url] : []);
 
+        if (compContainer) compContainer.classList.remove('hidden');
+
         if (officerPhotos.length > 0) {
-            compImg.src = officerPhotos[0];
-            compContainer.classList.remove('hidden');
+            if (compImg) {
+                compImg.src = officerPhotos[0];
+                compImg.classList.remove('hidden');
+            }
+            if (compPlaceholder) compPlaceholder.classList.add('hidden');
 
             if (officerGallery) {
                 if (officerPhotos.length > 1) {
@@ -348,7 +365,12 @@
                 }
             }
         } else {
-            compContainer.classList.add('hidden');
+            if (compImg) compImg.classList.add('hidden');
+            if (compPlaceholder) compPlaceholder.classList.remove('hidden');
+            if (officerGallery) {
+                officerGallery.classList.add('hidden');
+                officerGallery.innerHTML = '';
+            }
         }
 
         // 6. Pelapor Aduan & Nomor Telepon Sensor
@@ -406,10 +428,21 @@
             }
         }
 
-        // 8. Lokasi Kerusakan
+        // 8. Lokasi Kerusakan + Link Google Maps
         const coordsEl = document.getElementById('landingModalCoords');
+        const mapsLink = document.getElementById('landingModalMapsLink');
         const addrEl = document.getElementById('landingModalFullAddress');
-        if (coordsEl) coordsEl.innerText = (item.latitude && item.longitude) ? `${item.latitude}, ${item.longitude}` : '-';
+        const hasCoords = Boolean(item.latitude && item.longitude);
+        if (coordsEl) coordsEl.innerText = hasCoords ? `${item.latitude}, ${item.longitude}` : '-';
+        if (mapsLink) {
+            if (hasCoords) {
+                mapsLink.href = `https://www.google.com/maps?q=${encodeURIComponent(item.latitude + ',' + item.longitude)}`;
+                mapsLink.classList.remove('pointer-events-none', 'opacity-60');
+            } else {
+                mapsLink.href = '#';
+                mapsLink.classList.add('pointer-events-none', 'opacity-60');
+            }
+        }
         if (addrEl) addrEl.innerText = item.address || 'Alamat tidak tercatat rinci';
 
         // 9. Ruas Panjang (Major Road)
@@ -433,11 +466,11 @@
         const descEl = document.getElementById('landingModalDescription');
         if (descEl) descEl.innerText = item.description || 'Tidak ada catatan deskripsi tambahan.';
 
-        // Buka modal
+        // Buka modal (Render ikon hanya di dalam modal agar instan tanpa lag)
         modal.classList.remove('hidden');
         document.body.style.overflow = 'hidden';
 
-        if (window.lucide) window.lucide.createIcons();
+        if (window.lucide) window.lucide.createIcons({ root: modal });
     }
 
     window.closeLandingDetailModal = function() {
@@ -459,5 +492,33 @@
     // Alias agar pemanggilan di landing page lama langsung otomatis mengarah ke modal landing page ini
     window.openDetailModal = window.openLandingDetailModal;
     window.closeDetailModal = window.closeLandingDetailModal;
+
+    window.copyLandingCoords = function() {
+        const el = document.getElementById('landingModalCoords');
+        if (!el) return;
+        const txt = el.innerText.trim();
+        if (!txt || txt === '-' || txt === 'Tersalin!') return;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(txt).then(() => {
+                el.innerText = 'Tersalin!';
+                setTimeout(() => { el.innerText = txt; }, 1600);
+            }).catch(() => {});
+        }
+    };
+
+    window.openLandingImageLightbox = function(src) {
+        if (!src || src.startsWith('data:image/gif')) return;
+        let overlay = document.getElementById('landingImageLightbox');
+        if (!overlay) {
+            overlay = document.createElement('div');
+            overlay.id = 'landingImageLightbox';
+            overlay.className = 'fixed inset-0 z-[10000] bg-slate-950/90 flex items-center justify-center p-4 cursor-zoom-out';
+            overlay.innerHTML = '<img id="landingLightboxImg" src="" alt="Preview Foto" class="max-w-full max-h-[90vh] rounded-2xl shadow-2xl object-contain">';
+            overlay.addEventListener('click', () => overlay.classList.add('hidden'));
+            document.body.appendChild(overlay);
+        }
+        document.getElementById('landingLightboxImg').src = src;
+        overlay.classList.remove('hidden');
+    };
 })();
 </script>

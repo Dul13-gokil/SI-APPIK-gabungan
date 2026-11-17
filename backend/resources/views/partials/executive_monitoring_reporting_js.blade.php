@@ -104,7 +104,7 @@ function initExecutiveMonitoringCharts() {
             categoryDistributionChartInstance.destroy();
         }
         const ctxCat = catCanvas.getContext('2d');
-        const blueTones = ['#1E3A8A', '#2563EB', '#3B82F6', '#60A5FA', '#93C5FD', '#BFDBFE'];
+        const blueTones = ['#2563EB', '#2563EB', '#3B82F6', '#60A5FA', '#93C5FD', '#BFDBFE'];
         const catLabels = {!! json_encode($categories->pluck('name')) !!};
         const catData = {!! json_encode($categories->pluck('complaints_count')) !!};
 
@@ -161,9 +161,9 @@ function initExecutiveMonitoringCharts() {
                         {{ $summary['rejected'] ?? 0 }}
                     ],
                     backgroundColor: [
-                        '#1E3A8A', // Total Laporan
+                        '#2563EB', // Total Laporan
                         '#EF4444', // Verifikasi (Rule 5: SUBMITTED = Merah)
-                        '#1E40AF', // Ditugaskan (Rule 5: DISPATCHED = Biru)
+                        '#2563EB', // Ditugaskan (Rule 5: DISPATCHED = Biru)
                         '#F59E0B', // Dikerjakan (Rule 5: IN_PROGRESS = Kuning)
                         '#10B981', // Selesai (Rule 5: COMPLETED = Hijau)
                         '#DC2626'  // Ditolak (Rule 5: REJECTED = Merah gelap)
@@ -217,7 +217,7 @@ function initExecutiveMonitoringCharts() {
                     data: [{{ $fieldPercent }}, {{ $operatorPercent }}, {{ $deptPercent }}],
                     backgroundColor: [
                         '#3B82F6', // Petugas Lapangan
-                        '#1E3A8A', // Operator Verifikasi
+                        '#2563EB', // Operator Verifikasi
                         '#10B981'  // Dinas PUPR
                     ],
                     borderWidth: 2,
@@ -284,10 +284,10 @@ function setReportFormat(format) {
     document.querySelectorAll('[data-format-btn]').forEach((btn) => {
         const isSelected = btn.getAttribute('data-format-btn') === activeReportFormat;
         if (isSelected) {
-            btn.classList.add('bg-white', 'text-[#1E3A8A]', 'border-slate-200', 'shadow-2xs');
+            btn.classList.add('bg-white', 'text-[#2563EB]', 'border-slate-200', 'shadow-2xs');
             btn.classList.remove('text-slate-600', 'border-transparent');
         } else {
-            btn.classList.remove('bg-white', 'text-[#1E3A8A]', 'border-slate-200', 'shadow-2xs');
+            btn.classList.remove('bg-white', 'text-[#2563EB]', 'border-slate-200', 'shadow-2xs');
             btn.classList.add('text-slate-600', 'border-transparent');
         }
     });

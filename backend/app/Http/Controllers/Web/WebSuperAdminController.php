@@ -44,7 +44,7 @@ class WebSuperAdminController extends Controller
             'total_field_workers'  => User::where('role', 'PETUGAS')->count(),
         ];
 
-        $activeTab = $request->get('tab', 'users-management');
+        $activeTab = $request->get('tab', 'overview');
 
         $query = Complaint::with(['category', 'user', 'citizen', 'photos', 'latestDisposition.assignee', 'latestDisposition.department', 'latestDisposition.team.leader', 'aiAssessments'])->latest();
 

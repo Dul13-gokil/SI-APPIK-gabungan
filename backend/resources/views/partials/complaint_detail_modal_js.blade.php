@@ -62,7 +62,7 @@
                 statusBadge.className = 'shrink-0 px-2.5 py-1 rounded-md text-xs font-bold bg-amber-50 text-amber-800 border border-amber-300 whitespace-nowrap';
                 statusBadge.innerText = 'PERLU REVISI';
             } else if (s === 'DISPATCHED') {
-                statusBadge.className = 'shrink-0 px-2.5 py-1 rounded-md text-xs font-bold bg-blue-50 text-[#1E3A8A] border border-blue-200 whitespace-nowrap';
+                statusBadge.className = 'shrink-0 px-2.5 py-1 rounded-md text-xs font-bold bg-blue-50 text-[#2563EB] border border-blue-200 whitespace-nowrap';
                 statusBadge.innerText = 'DITUGASKAN';
             } else if (s === 'REJECTED') {
                 statusBadge.className = 'shrink-0 px-2.5 py-1 rounded-md text-xs font-bold bg-red-50 text-red-700 border border-red-200 whitespace-nowrap';
@@ -107,7 +107,7 @@
                     citizenGallery.classList.remove('hidden');
                     citizenGallery.innerHTML = citizenPhotos.map((url, idx) => `
                         <button type="button" onclick="document.getElementById('sharedModalPhoto').src='${url}'; document.getElementById('sharedModalPhotoCountLabel').innerText='Foto Bukti ${idx + 1} dari ${citizenPhotos.length}';" 
-                            class="w-12 h-12 rounded-xl overflow-hidden border border-slate-200 bg-slate-100 shrink-0 hover:ring-2 hover:ring-[#1E3A8A] transition cursor-pointer">
+                            class="w-12 h-12 rounded-xl overflow-hidden border border-slate-200 bg-slate-100 shrink-0 hover:ring-2 hover:ring-[#2563EB] transition cursor-pointer">
                             <img src="${url}" class="w-full h-full object-cover">
                         </button>
                     `).join('');
@@ -121,18 +121,21 @@
             if (citizenGallery) citizenGallery.classList.add('hidden');
         }
 
-        // 7. Foto Bukti Hasil Pengerjaan Fisik (Petugas Lapangan)
+        // 7. Foto Bukti Hasil Pengerjaan Fisik (Selalu tampil berdampingan)
         const compContainer = document.getElementById('sharedModalCompletionPhotoContainer');
         const compImg = document.getElementById('sharedModalCompletionPhoto');
+        const compPlaceholder = document.getElementById('sharedModalCompletionPlaceholder');
         const officerGallery = document.getElementById('sharedModalOfficerGallery');
 
         const officerPhotos = (item.officer_photos && item.officer_photos.length > 0)
             ? item.officer_photos
             : (item.completion_photo_url ? [item.completion_photo_url] : []);
 
+        if (compContainer) compContainer.classList.remove('hidden');
         if (officerPhotos.length > 0) {
             compImg.src = officerPhotos[0];
-            compContainer.classList.remove('hidden');
+            compImg.classList.remove('hidden');
+            if (compPlaceholder) compPlaceholder.classList.add('hidden');
 
             if (officerGallery) {
                 if (officerPhotos.length > 1) {
@@ -149,7 +152,8 @@
                 }
             }
         } else {
-            compContainer.classList.add('hidden');
+            compImg.classList.add('hidden');
+            if (compPlaceholder) compPlaceholder.classList.remove('hidden');
             if (officerGallery) officerGallery.classList.add('hidden');
         }
 

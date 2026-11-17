@@ -7,13 +7,17 @@
 @php
     $todayStr = \Carbon\Carbon::now('Asia/Makassar')->locale('id')->isoFormat('dddd, D MMMM Y • HH:mm:ss') . ' WITA';
     $tabMeta = [
+        'overview' => [
+            'title' => 'Dashboard Ringkasan Super Admin',
+            'subtitle' => 'Pantau kesehatan server, laporan masuk terbaru, dan akses cepat pengelolaan sistem.',
+        ],
         'users-management' => [
-            'title' => 'Pengelolaan Akun Pimpinan & Petugas',
-            'subtitle' => 'Perbarui akun Kepala Daerah serta daftarkan akun Operator dan Petugas Lapangan baru.',
+            'title' => 'Kelola Akun & Daftar Pengguna',
+            'subtitle' => 'Perbarui akun Kepala Daerah, daftarkan akun baru, dan kelola kata sandi pengguna dalam satu halaman.',
         ],
         'users-list' => [
-            'title' => 'Daftar Pengguna & Pengaturan Kata Sandi',
-            'subtitle' => 'Lihat daftar seluruh akun berdasarkan peran, cari pengguna, dan atur ulang kata sandi.',
+            'title' => 'Kelola Akun & Daftar Pengguna',
+            'subtitle' => 'Perbarui akun Kepala Daerah, daftarkan akun baru, dan kelola kata sandi pengguna dalam satu halaman.',
         ],
         'complaints-list' => [
             'title' => 'Daftar Seluruh Pengaduan Infrastruktur',
@@ -36,7 +40,7 @@
             'subtitle' => 'Daftar laporan yang ditolak langsung oleh Super Admin beserta alasan resmi penolakan.',
         ],
     ];
-    $currentMeta = $tabMeta[$activeTab] ?? $tabMeta['users-management'];
+    $currentMeta = $tabMeta[$activeTab] ?? $tabMeta['overview'];
 @endphp
 
 <div class="py-4 sm:py-6 space-y-5">
@@ -47,25 +51,25 @@
             <h2 id="adminSectionTitle" class="font-outfit font-bold text-lg sm:text-xl text-[#0F172A] leading-tight">
                 {{ $currentMeta['title'] }}
             </h2>
-            <p id="adminSectionSubtitle" class="text-xs text-[#475569] mt-0.5">
+            <p id="adminSectionSubtitle" class="hidden text-xs text-[#475569] mt-0.5">
                 {{ $currentMeta['subtitle'] }}
             </p>
         </div>
         <div class="flex items-center gap-2 shrink-0">
             <span class="px-3.5 py-2 rounded-lg bg-white text-[#0F172A] text-xs font-semibold border border-[#E2E8F0] flex items-center gap-2">
-                <i data-lucide="clock" class="w-4 h-4 text-[#1E3A8A]"></i>
+                <i data-lucide="clock" class="w-4 h-4 text-[#2563EB]"></i>
                 <span class="live-wita-clock">{{ $todayStr }}</span>
             </span>
         </div>
     </div>
 
-    <!-- 2. KPI SUMMARY CARDS -->
-    <div class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-7 gap-2 sm:gap-3">
+    <!-- 2. KPI SUMMARY CARDS (Disembunyikan pada tab Kelola Akun agar fokus & bersih sesuai FigCraft 1647) -->
+    <div id="adminKpiSummaryGrid" class="{{ in_array($activeTab, ['users-management', 'users-list']) ? 'hidden ' : '' }}grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-7 gap-2 sm:gap-3">
         <!-- 1. Total Aduan -->
         <div class="p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
             <div class="flex items-center justify-between gap-1.5">
                 <span class="text-[8.5px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-normal sm:tracking-wider leading-tight">Total Aduan</span>
-                <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-blue-50 text-[#1E3A8A] border border-blue-200 flex items-center justify-center shrink-0">
+                <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-blue-50 text-[#2563EB] border border-blue-200 flex items-center justify-center shrink-0">
                     <i data-lucide="inbox" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                 </div>
             </div>
@@ -97,7 +101,7 @@
         <div class="p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
             <div class="flex items-center justify-between gap-1.5">
                 <span class="text-[8.5px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-normal sm:tracking-wider leading-tight">Ditugaskan</span>
-                <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-blue-50 text-[#1E40AF] border border-blue-200 flex items-center justify-center shrink-0">
+                <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-blue-50 text-[#2563EB] border border-blue-200 flex items-center justify-center shrink-0">
                     <i data-lucide="send" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                 </div>
             </div>
@@ -161,7 +165,7 @@
         <div class="col-span-3 sm:col-span-1 p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
             <div class="flex items-center justify-between gap-1.5">
                 <span class="text-[8.5px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-normal sm:tracking-wider leading-tight">Total Tim</span>
-                <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-blue-50 text-[#1E3A8A] border border-blue-200 flex items-center justify-center shrink-0">
+                <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-blue-50 text-[#2563EB] border border-blue-200 flex items-center justify-center shrink-0">
                     <i data-lucide="users-2" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                 </div>
             </div>
@@ -174,11 +178,11 @@
         </div>
     </div>
 
-    <!-- 3. MENU FITUR ADMIN (TERSTRUKTUR & MUDAH DIKENALI) -->
-    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-2 sm:gap-2.5 w-full">
+    <!-- 3. MENU FITUR ADMIN (DIPINDAHKAN KE SIDEBAR ACCORDION) -->
+    <div class="hidden grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-2 sm:gap-2.5 w-full">
         <!-- 1. Tab Pengaturan Akun -->
         <button type="button" onclick="switchAdminTab('users-management')" id="tabBtn-users-management"
-            class="admin-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'users-management' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
+            class="admin-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'users-management' ? 'bg-[#2563EB] text-white border-[#2563EB]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
             <i data-lucide="user-plus" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
                 <span class="text-[11px] sm:text-xs font-bold block leading-tight">Kelola Akun</span>
@@ -187,67 +191,67 @@
 
         <!-- 2. Tab Daftar Pengguna -->
         <button type="button" onclick="switchAdminTab('users-list')" id="tabBtn-users-list"
-            class="admin-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'users-list' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
+            class="admin-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'users-list' ? 'bg-[#2563EB] text-white border-[#2563EB]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
             <i data-lucide="users" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
                 <span class="text-[11px] sm:text-xs font-bold block leading-tight">Pengguna</span>
             </div>
-            <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'users-list' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
+            <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'users-list' ? 'bg-white text-[#2563EB]' : 'bg-blue-50 text-[#2563EB] border border-blue-200' }}">
                 {{ $users->count() }}
             </span>
         </button>
 
         <!-- 3. Tab Daftar Aduan -->
         <button type="button" onclick="switchAdminTab('complaints-list')" id="tabBtn-complaints-list"
-            class="admin-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'complaints-list' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
+            class="admin-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'complaints-list' ? 'bg-[#2563EB] text-white border-[#2563EB]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
             <i data-lucide="layers" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
                 <span class="text-[11px] sm:text-xs font-bold block leading-tight">Daftar Aduan</span>
             </div>
-            <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'complaints-list' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
+            <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'complaints-list' ? 'bg-white text-[#2563EB]' : 'bg-blue-50 text-[#2563EB] border border-blue-200' }}">
                 {{ $complaints->count() }}
             </span>
         </button>
 
         <!-- 4. Tab Peta Wilayah -->
         <button type="button" onclick="switchAdminTab('regions-gis')" id="tabBtn-regions-gis"
-            class="admin-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'regions-gis' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
+            class="admin-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'regions-gis' ? 'bg-[#2563EB] text-white border-[#2563EB]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
             <i data-lucide="map" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
                 <span class="text-[11px] sm:text-xs font-bold block leading-tight">Peta Wilayah</span>
             </div>
-            <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'regions-gis' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
+            <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'regions-gis' ? 'bg-white text-[#2563EB]' : 'bg-blue-50 text-[#2563EB] border border-blue-200' }}">
                 {{ count($districtStats ?? $regions) }}
             </span>
         </button>
 
         <!-- 5. Tab Regu & Tugas -->
         <button type="button" onclick="switchAdminTab('teams-management')" id="tabBtn-teams-management"
-            class="admin-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'teams-management' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
+            class="admin-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'teams-management' ? 'bg-[#2563EB] text-white border-[#2563EB]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
             <i data-lucide="users-2" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
                 <span class="text-[11px] sm:text-xs font-bold block leading-tight">Regu &amp; Tugas</span>
             </div>
-            <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'teams-management' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
+            <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'teams-management' ? 'bg-white text-[#2563EB]' : 'bg-blue-50 text-[#2563EB] border border-blue-200' }}">
                 {{ $teams->count() }}
             </span>
         </button>
 
         <!-- 6. Tab Arsip Ditolak (Khusus Super Admin) -->
         <button type="button" onclick="switchAdminTab('admin-rejected')" id="tabBtn-admin-rejected"
-            class="admin-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'admin-rejected' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
+            class="admin-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'admin-rejected' ? 'bg-[#2563EB] text-white border-[#2563EB]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
             <i data-lucide="archive-x" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
                 <span class="text-[11px] sm:text-xs font-bold block leading-tight">Arsip Ditolak</span>
             </div>
-            <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'admin-rejected' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
+            <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'admin-rejected' ? 'bg-white text-[#2563EB]' : 'bg-blue-50 text-[#2563EB] border border-blue-200' }}">
                 {{ ($adminRejectedComplaints ?? collect())->count() }}
             </span>
         </button>
 
         <!-- 7. Tab Laporan Kinerja -->
         <button type="button" onclick="switchAdminTab('reporting')" id="tabBtn-reporting"
-            class="admin-tab-btn col-span-2 sm:col-span-1 text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'reporting' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
+            class="admin-tab-btn col-span-2 sm:col-span-1 text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'reporting' ? 'bg-[#2563EB] text-white border-[#2563EB]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
             <i data-lucide="bar-chart-3" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
                 <span class="text-[11px] sm:text-xs font-bold block leading-tight">Laporan Kinerja</span>
@@ -255,136 +259,262 @@
         </button>
     </div>
 
-    <!-- Tab Panel 1: Manajemen Akun (Bupati & Petugas) -->
-    <div id="tabPanel-users-management" class="admin-tab-panel {{ $activeTab === 'users-management' ? '' : 'hidden' }} space-y-5">
+    <!-- Tab Panel 0: Dashboard Ringkasan Super Admin (Clean & Ringkas) -->
+    @php
+        $dbConnected = false;
+        try {
+            \Illuminate\Support\Facades\DB::connection()->getPdo();
+            $dbConnected = true;
+        } catch (\Throwable $e) {
+            $dbConnected = false;
+        }
+        $storagePublicOk = is_dir(storage_path('app/public')) && is_writable(storage_path('app/public'));
+        $latestOverviewComplaints = $complaints->take(5);
+        $countBupati = $users->filter(fn($u) => in_array(strtoupper($u->role), ['BUPATI', 'KEPALA_DAERAH']))->count();
+        $countOperator = $users->filter(fn($u) => strtoupper($u->role) === 'OPERATOR')->count();
+        $countPetugas = $users->filter(fn($u) => strtoupper($u->role) === 'PETUGAS')->count();
+        $countWarga = $users->filter(fn($u) => strtoupper($u->role) === 'WARGA')->count();
+    @endphp
+    <div id="tabPanel-overview" class="admin-tab-panel {{ $activeTab === 'overview' ? '' : 'hidden' }} space-y-5">
+        <!-- Kesehatan Server & Infrastruktur Sistem (Palet Tenang & Seragam) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-white rounded-2xl border border-[#E2E8F0] p-4 shadow-2xs flex items-center justify-between gap-3">
+                <div class="space-y-1 min-w-0">
+                    <div class="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-[#64748B]">
+                        <span class="w-2 h-2 rounded-full bg-[#10B981]"></span>
+                        Server Web &amp; API
+                    </div>
+                    <p class="text-sm font-bold text-[#0F172A]">Online</p>
+                    <p class="text-[11px] text-[#64748B]">Laravel {{ app()->version() }} &bull; PHP {{ PHP_VERSION }}</p>
+                </div>
+                <div class="w-9 h-9 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] text-[#475569] flex items-center justify-center shrink-0">
+                    <i data-lucide="server" class="w-4 h-4"></i>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-[#E2E8F0] p-4 shadow-2xs flex items-center justify-between gap-3">
+                <div class="space-y-1 min-w-0">
+                    <div class="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-[#64748B]">
+                        <span class="w-2 h-2 rounded-full {{ $dbConnected ? 'bg-[#10B981]' : 'bg-[#EF4444]' }}"></span>
+                        Database PostgreSQL
+                    </div>
+                    <p class="text-sm font-bold text-[#0F172A]">{{ $dbConnected ? 'Terhubung (sik)' : 'Terputus' }}</p>
+                    <p class="text-[11px] text-[#64748B]">{{ $users->count() }} akun &bull; {{ $summary['total'] ?? 0 }} aduan</p>
+                </div>
+                <div class="w-9 h-9 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] text-[#475569] flex items-center justify-center shrink-0">
+                    <i data-lucide="database" class="w-4 h-4"></i>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-[#E2E8F0] p-4 shadow-2xs flex items-center justify-between gap-3">
+                <div class="space-y-1 min-w-0">
+                    <div class="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-[#64748B]">
+                        <span class="w-2 h-2 rounded-full bg-[#10B981]"></span>
+                        AI Deteksi YOLOv8
+                    </div>
+                    <p class="text-sm font-bold text-[#0F172A]">Siap Analisis</p>
+                    <p class="text-[11px] text-[#64748B]">Jalan, Jembatan &amp; PJU</p>
+                </div>
+                <div class="w-9 h-9 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] text-[#475569] flex items-center justify-center shrink-0">
+                    <i data-lucide="cpu" class="w-4 h-4"></i>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-[#E2E8F0] p-4 shadow-2xs flex items-center justify-between gap-3">
+                <div class="space-y-1 min-w-0">
+                    <div class="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-[#64748B]">
+                        <span class="w-2 h-2 rounded-full {{ $storagePublicOk ? 'bg-[#10B981]' : 'bg-[#F59E0B]' }}"></span>
+                        Penyimpanan Media
+                    </div>
+                    <p class="text-sm font-bold text-[#0F172A]">{{ $storagePublicOk ? 'Aktif & Writable' : 'Periksa Izin' }}</p>
+                    <p class="text-[11px] text-[#64748B]">Foto laporan &amp; hasil kerja</p>
+                </div>
+                <div class="w-9 h-9 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] text-[#475569] flex items-center justify-center shrink-0">
+                    <i data-lucide="hard-drive" class="w-4 h-4"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Grid Konten Overview: Laporan Terbaru & Ringkasan Akun / Sistem -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+            <!-- Kiri (7 Kolom): Laporan Masuk Terbaru -->
+            <div class="lg:col-span-7 bg-white rounded-2xl border border-[#E2E8F0] shadow-2xs overflow-hidden flex flex-col">
+                <div class="px-5 py-4 border-b border-[#E2E8F0] flex items-center justify-between gap-3">
+                    <h2 class="font-outfit font-bold text-sm sm:text-base text-[#0F172A]">Laporan Pengaduan Terbaru</h2>
+                    <button type="button" onclick="switchAdminTab('complaints-list')" class="px-3 py-1.5 rounded-lg bg-[#EFF6FF] hover:bg-[#DBEAFE] text-[#2563EB] text-xs font-bold transition shrink-0">
+                        Lihat Semua
+                    </button>
+                </div>
+                <div class="divide-y divide-slate-100">
+                    @forelse($latestOverviewComplaints as $ovItem)
+                        @php
+                            $st = $ovItem->status;
+                            $stBadge = match($st) {
+                                'SUBMITTED' => ['label' => 'VERIFIKASI', 'cls' => 'bg-red-50 text-[#EF4444] border-red-200'],
+                                'VERIFIED', 'DISPATCHED' => ['label' => 'DITUGASKAN', 'cls' => 'bg-[#EFF6FF] text-[#2563EB] border-[#BFDBFE]'],
+                                'IN_PROGRESS', 'WAITING_VERIFICATION', 'REVISION_REQUIRED' => ['label' => $st === 'WAITING_VERIFICATION' ? 'VALIDASI' : 'DIKERJAKAN', 'cls' => 'bg-amber-50 text-[#D97706] border-amber-200'],
+                                'COMPLETED', 'CLOSED' => ['label' => 'SELESAI', 'cls' => 'bg-emerald-50 text-[#10B981] border-emerald-200'],
+                                'REJECTED' => ['label' => 'DITOLAK', 'cls' => 'bg-red-50 text-[#DC2626] border-red-200'],
+                                default => ['label' => $st, 'cls' => 'bg-slate-50 text-slate-600 border-slate-200'],
+                            };
+                        @endphp
+                        <div class="px-5 py-3.5 flex items-center justify-between gap-3 hover:bg-[#F8FAFC] transition">
+                            <div class="min-w-0 flex-1 space-y-0.5">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span class="text-[11px] font-bold text-[#2563EB]">#{{ $ovItem->ticket_number ?? $ovItem->id }}</span>
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold border {{ $stBadge['cls'] }}">{{ $stBadge['label'] }}</span>
+                                    <span class="text-[11px] text-[#64748B]">{{ $ovItem->created_at?->timezone('Asia/Makassar')->format('d M Y, H:i') }} WITA</span>
+                                </div>
+                                <p class="text-xs font-bold text-[#0F172A] truncate">{{ $ovItem->title ?? ($ovItem->category->name ?? 'Laporan Infrastruktur') }}</p>
+                                <p class="text-[11px] text-[#64748B] truncate">{{ $ovItem->address_detail ?? 'Kabupaten Kolaka Utara' }}</p>
+                            </div>
+                            <button type="button" onclick="switchAdminTab('complaints-list')" title="Tinjau Laporan" aria-label="Tinjau Laporan" class="w-8 h-8 rounded-lg border border-[#E2E8F0] hover:border-[#2563EB] hover:bg-[#EFF6FF] text-[#475569] hover:text-[#2563EB] inline-flex items-center justify-center transition shrink-0">
+                                <i data-lucide="eye" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    @empty
+                        <div class="p-8 text-center text-xs text-[#64748B]">Belum ada laporan masuk.</div>
+                    @endforelse
+                </div>
+            </div>
+
+            <!-- Kanan (5 Kolom): Ringkasan Akun & Regu + Status Keamanan -->
+            <div class="lg:col-span-5 space-y-5">
+                <div class="bg-white rounded-2xl border border-[#E2E8F0] p-5 shadow-2xs space-y-3.5">
+                    <div class="flex items-center justify-between">
+                        <h2 class="font-outfit font-bold text-sm sm:text-base text-[#0F172A]">Komposisi Akun &amp; Regu</h2>
+                        <span class="text-[11px] font-bold text-[#2563EB]">{{ $users->count() }} Total</span>
+                    </div>
+                    <div class="divide-y divide-slate-100 text-xs">
+                        <div class="py-2 flex items-center justify-between">
+                            <span class="text-[#475569]">Kepala Daerah</span>
+                            <span class="font-bold text-[#0F172A]">{{ $countBupati }} akun</span>
+                        </div>
+                        <div class="py-2 flex items-center justify-between">
+                            <span class="text-[#475569]">Operator PUPR</span>
+                            <span class="font-bold text-[#0F172A]">{{ $countOperator }} akun</span>
+                        </div>
+                        <div class="py-2 flex items-center justify-between">
+                            <span class="text-[#475569]">Pekerja Lapangan</span>
+                            <span class="font-bold text-[#0F172A]">{{ $countPetugas }} akun</span>
+                        </div>
+                        <div class="py-2 flex items-center justify-between">
+                            <span class="text-[#475569]">Warga Masyarakat</span>
+                            <span class="font-bold text-[#0F172A]">{{ $countWarga }} akun</span>
+                        </div>
+                        <div class="py-2 flex items-center justify-between">
+                            <span class="text-[#475569]">Regu Lapangan Aktif</span>
+                            <span class="font-bold text-[#2563EB]">{{ $teams->count() }} regu</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl border border-[#E2E8F0] p-5 shadow-2xs space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h3 class="font-outfit font-bold text-sm text-[#0F172A]">Keamanan &amp; Kebijakan</h3>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#ECFDF5] text-[#10B981] border border-[#A7F3D0]">AKTIF</span>
+                    </div>
+                    <ul class="space-y-2 text-xs text-[#475569]">
+                        <li class="flex items-center justify-between">
+                            <span>Autentikasi &amp; RBAC</span>
+                            <span class="font-semibold text-[#0F172A]">Sanctum + Role Guard</span>
+                        </li>
+                        <li class="flex items-center justify-between">
+                            <span>Mode Penugasan</span>
+                            <span class="font-semibold text-[#0F172A]">{{ $dispatchMode ?? 'HYBRID' }}</span>
+                        </li>
+                        <li class="flex items-center justify-between">
+                            <span>Cakupan Wilayah</span>
+                            <span class="font-semibold text-[#0F172A]">{{ $regions->count() }} Kecamatan</span>
+                        </li>
+                        <li class="flex items-center justify-between">
+                            <span>Arsip Ditolak Admin</span>
+                            <span class="font-semibold text-[#0F172A]">{{ $adminRejectedComplaints->count() }} laporan</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab Panel 1: Manajemen Akun (Bupati & Petugas) — Digabung dengan Daftar Pengguna -->
+    <div id="tabPanel-users-management" class="admin-tab-panel {{ in_array($activeTab, ['users-management', 'users-list']) ? '' : 'hidden' }} space-y-5">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
             <!-- Card 1: Perbarui Akun / Ganti Kepala Daerah (Bupati) -->
-            <div class="card-white rounded-2xl p-5 sm:p-6 bg-white border border-[#E2E8F0] shadow-2xs flex flex-col justify-between space-y-4">
+            <div class="card-white rounded-2xl p-5 bg-white border border-[#E2E8F0] shadow-xs flex flex-col justify-between">
                 <div class="space-y-3">
-                    <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-                        <div class="flex items-center gap-2.5">
-                            <div class="w-9 h-9 rounded-xl bg-blue-50 text-[#1E3A8A] border border-blue-200 flex items-center justify-center">
-                                <i data-lucide="landmark" class="w-4 h-4"></i>
-                            </div>
-                            <div>
-                                <h3 class="font-outfit font-extrabold text-sm sm:text-base text-slate-900 leading-tight">
-                                    Perbarui Akun / Ganti Kepala Daerah Kabupaten
-                                </h3>
-                            </div>
-                        </div>
-                        <span class="px-2.5 py-1 rounded-full bg-blue-50 text-[#1E3A8A] border border-blue-200 text-[10px] font-bold text-center shrink-0 whitespace-nowrap">
-                            KEPALA DAERAH
-                        </span>
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="landmark" class="w-4 h-4 text-[#475569] shrink-0"></i>
+                        <h3 class="font-outfit font-bold text-sm text-[#0F172A] leading-tight">
+                            Perbarui Akun Kepala Daerah Kabupaten
+                        </h3>
                     </div>
 
-                    <form method="POST" action="{{ route('admin.bupati.update') }}" class="space-y-3 pt-1">
+                    <form method="POST" action="{{ route('admin.bupati.update') }}" class="space-y-2.5">
                         @csrf
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">Nama Lengkap Kepala Daerah</label>
-                            <input type="text" name="name" value="{{ $bupati->name ?? 'Kepala Daerah Kabupaten' }}" required
-                                class="w-full text-xs rounded-xl border border-slate-300 p-2.5 bg-white focus:ring-2 focus:ring-[#1E3A8A] focus:border-transparent transition">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                            <input type="text" name="name" value="{{ $bupati->name ?? 'Kepala Daerah Kabupaten' }}" required placeholder="Nama Lengkap Kepala Daerah"
+                                class="w-full text-xs rounded-xl border border-[#E2E8F0] px-3 py-2 bg-[#F8FAFC] focus:bg-white focus:ring-2 focus:ring-[#2563EB]/15 focus:border-[#2563EB] transition">
+                            <input type="email" name="email" value="{{ $bupati->email ?? 'bupati@kabupaten.go.id' }}" required placeholder="Email Resmi"
+                                class="w-full text-xs rounded-xl border border-[#E2E8F0] px-3 py-2 bg-[#F8FAFC] focus:bg-white focus:ring-2 focus:ring-[#2563EB]/15 focus:border-[#2563EB] transition">
                         </div>
 
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-1">Email Resmi</label>
-                                <input type="email" name="email" value="{{ $bupati->email ?? 'bupati@kabupaten.go.id' }}" required
-                                    class="w-full text-xs rounded-xl border border-slate-300 p-2.5 bg-white focus:ring-2 focus:ring-[#1E3A8A] focus:border-transparent transition">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-1">Nomor Handphone / WA</label>
-                                <input type="text" name="phone" value="{{ $bupati->phone ?? '081234567890' }}"
-                                    class="w-full text-xs rounded-xl border border-slate-300 p-2.5 bg-white focus:ring-2 focus:ring-[#1E3A8A] focus:border-transparent transition">
-                            </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                            <input type="text" name="phone" value="{{ $bupati->phone ?? '081234567890' }}" placeholder="Nomor Handphone / WA"
+                                class="w-full text-xs rounded-xl border border-[#E2E8F0] px-3 py-2 bg-[#F8FAFC] focus:bg-white focus:ring-2 focus:ring-[#2563EB]/15 focus:border-[#2563EB] transition">
+                            <input type="password" name="password" placeholder="Password Baru (opsional)"
+                                class="w-full text-xs rounded-xl border border-[#E2E8F0] px-3 py-2 bg-[#F8FAFC] focus:bg-white focus:ring-2 focus:ring-[#2563EB]/15 focus:border-[#2563EB] transition">
                         </div>
 
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">
-                                Password Baru <span class="text-slate-400 font-normal text-[11px]">(Kosongkan bila tidak ingin mengubah)</span>
-                            </label>
-                            <input type="password" name="password" placeholder="••••••••"
-                                class="w-full text-xs rounded-xl border border-slate-300 p-2.5 bg-white focus:ring-2 focus:ring-[#1E3A8A] focus:border-transparent transition">
-                        </div>
-
-                        <div class="pt-2">
-                            <button type="submit" class="w-full py-2.5 px-4 rounded-xl bg-[#1E3A8A] hover:bg-blue-900 text-white font-bold text-xs shadow-xs transition flex items-center justify-center gap-2">
-                                <i data-lucide="save" class="w-4 h-4"></i>
-                                <span>Simpan Perubahan Akun Kepala Daerah</span>
-                            </button>
-                        </div>
+                        <button type="submit" class="w-full py-2.5 px-4 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold text-xs shadow-xs transition flex items-center justify-center gap-2 cursor-pointer">
+                            <span>Simpan Perubahan Akun Kepala Daerah</span>
+                        </button>
                     </form>
                 </div>
             </div>
 
             <!-- Card 2: Penambahan Akun Baru (Operator & Pekerja Lapangan) -->
-            <div class="card-white rounded-2xl p-5 sm:p-6 bg-white border border-[#E2E8F0] shadow-2xs flex flex-col justify-between space-y-4">
+            <div class="card-white rounded-2xl p-5 bg-white border border-[#E2E8F0] shadow-xs flex flex-col justify-between">
                 <div class="space-y-3">
-                    <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-                        <div class="flex items-center gap-2.5">
-                            <div class="w-9 h-9 rounded-xl bg-blue-50 text-[#1E3A8A] border border-blue-200 flex items-center justify-center">
-                                <i data-lucide="user-plus" class="w-4 h-4"></i>
-                            </div>
-                            <div>
-                                <h3 class="font-outfit font-extrabold text-sm sm:text-base text-slate-900 leading-tight">
-                                    Penambahan Akun Baru
-                                </h3>
-                            </div>
+                    <div class="flex items-center justify-between gap-2">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="user-plus" class="w-4 h-4 text-[#475569] shrink-0"></i>
+                            <h3 class="font-outfit font-bold text-sm text-[#0F172A] leading-tight">
+                                + Penambahan Akun Petugas &amp; Operator Baru
+                            </h3>
                         </div>
-                        <span class="px-2.5 py-1 rounded-full bg-blue-50 text-[#1E3A8A] border border-blue-200 text-[10px] font-bold text-center shrink-0 whitespace-nowrap">
-                            PETUGAS &amp; OPERATOR
-                        </span>
+                        <span class="text-[10.5px] font-medium text-[#64748B] shrink-0">Sandi awal: <code class="font-mono font-bold text-[#334155]">password</code></span>
                     </div>
 
-                    <form method="POST" action="{{ route('admin.users.store') }}" class="space-y-3 pt-1">
+                    <form method="POST" action="{{ route('admin.users.store') }}" class="space-y-2.5">
                         @csrf
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-1">Nama Lengkap</label>
-                                <input type="text" name="name" required placeholder="Contoh: Budi Santoso"
-                                    class="w-full text-xs rounded-xl border border-slate-300 p-2.5 bg-white focus:ring-2 focus:ring-[#1E3A8A] focus:border-transparent transition">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-1">Peran / Role Akun</label>
-                                <select name="role" required class="w-full text-xs rounded-xl border border-slate-300 p-2.5 bg-white focus:ring-2 focus:ring-[#1E3A8A] focus:border-transparent transition">
-                                    <option value="OPERATOR">Operator Verifikasi (Disposisi Web)</option>
-                                    <option value="PETUGAS" selected>Pekerja Lapangan (Petugas Teknis PUPR)</option>
-                                    <option value="KEPALA_DAERAH" {{ $hasBupati ? 'disabled class=text-slate-400' : '' }}>
-                                        Kepala Daerah Kabupaten {{ $hasBupati ? '(Terkunci: Maks. 1 Akun)' : '' }}
-                                    </option>
-                                    <option value="ADMIN" {{ $hasSuperAdmin ? 'disabled class=text-slate-400' : '' }}>
-                                        Super Administrator {{ $hasSuperAdmin ? '(Terkunci: Maks. 1 Akun)' : '' }}
-                                    </option>
-                                </select>
-                            </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                            <input type="text" name="name" required placeholder="Nama Lengkap"
+                                class="w-full text-xs rounded-xl border border-[#E2E8F0] px-3 py-2 bg-[#F8FAFC] focus:bg-white focus:ring-2 focus:ring-[#2563EB]/15 focus:border-[#2563EB] transition">
+                            <select name="role" required class="w-full text-xs rounded-xl border border-[#E2E8F0] px-3 py-2 bg-[#F8FAFC] focus:bg-white focus:ring-2 focus:ring-[#2563EB]/15 focus:border-[#2563EB] transition">
+                                <option value="OPERATOR">Operator Verifikasi (Disposisi Web)</option>
+                                <option value="PETUGAS" selected>Pekerja Lapangan (Petugas Teknis PUPR)</option>
+                                <option value="KEPALA_DAERAH" {{ $hasBupati ? 'disabled class=text-slate-400' : '' }}>
+                                    Kepala Daerah Kabupaten {{ $hasBupati ? '(Terkunci)' : '' }}
+                                </option>
+                                <option value="ADMIN" {{ $hasSuperAdmin ? 'disabled class=text-slate-400' : '' }}>
+                                    Super Administrator {{ $hasSuperAdmin ? '(Terkunci)' : '' }}
+                                </option>
+                            </select>
                         </div>
 
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-1">Email Akun</label>
-                                <input type="email" name="email" required placeholder="petugas@kabupaten.go.id"
-                                    class="w-full text-xs rounded-xl border border-slate-300 p-2.5 bg-white focus:ring-2 focus:ring-[#1E3A8A] focus:border-transparent transition">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-1">No. Handphone / WA</label>
-                                <input type="text" name="phone" placeholder="08xxxxxxxxxx"
-                                    class="w-full text-xs rounded-xl border border-slate-300 p-2.5 bg-white focus:ring-2 focus:ring-[#1E3A8A] focus:border-transparent transition">
-                            </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                            <input type="email" name="email" required placeholder="Email Akun"
+                                class="w-full text-xs rounded-xl border border-[#E2E8F0] px-3 py-2 bg-[#F8FAFC] focus:bg-white focus:ring-2 focus:ring-[#2563EB]/15 focus:border-[#2563EB] transition">
+                            <input type="text" name="phone" placeholder="No. Handphone / WA"
+                                class="w-full text-xs rounded-xl border border-[#E2E8F0] px-3 py-2 bg-[#F8FAFC] focus:bg-white focus:ring-2 focus:ring-[#2563EB]/15 focus:border-[#2563EB] transition">
                         </div>
 
-                        <!-- Password Default Terkunci (Prinsip Zero Knowledge Sandi) -->
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">Kata Sandi Awal Akun</label>
-                            <input type="text" value="password" readonly tabindex="-1"
-                                class="w-full text-xs font-mono font-bold rounded-xl border border-slate-200 p-2.5 bg-slate-100/80 text-slate-600 cursor-not-allowed select-none">
-                        </div>
-
-                        <div class="pt-2">
-                            <button type="submit" class="w-full py-2.5 px-4 rounded-xl bg-[#1E3A8A] hover:bg-blue-900 text-white font-bold text-xs shadow-xs transition flex items-center justify-center gap-2">
-                                <i data-lucide="plus-circle" class="w-4 h-4"></i>
-                                <span>Daftarkan Akun & Kirim Undangan Email</span>
-                            </button>
-                        </div>
+                        <button type="submit" class="w-full py-2.5 px-4 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold text-xs shadow-xs transition flex items-center justify-center gap-2 cursor-pointer">
+                            <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                            <span>Daftarkan Akun &amp; Kirim Undangan Email</span>
+                        </button>
                     </form>
                 </div>
             </div>
@@ -392,105 +522,94 @@
         </div>
     </div>
 
-    <!-- Tab Panel 2: Daftar Pengguna Terdaftar -->
-    <div id="tabPanel-users-list" class="admin-tab-panel {{ $activeTab === 'users-list' ? '' : 'hidden' }} space-y-4">
-        
-        <!-- Filter & Search Bar Pengguna Sistem -->
-        <div class="card-white rounded-2xl p-4 bg-white border border-[#E2E8F0] shadow-2xs flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-            
-            <!-- Search Pengguna -->
-            <div class="relative flex-1">
-                <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
-                <input type="text" id="userSearchInput" oninput="filterUsersTable()" placeholder="Cari nama pengguna, email, atau no. handphone..."
-                    class="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-[#1E3A8A] focus:ring-1 focus:ring-[#1E3A8A] transition">
-            </div>
-
-            <!-- Filter Role & Status Pengguna -->
-            <div class="flex flex-wrap items-center justify-between sm:justify-end gap-2 w-full sm:w-auto">
-                <div class="grid grid-cols-2 sm:flex items-center gap-2 w-full sm:w-auto">
-                    <div class="flex items-center gap-1.5 min-w-0">
-                        <div class="hidden sm:flex items-center gap-1 text-xs text-slate-500 shrink-0 font-medium">
-                            <i data-lucide="shield" class="w-3.5 h-3.5 text-[#1E3A8A]"></i>
-                            <span>Peran:</span>
-                        </div>
-                        <select id="userRoleFilter" onchange="filterUsersTable()" class="w-full sm:w-auto text-xs font-semibold rounded-xl border border-slate-200 py-2 px-2.5 sm:px-3 bg-slate-50 text-slate-700 focus:outline-none focus:border-[#1E3A8A] focus:bg-white transition">
-                            <option value="">Semua Peran / Role</option>
-                            <option value="ADMIN">Administrator</option>
-                            <option value="KEPALA_DAERAH">Kepala Daerah Kabupaten</option>
-                            <option value="OPERATOR">Operator Verifikasi</option>
-                            <option value="PETUGAS">Pekerja Lapangan</option>
-                            <option value="WARGA">Warga Masyarakat</option>
-                        </select>
+    <!-- Tab Panel 2: Daftar Pengguna Terdaftar (Tampil Gabungan dengan Kelola Akun — Gaya FigCraft 1647) -->
+    <div id="tabPanel-users-list" class="admin-tab-panel {{ in_array($activeTab, ['users-management', 'users-list']) ? '' : 'hidden' }}">
+        <div class="card-white rounded-2xl p-5 sm:p-6 bg-white border border-[#E2E8F0] shadow-xs space-y-4">
+            <!-- Header & Filter Bar Terpadu -->
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE] flex items-center justify-center shrink-0">
+                        <i data-lucide="users" class="w-4 h-4"></i>
                     </div>
-
-                    <div class="flex items-center gap-1.5 min-w-0">
-                        <div class="hidden sm:flex items-center gap-1 text-xs text-slate-500 shrink-0 font-medium">
-                            <i data-lucide="user-check" class="w-3.5 h-3.5 text-[#1E3A8A]"></i>
-                            <span>Status:</span>
-                        </div>
-                        <select id="userStatusFilter" onchange="filterUsersTable()" class="w-full sm:w-auto text-xs font-semibold rounded-xl border border-slate-200 py-2 px-2.5 sm:px-3 bg-slate-50 text-slate-700 focus:outline-none focus:border-[#1E3A8A] focus:bg-white transition">
-                            <option value="">Semua Status</option>
-                            <option value="active">Aktif</option>
-                            <option value="inactive">Nonaktif</option>
-                        </select>
+                    <div>
+                        <h3 class="font-outfit font-bold text-sm sm:text-base text-[#0F172A] flex items-center gap-2 flex-wrap">
+                            <span>Daftar Pengguna &amp; Pengaturan Kata Sandi</span>
+                            <span class="px-2 py-0.5 rounded-full bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE] text-[11px] font-bold whitespace-nowrap">
+                                <span id="filteredUserCount">{{ $users->count() }}</span> Akun
+                            </span>
+                        </h3>
                     </div>
                 </div>
 
-                <div class="px-3 py-2 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold flex items-center gap-1.5 shrink-0">
-                    <span>Total:</span>
-                    <span id="filteredUserCount">{{ $users->count() }}</span>
-                    <span>Akun</span>
-                </div>
+                <div class="flex flex-wrap items-center gap-2">
+                    <!-- Search Pengguna -->
+                    <div class="relative flex-1 sm:w-56">
+                        <i data-lucide="search" class="w-4 h-4 text-[#64748B] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                        <input type="text" id="userSearchInput" oninput="filterUsersTable()" placeholder="Cari nama, email, atau no. HP..."
+                            class="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] focus:bg-white focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/15 transition">
+                    </div>
 
-                <!-- Toggle Tata Letak Daftar / Petak -->
-                <div class="inline-flex items-center p-0.5 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] shrink-0" role="group" aria-label="Tata letak direktori akun">
-                    <button type="button" id="usersLayoutBtn-list" onclick="setAdminUsersLayout('list')"
-                        class="px-2.5 py-1.5 rounded-md text-xs font-semibold flex items-center gap-1 transition cursor-pointer bg-[#1E3A8A] text-white">
-                        <i data-lucide="list" class="w-3.5 h-3.5"></i>
-                        <span>Daftar</span>
-                    </button>
-                    <button type="button" id="usersLayoutBtn-grid" onclick="setAdminUsersLayout('grid')"
-                        class="px-2.5 py-1.5 rounded-md text-xs font-semibold flex items-center gap-1 transition cursor-pointer text-[#475569] hover:text-[#0F172A]">
-                        <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
-                        <span>Petak</span>
-                    </button>
+                    <select id="userRoleFilter" onchange="filterUsersTable()" class="text-xs font-semibold rounded-xl border border-[#E2E8F0] py-2 px-3 bg-[#F8FAFC] text-[#334155] focus:outline-none focus:border-[#2563EB] focus:bg-white transition">
+                        <option value="">Peran: Semua</option>
+                        <option value="ADMIN">Administrator</option>
+                        <option value="KEPALA_DAERAH">Kepala Daerah</option>
+                        <option value="OPERATOR">Operator Verifikasi</option>
+                        <option value="PETUGAS">Pekerja Lapangan</option>
+                        <option value="WARGA">Warga Masyarakat</option>
+                    </select>
+
+                    <select id="userStatusFilter" onchange="filterUsersTable()" class="text-xs font-semibold rounded-xl border border-[#E2E8F0] py-2 px-3 bg-[#F8FAFC] text-[#334155] focus:outline-none focus:border-[#2563EB] focus:bg-white transition">
+                        <option value="">Status: Semua</option>
+                        <option value="active">Aktif</option>
+                        <option value="inactive">Nonaktif</option>
+                    </select>
+
+                    <!-- Toggle Tata Letak Daftar / Petak (Rata Kanan) -->
+                    <div class="inline-flex items-center p-0.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] shrink-0 ml-auto" role="group" aria-label="Tata letak direktori akun">
+                        <button type="button" id="usersLayoutBtn-list" onclick="setAdminUsersLayout('list')"
+                            class="px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition cursor-pointer bg-[#2563EB] text-white">
+                            <i data-lucide="list" class="w-3.5 h-3.5"></i>
+                            <span>Daftar</span>
+                        </button>
+                        <button type="button" id="usersLayoutBtn-grid" onclick="setAdminUsersLayout('grid')"
+                            class="px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition cursor-pointer text-[#475569] hover:text-[#0F172A]">
+                            <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
+                            <span>Petak</span>
+                        </button>
+                    </div>
                 </div>
             </div>
 
-        </div>
-
-        <!-- Tabel Pengguna Sistem Modern & Enak Dilihat -->
-        <div class="card-white rounded-2xl bg-white border border-[#E2E8F0] overflow-hidden">
-            <div id="usersTableWrap" class="overflow-x-visible md:overflow-x-auto">
-                <table class="w-full text-left text-xs text-slate-600" id="usersTable">
-                    <thead class="hidden md:table-header-group bg-slate-50/80 text-slate-500 font-bold border-b border-[#E2E8F0] uppercase tracking-wider text-[11px]">
-                        <tr>
-                            <th class="py-3.5 px-4">Pengguna</th>
-                            <th class="py-3.5 px-4">Email Akun</th>
-                            <th class="py-3.5 px-4">Peran / Role</th>
-                            <th class="py-3.5 px-4">No. Handphone</th>
-                            <th class="py-3.5 px-4">Terdaftar Sejak</th>
-                            <th class="py-3.5 px-4 text-right">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-100" id="usersTableBody">
-                        @foreach($users as $u)
-                            @php
-                                $roleUpper = strtoupper($u->role);
-                                $roleDisplay = match($roleUpper) {
-                                    'BUPATI', 'KEPALA_DAERAH' => 'KEPALA DAERAH',
-                                    default => $roleUpper,
-                                };
-                                $roleBadgeClass = match($roleUpper) {
-                                    'ADMIN', 'SUPERADMIN' => 'bg-blue-50 text-[#1E3A8A] border-blue-200 font-bold',
-                                    'BUPATI', 'KEPALA_DAERAH' => 'bg-blue-100/70 text-[#1E3A8A] border-blue-300 font-extrabold',
-                                    'OPERATOR'            => 'bg-blue-50 text-[#1E3A8A] border-blue-200 font-semibold',
-                                    'PETUGAS'             => 'bg-slate-100 text-slate-700 border-slate-200 font-semibold',
-                                    default               => 'bg-slate-100 text-slate-600 border-slate-200',
-                                };
-                                $avatarBg = match($roleUpper) {
-                                    'ADMIN', 'SUPERADMIN', 'BUPATI', 'KEPALA_DAERAH' => 'bg-[#1E3A8A] text-white',
-                                    default               => 'bg-slate-200 text-[#1E3A8A]',
+            <!-- Tabel Pengguna Sistem Modern -->
+            <div class="overflow-hidden rounded-xl border border-[#E2E8F0]">
+                <div id="usersTableWrap" class="overflow-x-visible md:overflow-x-auto">
+                    <table class="w-full text-left text-xs text-slate-600" id="usersTable">
+                        <thead class="hidden md:table-header-group bg-[#F8FAFC] text-[#64748B] font-bold border-b border-[#E2E8F0] uppercase tracking-wider text-[11px]">
+                            <tr>
+                                <th class="py-3 px-4">Nama &amp; Email Akun</th>
+                                <th class="py-3 px-4">Peran / Role</th>
+                                <th class="py-3 px-4">No. Handphone</th>
+                                <th class="py-3 px-4 text-right">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100" id="usersTableBody">
+                            @foreach($users as $u)
+                                @php
+                                    $roleUpper = strtoupper($u->role);
+                                    $roleDisplay = match($roleUpper) {
+                                        'BUPATI', 'KEPALA_DAERAH' => 'KEPALA DAERAH',
+                                        default => $roleUpper,
+                                    };
+                                    $roleBadgeClass = match($roleUpper) {
+                                        'ADMIN', 'SUPERADMIN' => 'text-[#2563EB] font-bold',
+                                        'BUPATI', 'KEPALA_DAERAH' => 'text-[#2563EB] font-bold',
+                                        'OPERATOR'            => 'text-[#059669] font-bold',
+                                        'PETUGAS'             => 'text-[#475569] font-semibold',
+                                        default               => 'text-[#64748B] font-medium',
+                                    };
+                                    $avatarBg = match($roleUpper) {
+                                    'ADMIN', 'SUPERADMIN', 'BUPATI', 'KEPALA_DAERAH' => 'bg-[#2563EB] text-white',
+                                    default               => 'bg-slate-200 text-[#2563EB]',
                                 };
                                 $initial = strtoupper(substr($u->name, 0, 1));
                             @endphp
@@ -500,36 +619,24 @@
                                 data-phone="{{ $u->phone ?? '' }}"
                                 data-role="{{ $roleUpper == 'BUPATI' ? 'KEPALA_DAERAH' : $roleUpper }}"
                                 data-status="{{ ($u->is_active ?? true) ? 'active' : 'inactive' }}">
-                                <td class="block md:table-cell p-0 md:py-3 md:px-4 min-w-0 flex-1">
-                                    <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
-                                        <div class="w-8 h-8 rounded-full {{ $avatarBg }} flex items-center justify-center font-bold text-xs shrink-0">
-                                            {{ $initial }}
-                                        </div>
-                                        <div class="min-w-0 flex-1">
-                                            <div class="flex items-center gap-1.5 flex-wrap">
-                                                <span class="font-bold text-slate-900 text-xs truncate">{{ $u->name }}</span>
-                                                @if(!($u->is_active ?? true))
-                                                    <span class="px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-red-50 text-red-700 border border-red-200">Nonaktif</span>
-                                                @endif
-                                                <span class="md:hidden px-1.5 py-0.5 rounded-full text-[9px] font-bold border {{ $roleBadgeClass }}">{{ $roleDisplay }}</span>
-                                            </div>
-                                            <div class="text-[11px] text-slate-400">ID #{{ $u->id }}</div>
-                                            <div class="md:hidden text-[11px] text-slate-500 font-mono truncate mt-0.5">{{ $u->email }}</div>
-                                        </div>
+                                <td class="block md:table-cell p-0 md:py-3.5 md:px-4 min-w-0 flex-1">
+                                    <div class="flex items-center gap-2 flex-wrap">
+                                        <span class="font-bold text-[#0F172A] text-xs">{{ $u->name }}</span>
+                                        <span class="text-slate-300 hidden md:inline">&bull;</span>
+                                        <span class="text-[#475569] text-xs font-medium truncate">{{ $u->email }}</span>
+                                        @if(!($u->is_active ?? true))
+                                            <span class="px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-red-50 text-red-700 border border-red-200">Nonaktif</span>
+                                        @endif
                                     </div>
                                 </td>
-                                <td class="hidden md:table-cell py-3 px-4 font-mono text-slate-600 text-xs">{{ $u->email }}</td>
-                                <td class="hidden md:table-cell py-3 px-4">
-                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold border {{ $roleBadgeClass }}">
+                                <td class="hidden md:table-cell py-3.5 px-4">
+                                    <span class="text-[11px] tracking-wide {{ $roleBadgeClass }}">
                                         {{ $roleDisplay }}
                                     </span>
                                 </td>
-                                <td class="hidden md:table-cell py-3 px-4 text-slate-600 font-mono text-xs">{{ $u->phone ?? '-' }}</td>
-                                <td class="hidden md:table-cell py-3 px-4 text-slate-400 text-[11px]">
-                                    {{ $u->created_at ? $u->created_at->isoFormat('D MMM Y') : '-' }}
-                                </td>
-                                <td class="block md:table-cell p-0 md:py-3 md:px-4 text-right shrink-0">
-                                    <div class="flex items-center justify-end gap-1.5">
+                                <td class="hidden md:table-cell py-3.5 px-4 text-[#475569] font-mono text-xs">{{ $u->phone ?? '-' }}</td>
+                                <td class="block md:table-cell p-0 md:py-3.5 md:px-4 text-right shrink-0">
+                                    <div class="flex items-center justify-end gap-1">
                                         <!-- Edit Profil & Akun Pengguna -->
                                         <button type="button" 
                                             data-id="{{ $u->id }}"
@@ -538,7 +645,7 @@
                                             data-phone="{{ $u->phone ?? '' }}"
                                             data-role="{{ $roleUpper == 'BUPATI' ? 'KEPALA_DAERAH' : $roleUpper }}"
                                             onclick="openEditUserModalFromBtn(this)"
-                                            class="p-1.5 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-100 hover:text-[#1E3A8A] transition cursor-pointer" 
+                                            class="p-1.5 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-100 hover:text-[#2563EB] transition cursor-pointer" 
                                             title="Edit Profil, Peran, No. HP, atau Password">
                                             <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
                                         </button>
@@ -546,7 +653,7 @@
                                         <!-- Reset Password Cepat ke default: password (Quick Action Modal) -->
                                         <button type="button" 
                                             onclick="openQuickResetModal({{ $u->id }}, '{{ addslashes($u->name) }}', '{{ addslashes($u->email) }}', '{{ $roleDisplay }}')"
-                                            class="p-1.5 rounded-lg border border-slate-200 text-[#1E3A8A] hover:bg-blue-50 transition cursor-pointer" 
+                                            class="p-1.5 rounded-lg border border-slate-200 text-[#2563EB] hover:bg-blue-50 transition cursor-pointer" 
                                             title="Quick Action: Reset Password ke default (password)">
                                             <i data-lucide="key" class="w-3.5 h-3.5"></i>
                                         </button>
@@ -602,14 +709,14 @@
                             default => $roleUpper,
                         };
                         $roleBadgeClass = match($roleUpper) {
-                            'ADMIN', 'SUPERADMIN' => 'bg-[#1E3A8A] text-white border-[#1E3A8A]',
-                            'BUPATI', 'KEPALA_DAERAH' => 'bg-blue-100 text-[#1E3A8A] border-blue-200',
-                            'OPERATOR' => 'bg-blue-50 text-[#1E3A8A] border-blue-200',
+                            'ADMIN', 'SUPERADMIN' => 'bg-[#2563EB] text-white border-[#2563EB]',
+                            'BUPATI', 'KEPALA_DAERAH' => 'bg-blue-100 text-[#2563EB] border-blue-200',
+                            'OPERATOR' => 'bg-blue-50 text-[#2563EB] border-blue-200',
                             'PETUGAS' => 'bg-slate-100 text-slate-800 border-slate-200',
                             default => 'bg-slate-50 text-slate-600 border-slate-200',
                         };
                     @endphp
-                    <div class="user-grid-card rounded-xl border border-[#E2E8F0] bg-white p-4 space-y-3 hover:border-[#1E3A8A] transition flex flex-col justify-between"
+                    <div class="user-grid-card rounded-xl border border-[#E2E8F0] bg-white p-4 space-y-3 hover:border-[#2563EB] transition flex flex-col justify-between"
                         data-name="{{ strtolower($u->name) }}"
                         data-email="{{ strtolower($u->email) }}"
                         data-phone="{{ strtolower($u->phone ?? '') }}"
@@ -618,7 +725,7 @@
                         <div class="space-y-2.5">
                             <div class="flex items-start justify-between gap-2">
                                 <div class="flex items-center gap-2.5 min-w-0">
-                                    <div class="w-9 h-9 rounded-full {{ $roleUpper === 'ADMIN' ? 'bg-[#1E3A8A] text-white' : 'bg-blue-50 text-[#1E3A8A]' }} flex items-center justify-center font-bold text-xs shrink-0">
+                                    <div class="w-9 h-9 rounded-full {{ $roleUpper === 'ADMIN' ? 'bg-[#2563EB] text-white' : 'bg-blue-50 text-[#2563EB]' }} flex items-center justify-center font-bold text-xs shrink-0">
                                         {{ strtoupper(substr($u->name, 0, 1)) }}
                                     </div>
                                     <div class="min-w-0">
@@ -649,7 +756,7 @@
                             </button>
                             <button type="button"
                                 onclick="openQuickResetModal({{ $u->id }}, '{{ addslashes($u->name) }}', '{{ addslashes($u->email) }}', '{{ $roleDisplay }}')"
-                                class="px-2.5 py-1 rounded-lg border border-blue-200 text-[#1E3A8A] hover:bg-blue-50 text-[11px] font-semibold transition cursor-pointer">
+                                class="px-2.5 py-1 rounded-lg border border-blue-200 text-[#2563EB] hover:bg-blue-50 text-[11px] font-semibold transition cursor-pointer">
                                 Sandi
                             </button>
                             @if($u->id !== auth()->id())
@@ -683,7 +790,7 @@
                     <div class="flex items-center gap-2">
                         <span class="font-medium">Tampilkan:</span>
                         <select id="usersPageSizeSelect" onchange="changeUsersPageSize(this.value)" aria-label="Jumlah akun per halaman"
-                            class="text-xs font-semibold rounded-lg border border-[#E2E8F0] bg-white text-[#0F172A] px-2.5 py-1.5 focus:outline-none focus:border-[#1E3A8A] cursor-pointer">
+                            class="text-xs font-semibold rounded-lg border border-[#E2E8F0] bg-white text-[#0F172A] px-2.5 py-1.5 focus:outline-none focus:border-[#2563EB] cursor-pointer">
                             <option value="5">5 akun</option>
                             <option value="10" selected>10 akun</option>
                             <option value="50">50 akun</option>
@@ -694,62 +801,55 @@
                 <div id="usersPageControls" class="flex items-center gap-1.5 flex-wrap"></div>
             </div>
         </div>
+        </div>
 
     </div>
 
-    <!-- Tab Panel 3: Daftar Seluruh Pengaduan -->
-    <div id="tabPanel-complaints-list" class="admin-tab-panel {{ $activeTab === 'complaints-list' ? '' : 'hidden' }} space-y-4">
-        
-        <!-- Filter & Search Bar Instan (0ms Tanpa Loading / Reload Halaman Sama Seperti Halaman Operator) -->
-        <div class="card-white rounded-2xl p-4 bg-white border border-[#E2E8F0] shadow-2xs flex flex-col sm:flex-row items-center gap-2.5">
-            
-            <!-- Search Bar Instan (Mengisi sisa ruang secara fleksibel tanpa whitespace kosong) -->
-            <div class="relative w-full sm:flex-1 min-w-[160px]">
-                <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
-                <input type="text" id="complaintSearchInput" oninput="filterComplaintsTable()" placeholder="Cari kode aduan, judul kerusakan, nama pelapor, atau alamat..."
-                    class="w-full pl-9 pr-3 py-1.5 text-xs rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-[#1E3A8A] focus:ring-1 focus:ring-[#1E3A8A] transition">
-            </div>
-
-            <!-- Filter Kategori & Status Instan (Kompak 2-Kolom di Mobile, Satu Baris di Desktop) -->
-            <div class="grid grid-cols-2 sm:flex sm:flex-wrap lg:flex-nowrap items-center gap-2 w-full sm:w-auto shrink-0">
-                <!-- Dropdown Kategori -->
-                <div class="flex flex-col sm:flex-row sm:items-center gap-1 min-w-0">
-                    <div class="flex items-center gap-1 text-[11px] sm:text-xs text-slate-500 shrink-0 font-medium whitespace-nowrap">
-                        <i data-lucide="layers" class="w-3.5 h-3.5 text-[#1E3A8A]"></i>
-                        <span>Kategori:</span>
+    <!-- Tab Panel 3: Daftar Seluruh Pengaduan (Kartu Terpadu Seragam Kelola Akun & Pengguna) -->
+    <div id="tabPanel-complaints-list" class="admin-tab-panel {{ $activeTab === 'complaints-list' ? '' : 'hidden' }}">
+        <div class="card-white rounded-2xl p-5 sm:p-6 bg-white border border-[#E2E8F0] shadow-xs space-y-4">
+            <!-- Header & Filter Bar Terpadu -->
+            <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-3">
+                <div class="flex items-center gap-2.5 shrink-0">
+                    <div class="w-9 h-9 rounded-xl bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE] flex items-center justify-center shrink-0">
+                        <i data-lucide="layers" class="w-4 h-4"></i>
                     </div>
+                    <div>
+                        <h3 class="font-outfit font-bold text-sm sm:text-base text-[#0F172A] flex items-center gap-2 flex-wrap">
+                            <span>Daftar Seluruh Pengaduan</span>
+                            <span class="px-2 py-0.5 rounded-full bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE] text-[11px] font-bold whitespace-nowrap">
+                                {{ $complaints->count() }} Aduan
+                            </span>
+                        </h3>
+                    </div>
+                </div>
+
+                <!-- Search & Filter Instan -->
+                <div class="flex flex-wrap items-center gap-2 flex-1 xl:justify-end">
+                    <div class="relative flex-1 min-w-[180px] sm:max-w-xs">
+                        <i data-lucide="search" class="w-4 h-4 text-[#64748B] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                        <input type="text" id="complaintSearchInput" oninput="filterComplaintsTable()" placeholder="Cari kode, judul, pelapor..."
+                            class="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] focus:bg-white focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/15 transition">
+                    </div>
+
                     <select id="complaintCategorySelect" onchange="filterComplaintsTable()" 
-                        class="w-full sm:w-auto text-xs font-semibold rounded-xl border border-slate-200 py-1.5 px-2 bg-slate-50 text-slate-700 focus:outline-none focus:border-[#1E3A8A] focus:bg-white transition">
-                        <option value="ALL">Semua Kategori</option>
+                        class="text-xs font-semibold rounded-xl border border-[#E2E8F0] py-2 px-3 bg-[#F8FAFC] text-[#334155] focus:outline-none focus:border-[#2563EB] focus:bg-white transition">
+                        <option value="ALL">Kategori: Semua</option>
                         @foreach($categories as $cat)
                             <option value="{{ $cat->id }}">{{ $cat->name }}</option>
                         @endforeach
                     </select>
-                </div>
 
-                <!-- Dropdown Tipe Laporan (Kerusakan Ringan / Berat) -->
-                <div class="flex flex-col sm:flex-row sm:items-center gap-1 min-w-0">
-                    <div class="flex items-center gap-1 text-[11px] sm:text-xs text-slate-500 shrink-0 font-medium whitespace-nowrap">
-                        <i data-lucide="git-commit" class="w-3.5 h-3.5 text-[#1E3A8A]"></i>
-                        <span>Tipe:</span>
-                    </div>
                     <select id="complaintDamageTypeSelect" onchange="filterComplaintsTable()" 
-                        class="w-full sm:w-auto text-xs font-semibold rounded-xl border border-slate-200 py-1.5 px-2 bg-slate-50 text-slate-700 focus:outline-none focus:border-[#1E3A8A] focus:bg-white transition">
-                        <option value="ALL">Semua Tipe</option>
-                        <option value="minor">Kerusakan Ringan</option>
-                        <option value="major">Kerusakan Berat</option>
+                        class="text-xs font-semibold rounded-xl border border-[#E2E8F0] py-2 px-3 bg-[#F8FAFC] text-[#334155] focus:outline-none focus:border-[#2563EB] focus:bg-white transition">
+                        <option value="ALL">Tipe: Semua</option>
+                        <option value="minor">Ringan</option>
+                        <option value="major">Berat</option>
                     </select>
-                </div>
 
-                <!-- Dropdown Status -->
-                <div class="col-span-2 sm:col-span-1 flex flex-col sm:flex-row sm:items-center gap-1 min-w-0">
-                    <div class="flex items-center gap-1 text-[11px] sm:text-xs text-slate-500 shrink-0 font-medium whitespace-nowrap">
-                        <i data-lucide="check-square" class="w-3.5 h-3.5 text-[#1E3A8A]"></i>
-                        <span>Status:</span>
-                    </div>
                     <select id="complaintStatusSelect" onchange="filterComplaintsTable()" 
-                        class="w-full sm:w-auto text-xs font-semibold rounded-xl border border-slate-200 py-1.5 px-2 bg-slate-50 text-slate-700 focus:outline-none focus:border-[#1E3A8A] focus:bg-white transition">
-                        <option value="ALL">Semua Status</option>
+                        class="text-xs font-semibold rounded-xl border border-[#E2E8F0] py-2 px-3 bg-[#F8FAFC] text-[#334155] focus:outline-none focus:border-[#2563EB] focus:bg-white transition">
+                        <option value="ALL">Status: Semua</option>
                         <option value="SUBMITTED">Verifikasi</option>
                         <option value="DISPATCHED">Ditugaskan</option>
                         <option value="IN_PROGRESS">Dikerjakan</option>
@@ -757,38 +857,34 @@
                         <option value="COMPLETED">Selesai</option>
                         <option value="REJECTED">Ditolak</option>
                     </select>
-                </div>
 
-                <div class="col-span-2 sm:col-span-1 flex items-end sm:items-center justify-end gap-1.5 self-end sm:self-auto">
-                    <!-- Tombol Reset Filter (Muncul hanya saat filter aktif) -->
                     <button type="button" id="complaintResetBtn" onclick="resetComplaintFilters()" 
-                        class="hidden px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition flex items-center gap-1 shrink-0 cursor-pointer">
+                        class="hidden px-2.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition flex items-center gap-1 shrink-0 cursor-pointer">
                         <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
                         <span>Reset</span>
                     </button>
 
-                    <!-- Toggle Tata Letak Daftar / Petak -->
-                    <div class="inline-flex items-center p-0.5 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] shrink-0" role="group" aria-label="Tata letak semua aduan">
+                    <!-- Toggle Tata Letak Daftar / Petak (Rata Kanan) -->
+                    <div class="inline-flex items-center p-0.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] shrink-0 ml-auto" role="group" aria-label="Tata letak semua aduan">
                         <button type="button" id="complaintsLayoutBtn-list" onclick="setAdminComplaintsLayout('list')"
-                            class="px-2.5 py-1 rounded-md text-xs font-semibold flex items-center gap-1 transition cursor-pointer bg-[#1E3A8A] text-white">
+                            class="px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition cursor-pointer bg-[#2563EB] text-white">
                             <i data-lucide="list" class="w-3.5 h-3.5"></i>
                             <span>Daftar</span>
                         </button>
                         <button type="button" id="complaintsLayoutBtn-grid" onclick="setAdminComplaintsLayout('grid')"
-                            class="px-2.5 py-1 rounded-md text-xs font-semibold flex items-center gap-1 transition cursor-pointer text-[#475569] hover:text-[#0F172A]">
+                            class="px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition cursor-pointer text-[#475569] hover:text-[#0F172A]">
                             <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
                             <span>Petak</span>
                         </button>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Tabel Daftar Seluruh Pengaduan -->
-        <div class="card-white rounded-2xl bg-white border border-[#E2E8F0] overflow-hidden">
-            <div id="complaintsTableWrap" class="overflow-hidden md:overflow-x-auto">
-            <table class="block md:table w-full text-left text-xs text-slate-600" id="complaintsTable">
-                <thead class="hidden md:table-header-group bg-slate-50/80 text-slate-500 font-bold border-b border-[#E2E8F0] uppercase tracking-wider text-[11px]">
+            <!-- Tabel Daftar Seluruh Pengaduan -->
+            <div class="rounded-xl border border-[#E2E8F0] overflow-hidden">
+                <div id="complaintsTableWrap" class="overflow-hidden md:overflow-x-auto">
+                <table class="block md:table w-full text-left text-xs text-slate-600" id="complaintsTable">
+                    <thead class="hidden md:table-header-group bg-[#F8FAFC] text-[#64748B] font-bold border-b border-[#E2E8F0] uppercase tracking-wider text-[11px]">
                     <tr>
                         <th class="py-3 px-3 w-28 whitespace-nowrap">Kode</th>
                         <th class="py-3 px-3">Judul & Lokasi</th>
@@ -837,7 +933,7 @@
                             data-category="{{ $c->category_id }}"
                             data-damage-type="{{ $c->damage_type ?? 'minor' }}"
                             data-status="{{ $c->status }}">
-                            <td class="hidden md:table-cell py-2.5 px-3 font-mono font-bold text-[#1E3A8A] text-xs whitespace-nowrap">
+                            <td class="hidden md:table-cell py-2.5 px-3 font-mono font-bold text-[#2563EB] text-xs whitespace-nowrap">
                                 <button type="button" onclick="event.stopPropagation(); openAdminDetailModal({{ $c->id }})" class="hover:underline text-left cursor-pointer">
                                     #{{ $c->public_code }}
                                 </button>
@@ -845,7 +941,7 @@
                             </td>
                             <td class="block md:table-cell p-0 md:py-2.5 md:px-3 flex-1 md:w-auto min-w-0">
                                 <div class="flex items-center gap-2.5 min-w-0 group">
-                                    <div class="relative w-11 h-11 rounded-xl overflow-hidden border border-slate-200 bg-slate-100 shrink-0 group-hover:ring-2 group-hover:ring-[#1E3A8A] transition" title="Lihat Foto & Detail">
+                                    <div class="relative w-11 h-11 rounded-xl overflow-hidden border border-slate-200 bg-slate-100 shrink-0 transition" title="Lihat Foto & Detail">
                                         @if($firstPhotoUrl)
                                             <img src="{{ $firstPhotoUrl }}" alt="Foto Aduan" class="w-full h-full object-cover">
                                         @else
@@ -856,11 +952,11 @@
                                     </div>
                                     <div class="min-w-0 flex-1">
                                         <div class="md:hidden flex items-center gap-1.5 flex-wrap mb-0.5">
-                                            <span class="font-mono font-bold text-[#1E3A8A] text-[10px]">#{{ $c->public_code }}</span>
+                                            <span class="font-mono font-bold text-[#2563EB] text-[10px]">#{{ $c->public_code }}</span>
                                             <span class="px-1.5 py-0.5 rounded-full text-[9px] font-bold border {{ $statusBadgeClass }}">{{ $statusLabel }}</span>
                                         </div>
                                         <div class="flex items-center gap-1.5 flex-wrap mb-0.5">
-                                            <button type="button" onclick="openAdminDetailModal({{ $c->id }})" class="font-bold text-slate-900 text-xs truncate hover:text-[#1E3A8A] text-left cursor-pointer max-w-full md:max-w-[200px]" title="{{ $c->title }}">
+                                            <button type="button" onclick="openAdminDetailModal({{ $c->id }})" class="font-bold text-slate-900 text-xs truncate hover:text-[#2563EB] text-left cursor-pointer max-w-full md:max-w-[200px]" title="{{ $c->title }}">
                                                 {{ $c->title }}
                                             </button>
                                         </div>
@@ -941,12 +1037,12 @@
                             'COMPLETED', 'CLOSED' => 'bg-emerald-50 text-emerald-800 border-emerald-200',
                             'WAITING_VERIFICATION' => 'bg-amber-50 text-amber-700 border-amber-300',
                             'IN_PROGRESS', 'REVISION_REQUIRED' => 'bg-amber-50 text-amber-800 border-amber-300',
-                            'DISPATCHED' => 'bg-blue-50 text-[#1E3A8A] border-blue-200',
+                            'DISPATCHED' => 'bg-blue-50 text-[#2563EB] border-blue-200',
                             default => 'bg-red-50 text-red-700 border-red-200',
                         };
                         $cSearch = strtolower($c->public_code . ' ' . $c->title . ' ' . $c->address . ' ' . ($c->citizen?->name ?? ''));
                     @endphp
-                    <div onclick="if (window.innerWidth < 768) { openAdminDetailModal({{ $c->id }}); }" class="complaint-grid-card rounded-xl border border-[#E2E8F0] bg-white p-4 space-y-3 hover:border-[#1E3A8A] transition cursor-pointer md:cursor-default"
+                    <div onclick="if (window.innerWidth < 768) { openAdminDetailModal({{ $c->id }}); }" class="complaint-grid-card rounded-xl border border-[#E2E8F0] bg-white p-4 space-y-3 hover:border-[#2563EB] transition cursor-pointer md:cursor-default"
                         data-search="{{ $cSearch }}"
                         data-category="{{ $c->category_id ?? '' }}"
                         data-damage-type="{{ $c->damage_type ?? 'minor' }}"
@@ -972,7 +1068,7 @@
                                 <p class="text-xs text-[#475569] truncate">{{ $c->address }}</p>
                                 <p class="text-[11px] text-[#475569]">Pelapor: <strong class="text-[#0F172A]">{{ $c->citizen?->name ?? 'Warga' }}</strong> • {{ $c->created_at?->diffForHumans() }}</p>
                                 <div class="flex items-center justify-end md:justify-between gap-2 pt-1">
-                                    <button type="button" onclick="openAdminDetailModal({{ $c->id }})" class="hidden md:inline-flex text-xs font-bold text-[#1E3A8A] hover:underline items-center gap-1 cursor-pointer">
+                                    <button type="button" onclick="openAdminDetailModal({{ $c->id }})" class="hidden md:inline-flex text-xs font-bold text-[#2563EB] hover:underline items-center gap-1 cursor-pointer">
                                         <span>Lihat Rincian Lengkap & Foto</span>
                                         <i data-lucide="arrow-right" class="w-3 h-3"></i>
                                     </button>
@@ -1000,7 +1096,7 @@
                     <div class="flex items-center gap-2">
                         <span class="font-medium">Tampilkan:</span>
                         <select id="complaintsPageSizeSelect" onchange="changeComplaintsPageSize(this.value)" aria-label="Jumlah aduan per halaman"
-                            class="text-xs font-semibold rounded-lg border border-[#E2E8F0] bg-white text-[#0F172A] px-2.5 py-1.5 focus:outline-none focus:border-[#1E3A8A] cursor-pointer">
+                            class="text-xs font-semibold rounded-lg border border-[#E2E8F0] bg-white text-[#0F172A] px-2.5 py-1.5 focus:outline-none focus:border-[#2563EB] cursor-pointer">
                             <option value="5">5 aduan</option>
                             <option value="10" selected>10 aduan</option>
                             <option value="50">50 aduan</option>
@@ -1011,389 +1107,388 @@
                 <div id="complaintsPageControls" class="flex items-center gap-1.5 flex-wrap"></div>
             </div>
         </div>
+        </div>
 
     </div>
 
     <!-- Tab Panel 4: CMS Pemetaan Wilayah & Geofencing GIS (Kolaka Utara) -->
-    <div id="tabPanel-regions-gis" class="admin-tab-panel {{ $activeTab === 'regions-gis' ? '' : 'hidden' }} space-y-6">
+    <div id="tabPanel-regions-gis" class="admin-tab-panel {{ $activeTab === 'regions-gis' ? '' : 'hidden' }} space-y-5">
+        @php
+            $lasusuaData = collect($districtStats)->first(function($d) {
+                return str_contains(strtolower($d['district']), 'lasusua');
+            }) ?? ['id' => 1, 'district' => 'Kecamatan Lasusua', 'village' => 'Kel. Lasusua', 'latitude' => -3.5262, 'longitude' => 120.8407];
+            $activeDistrictCount = collect($districtStats)->where('total', '>', 0)->count();
+            $totalMappedComplaints = collect($districtStats)->sum('total');
+            $safeDistrictCount = max(0, count($districtStats) - $activeDistrictCount);
+        @endphp
 
-        <!-- Peta Interaktif Batas Wilayah Kolaka Utara -->
-        <div id="adminRegionMapCard" class="card-white rounded-2xl p-5 bg-white border border-[#E2E8F0] shadow-2xs space-y-3">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
-                <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-xl bg-blue-50 text-[#1E3A8A] flex items-center justify-center border border-blue-200">
-                        <i data-lucide="map" class="w-4 h-4"></i>
-                    </div>
-                    <div>
-                        <h4 class="font-outfit font-bold text-sm text-slate-900">
-                            Peta Spasial Administratif & Titik Pusat 15 Kecamatan
-                        </h4>
-                    </div>
+        <!-- Header & Aksi Cepat -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+                <h2 class="font-outfit font-bold text-xl sm:text-[22px] text-[#0F172A] tracking-tight">
+                    Peta Wilayah GIS &amp; Sebaran 15 Kecamatan
+                </h2>
+                <p class="text-xs text-[#64748B] mt-0.5">
+                    Pantau sebaran aduan infrastruktur dan kelola titik koordinat pusat 15 kecamatan Kabupaten Kolaka Utara
+                </p>
+            </div>
+            <button type="button" onclick="resetAdminRegionMapView()"
+                class="self-start sm:self-auto px-3.5 py-2 rounded-[10px] bg-white hover:bg-slate-50 text-[#0F172A] border border-[#E2E8F0] font-bold text-xs transition inline-flex items-center gap-1.5 cursor-pointer shrink-0">
+                <i data-lucide="focus" class="w-3.5 h-3.5 text-[#2563EB]"></i>
+                <span>Fokus Lasusua</span>
+            </button>
+        </div>
+
+        <!-- 3-Card KPI Strip -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="rounded-2xl p-4 bg-white border border-[#E2E8F0] flex items-center justify-between gap-3">
+                <div>
+                    <span class="text-[10px] text-[#64748B] font-bold uppercase tracking-wider block">Total Kecamatan Terdaftar</span>
+                    <span class="text-xl font-outfit font-bold text-[#0F172A] block mt-0.5">15 Kecamatan</span>
+                    <span class="text-[11px] text-[#64748B]">Kabupaten Kolaka Utara</span>
                 </div>
-                <div class="flex items-center gap-2 sm:gap-3 text-[10px] sm:text-xs font-semibold overflow-x-auto whitespace-nowrap w-full sm:w-auto pb-0.5 sm:pb-0">
-                    <span class="inline-flex items-center gap-1 shrink-0"><span class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#EF4444]"></span> Verifikasi</span>
-                    <span class="inline-flex items-center gap-1 shrink-0"><span class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#1E40AF]"></span> Ditugaskan</span>
-                    <span class="inline-flex items-center gap-1 shrink-0"><span class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#F59E0B]"></span> <span class="hidden sm:inline">Sedang </span>Dikerjakan</span>
-                    <span class="inline-flex items-center gap-1 shrink-0"><span class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#F59E0B]"></span> Validasi</span>
-                    <span class="inline-flex items-center gap-1 shrink-0"><span class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#10B981]"></span> Selesai</span>
-                    <span class="inline-flex items-center gap-1 shrink-0"><span class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#DC2626]"></span> Ditolak</span>
-                    <button type="button" onclick="resetAdminRegionMapView()" class="ml-1 sm:ml-2 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[10px] sm:text-xs transition inline-flex items-center gap-1.5 cursor-pointer shrink-0">
-                        <i data-lucide="focus" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
-                        <span>Fokus Lasusua</span>
-                    </button>
+                <div class="w-10 h-10 rounded-xl bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE] flex items-center justify-center shrink-0">
+                    <i data-lucide="building-2" class="w-4 h-4"></i>
                 </div>
             </div>
 
-            <!-- Banner Interaktif CMS Penentuan Titik Koordinat Peta (Saat Edit Aktif) -->
-            <div id="pickingBanner" class="hidden p-3.5 sm:p-4 rounded-xl bg-blue-50/95 border-2 border-[#1E3A8A] flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-md animate-in fade-in duration-200">
-                <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-xl bg-[#1E3A8A] text-white flex items-center justify-center shrink-0 shadow-xs">
-                        <i data-lucide="crosshair" class="w-5 h-5"></i>
-                    </div>
-                    <div>
-                        <div class="flex items-center gap-2 flex-wrap">
-                            <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-[#1E3A8A] text-white">Penyesuaian Koordinat Wilayah</span>
-                            <strong class="text-xs sm:text-sm text-slate-900 font-extrabold" id="pickingDistrictTitle">Kecamatan Lasusua</strong>
-                        </div>
-                        <span class="text-[11px] text-slate-600 block mt-0.5 leading-snug">
-                            Ketuk peta 2x untuk menentukan titik koordinat baru.
-                        </span>
-                    </div>
+            <div class="rounded-2xl p-4 bg-white border border-[#E2E8F0] flex items-center justify-between gap-3">
+                <div>
+                    <span class="text-[10px] text-[#64748B] font-bold uppercase tracking-wider block">Pusat Pemerintahan (Ibukota)</span>
+                    <span class="text-xl font-outfit font-bold text-[#2563EB] block mt-0.5">Lasusua</span>
+                    <button type="button" onclick="startPickingCoordinate({{ $lasusuaData['id'] }}, '{{ $lasusuaData['district'] }} (Ibukota)', {{ $lasusuaData['latitude'] }}, {{ $lasusuaData['longitude'] }})"
+                        class="text-[11px] font-bold text-[#2563EB] hover:underline inline-flex items-center gap-1 cursor-pointer">
+                        <i data-lucide="crosshair" class="w-3 h-3"></i>
+                        <span>Atur Titik Pusat Ibukota di Peta</span>
+                    </button>
                 </div>
-                <div class="flex items-center gap-2 w-full sm:w-auto self-end sm:self-auto shrink-0 flex-wrap sm:flex-nowrap">
-                    <div class="px-3 py-1.5 rounded-xl bg-white border border-blue-200 text-xs font-mono font-bold text-[#1E3A8A] shadow-2xs" id="pickingCoordsDisplay">
-                        Klik pada peta...
-                    </div>
-                    <button type="button" id="savePickedBtn" onclick="savePickedCoordinate()" disabled
-                        class="px-4 py-2 rounded-xl bg-[#1E3A8A] hover:bg-blue-900 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold text-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer">
-                        <i data-lucide="save" class="w-3.5 h-3.5"></i>
-                        <span>Simpan Titik</span>
-                    </button>
-                    <button type="button" onclick="cancelPickingCoordinate()"
-                        class="px-3.5 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs transition cursor-pointer">
-                        Batal
-                    </button>
+                <div class="w-10 h-10 rounded-xl bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE] flex items-center justify-center shrink-0">
+                    <i data-lucide="navigation" class="w-4 h-4"></i>
                 </div>
             </div>
-            
-            <div class="relative w-full h-[400px] rounded-xl overflow-hidden border border-slate-200 bg-slate-100">
-                <div id="adminRegionMap" class="w-full h-full z-0"></div>
+
+            <div class="rounded-2xl p-4 bg-white border border-[#E2E8F0] flex items-center justify-between gap-3">
+                <div>
+                    <span class="text-[10px] text-[#64748B] font-bold uppercase tracking-wider block">Wilayah Beraduan Aktif</span>
+                    <span class="text-xl font-outfit font-bold text-[#0F172A] block mt-0.5">{{ $activeDistrictCount }} Kecamatan</span>
+                    <span class="text-[11px] text-[#64748B]">{{ $totalMappedComplaints }} Total Aduan Terpetakan</span>
+                </div>
+                <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 border border-amber-200 flex items-center justify-center shrink-0">
+                    <i data-lucide="map-pin" class="w-4 h-4"></i>
+                </div>
             </div>
         </div>
 
-        <!-- Sebaran Pengaduan Per Wilayah Kecamatan & Desa (Kolaka Utara) -->
-        <div class="card-white rounded-2xl p-5 sm:p-6 bg-white border border-[#E2E8F0] shadow-2xs space-y-5">
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-100 pb-4">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-2xl bg-blue-50 text-[#1E3A8A] flex items-center justify-center border border-blue-200 shrink-0">
-                        <i data-lucide="map" class="w-5 h-5"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-outfit font-extrabold text-sm sm:text-base text-slate-900 leading-tight">
-                            Sebaran Pengaduan Infrastruktur per Wilayah Kecamatan & Desa
-                        </h3>
-                    </div>
+        <!-- Banner Interaktif CMS Penentuan Titik Koordinat Peta (Full Width di Atas Kedua Kolom) -->
+        <div id="pickingBanner" class="hidden p-4 rounded-2xl bg-[#EFF6FF] border border-[#BFDBFE] flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+            <div class="flex items-center gap-3 min-w-0">
+                <div class="w-10 h-10 rounded-xl bg-[#2563EB] text-white flex items-center justify-center shrink-0">
+                    <i data-lucide="crosshair" class="w-5 h-5"></i>
                 </div>
-                <div class="flex items-center gap-2 self-start md:self-auto shrink-0">
-                    <span class="px-3 py-1 rounded-full bg-blue-50 text-[#1E3A8A] text-xs font-bold border border-blue-200 flex items-center gap-1.5">
-                        <i data-lucide="shield-check" class="w-3.5 h-3.5 text-blue-600"></i>
-                        <span>15 Kecamatan Terintegrasi</span>
+                <div class="min-w-0">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span class="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-[#2563EB] text-white">Penyesuaian Koordinat</span>
+                        <strong class="text-sm text-[#0F172A] font-outfit font-bold" id="pickingDistrictTitle">Kecamatan Lasusua</strong>
+                    </div>
+                    <span class="text-xs text-[#475569] block mt-0.5">
+                        Ketuk peta 2x untuk menentukan titik koordinat pusat baru pada wilayah ini.
                     </span>
                 </div>
             </div>
-
-            <!-- Ringkasan Statistik Kewilayahan Kolaka Utara -->
-            @php
-                $lasusuaData = collect($districtStats)->first(function($d) {
-                    return str_contains(strtolower($d['district']), 'lasusua');
-                }) ?? ['id' => 1, 'district' => 'Kecamatan Lasusua', 'village' => 'Kel. Lasusua', 'latitude' => -3.5262, 'longitude' => 120.8407];
-            @endphp
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-between">
-                    <div>
-                        <span class="text-[11px] text-slate-500 font-semibold block">Total Kecamatan Terdaftar</span>
-                        <span class="text-lg font-outfit font-extrabold text-slate-900">15 Kecamatan</span>
-                    </div>
-                    <div class="w-8 h-8 rounded-xl bg-blue-50/80 text-[#1E3A8A] border border-blue-100/70 flex items-center justify-center shrink-0">
-                        <i data-lucide="building-2" class="w-4 h-4"></i>
-                    </div>
+            <div class="flex items-center gap-2 flex-wrap shrink-0">
+                <div class="px-3.5 py-2 rounded-xl bg-white border border-[#BFDBFE] text-xs font-mono font-bold text-[#2563EB]" id="pickingCoordsDisplay">
+                    Klik pada peta...
                 </div>
-
-                <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-between">
-                    <div>
-                        <span class="text-[11px] text-slate-500 font-semibold block">Pusat Pemerintahan (Ibukota)</span>
-                        <span class="text-lg font-outfit font-extrabold text-[#1E3A8A]">Lasusua</span>
-                        <button type="button" onclick="startPickingCoordinate({{ $lasusuaData['id'] }}, '{{ $lasusuaData['district'] }} (Ibukota)', {{ $lasusuaData['latitude'] }}, {{ $lasusuaData['longitude'] }})"
-                            class="mt-1 text-[11px] font-bold text-[#1E3A8A] hover:underline flex items-center gap-1 cursor-pointer">
-                            <i data-lucide="crosshair" class="w-3 h-3"></i>
-                            <span>Atur Pusat Ibukota di Peta</span>
-                        </button>
-                    </div>
-                    <div class="w-8 h-8 rounded-xl bg-blue-50/80 text-[#1E3A8A] border border-blue-100/70 flex items-center justify-center shrink-0">
-                        <i data-lucide="navigation" class="w-4 h-4"></i>
-                    </div>
-                </div>
-
-                <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-between">
-                    <div>
-                        <span class="text-[11px] text-slate-500 font-semibold block">Cakupan Wilayah Layanan</span>
-                        <span class="text-sm font-extrabold text-slate-800 flex items-center gap-1.5 mt-1">
-                            <span class="w-2 h-2 rounded-full bg-[#1E3A8A]"></span>
-                            Kabupaten Kolaka Utara
-                        </span>
-                    </div>
-                    <div class="w-8 h-8 rounded-xl bg-blue-50/80 text-[#1E3A8A] border border-blue-100/70 flex items-center justify-center shrink-0">
-                        <i data-lucide="shield-check" class="w-4 h-4"></i>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Grid 15 Kecamatan Kolaka Utara -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
-                @foreach($districtStats as $ds)
-                    <div id="districtCard-{{ $ds['id'] }}" class="p-3.5 rounded-xl bg-slate-50/90 border border-slate-200/80 hover:bg-white hover:border-blue-300 hover:shadow-sm transition flex flex-col justify-between space-y-3">
-                        <div class="flex items-start justify-between gap-2">
-                            <div class="min-w-0">
-                                <span class="font-extrabold text-slate-900 text-xs sm:text-sm block truncate">{{ $ds['district'] }}</span>
-                                <span class="text-[11px] text-slate-500 block truncate flex items-center gap-1.5 mt-0.5">
-                                    <span class="w-1.5 h-1.5 rounded-full {{ $ds['total'] > 0 ? 'bg-blue-600' : 'bg-slate-400' }}"></span>
-                                    <span>Pusat: {{ $ds['village'] }}</span>
-                                </span>
-                            </div>
-                            @if($ds['total'] > 0)
-                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-blue-100 text-[#1E3A8A] shrink-0 whitespace-nowrap">
-                                    {{ $ds['total'] }} Laporan
-                                </span>
-                            @else
-                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-slate-200/70 text-slate-600 shrink-0 whitespace-nowrap">
-                                    Nihil (Aman)
-                                </span>
-                            @endif
-                        </div>
-
-                        <div class="pt-2 border-t border-slate-200/70 space-y-1.5 text-[11px]">
-                            <div class="flex items-center justify-between text-slate-500">
-                                <span>Status Penanganan:</span>
-                                @if($ds['total'] === 0)
-                                    <span class="text-slate-400 font-medium">Kondusif & Terpantau</span>
-                                @elseif($ds['completed'] === $ds['total'])
-                                    <span class="font-bold text-emerald-600 flex items-center gap-1">
-                                        <i data-lucide="check-check" class="w-3.5 h-3.5"></i>
-                                        100% Selesai
-                                    </span>
-                                @endif
-                            </div>
-                            @if($ds['total'] > 0 && $ds['completed'] !== $ds['total'])
-                                <div class="flex items-center gap-1.5 flex-wrap">
-                                    @if(($ds['pending'] ?? 0) > 0)
-                                        <span class="px-2 py-0.5 rounded-md bg-red-50 text-red-700 border border-red-200 text-[10px] font-bold flex items-center gap-1">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
-                                            {{ $ds['pending'] }} Verifikasi
-                                        </span>
-                                    @endif
-                                    @if(($ds['dispatched'] ?? 0) > 0)
-                                        <span class="px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-200 text-[10px] font-bold flex items-center gap-1">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
-                                            {{ $ds['dispatched'] }} Ditugaskan
-                                        </span>
-                                    @endif
-                                    @if(($ds['in_progress'] ?? 0) > 0)
-                                        <span class="px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 border border-amber-200 text-[10px] font-bold flex items-center gap-1">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-                                            {{ $ds['in_progress'] }} Dikerjakan
-                                        </span>
-                                    @endif
-                                    @if(($ds['waiting_verification'] ?? 0) > 0)
-                                        <span class="px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 border border-amber-200 text-[10px] font-bold flex items-center gap-1">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-                                            {{ $ds['waiting_verification'] }} Validasi
-                                        </span>
-                                    @endif
-                                    @if(($ds['completed'] ?? 0) > 0)
-                                        <span class="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold flex items-center gap-1">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                            {{ $ds['completed'] }} Selesai
-                                        </span>
-                                    @endif
-                                    @if(($ds['rejected'] ?? 0) > 0)
-                                        <span class="px-2 py-0.5 rounded-md bg-red-50 text-red-700 border border-red-200 text-[10px] font-bold flex items-center gap-1">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
-                                            {{ $ds['rejected'] }} Ditolak
-                                        </span>
-                                    @endif
-                                </div>
-                            @endif
-                        </div>
-
-                        <div class="pt-1 flex items-center justify-between gap-1.5 flex-wrap">
-                            <span id="coordsDisplay-{{ $ds['id'] }}" class="font-mono text-[10px] text-slate-500 font-semibold">
-                                {{ number_format($ds['latitude'], 4) }}, {{ number_format($ds['longitude'], 4) }}
-                            </span>
-                            <div class="flex items-center gap-1.5">
-                                <button type="button" onclick="focusDistrictOnAdminMap({{ $ds['latitude'] }}, {{ $ds['longitude'] }}, '{{ $ds['district'] }}')"
-                                    class="px-2 py-1 rounded-lg bg-white border border-slate-200 hover:border-[#1E3A8A] text-[#1E3A8A] font-bold text-[10px] transition flex items-center gap-1 cursor-pointer">
-                                    <i data-lucide="crosshair" class="w-3 h-3"></i>
-                                    <span>Fokus Peta</span>
-                                </button>
-                                <button type="button" onclick="startPickingCoordinate({{ $ds['id'] }}, '{{ $ds['district'] }}', {{ $ds['latitude'] }}, {{ $ds['longitude'] }})"
-                                    class="px-2.5 py-1 rounded-lg bg-[#1E3A8A] hover:bg-blue-900 text-white font-bold text-[10px] transition flex items-center gap-1 cursor-pointer shadow-2xs">
-                                    <i data-lucide="map-pin" class="w-3 h-3"></i>
-                                    <span>Atur Titik</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
+                <button type="button" id="savePickedBtn" onclick="savePickedCoordinate()" disabled
+                    class="px-4 py-2 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold text-xs transition flex items-center gap-1.5 cursor-pointer">
+                    <i data-lucide="save" class="w-3.5 h-3.5"></i>
+                    <span>Simpan Titik</span>
+                </button>
+                <button type="button" onclick="cancelPickingCoordinate()"
+                    class="px-4 py-2 rounded-xl bg-white hover:bg-slate-100 text-[#334155] border border-[#E2E8F0] font-bold text-xs transition cursor-pointer">
+                    Batal
+                </button>
             </div>
         </div>
 
+        <!-- Split GIS Workspace (Left: Map, Right: Direktori 15 Kecamatan) -->
+        <div class="grid grid-cols-1 xl:grid-cols-12 gap-5 items-stretch">
+
+            <!-- Kolom Kiri: Peta Spasial 15 Kecamatan -->
+            <div id="adminRegionMapCard" class="xl:col-span-7 rounded-[20px] p-5 bg-white border border-[#E2E8F0] flex flex-col gap-3.5 h-full">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <h4 class="font-outfit font-bold text-[15px] text-[#0F172A]">
+                        Peta Spasial 15 Kecamatan
+                    </h4>
+                    <div class="flex items-center gap-2.5 text-[11px] font-semibold text-[#475569] overflow-x-auto whitespace-nowrap pb-0.5 sm:pb-0">
+                        <span class="inline-flex items-center gap-1 shrink-0"><span class="w-2 h-2 rounded-full bg-[#EF4444]"></span> Verifikasi</span>
+                        <span class="inline-flex items-center gap-1 shrink-0"><span class="w-2 h-2 rounded-full bg-[#2563EB]"></span> Ditugaskan</span>
+                        <span class="inline-flex items-center gap-1 shrink-0"><span class="w-2 h-2 rounded-full bg-[#F59E0B]"></span> Dikerjakan / Validasi</span>
+                        <span class="inline-flex items-center gap-1 shrink-0"><span class="w-2 h-2 rounded-full bg-[#10B981]"></span> Selesai</span>
+                        <span class="inline-flex items-center gap-1 shrink-0"><span class="w-2 h-2 rounded-full bg-[#DC2626]"></span> Ditolak</span>
+                    </div>
+                </div>
+
+                <div class="relative w-full flex-1 min-h-[460px] xl:min-h-[580px] rounded-2xl overflow-hidden border border-[#CBD5E1] bg-slate-100">
+                    <div id="adminRegionMap" class="w-full h-full z-0"></div>
+                </div>
+            </div>
+
+            <!-- Kolom Kanan: Direktori 15 Kecamatan -->
+            <div class="xl:col-span-5 rounded-[20px] p-5 bg-white border border-[#E2E8F0] flex flex-col gap-3.5 h-full">
+                <div class="flex items-center justify-between gap-2">
+                    <h3 class="font-outfit font-bold text-[15px] text-[#0F172A]">
+                        Direktori 15 Kecamatan
+                    </h3>
+                    <span class="text-[11px] font-semibold text-[#64748B]" id="adminRegionCountBadge">
+                        {{ count($districtStats) }} Wilayah
+                    </span>
+                </div>
+
+                <!-- Search & Filter Chips -->
+                <div class="space-y-2.5">
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#94A3B8]">
+                            <i data-lucide="search" class="w-3.5 h-3.5"></i>
+                        </div>
+                        <input type="text" id="adminRegionSearch" oninput="filterAdminRegions()"
+                            placeholder="Cari nama kecamatan atau kelurahan/desa..."
+                            class="w-full pl-9 pr-3.5 py-2 text-xs rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] text-[#0F172A] placeholder:text-[#94A3B8] focus:bg-white focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/15 focus:outline-none transition">
+                    </div>
+
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                        <button type="button" onclick="setAdminRegionFilter('all', this)" class="admin-region-filter-btn px-3 py-1 rounded-full text-[11px] font-bold bg-[#2563EB] text-white transition cursor-pointer">
+                            Semua ({{ count($districtStats) }})
+                        </button>
+                        <button type="button" onclick="setAdminRegionFilter('active', this)" class="admin-region-filter-btn px-3 py-1 rounded-full text-[11px] font-semibold bg-[#F8FAFC] text-[#475569] border border-[#E2E8F0] hover:bg-slate-100 transition cursor-pointer">
+                            Ada Aduan ({{ $activeDistrictCount }})
+                        </button>
+                        <button type="button" onclick="setAdminRegionFilter('safe', this)" class="admin-region-filter-btn px-3 py-1 rounded-full text-[11px] font-semibold bg-[#F8FAFC] text-[#475569] border border-[#E2E8F0] hover:bg-slate-100 transition cursor-pointer">
+                            Aman ({{ $safeDistrictCount }})
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Scrollable District List -->
+                <div id="adminRegionListContainer" class="max-h-[480px] xl:max-h-[490px] overflow-y-auto pr-1 space-y-2.5">
+                    @foreach($districtStats as $ds)
+                        @php $isLasusua = str_contains(strtolower($ds['district']), 'lasusua'); @endphp
+                        <div id="districtCard-{{ $ds['id'] }}"
+                             data-name="{{ strtolower($ds['district'] . ' ' . $ds['village']) }}"
+                             data-total="{{ $ds['total'] }}"
+                             class="admin-region-item p-3.5 rounded-[14px] {{ $isLasusua ? 'bg-[#EFF6FF]/60 border-[#BFDBFE]' : 'bg-white border-[#E2E8F0]' }} border hover:border-[#2563EB] transition space-y-2">
+                            <div class="flex items-start justify-between gap-2">
+                                <div class="min-w-0">
+                                    <div class="flex items-center gap-1.5 flex-wrap">
+                                        <span class="font-outfit font-bold text-[13px] text-[#0F172A] truncate">{{ $ds['district'] }}</span>
+                                        @if($isLasusua)
+                                            <span class="px-1.5 py-0.5 rounded bg-white border border-blue-200 text-[#2563EB] text-[9px] font-bold uppercase">Ibukota</span>
+                                        @endif
+                                    </div>
+                                    <div class="text-[11px] text-[#64748B] flex items-center gap-1.5 mt-0.5 flex-wrap">
+                                        <span>Pusat: {{ $ds['village'] }}</span>
+                                        <span>&bull;</span>
+                                        <span id="coordsDisplay-{{ $ds['id'] }}" class="font-mono text-[10px] font-semibold text-[#475569]">
+                                            {{ number_format($ds['latitude'], 4) }}, {{ number_format($ds['longitude'], 4) }}
+                                        </span>
+                                    </div>
+                                </div>
+                                @if($ds['total'] > 0)
+                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#2563EB] text-white shrink-0 whitespace-nowrap">
+                                        {{ $ds['total'] }} Aduan
+                                    </span>
+                                @else
+                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#F1F5F9] text-[#64748B] shrink-0 whitespace-nowrap">
+                                        0 Aduan
+                                    </span>
+                                @endif
+                            </div>
+
+                            @if($ds['total'] > 0)
+                                <div class="flex items-center gap-1.5 flex-wrap">
+                                    @if(($ds['pending'] ?? 0) > 0)
+                                        <span class="px-2 py-0.5 rounded-md bg-red-50 text-red-700 border border-red-200 text-[10px] font-bold">{{ $ds['pending'] }} Verifikasi</span>
+                                    @endif
+                                    @if(($ds['dispatched'] ?? 0) > 0)
+                                        <span class="px-2 py-0.5 rounded-md bg-blue-50 text-[#2563EB] border border-blue-200 text-[10px] font-bold">{{ $ds['dispatched'] }} Ditugaskan</span>
+                                    @endif
+                                    @if(($ds['in_progress'] ?? 0) > 0)
+                                        <span class="px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 border border-amber-200 text-[10px] font-bold">{{ $ds['in_progress'] }} Dikerjakan</span>
+                                    @endif
+                                    @if(($ds['waiting_verification'] ?? 0) > 0)
+                                        <span class="px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 border border-amber-200 text-[10px] font-bold">{{ $ds['waiting_verification'] }} Validasi</span>
+                                    @endif
+                                    @if(($ds['completed'] ?? 0) > 0)
+                                        <span class="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold">{{ $ds['completed'] }} Selesai</span>
+                                    @endif
+                                    @if(($ds['rejected'] ?? 0) > 0)
+                                        <span class="px-2 py-0.5 rounded-md bg-red-50 text-red-700 border border-red-200 text-[10px] font-bold">{{ $ds['rejected'] }} Ditolak</span>
+                                    @endif
+                                </div>
+                            @endif
+
+                            <div class="pt-1 flex items-center gap-3 text-[11px] font-bold">
+                                <button type="button" onclick="focusDistrictOnAdminMap({{ $ds['latitude'] }}, {{ $ds['longitude'] }}, '{{ $ds['district'] }}')"
+                                    class="text-[#2563EB] hover:underline inline-flex items-center gap-1 cursor-pointer">
+                                    <i data-lucide="crosshair" class="w-3 h-3"></i>
+                                    <span>Fokus Peta</span>
+                                </button>
+                                <span class="text-slate-300">&bull;</span>
+                                <button type="button" onclick="startPickingCoordinate({{ $ds['id'] }}, '{{ $ds['district'] }}', {{ $ds['latitude'] }}, {{ $ds['longitude'] }})"
+                                    class="text-[#2563EB] hover:underline inline-flex items-center gap-1 cursor-pointer">
+                                    <i data-lucide="map-pin" class="w-3 h-3"></i>
+                                    <span>Ubah Titik Pusat</span>
+                                </button>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+
+                <div class="pt-2 border-t border-[#E2E8F0] text-[11px] font-medium text-[#64748B]">
+                    Menampilkan <span id="adminRegionVisibleCount" class="font-bold text-[#0F172A]">{{ count($districtStats) }}</span> dari {{ count($districtStats) }} kecamatan &bull; Gulir untuk melihat lainnya
+                </div>
+            </div>
+
+        </div>
+
+        <script>
+            let activeAdminRegionFilter = 'all';
+            function setAdminRegionFilter(mode, btn) {
+                activeAdminRegionFilter = mode;
+                document.querySelectorAll('.admin-region-filter-btn').forEach(b => {
+                    b.className = 'admin-region-filter-btn px-3 py-1 rounded-full text-[11px] font-semibold bg-[#F8FAFC] text-[#475569] border border-[#E2E8F0] hover:bg-slate-100 transition cursor-pointer';
+                });
+                if (btn) {
+                    btn.className = 'admin-region-filter-btn px-3 py-1 rounded-full text-[11px] font-bold bg-[#2563EB] text-white transition cursor-pointer';
+                }
+                filterAdminRegions();
+            }
+            function filterAdminRegions() {
+                const q = (document.getElementById('adminRegionSearch')?.value || '').toLowerCase().trim();
+                let visible = 0;
+                document.querySelectorAll('.admin-region-item').forEach(el => {
+                    const name = el.getAttribute('data-name') || '';
+                    const total = parseInt(el.getAttribute('data-total') || '0', 10);
+                    const matchQuery = !q || name.includes(q);
+                    const matchFilter = activeAdminRegionFilter === 'all'
+                        || (activeAdminRegionFilter === 'active' && total > 0)
+                        || (activeAdminRegionFilter === 'safe' && total === 0);
+                    if (matchQuery && matchFilter) {
+                        el.classList.remove('hidden');
+                        visible++;
+                    } else {
+                        el.classList.add('hidden');
+                    }
+                });
+                const countEl = document.getElementById('adminRegionVisibleCount');
+                if (countEl) countEl.textContent = visible;
+            }
+        </script>
     </div>
 
     <!-- Tab Panel 5: Manajemen Regu Lapangan & Mode Penugasan Sistem -->
     <div id="tabPanel-teams-management" class="admin-tab-panel {{ $activeTab === 'teams-management' ? '' : 'hidden' }} space-y-6">
 
-        <!-- 1. KOTAK PENGATURAN MODE PENUGASAN SISTEM (HYBRID / OPERATOR / KLAIM MANDIRI) -->
-        <div class="card-white rounded-3xl p-5 sm:p-6 bg-white border border-[#E2E8F0] shadow-2xs space-y-5">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
-                <div class="flex items-center gap-3">
-                    <div class="w-11 h-11 rounded-2xl bg-blue-50 text-[#1E3A8A] border border-blue-200 flex items-center justify-center shrink-0">
-                        <i data-lucide="sliders" class="w-5 h-5"></i>
-                    </div>
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <h3 class="font-outfit font-extrabold text-base sm:text-lg text-slate-900 leading-tight">
-                                Mode Penugasan Regu Lapangan
-                            </h3>
-                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold border bg-slate-100 text-slate-800 border-slate-300">
-                                AKTIF: {{ $dispatchMode ?? 'HYBRID' }}
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <!-- 1. HEADER HALAMAN REGU LAPANGAN (SI-APPIK V2) -->
+        <div>
+            <h2 class="font-outfit font-bold text-xl sm:text-[22px] text-[#0F172A] tracking-tight">
+                Pengelolaan Regu Lapangan &amp; Penugasan
+            </h2>
+        </div>
 
-            <!-- Form Mode Penugasan -->
+        <!-- 2. KOTAK PENGATURAN MODE PENUGASAN SISTEM (RINGKAS SI-APPIK V2) -->
+        <div class="card-white rounded-[20px] p-5 bg-white border border-[#E2E8F0] space-y-4">
             <form id="dispatchModeForm" method="POST" action="{{ route('admin.settings.dispatch-mode') }}" onsubmit="handleDispatchModeSubmit(event)" class="space-y-4">
                 @csrf
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <!-- Opsi 1: HYBRID (Default & Direkomendasikan) -->
-                    <label class="relative flex flex-col justify-between p-4 rounded-2xl border-2 cursor-pointer transition {{ $dispatchMode === 'HYBRID' ? 'border-[#1E3A8A] bg-slate-50/70 shadow-xs' : 'border-slate-200 bg-white hover:border-slate-300' }}">
-                        <div class="space-y-2">
-                            <div class="flex items-center justify-between">
-                                <span class="px-2 py-0.5 rounded-md bg-[#1E3A8A] text-white text-[10px] font-extrabold">
-                                    DIREKOMENDASIKAN
-                                </span>
-                                <input type="radio" name="dispatch_mode" value="HYBRID" {{ $dispatchMode === 'HYBRID' ? 'checked' : '' }} class="w-4 h-4 text-[#1E3A8A] focus:ring-[#1E3A8A]">
-                            </div>
-                            <div class="flex items-center gap-2 pt-1">
-                                <i data-lucide="git-merge" class="w-4 h-4 text-slate-800"></i>
-                                <span class="font-outfit font-bold text-sm text-slate-900">Mode Hybrid</span>
-                            </div>
-                            <p class="text-[11px] text-slate-600 leading-relaxed">
-                                Operator dapat menugaskan langsung ke regu tertentu (berdasarkan kecamatan/spesialisasi) <strong>ATAU</strong> membiarkan terbuka agar bisa diklaim mandiri oleh regu lapangan yang siap.
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div class="flex items-center gap-2.5 flex-wrap">
+                        <h3 class="font-outfit font-bold text-[15px] text-[#0F172A]">
+                            Mode Penugasan Regu Lapangan
+                        </h3>
+                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold border bg-[#EFF6FF] text-[#2563EB] border-[#BFDBFE]">
+                            AKTIF: {{ $dispatchMode ?? 'HYBRID' }}
+                        </span>
+                    </div>
+                    <button type="submit" class="self-start sm:self-auto px-4 py-2 rounded-[10px] bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold text-xs flex items-center gap-1.5 transition cursor-pointer shrink-0">
+                        <i data-lucide="save" class="w-3.5 h-3.5"></i>
+                        <span>Terapkan Mode</span>
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+                    <!-- Opsi 1: HYBRID -->
+                    <label class="relative flex items-start justify-between gap-3 p-3.5 rounded-[14px] border cursor-pointer transition {{ $dispatchMode === 'HYBRID' ? 'border-[#2563EB] bg-[#EFF6FF]/60' : 'border-[#E2E8F0] bg-[#F8FAFC] hover:border-slate-300' }}">
+                        <div class="space-y-1 min-w-0">
+                            <span class="font-outfit font-bold text-[13px] text-[#0F172A] block">Mode Hybrid &bull; Direkomendasikan</span>
+                            <p class="text-[11px] text-[#475569] leading-snug">
+                                Operator menugaskan langsung atau klaim mandiri regu.
                             </p>
                         </div>
-                        <div class="pt-3 border-t border-slate-200/60 mt-3 flex items-center gap-1.5 text-[10px] text-slate-600 font-semibold">
-                            <i data-lucide="check" class="w-3.5 h-3.5 text-slate-800"></i>
-                            <span>Fleksibilitas maksimal & pemerataan beban kerja</span>
-                        </div>
+                        <input type="radio" name="dispatch_mode" value="HYBRID" {{ $dispatchMode === 'HYBRID' ? 'checked' : '' }} class="w-4 h-4 mt-0.5 text-[#2563EB] focus:ring-[#2563EB] shrink-0">
                     </label>
 
                     <!-- Opsi 2: OPERATOR_ONLY -->
-                    <label class="relative flex flex-col justify-between p-4 rounded-2xl border-2 cursor-pointer transition {{ $dispatchMode === 'OPERATOR_ONLY' ? 'border-[#1E3A8A] bg-slate-50/70 shadow-xs' : 'border-slate-200 bg-white hover:border-slate-300' }}">
-                        <div class="space-y-2">
-                            <div class="flex items-center justify-between">
-                                <span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[10px] font-extrabold">
-                                    KOMANDO TERPUSAT
-                                </span>
-                                <input type="radio" name="dispatch_mode" value="OPERATOR_ONLY" {{ $dispatchMode === 'OPERATOR_ONLY' ? 'checked' : '' }} class="w-4 h-4 text-[#1E3A8A] focus:ring-[#1E3A8A]">
-                            </div>
-                            <div class="flex items-center gap-2 pt-1">
-                                <i data-lucide="send" class="w-4 h-4 text-slate-800"></i>
-                                <span class="font-outfit font-bold text-sm text-slate-900">Operator Saja</span>
-                            </div>
-                            <p class="text-[11px] text-slate-600 leading-relaxed">
-                                Setiap laporan yang valid <strong>wajib ditunjuk regunya</strong> secara manual oleh Operator dinas sebelum regu bisa memulai pengerjaan fisik di lapangan.
+                    <label class="relative flex items-start justify-between gap-3 p-3.5 rounded-[14px] border cursor-pointer transition {{ $dispatchMode === 'OPERATOR_ONLY' ? 'border-[#2563EB] bg-[#EFF6FF]/60' : 'border-[#E2E8F0] bg-[#F8FAFC] hover:border-slate-300' }}">
+                        <div class="space-y-1 min-w-0">
+                            <span class="font-outfit font-bold text-[13px] text-[#0F172A] block">Operator Saja &bull; Komando Terpusat</span>
+                            <p class="text-[11px] text-[#64748B] leading-snug">
+                                Wajib ditunjuk manual oleh Operator dinas PUPR.
                             </p>
                         </div>
-                        <div class="pt-3 border-t border-slate-200/60 mt-3 flex items-center gap-1.5 text-[10px] text-slate-500 font-semibold">
-                            <i data-lucide="shield" class="w-3.5 h-3.5 text-slate-600"></i>
-                            <span>Kontrol ketat & terarah penuh</span>
-                        </div>
+                        <input type="radio" name="dispatch_mode" value="OPERATOR_ONLY" {{ $dispatchMode === 'OPERATOR_ONLY' ? 'checked' : '' }} class="w-4 h-4 mt-0.5 text-[#2563EB] focus:ring-[#2563EB] shrink-0">
                     </label>
 
                     <!-- Opsi 3: SELF_CLAIM_ONLY -->
-                    <label class="relative flex flex-col justify-between p-4 rounded-2xl border-2 cursor-pointer transition {{ $dispatchMode === 'SELF_CLAIM_ONLY' ? 'border-[#1E3A8A] bg-slate-50/70 shadow-xs' : 'border-slate-200 bg-white hover:border-slate-300' }}">
-                        <div class="space-y-2">
-                            <div class="flex items-center justify-between">
-                                <span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[10px] font-extrabold">
-                                    KLAIM BEBAS MANDIRI
-                                </span>
-                                <input type="radio" name="dispatch_mode" value="SELF_CLAIM_ONLY" {{ $dispatchMode === 'SELF_CLAIM_ONLY' ? 'checked' : '' }} class="w-4 h-4 text-[#1E3A8A] focus:ring-[#1E3A8A]">
-                            </div>
-                            <div class="flex items-center gap-2 pt-1">
-                                <i data-lucide="hand" class="w-4 h-4 text-slate-800"></i>
-                                <span class="font-outfit font-bold text-sm text-slate-900">Klaim Mandiri Saja</span>
-                            </div>
-                            <p class="text-[11px] text-slate-600 leading-relaxed">
-                                Laporan yang terverifikasi langsung masuk ke daftar antrean terbuka. Regu lapangan secara mandiri berhak mengambil tugas sesuai kesiapan alat dan lokasi.
+                    <label class="relative flex items-start justify-between gap-3 p-3.5 rounded-[14px] border cursor-pointer transition {{ $dispatchMode === 'SELF_CLAIM_ONLY' ? 'border-[#2563EB] bg-[#EFF6FF]/60' : 'border-[#E2E8F0] bg-[#F8FAFC] hover:border-slate-300' }}">
+                        <div class="space-y-1 min-w-0">
+                            <span class="font-outfit font-bold text-[13px] text-[#0F172A] block">Klaim Mandiri &bull; Klaim Bebas</span>
+                            <p class="text-[11px] text-[#64748B] leading-snug">
+                                Regu lapangan mengambil tugas siap tangani sendiri.
                             </p>
                         </div>
-                        <div class="pt-3 border-t border-slate-200/60 mt-3 flex items-center gap-1.5 text-[10px] text-slate-500 font-semibold">
-                            <i data-lucide="zap" class="w-3.5 h-3.5 text-slate-600"></i>
-                            <span>Respon cepat tanpa tunggu disposisi</span>
-                        </div>
+                        <input type="radio" name="dispatch_mode" value="SELF_CLAIM_ONLY" {{ $dispatchMode === 'SELF_CLAIM_ONLY' ? 'checked' : '' }} class="w-4 h-4 mt-0.5 text-[#2563EB] focus:ring-[#2563EB] shrink-0">
                     </label>
-                </div>
-
-                <div class="flex justify-end pt-2">
-                    <button type="submit" class="px-5 py-2.5 rounded-xl bg-[#1E3A8A] hover:bg-[#172e6e] text-white font-bold text-xs flex items-center gap-2 shadow-md shadow-[#1E3A8A]/20 transition cursor-pointer">
-                        <i data-lucide="save" class="w-4 h-4"></i>
-                        <span>Simpan Pengaturan Mode</span>
-                    </button>
                 </div>
             </form>
         </div>
 
-        <!-- 2. BARIS RINGKASAN REGU & TOMBOL BENTUK REGU BARU -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div class="flex items-center gap-3 flex-wrap">
-                <div class="px-4 py-2 rounded-2xl bg-white border border-slate-200 shadow-2xs flex items-center gap-2.5">
-                    <i data-lucide="users" class="w-4 h-4 text-[#1E3A8A]"></i>
-                    <span class="text-xs text-slate-600 font-medium">Total Regu:</span>
-                    <strong class="text-xs font-outfit font-extrabold text-slate-900">{{ $teams->count() }} Regu</strong>
-                </div>
-                <div class="px-4 py-2 rounded-2xl bg-white border border-slate-200 shadow-2xs flex items-center gap-2.5">
-                    <i data-lucide="hard-hat" class="w-4 h-4 text-[#1E3A8A]"></i>
-                    <span class="text-xs text-slate-600 font-medium">Petugas Lapangan:</span>
-                    <strong class="text-xs font-outfit font-extrabold text-slate-900">{{ $availableOfficers->count() }} Personil</strong>
-                </div>
+        <!-- 3. BARIS RINGKASAN REGU & AKSI (TEPAT DI ATAS KOTAK REGU) -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="flex items-center gap-2 flex-wrap">
+                <span class="px-3.5 py-1.5 rounded-full bg-[#EFF6FF] border border-[#BFDBFE] text-xs font-bold text-[#2563EB] inline-flex items-center gap-1.5">
+                    <i data-lucide="users" class="w-3.5 h-3.5"></i>
+                    <span>{{ $teams->count() }} Regu Aktif</span>
+                </span>
+                <span class="px-3.5 py-1.5 rounded-full bg-white border border-[#E2E8F0] text-xs font-bold text-[#334155] inline-flex items-center gap-1.5">
+                    <i data-lucide="hard-hat" class="w-3.5 h-3.5 text-[#2563EB]"></i>
+                    <span>{{ $availableOfficers->count() }} Personil Aktif</span>
+                </span>
             </div>
 
-            <div class="flex items-center gap-2.5 flex-wrap shrink-0">
+            <div class="flex items-center gap-2 flex-wrap justify-between sm:justify-end">
+                <button type="button" onclick="openCreateTeamModal()"
+                    class="px-4 py-2 rounded-[10px] bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold text-xs flex items-center justify-center gap-1.5 transition cursor-pointer shrink-0">
+                    <i data-lucide="user-plus" class="w-3.5 h-3.5"></i>
+                    <span>+ Bentuk Regu Baru</span>
+                </button>
+
                 <!-- Toggle Tata Letak Daftar / Petak -->
-                <div class="inline-flex items-center p-0.5 rounded-lg bg-white border border-[#E2E8F0] shrink-0" role="group" aria-label="Tata letak regu">
+                <div class="inline-flex items-center p-0.5 rounded-[10px] bg-white border border-[#E2E8F0] shrink-0" role="group" aria-label="Tata letak regu">
                     <button type="button" id="teamsLayoutBtn-list" onclick="setAdminTeamsLayout('list')"
-                        class="px-2.5 py-1.5 rounded-md text-xs font-semibold flex items-center gap-1 transition cursor-pointer bg-[#1E3A8A] text-white">
+                        class="px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition cursor-pointer bg-[#2563EB] text-white">
                         <i data-lucide="list" class="w-3.5 h-3.5"></i>
                         <span>Daftar</span>
                     </button>
                     <button type="button" id="teamsLayoutBtn-grid" onclick="setAdminTeamsLayout('grid')"
-                        class="px-2.5 py-1.5 rounded-md text-xs font-semibold flex items-center gap-1 transition cursor-pointer text-[#475569] hover:text-[#0F172A]">
+                        class="px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition cursor-pointer text-[#475569] hover:text-[#0F172A]">
                         <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
                         <span>Petak</span>
                     </button>
                 </div>
-
-                <button type="button" onclick="openCreateTeamModal()"
-                    class="px-5 py-2.5 rounded-xl bg-[#1E3A8A] hover:bg-[#172e6e] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md shadow-[#1E3A8A]/20 transition cursor-pointer shrink-0">
-                    <i data-lucide="user-plus" class="w-4 h-4"></i>
-                    <span>+ Bentuk Regu Lapangan Baru</span>
-                </button>
             </div>
         </div>
 
-        <!-- 3. DAFTAR SELURUH REGU LAPANGAN KABUPATEN -->
+        <!-- 4. DAFTAR SELURUH REGU LAPANGAN KABUPATEN -->
         <div id="adminTeamsTableWrap" class="bg-white rounded-2xl border border-[#E2E8F0] overflow-hidden">
             <div class="overflow-x-visible md:overflow-x-auto">
                 <table class="w-full text-left border-collapse">
@@ -1416,13 +1511,13 @@
                             @endphp
                             <tr class="admin-team-row flex md:table-row items-center justify-between gap-2.5 px-3.5 py-3 md:p-0 hover:bg-slate-50/80 transition">
                                 <td class="hidden md:table-cell px-4 py-3 whitespace-nowrap">
-                                    <span class="px-2 py-0.5 rounded-md bg-[#1E3A8A] text-white font-mono text-[10px] font-bold">
+                                    <span class="px-2 py-0.5 rounded-md bg-[#2563EB] text-white font-mono text-[10px] font-bold">
                                         {{ $team->code }}
                                     </span>
                                 </td>
                                 <td class="block md:table-cell p-0 md:px-4 md:py-3 min-w-0 flex-1">
                                     <div class="md:hidden flex items-center gap-1.5 flex-wrap mb-1">
-                                        <span class="px-1.5 py-0.5 rounded bg-[#1E3A8A] text-white font-mono text-[9.5px] font-bold">{{ $team->code }}</span>
+                                        <span class="px-1.5 py-0.5 rounded bg-[#2563EB] text-white font-mono text-[9.5px] font-bold">{{ $team->code }}</span>
                                         <span class="px-1.5 py-0.5 rounded-full text-[9.5px] font-bold border {{ $isIdeal ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200' }}">{{ $memberCount }} Personil</span>
                                     </div>
                                     <div class="font-bold text-[#0F172A] truncate">{{ $team->name }}</div>
@@ -1449,7 +1544,7 @@
                                 </td>
                                 <td class="block md:table-cell p-0 md:px-4 md:py-3 text-right whitespace-nowrap shrink-0">
                                     <button type="button" onclick="setAdminTeamsLayout('grid'); document.getElementById('team-card-{{ $team->id }}')?.scrollIntoView({ behavior: 'smooth', block: 'center' });"
-                                        class="px-2.5 py-1.5 rounded-lg border border-[#E2E8F0] bg-white hover:bg-slate-50 text-[#1E3A8A] text-[11px] font-bold inline-flex items-center gap-1 transition cursor-pointer">
+                                        class="px-2.5 py-1.5 rounded-lg border border-[#E2E8F0] bg-white hover:bg-slate-50 text-[#2563EB] text-[11px] font-bold inline-flex items-center gap-1 transition cursor-pointer">
                                         <i data-lucide="users" class="w-3.5 h-3.5"></i>
                                         <span>Kelola Personil</span>
                                     </button>
@@ -1485,7 +1580,7 @@
                                 </div>
                                 <div>
                                     <div class="flex items-center gap-2 flex-wrap">
-                                        <span class="px-2 py-0.5 rounded-md bg-[#1E3A8A] text-white font-mono text-[10px] font-extrabold">
+                                        <span class="px-2 py-0.5 rounded-md bg-[#2563EB] text-white font-mono text-[10px] font-extrabold">
                                             {{ $team->code }}
                                         </span>
                                         <h4 class="font-outfit font-extrabold text-base text-slate-900 leading-tight">
@@ -1506,7 +1601,7 @@
                         <!-- Card Ketua Regu (Koordinator Lapangan) -->
                         <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/90 flex items-center justify-between gap-3">
                             <div class="flex items-center gap-3">
-                                <div class="w-9 h-9 rounded-xl bg-[#1E3A8A] text-white flex items-center justify-center text-xs font-bold shrink-0 shadow-2xs">
+                                <div class="w-9 h-9 rounded-xl bg-[#2563EB] text-white flex items-center justify-center text-xs font-bold shrink-0 shadow-2xs">
                                     <i data-lucide="crown" class="w-4 h-4 text-white"></i>
                                 </div>
                                 <div>
@@ -1531,7 +1626,7 @@
                         <div class="space-y-2">
                             <div class="flex items-center justify-between text-xs font-bold text-slate-700">
                                 <span class="flex items-center gap-1.5">
-                                    <i data-lucide="users" class="w-3.5 h-3.5 text-[#1E3A8A]"></i>
+                                    <i data-lucide="users" class="w-3.5 h-3.5 text-[#2563EB]"></i>
                                     <span>Personil Regu</span>
                                 </span>
                                 <span class="text-[11px] text-slate-500 font-normal">
@@ -1546,7 +1641,7 @@
                                     @endphp
                                     <div class="p-2.5 rounded-xl border border-slate-200/90 bg-white hover:border-slate-300 transition flex items-center justify-between gap-2 shadow-2xs">
                                         <div class="flex items-center gap-2.5 min-w-0">
-                                            <div class="w-7 h-7 rounded-lg {{ $isLeader ? 'bg-[#1E3A8A] text-white font-extrabold' : 'bg-slate-100 text-slate-700 font-bold border border-slate-200' }} flex items-center justify-center text-[11px] shrink-0">
+                                            <div class="w-7 h-7 rounded-lg {{ $isLeader ? 'bg-[#2563EB] text-white font-extrabold' : 'bg-slate-100 text-slate-700 font-bold border border-slate-200' }} flex items-center justify-center text-[11px] shrink-0">
                                                 {{ strtoupper(substr($member->user?->name ?? 'P', 0, 1)) }}
                                             </div>
                                             <div class="min-w-0">
@@ -1599,7 +1694,7 @@
                         <form method="POST" action="{{ route('admin.teams.members.add', $team->id) }}" class="p-3 rounded-2xl bg-slate-100/80 border border-slate-200/80 flex flex-col sm:flex-row items-center gap-2">
                             @csrf
                             <div class="w-full sm:flex-1">
-                                <select name="user_id" required class="w-full text-xs rounded-xl border border-slate-300 p-2 bg-white focus:ring-2 focus:ring-[#1E3A8A]">
+                                <select name="user_id" required class="w-full text-xs rounded-xl border border-slate-300 p-2 bg-white focus:ring-2 focus:ring-[#2563EB]">
                                     @if($unassignedOfficers->isEmpty())
                                         <option value="" disabled selected>Semua Petugas Sudah Masuk Regu</option>
                                     @else
@@ -1611,7 +1706,7 @@
                                 </select>
                             </div>
                             <input type="hidden" name="role" value="MEMBER">
-                            <button type="submit" @if($unassignedOfficers->isEmpty()) disabled class="w-full sm:w-auto px-4 py-2 rounded-xl bg-slate-300 text-slate-500 font-bold text-xs flex items-center justify-center gap-1.5 shrink-0 cursor-not-allowed" @else class="w-full sm:w-auto px-4 py-2 rounded-xl bg-[#1E3A8A] hover:bg-[#172e6e] text-white font-bold text-xs flex items-center justify-center gap-1.5 transition shrink-0 cursor-pointer shadow-2xs" @endif>
+                            <button type="submit" @if($unassignedOfficers->isEmpty()) disabled class="w-full sm:w-auto px-4 py-2 rounded-xl bg-slate-300 text-slate-500 font-bold text-xs flex items-center justify-center gap-1.5 shrink-0 cursor-not-allowed" @else class="w-full sm:w-auto px-4 py-2 rounded-xl bg-[#2563EB] hover:bg-[#172e6e] text-white font-bold text-xs flex items-center justify-center gap-1.5 transition shrink-0 cursor-pointer shadow-2xs" @endif>
                                 <i data-lucide="plus" class="w-3.5 h-3.5"></i>
                                 <span>Tambah Personil</span>
                             </button>
@@ -1633,7 +1728,7 @@
                                 })"
                                 class="px-3 py-1.5 rounded-lg border border-slate-200 hover:border-slate-400 text-slate-700 hover:text-slate-900 font-bold text-xs transition flex items-center gap-1 cursor-pointer">
                                 <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
-                                <span>Ubah Regu</span>
+                                <span>Edit Regu</span>
                             </button>
                             <!-- Tombol Hapus Regu (Modal Kustom Cantik - Tetap Merah Elegan) -->
                             <button type="button" 
@@ -1653,14 +1748,14 @@
                 </div>
             @empty
                 <div class="col-span-2 text-center py-12 bg-white rounded-3xl border border-dashed border-slate-300 p-6 space-y-3">
-                    <div class="w-12 h-12 rounded-2xl bg-blue-50 text-[#1E3A8A] flex items-center justify-center mx-auto">
+                    <div class="w-12 h-12 rounded-2xl bg-blue-50 text-[#2563EB] flex items-center justify-center mx-auto">
                         <i data-lucide="users-2" class="w-6 h-6"></i>
                     </div>
                     <h4 class="font-outfit font-extrabold text-base text-slate-900">Belum Ada Regu Lapangan</h4>
                     <p class="text-xs text-slate-500 max-w-md mx-auto">
                         Bentuk regu lapangan (5–10 personil per regu) untuk penanganan terkoordinasi pekerjaan fisik infrastruktur jalan.
                     </p>
-                    <button type="button" onclick="openCreateTeamModal()" class="px-4 py-2 rounded-xl bg-[#1E3A8A] text-white text-xs font-bold transition">
+                    <button type="button" onclick="openCreateTeamModal()" class="px-4 py-2 rounded-xl bg-[#2563EB] text-white text-xs font-bold transition">
                         + Bentuk Regu Pertama
                     </button>
                 </div>
@@ -1673,7 +1768,7 @@
                 <div class="flex items-center gap-2">
                     <span class="font-medium">Tampilkan:</span>
                     <select id="teamsPageSizeSelect" onchange="changeTeamsPageSize(this.value)" aria-label="Jumlah regu per halaman"
-                        class="text-xs font-semibold rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] text-[#0F172A] px-2.5 py-1.5 focus:outline-none focus:border-[#1E3A8A] cursor-pointer">
+                        class="text-xs font-semibold rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] text-[#0F172A] px-2.5 py-1.5 focus:outline-none focus:border-[#2563EB] cursor-pointer">
                         <option value="5" selected>5 regu</option>
                         <option value="10">10 regu</option>
                         <option value="50">50 regu</option>
@@ -1691,46 +1786,50 @@
         @include('partials.executive_monitoring_reporting')
     </div>
 
-    <!-- Tab Panel 7: Arsip Pengaduan Ditolak oleh Super Admin (Eksklusif Super Admin) -->
-    <div id="tabPanel-admin-rejected" class="admin-tab-panel {{ $activeTab === 'admin-rejected' ? '' : 'hidden' }} space-y-4">
-        <div class="card-white rounded-2xl bg-white border border-[#E2E8F0] overflow-hidden">
-            <!-- Header & Search Toolbar (Selaras Daftar Pengguna & Daftar Aduan) -->
-            <div class="p-4 border-b border-[#E2E8F0] flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+    <!-- Tab Panel 7: Arsip Pengaduan Ditolak oleh Super Admin (Seragam Daftar Aduan & Daftar Pengguna) -->
+    <div id="tabPanel-admin-rejected" class="admin-tab-panel {{ $activeTab === 'admin-rejected' ? '' : 'hidden' }}">
+        <div class="card-white rounded-2xl p-5 sm:p-6 bg-white border border-[#E2E8F0] shadow-xs space-y-4">
+            <!-- Header & Search Toolbar -->
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
                 <div class="flex items-center gap-2.5 shrink-0">
-                    <div class="w-9 h-9 rounded-xl bg-blue-50 text-[#1E3A8A] border border-blue-200 flex items-center justify-center shrink-0">
+                    <div class="w-9 h-9 rounded-xl bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE] flex items-center justify-center shrink-0">
                         <i data-lucide="archive-x" class="w-4 h-4"></i>
                     </div>
-                    <h3 class="font-outfit font-bold text-sm sm:text-base text-slate-900">Arsip Pengaduan Ditolak Super Admin</h3>
+                    <h3 class="font-outfit font-bold text-sm sm:text-base text-[#0F172A] flex items-center gap-2 flex-wrap">
+                        <span>Arsip Pengaduan Ditolak Super Admin</span>
+                        <span class="px-2 py-0.5 rounded-full bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE] text-[11px] font-bold whitespace-nowrap">
+                            {{ $adminRejectedComplaints->count() }} Laporan
+                        </span>
+                    </h3>
                 </div>
 
-                <div class="flex flex-col sm:flex-row sm:items-center gap-2.5 flex-1 lg:max-w-2xl lg:justify-end">
-                    <div class="relative w-full sm:flex-1">
-                        <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                <div class="flex flex-wrap items-center gap-2 flex-1 lg:justify-end">
+                    <div class="relative flex-1 min-w-[180px] sm:max-w-xs">
+                        <i data-lucide="search" class="w-4 h-4 text-[#64748B] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
                         <input type="text" id="adminRejectedSearchInput" oninput="filterAdminRejected()"
                             placeholder="Cari kode, judul, pelapor, atau alasan..."
-                            class="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-[#1E3A8A] focus:ring-1 focus:ring-[#1E3A8A] transition">
+                            class="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] focus:bg-white focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/15 transition">
                     </div>
-                    <div class="flex items-center justify-end gap-2 shrink-0">
-                        <div class="inline-flex items-center p-0.5 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] shrink-0" role="group" aria-label="Tata letak arsip ditolak">
-                            <button type="button" id="adminRejectedLayoutBtn-list" onclick="setAdminRejectedLayout('list')"
-                                class="px-2.5 py-1 rounded-md text-xs font-semibold flex items-center gap-1 transition cursor-pointer bg-[#1E3A8A] text-white">
-                                <i data-lucide="list" class="w-3.5 h-3.5"></i>
-                                <span>Daftar</span>
-                            </button>
-                            <button type="button" id="adminRejectedLayoutBtn-grid" onclick="setAdminRejectedLayout('grid')"
-                                class="px-2.5 py-1 rounded-md text-xs font-semibold flex items-center gap-1 transition cursor-pointer text-[#475569] hover:text-[#0F172A]">
-                                <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
-                                <span>Petak</span>
-                            </button>
-                        </div>
+                    <div class="inline-flex items-center p-0.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] shrink-0 ml-auto" role="group" aria-label="Tata letak arsip ditolak">
+                        <button type="button" id="adminRejectedLayoutBtn-list" onclick="setAdminRejectedLayout('list')"
+                            class="px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition cursor-pointer bg-[#2563EB] text-white">
+                            <i data-lucide="list" class="w-3.5 h-3.5"></i>
+                            <span>Daftar</span>
+                        </button>
+                        <button type="button" id="adminRejectedLayoutBtn-grid" onclick="setAdminRejectedLayout('grid')"
+                            class="px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition cursor-pointer text-[#475569] hover:text-[#0F172A]">
+                            <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
+                            <span>Petak</span>
+                        </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Tata Letak Daftar (Responsif Tanpa Scroll Horizontal) -->
+            <!-- Tata Letak Daftar (Wadah Bordered Seragam) -->
+            <div class="rounded-xl border border-[#E2E8F0] overflow-hidden">
             <div id="adminRejectedListWrap">
                 <table class="block md:table w-full text-left text-xs text-slate-600">
-                    <thead class="hidden md:table-header-group bg-slate-50 text-slate-700 font-bold border-b border-slate-200 uppercase tracking-wider text-[10.5px]">
+                    <thead class="hidden md:table-header-group bg-[#F8FAFC] text-[#64748B] font-bold border-b border-[#E2E8F0] uppercase tracking-wider text-[11px]">
                         <tr>
                             <th class="py-3 px-4 whitespace-nowrap">Kode</th>
                             <th class="py-3 px-4">Judul &amp; Lokasi</th>
@@ -1747,7 +1846,7 @@
                             @endphp
                             <tr class="admin-rejected-row block md:table-row p-3.5 md:p-0 hover:bg-slate-50/70 transition space-y-1.5 md:space-y-0"
                                 data-search="{{ $rcSearch }}">
-                                <td class="block md:table-cell md:py-3 md:px-4 font-mono font-bold text-[#1E3A8A] whitespace-nowrap align-top">
+                                <td class="block md:table-cell md:py-3 md:px-4 font-mono font-bold text-[#2563EB] whitespace-nowrap align-top">
                                     <div class="flex items-center justify-between md:block">
                                         <span>#{{ $rc->public_code }}</span>
                                         <span class="md:hidden px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 text-[10px] font-sans font-semibold border border-slate-200">
@@ -1786,6 +1885,7 @@
                     </tbody>
                 </table>
             </div>
+            </div>
 
             <!-- Tata Letak Petak (Grid Kartu) -->
             <div id="adminRejectedGridWrap" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
@@ -1796,7 +1896,7 @@
                     <div class="admin-rejected-grid-card rounded-xl border border-[#E2E8F0] bg-white p-4 space-y-2.5"
                         data-search="{{ $rcSearch }}">
                         <div class="flex items-center justify-between gap-2 flex-wrap">
-                            <span class="px-2 py-0.5 rounded-md bg-blue-50 text-[#1E3A8A] font-mono text-[11px] font-bold border border-blue-200">#{{ $rc->public_code }}</span>
+                            <span class="px-2 py-0.5 rounded-md bg-blue-50 text-[#2563EB] font-mono text-[11px] font-bold border border-blue-200">#{{ $rc->public_code }}</span>
                             <span class="px-2 py-0.5 rounded-md text-[10.5px] font-semibold bg-slate-100 text-slate-700 border border-slate-200">
                                 {{ $rc->category?->name ?? 'Infrastruktur' }}
                             </span>
@@ -1827,7 +1927,7 @@
                     <div class="flex items-center gap-2">
                         <span class="font-medium">Tampilkan:</span>
                         <select id="adminRejectedPageSizeSelect" onchange="changeAdminRejectedPageSize(this.value)" aria-label="Jumlah laporan ditolak per halaman"
-                            class="text-xs font-semibold rounded-lg border border-[#E2E8F0] bg-white text-[#0F172A] px-2.5 py-1.5 focus:outline-none focus:border-[#1E3A8A] cursor-pointer">
+                            class="text-xs font-semibold rounded-lg border border-[#E2E8F0] bg-white text-[#0F172A] px-2.5 py-1.5 focus:outline-none focus:border-[#2563EB] cursor-pointer">
                             <option value="5">5 laporan</option>
                             <option value="10" selected>10 laporan</option>
                             <option value="50">50 laporan</option>
@@ -1842,26 +1942,25 @@
 
 @push('modals')
     <!-- MODAL TOLAK LAPORAN RESMI (PENGGANTI HARD DELETE — WAJIB ALASAN & PERNYATAAN) -->
-    <div id="rejectComplaintAdminModal" class="fixed inset-0 z-[99999] hidden items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs transition-opacity duration-200">
-        <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden transform transition-all scale-95 opacity-0 duration-200" id="rejectComplaintAdminContent">
-            <div class="p-6 space-y-4">
-                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-                    <div class="flex items-center gap-2.5">
-                        <div class="w-10 h-10 rounded-xl bg-red-50 text-red-600 border border-red-200 flex items-center justify-center shrink-0">
-                            <i data-lucide="x-circle" class="w-5 h-5"></i>
-                        </div>
-                        <h3 class="font-outfit font-extrabold text-base text-slate-900">
-                            Tolak Laporan Pengaduan
-                        </h3>
+    <div id="rejectComplaintAdminModal" class="fixed inset-0 z-[99999] hidden items-center justify-center p-4 bg-slate-900/65 transition-opacity duration-200">
+        <div class="bg-white rounded-[24px] max-w-md w-full shadow-[0_20px_50px_rgba(15,23,42,0.22)] border border-[#E2E8F0] overflow-hidden transform transition-all scale-95 opacity-0 duration-200" id="rejectComplaintAdminContent">
+            <div class="px-6 py-4 border-b border-[#E2E8F0] flex items-center justify-between bg-white">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-red-50 text-red-600 border border-red-200 flex items-center justify-center shrink-0">
+                        <i data-lucide="x-circle" class="w-4 h-4"></i>
                     </div>
-                    <button type="button" onclick="closeRejectComplaintAdminModal()" class="p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition cursor-pointer">
-                        <i data-lucide="x" class="w-4 h-4"></i>
-                    </button>
+                    <h3 class="font-outfit font-bold text-base text-[#0F172A]">
+                        Tolak Laporan Pengaduan
+                    </h3>
                 </div>
-
-                <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs space-y-1">
+                <button type="button" onclick="closeRejectComplaintAdminModal()" class="w-9 h-9 rounded-[10px] bg-[#F8FAFC] hover:bg-slate-100 text-[#475569] hover:text-[#0F172A] border border-[#E2E8F0] flex items-center justify-center transition cursor-pointer shrink-0">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+            <div class="p-6 space-y-4">
+                <div class="p-3.5 rounded-2xl bg-[#F8FAFC] border border-[#E2E8F0] text-xs space-y-1">
                     <div class="font-mono font-bold text-red-600" id="rejectAdminModalCode">#0001</div>
-                    <div class="font-semibold text-slate-800 line-clamp-2" id="rejectAdminModalTitle">-</div>
+                    <div class="font-semibold text-[#0F172A] line-clamp-2" id="rejectAdminModalTitle">-</div>
                 </div>
 
                 <div class="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-[11px] flex items-start gap-2">
@@ -1872,30 +1971,30 @@
                 <form id="rejectComplaintAdminForm" method="POST" action="" class="space-y-3.5">
                     @csrf
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Alasan Penolakan <span class="text-red-500">*</span></label>
+                        <label class="block text-xs font-bold text-[#334155] mb-1">Alasan Penolakan <span class="text-red-500">*</span></label>
                         <textarea id="rejectAdminReasonInput" name="reason" rows="2" required minlength="10"
                             oninput="validateRejectAdminForm()"
                             placeholder="Tuliskan alasan logis dan resmi penolakan (minimal 10 karakter)..."
-                            class="w-full text-xs px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-red-600 focus:ring-1 focus:ring-red-600 transition"></textarea>
+                            class="w-full text-xs px-3 py-2.5 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] focus:bg-white focus:border-red-600 focus:ring-2 focus:ring-red-600/15 transition"></textarea>
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">
+                        <label class="block text-xs font-bold text-[#334155] mb-1">
                             Ketik ulang kode laporan <span id="rejectAdminExpectedCode" class="font-mono text-red-600 bg-red-50 px-1.5 py-0.5 rounded border border-red-200"></span> sebagai pernyataan tanggung jawab <span class="text-red-500">*</span>
                         </label>
                         <input type="text" id="rejectAdminConfirmInput" name="confirmation_statement" required
                             oninput="validateRejectAdminForm()"
                             placeholder="Ketik kode laporan di atas"
-                            class="w-full text-xs font-mono px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-red-600 focus:ring-1 focus:ring-red-600 transition">
+                            class="w-full text-xs font-mono px-3 py-2.5 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] focus:bg-white focus:border-red-600 focus:ring-2 focus:ring-red-600/15 transition">
                     </div>
 
-                    <div class="flex items-center justify-end gap-2.5 pt-2 border-t border-slate-100">
+                    <div class="flex items-center justify-end gap-2.5 pt-3 border-t border-[#E2E8F0]">
                         <button type="button" onclick="closeRejectComplaintAdminModal()"
-                            class="px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs transition cursor-pointer">
+                            class="px-5 py-2.5 rounded-xl bg-[#F1F5F9] hover:bg-slate-200 text-[#334155] font-bold text-xs transition cursor-pointer">
                             Batal
                         </button>
                         <button type="submit" id="rejectAdminSubmitBtn" disabled
-                            class="px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 disabled:opacity-45 disabled:cursor-not-allowed text-white font-bold text-xs transition flex items-center gap-1.5 cursor-pointer">
+                            class="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 disabled:opacity-45 disabled:cursor-not-allowed text-white font-bold text-xs transition flex items-center gap-1.5 cursor-pointer">
                             <i data-lucide="x-circle" class="w-3.5 h-3.5"></i>
                             <span>Konfirmasi Tolak Laporan</span>
                         </button>
@@ -1910,22 +2009,22 @@
 
 
     <!-- MODAL EDIT PROFIL & KATA SANDI PENGGUNA (SUPER ADMIN) -->
-    <div id="editUserModal" class="fixed inset-0 z-[99999] hidden items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs transition-opacity duration-200">
-        <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden transform transition-all scale-95 opacity-0 duration-200" id="editUserModalContent">
-            <div class="p-6 space-y-5">
-                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-                    <div class="flex items-center gap-2.5">
-                        <div class="w-10 h-10 rounded-xl bg-blue-50 text-[#1E3A8A] border border-blue-100 flex items-center justify-center font-bold">
-                            <i data-lucide="user-cog" class="w-5 h-5"></i>
-                        </div>
-                        <h3 class="font-outfit font-extrabold text-base text-slate-900">
-                            Edit Akun &amp; Profil Pengguna
-                        </h3>
+    <div id="editUserModal" class="fixed inset-0 z-[99999] hidden items-center justify-center p-4 bg-slate-900/65 transition-opacity duration-200">
+        <div class="bg-white rounded-[24px] max-w-lg w-full shadow-[0_20px_50px_rgba(15,23,42,0.22)] border border-[#E2E8F0] overflow-hidden transform transition-all scale-95 opacity-0 duration-200" id="editUserModalContent">
+            <div class="px-5 py-4 sm:px-7 sm:py-5 border-b border-[#E2E8F0] flex items-center justify-between bg-white">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE] flex items-center justify-center font-bold shrink-0">
+                        <i data-lucide="user-cog" class="w-4 h-4"></i>
                     </div>
-                    <button type="button" onclick="closeEditUserModal()" class="p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition cursor-pointer">
-                        <i data-lucide="x" class="w-4 h-4"></i>
-                    </button>
+                    <h3 class="font-outfit font-bold text-base text-[#0F172A]">
+                        Edit Akun &amp; Profil Pengguna
+                    </h3>
                 </div>
+                <button type="button" onclick="closeEditUserModal()" class="w-9 h-9 rounded-[10px] bg-[#F8FAFC] hover:bg-slate-100 text-[#475569] hover:text-[#0F172A] border border-[#E2E8F0] flex items-center justify-center transition cursor-pointer shrink-0" title="Tutup" aria-label="Tutup">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+            <div class="p-5 sm:px-7 sm:py-5">
 
                 <form id="editUserForm" method="POST" action="" class="space-y-4">
                     @csrf
@@ -1937,7 +2036,7 @@
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1">Nama Lengkap</label>
                             <input type="text" id="editUserName" name="name" required
-                                class="w-full text-xs font-medium px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-[#1E3A8A] focus:ring-1 focus:ring-[#1E3A8A] transition">
+                                class="w-full text-xs font-medium px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB] transition">
                         </div>
 
                         <!-- Email & Nomor Handphone (Grid 2 kolom) -->
@@ -1945,12 +2044,12 @@
                             <div>
                                 <label class="block text-xs font-bold text-slate-700 mb-1">Alamat Email</label>
                                 <input type="email" id="editUserEmail" name="email" required
-                                    class="w-full text-xs font-medium px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-[#1E3A8A] focus:ring-1 focus:ring-[#1E3A8A] transition">
+                                    class="w-full text-xs font-medium px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB] transition">
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-slate-700 mb-1">No. Handphone / WA</label>
                                 <input type="text" id="editUserPhone" name="phone" placeholder="08xxxxxxxxxx"
-                                    class="w-full text-xs font-medium px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-[#1E3A8A] focus:ring-1 focus:ring-[#1E3A8A] transition">
+                                    class="w-full text-xs font-medium px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB] transition">
                             </div>
                         </div>
 
@@ -1980,9 +2079,9 @@
                         <div class="pt-3 border-t border-slate-100">
                             <label class="flex items-center gap-2.5 p-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100/80 transition cursor-pointer select-none">
                                 <input type="checkbox" id="editUserResetDefault" name="reset_default" value="1"
-                                    class="w-4 h-4 rounded text-[#1E3A8A] focus:ring-[#1E3A8A] border-slate-300">
+                                    class="w-4 h-4 rounded text-[#2563EB] focus:ring-[#2563EB] border-slate-300">
                                 <span class="text-xs text-slate-800 font-bold block">
-                                    Reset Kata Sandi ke Default (<span class="font-mono text-[#1E3A8A]">password</span>)
+                                    Reset Kata Sandi ke Default (<span class="font-mono text-[#2563EB]">password</span>)
                                 </span>
                             </label>
                         </div>
@@ -1994,7 +2093,7 @@
                             Batal
                         </button>
                         <button type="submit"
-                            class="px-5 py-2.5 rounded-xl bg-[#1E3A8A] hover:bg-blue-900 text-white font-bold text-xs transition flex items-center gap-1.5 shadow-md shadow-blue-900/20 cursor-pointer">
+                            class="px-5 py-2.5 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold text-xs transition flex items-center gap-1.5 shadow-xs cursor-pointer">
                             <i data-lucide="save" class="w-3.5 h-3.5"></i>
                             <span>Simpan Perubahan</span>
                         </button>
@@ -2005,35 +2104,34 @@
     </div>
 
     <!-- MODAL NONAKTIFKAN AKUN PENGGUNA (WAJIB ALASAN LOGIS & PERNYATAAN TANGGUNG JAWAB) -->
-    <div id="deactivateUserModal" class="fixed inset-0 z-[99999] hidden items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs transition-opacity duration-200">
-        <div id="deactivateUserCard" class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden transform scale-95 opacity-0 transition-all duration-200">
-            <div class="p-6 space-y-4">
-                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-                    <div class="flex items-center gap-2.5">
-                        <div class="w-10 h-10 rounded-xl bg-red-50 text-red-600 border border-red-200 flex items-center justify-center shrink-0">
-                            <i data-lucide="user-x" class="w-5 h-5"></i>
-                        </div>
-                        <h3 class="font-outfit font-extrabold text-base text-slate-900">
-                            Nonaktifkan Akun Pengguna
-                        </h3>
+    <div id="deactivateUserModal" class="fixed inset-0 z-[99999] hidden items-center justify-center p-4 bg-slate-900/65 transition-opacity duration-200">
+        <div id="deactivateUserCard" class="bg-white rounded-[24px] max-w-md w-full shadow-[0_20px_50px_rgba(15,23,42,0.22)] border border-[#E2E8F0] overflow-hidden transform scale-95 opacity-0 transition-all duration-200">
+            <div class="px-6 py-4 border-b border-[#E2E8F0] flex items-center justify-between bg-white">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-red-50 text-red-600 border border-red-200 flex items-center justify-center shrink-0">
+                        <i data-lucide="user-x" class="w-4 h-4"></i>
                     </div>
-                    <button type="button" onclick="closeDeactivateUserModal()" class="p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition cursor-pointer">
-                        <i data-lucide="x" class="w-4 h-4"></i>
-                    </button>
+                    <h3 class="font-outfit font-bold text-base text-[#0F172A]">
+                        Nonaktifkan Akun Pengguna
+                    </h3>
                 </div>
-
-                <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs space-y-1">
+                <button type="button" onclick="closeDeactivateUserModal()" class="w-9 h-9 rounded-[10px] bg-[#F8FAFC] hover:bg-slate-100 text-[#475569] hover:text-[#0F172A] border border-[#E2E8F0] flex items-center justify-center transition cursor-pointer shrink-0">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+            <div class="p-6 space-y-4">
+                <div class="p-3.5 rounded-2xl bg-[#F8FAFC] border border-[#E2E8F0] text-xs space-y-1.5">
                     <div class="flex items-center justify-between">
-                        <span class="text-slate-500">Nama Akun:</span>
-                        <strong id="deactivateUserNameTarget" class="text-slate-900"></strong>
+                        <span class="text-[#64748B]">Nama Akun:</span>
+                        <strong id="deactivateUserNameTarget" class="text-[#0F172A]"></strong>
                     </div>
-                    <div class="flex items-center justify-between pt-1 border-t border-slate-100">
-                        <span class="text-slate-500">Email:</span>
-                        <span id="deactivateUserEmailTarget" class="font-mono text-slate-800 font-semibold"></span>
+                    <div class="flex items-center justify-between pt-1.5 border-t border-[#E2E8F0]">
+                        <span class="text-[#64748B]">Email:</span>
+                        <span id="deactivateUserEmailTarget" class="font-mono text-[#334155] font-semibold"></span>
                     </div>
-                    <div class="flex items-center justify-between pt-1 border-t border-slate-100">
-                        <span class="text-slate-500">Peran:</span>
-                        <span id="deactivateUserRoleTarget" class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-200 text-slate-700"></span>
+                    <div class="flex items-center justify-between pt-1.5 border-t border-[#E2E8F0]">
+                        <span class="text-[#64748B]">Peran:</span>
+                        <span id="deactivateUserRoleTarget" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE]"></span>
                     </div>
                 </div>
 
@@ -2045,38 +2143,38 @@
                 <form id="deactivateUserForm" method="POST" action="" class="space-y-3.5">
                     @csrf
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Alasan Penonaktifan <span class="text-red-500">*</span></label>
+                        <label class="block text-xs font-bold text-[#334155] mb-1">Alasan Penonaktifan <span class="text-red-500">*</span></label>
                         <textarea id="deactivateReasonInput" name="reason" rows="2" required minlength="10"
                             oninput="validateDeactivateForm()"
                             placeholder="Tuliskan alasan logis penonaktifan (minimal 10 karakter)..."
-                            class="w-full text-xs px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-red-600 focus:ring-1 focus:ring-red-600 transition"></textarea>
+                            class="w-full text-xs px-3 py-2.5 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] focus:bg-white focus:border-red-600 focus:ring-2 focus:ring-red-600/15 transition"></textarea>
                     </div>
 
                     <div id="deactivateLeaderPasswordWrap" class="hidden">
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Kata Sandi Super Admin <span class="text-red-500">*</span></label>
+                        <label class="block text-xs font-bold text-[#334155] mb-1">Kata Sandi Super Admin <span class="text-red-500">*</span></label>
                         <input type="password" id="deactivateAdminPasswordInput" name="admin_password"
                             oninput="validateDeactivateForm()"
                             placeholder="Masukkan kata sandi Super Admin Anda"
-                            class="w-full text-xs px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-red-600 focus:ring-1 focus:ring-red-600 transition">
+                            class="w-full text-xs px-3 py-2.5 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] focus:bg-white focus:border-red-600 focus:ring-2 focus:ring-red-600/15 transition">
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">
+                        <label class="block text-xs font-bold text-[#334155] mb-1">
                             Ketik ulang pernyataan <span id="deactivateExpectedStatement" class="font-mono text-red-600 bg-red-50 px-1.5 py-0.5 rounded border border-red-200 break-all"></span> <span class="text-red-500">*</span>
                         </label>
                         <input type="text" id="deactivateConfirmInput" name="confirmation_statement" required
                             oninput="validateDeactivateForm()"
                             placeholder="Ketik pernyataan konfirmasi di atas"
-                            class="w-full text-xs font-mono px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-red-600 focus:ring-1 focus:ring-red-600 transition">
+                            class="w-full text-xs font-mono px-3 py-2.5 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] focus:bg-white focus:border-red-600 focus:ring-2 focus:ring-red-600/15 transition">
                     </div>
 
-                    <div class="flex items-center justify-end gap-2.5 pt-2 border-t border-slate-100">
+                    <div class="flex items-center justify-end gap-2.5 pt-3 border-t border-[#E2E8F0]">
                         <button type="button" onclick="closeDeactivateUserModal()"
-                            class="px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs transition cursor-pointer">
+                            class="px-5 py-2.5 rounded-xl bg-[#F1F5F9] hover:bg-slate-200 text-[#334155] font-bold text-xs transition cursor-pointer">
                             Batal
                         </button>
                         <button type="submit" id="deactivateSubmitBtn" disabled
-                            class="px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 disabled:opacity-45 disabled:cursor-not-allowed text-white font-bold text-xs transition flex items-center gap-1.5 cursor-pointer">
+                            class="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 disabled:opacity-45 disabled:cursor-not-allowed text-white font-bold text-xs transition flex items-center gap-1.5 cursor-pointer">
                             <i data-lucide="user-x" class="w-3.5 h-3.5"></i>
                             <span>Nonaktifkan Akun</span>
                         </button>
@@ -2087,49 +2185,48 @@
     </div>
 
     <!-- MODAL AKTIFKAN KEMBALI AKUN PENGGUNA -->
-    <div id="reactivateUserModal" class="fixed inset-0 z-[99999] hidden items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs transition-opacity duration-200">
-        <div id="reactivateUserCard" class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden transform scale-95 opacity-0 transition-all duration-200">
-            <div class="p-6 space-y-4">
-                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-                    <div class="flex items-center gap-2.5">
-                        <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center justify-center shrink-0">
-                            <i data-lucide="user-check" class="w-5 h-5"></i>
-                        </div>
-                        <h3 class="font-outfit font-extrabold text-base text-slate-900">
-                            Aktifkan Kembali Akun
-                        </h3>
+    <div id="reactivateUserModal" class="fixed inset-0 z-[99999] hidden items-center justify-center p-4 bg-slate-900/65 transition-opacity duration-200">
+        <div id="reactivateUserCard" class="bg-white rounded-[24px] max-w-md w-full shadow-[0_20px_50px_rgba(15,23,42,0.22)] border border-[#E2E8F0] overflow-hidden transform scale-95 opacity-0 transition-all duration-200">
+            <div class="px-6 py-4 border-b border-[#E2E8F0] flex items-center justify-between bg-white">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-[#ECFDF5] text-[#047857] border border-[#A7F3D0] flex items-center justify-center shrink-0">
+                        <i data-lucide="user-check" class="w-4 h-4"></i>
                     </div>
-                    <button type="button" onclick="closeReactivateUserModal()" class="p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition cursor-pointer">
-                        <i data-lucide="x" class="w-4 h-4"></i>
-                    </button>
+                    <h3 class="font-outfit font-bold text-base text-[#0F172A]">
+                        Aktifkan Kembali Akun
+                    </h3>
                 </div>
-
-                <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs space-y-1">
+                <button type="button" onclick="closeReactivateUserModal()" class="w-9 h-9 rounded-[10px] bg-[#F8FAFC] hover:bg-slate-100 text-[#475569] hover:text-[#0F172A] border border-[#E2E8F0] flex items-center justify-center transition cursor-pointer shrink-0">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+            <div class="p-6 space-y-4">
+                <div class="p-3.5 rounded-2xl bg-[#F8FAFC] border border-[#E2E8F0] text-xs space-y-1.5">
                     <div class="flex items-center justify-between">
-                        <span class="text-slate-500">Nama Akun:</span>
-                        <strong id="reactivateUserNameTarget" class="text-slate-900"></strong>
+                        <span class="text-[#64748B]">Nama Akun:</span>
+                        <strong id="reactivateUserNameTarget" class="text-[#0F172A]"></strong>
                     </div>
-                    <div class="flex items-center justify-between pt-1 border-t border-slate-100">
-                        <span class="text-slate-500">Email:</span>
-                        <span id="reactivateUserEmailTarget" class="font-mono text-slate-800 font-semibold"></span>
+                    <div class="flex items-center justify-between pt-1.5 border-t border-[#E2E8F0]">
+                        <span class="text-[#64748B]">Email:</span>
+                        <span id="reactivateUserEmailTarget" class="font-mono text-[#334155] font-semibold"></span>
                     </div>
                 </div>
 
                 <form id="reactivateUserForm" method="POST" action="" class="space-y-3.5">
                     @csrf
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Catatan Pengaktifan (Opsional)</label>
+                        <label class="block text-xs font-bold text-[#334155] mb-1">Catatan Pengaktifan (Opsional)</label>
                         <input type="text" name="reason" placeholder="Contoh: Masa evaluasi selesai, akses dipulihkan."
-                            class="w-full text-xs px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-[#1E3A8A] focus:ring-1 focus:ring-[#1E3A8A] transition">
+                            class="w-full text-xs px-3 py-2.5 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] focus:bg-white focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/15 transition">
                     </div>
 
-                    <div class="flex items-center justify-end gap-2.5 pt-2 border-t border-slate-100">
+                    <div class="flex items-center justify-end gap-2.5 pt-3 border-t border-[#E2E8F0]">
                         <button type="button" onclick="closeReactivateUserModal()"
-                            class="px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs transition cursor-pointer">
+                            class="px-5 py-2.5 rounded-xl bg-[#F1F5F9] hover:bg-slate-200 text-[#334155] font-bold text-xs transition cursor-pointer">
                             Batal
                         </button>
                         <button type="submit"
-                            class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition flex items-center gap-1.5 cursor-pointer">
+                            class="px-5 py-2.5 rounded-xl bg-[#10B981] hover:bg-[#059669] text-white font-bold text-xs transition flex items-center gap-1.5 cursor-pointer">
                             <i data-lucide="user-check" class="w-3.5 h-3.5"></i>
                             <span>Ya, Aktifkan Akun</span>
                         </button>
@@ -2140,63 +2237,64 @@
     </div>
 
     <!-- MODAL QUICK ACTION RESET PASSWORD -->
-    <div id="quickResetPasswordModal" class="fixed inset-0 z-[99999] hidden items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs transition-opacity duration-200">
-        <div id="quickResetPasswordCard" class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden transform scale-95 opacity-0 transition-all duration-200 p-6 text-center space-y-4">
-            <!-- Icon Kunci Lingkaran Biru Lembut -->
-            <div class="w-16 h-16 rounded-full bg-blue-50 text-[#1E3A8A] border border-blue-100 mx-auto flex items-center justify-center shadow-xs">
-                <i data-lucide="key" class="w-8 h-8"></i>
-            </div>
-
-            <!-- Header Text -->
-            <div class="space-y-1.5">
-                <h3 class="font-outfit font-extrabold text-lg sm:text-xl text-slate-900 leading-tight">
-                    Reset Kata Sandi Akun
-                </h3>
-                <p class="text-xs text-slate-500">
-                    Setel ulang kata sandi akun <strong id="resetUserNameTarget" class="text-slate-900"></strong> ke kata sandi bawaan default.
-                </p>
-            </div>
-
-            <!-- Detail Akun Target Box -->
-            <div class="p-3.5 rounded-2xl bg-blue-50/50 border border-blue-100/80 text-left space-y-1.5">
-                <div class="flex items-center justify-between text-xs">
-                    <span class="text-slate-500 text-[11px]">Email Akun:</span>
-                    <span id="resetUserEmailTarget" class="font-mono text-slate-800 font-semibold text-[11.5px]"></span>
-                </div>
-                <div class="flex items-center justify-between text-xs pt-1 border-t border-blue-100/60">
-                    <span class="text-slate-500 text-[11px]">Kata Sandi Baru:</span>
-                    <span class="font-mono font-extrabold text-[#1E3A8A] text-xs bg-white px-2 py-0.5 rounded border border-blue-200 shadow-2xs">password</span>
-                </div>
-            </div>
-
-            <!-- Notice Box Email Info -->
-            <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-left flex items-start gap-2.5">
-                <i data-lucide="mail-check" class="w-4 h-4 text-[#1E3A8A] shrink-0 mt-0.5"></i>
-                <p class="text-[11.5px] text-slate-600 leading-relaxed font-normal">
-                    Email pemberitahuan resmi akan <strong>otomatis dikirimkan</strong> ke alamat email pengguna tersebut untuk memberitahukan reset kata sandi ini.
-                </p>
-            </div>
-
-            <!-- Actions Buttons -->
-            <div class="flex items-center justify-end gap-2.5 pt-2">
-                <button type="button" onclick="closeQuickResetModal()"
-                    class="px-5 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs transition cursor-pointer">
-                    Batal
-                </button>
-                <form id="quickResetFormAction" method="POST" action="">
-                    @csrf
-                    <button type="submit"
-                        class="px-5 py-2.5 rounded-xl bg-[#1E3A8A] hover:bg-blue-900 text-white font-bold text-xs transition flex items-center gap-1.5 shadow-md shadow-blue-900/20 cursor-pointer">
+    <div id="quickResetPasswordModal" class="fixed inset-0 z-[99999] hidden items-center justify-center p-4 bg-slate-900/65 transition-opacity duration-200">
+        <div id="quickResetPasswordCard" class="bg-white rounded-[24px] max-w-md w-full shadow-[0_20px_50px_rgba(15,23,42,0.22)] border border-[#E2E8F0] overflow-hidden transform scale-95 opacity-0 transition-all duration-200">
+            <div class="px-6 py-4 border-b border-[#E2E8F0] flex items-center justify-between bg-white">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE] flex items-center justify-center shrink-0">
                         <i data-lucide="key" class="w-4 h-4"></i>
-                        <span>Ya, Reset Kata Sandi</span>
+                    </div>
+                    <h3 class="font-outfit font-bold text-base text-[#0F172A]">
+                        Reset Kata Sandi Akun
+                    </h3>
+                </div>
+                <button type="button" onclick="closeQuickResetModal()" class="w-9 h-9 rounded-[10px] bg-[#F8FAFC] hover:bg-slate-100 text-[#475569] hover:text-[#0F172A] border border-[#E2E8F0] flex items-center justify-center transition cursor-pointer shrink-0">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+            <div class="p-6 space-y-4">
+                <p class="text-xs text-[#475569]">
+                    Setel ulang kata sandi akun <strong id="resetUserNameTarget" class="text-[#0F172A]"></strong> ke kata sandi bawaan default.
+                </p>
+
+                <div class="p-3.5 rounded-2xl bg-[#F8FAFC] border border-[#E2E8F0] space-y-1.5">
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="text-[#64748B] text-[11px]">Email Akun:</span>
+                        <span id="resetUserEmailTarget" class="font-mono text-[#0F172A] font-semibold text-[11.5px]"></span>
+                    </div>
+                    <div class="flex items-center justify-between text-xs pt-1.5 border-t border-[#E2E8F0]">
+                        <span class="text-[#64748B] text-[11px]">Kata Sandi Baru:</span>
+                        <span class="font-mono font-bold text-[#2563EB] text-xs bg-[#EFF6FF] px-2.5 py-0.5 rounded-lg border border-[#BFDBFE]">password</span>
+                    </div>
+                </div>
+
+                <div class="p-3.5 rounded-2xl bg-[#EFF6FF]/60 border border-[#BFDBFE] flex items-start gap-2.5">
+                    <i data-lucide="mail-check" class="w-4 h-4 text-[#2563EB] shrink-0 mt-0.5"></i>
+                    <p class="text-[11.5px] text-[#334155] leading-relaxed">
+                        Email pemberitahuan resmi akan <strong>otomatis dikirimkan</strong> ke alamat email pengguna tersebut untuk memberitahukan reset kata sandi ini.
+                    </p>
+                </div>
+
+                <div class="flex items-center justify-end gap-2.5 pt-3 border-t border-[#E2E8F0]">
+                    <button type="button" onclick="closeQuickResetModal()"
+                        class="px-5 py-2.5 rounded-xl bg-[#F1F5F9] hover:bg-slate-200 text-[#334155] font-bold text-xs transition cursor-pointer">
+                        Batal
                     </button>
-                </form>
+                    <form id="quickResetFormAction" method="POST" action="">
+                        @csrf
+                        <button type="submit"
+                            class="px-5 py-2.5 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold text-xs transition flex items-center gap-1.5 cursor-pointer">
+                            <i data-lucide="key" class="w-3.5 h-3.5"></i>
+                            <span>Ya, Reset Kata Sandi</span>
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Custom Modern Notification Modal (Pengganti Browser alert) -->
-    <div id="adminNoticeModal" class="fixed inset-0 z-[99999] hidden items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs transition-opacity duration-200">
+    <div id="adminNoticeModal" class="fixed inset-0 z-[99999] hidden items-center justify-center p-4 bg-slate-900/60 transition-opacity duration-200">
         <div id="adminNoticeCard" class="bg-white rounded-3xl shadow-2xl border border-slate-100 max-w-sm w-full p-6 text-center transform scale-95 opacity-0 transition-all duration-200 space-y-4">
             <div id="adminNoticeIconBox" class="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-100 mx-auto flex items-center justify-center shadow-xs">
                 <i id="adminNoticeIcon" data-lucide="check-circle-2" class="w-7 h-7"></i>
@@ -2211,65 +2309,84 @@
             </div>
             <div class="pt-1">
                 <button type="button" onclick="closeAdminNoticeModal()" 
-                    class="w-full py-2.5 px-4 rounded-xl bg-[#1E3A8A] hover:bg-blue-900 text-white font-bold text-xs sm:text-sm shadow-md shadow-blue-900/20 transition cursor-pointer">
+                    class="w-full py-2.5 px-4 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold text-xs sm:text-sm shadow-md shadow-blue-600/20 transition cursor-pointer">
                     Mengerti
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL BENTUK REGU BARU (SUPER ADMIN) -->
-    <div id="createTeamModal" class="fixed inset-0 z-[99999] hidden items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs transition-opacity duration-200">
-        <div id="createTeamCard" class="bg-white rounded-3xl max-w-lg w-full shadow-2xl border border-slate-100 overflow-hidden transform scale-95 opacity-0 transition-all duration-200">
-            <div class="p-6 space-y-5">
-                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-                    <div class="flex items-center gap-2.5">
-                        <div class="w-10 h-10 rounded-xl bg-blue-50 text-[#1E3A8A] flex items-center justify-center font-bold">
-                            <i data-lucide="users-2" class="w-5 h-5"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-outfit font-extrabold text-base text-slate-900">
-                                Bentuk Regu Lapangan Baru
-                            </h3>
-                            <p class="text-xs text-slate-400">
-                                Tetapkan nama regu, kode, dinas, dan wilayah kerja (5–10 personil)
-                            </p>
-                        </div>
+    <!-- MODAL BENTUK REGU BARU (SUPER ADMIN — KODE OTOMATIS & DINAS PUPR TERKUNCI) -->
+    @php
+        $maxTeamNum = 0;
+        foreach ($teams as $t) {
+            if (preg_match('/(\d+)/', $t->code ?? '', $m)) {
+                $maxTeamNum = max($maxTeamNum, (int) $m[1]);
+            }
+        }
+        $nextTeamNum = max($maxTeamNum + 1, $teams->count() + 1);
+        $autoTeamNumStr = str_pad((string) $nextTeamNum, 2, '0', STR_PAD_LEFT);
+        $autoTeamCode = 'REGU-' . $autoTeamNumStr;
+        $puprDept = $departments->first();
+    @endphp
+    <div id="createTeamModal" class="fixed inset-0 z-[99999] hidden items-center justify-center p-4 bg-slate-900/65 transition-opacity duration-200">
+        <div id="createTeamCard" class="bg-white rounded-[24px] max-w-lg w-full shadow-[0_20px_50px_rgba(15,23,42,0.22)] border border-[#E2E8F0] overflow-hidden transform scale-95 opacity-0 transition-all duration-200">
+            <div class="px-6 py-4 border-b border-[#E2E8F0] flex items-center justify-between bg-white">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE] flex items-center justify-center shrink-0">
+                        <i data-lucide="users-2" class="w-4 h-4"></i>
                     </div>
-                    <button type="button" onclick="closeCreateTeamModal()" class="p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition cursor-pointer">
-                        <i data-lucide="x" class="w-4 h-4"></i>
-                    </button>
+                    <h3 class="font-outfit font-bold text-base text-[#0F172A]">
+                        Bentuk Regu Lapangan Baru
+                    </h3>
                 </div>
-
-                <form method="POST" action="{{ route('admin.teams.store') }}" class="space-y-4">
+                <button type="button" onclick="closeCreateTeamModal()" class="w-9 h-9 rounded-[10px] bg-[#F8FAFC] hover:bg-slate-100 text-[#475569] hover:text-[#0F172A] border border-[#E2E8F0] flex items-center justify-center transition cursor-pointer shrink-0">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+            <div class="p-6">
+                <form method="POST" action="{{ route('admin.teams.store') }}" onsubmit="const inp = document.getElementById('createTeamNameInput'); const cov = document.getElementById('createTeamCoverageSelect'); if (inp && cov) { const formatted = formatAutoTeamName(inp.value, '{{ $autoTeamNumStr }}', cov.value); if (formatted) inp.value = formatted; }" class="space-y-4">
                     @csrf
-                    <div class="space-y-3">
+                    <div class="space-y-3.5">
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">Nama Regu Lapangan <span class="text-red-500">*</span></label>
-                            <input type="text" name="name" required placeholder="Contoh: Regu Aspal 02 - Ngapa"
-                                class="w-full text-xs font-medium px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-[#1E3A8A] focus:ring-1 focus:ring-[#1E3A8A] transition">
+                            <label class="block text-xs font-bold text-[#334155] mb-1">Nama / Jenis Regu Lapangan <span class="text-red-500">*</span></label>
+                            <input type="text" id="createTeamNameInput" name="name" required placeholder="Cukup ketik jenis regu, misal: Combat"
+                                oninput="updateCreateTeamPreview('{{ $autoTeamNumStr }}')"
+                                class="w-full text-xs font-medium px-3 py-2.5 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] focus:bg-white focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/15 transition">
+                            <div class="mt-1.5 flex items-center gap-1.5 text-[11px] text-[#64748B]">
+                                <span>Hasil otomatis:</span>
+                                <span id="createTeamNamePreview" class="font-bold text-[#2563EB] bg-[#EFF6FF] border border-[#BFDBFE] px-2 py-0.5 rounded-md">Regu Combat {{ $autoTeamNumStr }} - Semua Wilayah</span>
+                            </div>
                         </div>
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-1">Kode Regu <span class="text-slate-400 font-normal">(Opsional)</span></label>
-                                <input type="text" name="code" placeholder="Misal: REGU-03"
-                                    class="w-full text-xs font-medium px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-[#1E3A8A] focus:ring-1 focus:ring-[#1E3A8A] transition font-mono uppercase">
+                                <label class="block text-xs font-bold text-[#334155] mb-1">Kode Regu (Otomatis) <span class="text-red-500">*</span></label>
+                                <div class="relative">
+                                    <input type="text" name="code" value="{{ $autoTeamCode }}" readonly required tabindex="-1"
+                                        class="w-full text-xs font-mono font-bold pl-3 pr-9 py-2.5 rounded-xl border border-[#E2E8F0] bg-slate-100 text-[#2563EB] cursor-not-allowed select-none">
+                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-[#64748B]">
+                                        <i data-lucide="lock" class="w-3.5 h-3.5"></i>
+                                    </div>
+                                </div>
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-1">Dinas Teknis Terkait</label>
-                                <select name="department_id" class="w-full text-xs font-medium px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-[#1E3A8A] focus:ring-1 focus:ring-[#1E3A8A] transition">
-                                    <option value="">Pilih Dinas...</option>
-                                    @foreach($departments as $dept)
-                                        <option value="{{ $dept->id }}">{{ $dept->name }}</option>
-                                    @endforeach
-                                </select>
+                                <label class="block text-xs font-bold text-[#334155] mb-1">Dinas Teknis Terkait</label>
+                                <div class="relative">
+                                    <input type="text" value="{{ $puprDept?->name ?? 'Dinas Pekerjaan Umum dan Penataan Ruang (PUPR)' }}" readonly tabindex="-1"
+                                        class="w-full text-xs font-semibold pl-3 pr-9 py-2.5 rounded-xl border border-[#E2E8F0] bg-slate-100 text-[#475569] cursor-not-allowed select-none truncate">
+                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-[#64748B]">
+                                        <i data-lucide="lock" class="w-3.5 h-3.5"></i>
+                                    </div>
+                                    <input type="hidden" name="department_id" value="{{ $puprDept?->id ?? 1 }}">
+                                </div>
                             </div>
                         </div>
 
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">Wilayah Cakupan Kerja / Kecamatan</label>
-                            <select name="coverage_area" class="w-full text-xs font-medium px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-[#1E3A8A] focus:ring-1 focus:ring-[#1E3A8A] transition">
+                            <label class="block text-xs font-bold text-[#334155] mb-1">Wilayah Cakupan Kerja / Kecamatan</label>
+                            <select id="createTeamCoverageSelect" name="coverage_area" onchange="updateCreateTeamPreview('{{ $autoTeamNumStr }}')"
+                                class="w-full text-xs font-medium px-3 py-2.5 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] focus:bg-white focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/15 transition">
                                 <option value="Semua Wilayah">Semua Wilayah (Kabupaten Kolaka Utara)</option>
                                 @foreach($districts as $d)
                                     <option value="{{ $d }}">{{ $d }}</option>
@@ -2278,8 +2395,8 @@
                         </div>
 
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">Ketua Regu (Koordinator Lapangan)</label>
-                            <select name="leader_id" class="w-full text-xs font-medium px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-[#1E3A8A] focus:ring-1 focus:ring-[#1E3A8A] transition">
+                            <label class="block text-xs font-bold text-[#334155] mb-1">Ketua Regu (Koordinator Lapangan)</label>
+                            <select name="leader_id" class="w-full text-xs font-medium px-3 py-2.5 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] focus:bg-white focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/15 transition">
                                 <option value="">Tentukan Nanti / Belum Ada</option>
                                 @foreach($unassignedOfficers as $officer)
                                     <option value="{{ $officer->id }}">{{ $officer->name }} ({{ $officer->phone ?? '-' }})</option>
@@ -2288,13 +2405,13 @@
                         </div>
                     </div>
 
-                    <div class="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100">
+                    <div class="flex items-center justify-end gap-2.5 pt-4 border-t border-[#E2E8F0]">
                         <button type="button" onclick="closeCreateTeamModal()"
-                            class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer">
+                            class="px-5 py-2.5 rounded-xl bg-[#F1F5F9] hover:bg-slate-200 text-[#334155] font-bold text-xs transition cursor-pointer">
                             Batal
                         </button>
                         <button type="submit"
-                            class="px-5 py-2.5 rounded-xl bg-[#1E3A8A] hover:bg-[#172e6e] text-white font-bold text-xs transition flex items-center gap-1.5 shadow-md shadow-[#1E3A8A]/20 cursor-pointer">
+                            class="px-5 py-2.5 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold text-xs transition flex items-center gap-1.5 shadow-xs cursor-pointer">
                             <i data-lucide="check" class="w-3.5 h-3.5"></i>
                             <span>Bentuk Regu Sekarang</span>
                         </button>
@@ -2305,48 +2422,59 @@
     </div>
 
     <!-- MODAL EDIT REGU (SUPER ADMIN) -->
-    <div id="editTeamModal" class="fixed inset-0 z-[99999] hidden items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs transition-opacity duration-200">
-        <div id="editTeamCard" class="bg-white rounded-3xl max-w-lg w-full shadow-2xl border border-slate-100 overflow-hidden transform scale-95 opacity-0 transition-all duration-200">
-            <div class="p-6 space-y-5">
-                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-                    <div class="flex items-center gap-2.5">
-                        <div class="w-10 h-10 rounded-xl bg-blue-50 text-[#1E3A8A] flex items-center justify-center font-bold">
-                            <i data-lucide="pencil" class="w-5 h-5"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-outfit font-extrabold text-base text-slate-900">
-                                Ubah Data Regu Lapangan
-                            </h3>
-                            <p class="text-xs text-slate-400">
-                                Perbarui identitas regu, kode unik, wilayah fokus, dan ketua regu
-                            </p>
-                        </div>
+    <div id="editTeamModal" class="fixed inset-0 z-[99999] hidden items-center justify-center p-4 bg-slate-900/65 transition-opacity duration-200">
+        <div id="editTeamCard" class="bg-white rounded-[24px] max-w-lg w-full shadow-[0_20px_50px_rgba(15,23,42,0.22)] border border-[#E2E8F0] overflow-hidden transform scale-95 opacity-0 transition-all duration-200">
+            <div class="px-6 py-4 border-b border-[#E2E8F0] flex items-center justify-between bg-white">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE] flex items-center justify-center shrink-0">
+                        <i data-lucide="pencil" class="w-4 h-4"></i>
                     </div>
-                    <button type="button" onclick="closeEditTeamModal()" class="p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition cursor-pointer">
-                        <i data-lucide="x" class="w-4 h-4"></i>
-                    </button>
+                    <h3 class="font-outfit font-bold text-base text-[#0F172A]">
+                        Edit Regu
+                    </h3>
                 </div>
-
-                <form id="editTeamForm" method="POST" action="" class="space-y-4">
+                <button type="button" onclick="closeEditTeamModal()" class="w-9 h-9 rounded-[10px] bg-[#F8FAFC] hover:bg-slate-100 text-[#475569] hover:text-[#0F172A] border border-[#E2E8F0] flex items-center justify-center transition cursor-pointer shrink-0">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+            <div class="p-6">
+                <form id="editTeamForm" method="POST" action="" onsubmit="const inp = document.getElementById('editTeamName'); const cov = document.getElementById('editTeamCoverageArea'); const numStr = getEditTeamNumStr(); if (inp && cov) { const formatted = formatAutoTeamName(inp.value, numStr, cov.value); if (formatted) inp.value = formatted; }" class="space-y-4">
                     @csrf
                     @method('PUT')
-                    <div class="space-y-3">
+                    <div class="space-y-3.5">
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">Nama Regu Lapangan <span class="text-red-500">*</span></label>
-                            <input type="text" id="editTeamName" name="name" required
-                                class="w-full text-xs font-medium px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-[#1E3A8A] focus:ring-1 focus:ring-[#1E3A8A] transition">
+                            <label class="block text-xs font-bold text-[#334155] mb-1">Nama Regu Lapangan <span class="text-red-500">*</span></label>
+                            <input type="text" id="editTeamName" name="name" required placeholder="Cukup ketik jenis regu, misal: Aspal"
+                                oninput="updateEditTeamPreview()"
+                                class="w-full text-xs font-medium px-3 py-2.5 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] focus:bg-white focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/15 transition">
+                            <p class="text-[11px] text-[#64748B] mt-1.5 flex items-center gap-1.5 flex-wrap">
+                                <span>Hasil nama otomatis:</span>
+                                <span id="editTeamNamePreview" class="font-bold text-[#2563EB] bg-[#EFF6FF] border border-[#BFDBFE] px-2 py-0.5 rounded-md">Regu Aspal 01 - Lasusua</span>
+                            </p>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold text-[#334155] mb-1">Kode Regu <span class="text-red-500">*</span></label>
+                                <input type="text" id="editTeamCode" name="code" required readonly
+                                    class="w-full text-xs font-mono font-bold px-3 py-2.5 rounded-xl border border-[#E2E8F0] bg-slate-100 text-[#2563EB] cursor-not-allowed uppercase">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-[#334155] mb-1">Dinas Teknis Terkait</label>
+                                <div class="relative">
+                                    <input type="text" value="{{ $puprDept?->name ?? 'Dinas Pekerjaan Umum dan Penataan Ruang (PUPR)' }}" readonly tabindex="-1"
+                                        class="w-full text-xs font-semibold pl-3 pr-9 py-2.5 rounded-xl border border-[#E2E8F0] bg-slate-100 text-[#475569] cursor-not-allowed select-none truncate">
+                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-[#64748B]">
+                                        <i data-lucide="lock" class="w-3.5 h-3.5"></i>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">Kode Regu <span class="text-red-500">*</span></label>
-                            <input type="text" id="editTeamCode" name="code" required
-                                class="w-full text-xs font-medium px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-[#1E3A8A] focus:ring-1 focus:ring-[#1E3A8A] transition font-mono uppercase">
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">Wilayah Cakupan Kerja / Kecamatan</label>
-                            <select id="editTeamCoverageArea" name="coverage_area"
-                                class="w-full text-xs font-medium px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-[#1E3A8A] focus:ring-1 focus:ring-[#1E3A8A] transition">
+                            <label class="block text-xs font-bold text-[#334155] mb-1">Wilayah Cakupan Kerja / Kecamatan</label>
+                            <select id="editTeamCoverageArea" name="coverage_area" onchange="updateEditTeamPreview()"
+                                class="w-full text-xs font-medium px-3 py-2.5 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] focus:bg-white focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/15 transition">
                                 <option value="Semua Wilayah">Semua Wilayah (Kabupaten Kolaka Utara)</option>
                                 @foreach($districts as $d)
                                     <option value="{{ $d }}">{{ $d }}</option>
@@ -2355,8 +2483,8 @@
                         </div>
 
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">Ketua Regu (Koordinator Lapangan)</label>
-                            <select id="editTeamLeaderId" name="leader_id" class="w-full text-xs font-medium px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-[#1E3A8A] focus:ring-1 focus:ring-[#1E3A8A] transition">
+                            <label class="block text-xs font-bold text-[#334155] mb-1">Ketua Regu (Koordinator Lapangan)</label>
+                            <select id="editTeamLeaderId" name="leader_id" class="w-full text-xs font-medium px-3 py-2.5 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] focus:bg-white focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/15 transition">
                                 <option value="">Belum Ditunjuk / Kosongkan</option>
                                 @foreach($unassignedOfficers as $officer)
                                     <option value="{{ $officer->id }}" data-unassigned="true">{{ $officer->name }} ({{ $officer->phone ?? '-' }})</option>
@@ -2365,13 +2493,13 @@
                         </div>
                     </div>
 
-                    <div class="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100">
+                    <div class="flex items-center justify-end gap-2.5 pt-4 border-t border-[#E2E8F0]">
                         <button type="button" onclick="closeEditTeamModal()"
-                            class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer">
+                            class="px-5 py-2.5 rounded-xl bg-[#F1F5F9] hover:bg-slate-200 text-[#334155] font-bold text-xs transition cursor-pointer">
                             Batal
                         </button>
                         <button type="submit"
-                            class="px-5 py-2.5 rounded-xl bg-[#1E3A8A] hover:bg-[#172e6e] text-white font-bold text-xs transition flex items-center gap-1.5 shadow-md shadow-[#1E3A8A]/20 cursor-pointer">
+                            class="px-5 py-2.5 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold text-xs transition flex items-center gap-1.5 shadow-xs cursor-pointer">
                             <i data-lucide="save" class="w-3.5 h-3.5"></i>
                             <span>Simpan Perubahan</span>
                         </button>
@@ -2381,59 +2509,64 @@
         </div>
     </div>
 
-    <!-- 1. MODAL KUSTOM KONFIRMASI HAPUS REGU LAPANGAN -->
-    <div id="deleteTeamModal" class="fixed inset-0 z-[99999] hidden items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs transition-opacity duration-200">
-        <div id="deleteTeamCard" class="bg-white rounded-3xl max-w-md w-full shadow-2xl border border-slate-100 overflow-hidden transform scale-95 opacity-0 transition-all duration-200">
-            <div class="p-6 text-center space-y-4">
-                <div class="w-14 h-14 rounded-2xl bg-red-50 border border-red-200 text-red-600 flex items-center justify-center mx-auto shadow-inner">
-                    <i data-lucide="trash-2" class="w-7 h-7"></i>
-                </div>
-                <div>
-                    <h3 class="font-outfit font-extrabold text-lg text-slate-900 leading-tight">
+    <!-- MODAL KUSTOM KONFIRMASI HAPUS REGU LAPANGAN -->
+    <div id="deleteTeamModal" class="fixed inset-0 z-[99999] hidden items-center justify-center p-4 bg-slate-900/65 transition-opacity duration-200">
+        <div id="deleteTeamCard" class="bg-white rounded-[24px] max-w-md w-full shadow-[0_20px_50px_rgba(15,23,42,0.22)] border border-[#E2E8F0] overflow-hidden transform scale-95 opacity-0 transition-all duration-200">
+            <div class="px-6 py-4 border-b border-[#E2E8F0] flex items-center justify-between bg-white">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-red-50 text-red-600 border border-red-200 flex items-center justify-center shrink-0">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </div>
+                    <h3 class="font-outfit font-bold text-base text-[#0F172A]">
                         Hapus Regu Lapangan
                     </h3>
-                    <p class="text-xs text-slate-500 mt-1.5">
-                        Apakah Anda yakin ingin menghapus regu ini dari daftar operasional?
-                    </p>
                 </div>
+                <button type="button" onclick="closeDeleteTeamModal()" class="w-9 h-9 rounded-[10px] bg-[#F8FAFC] hover:bg-slate-100 text-[#475569] hover:text-[#0F172A] border border-[#E2E8F0] flex items-center justify-center transition cursor-pointer shrink-0">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+            <div class="p-6 space-y-4">
+                <p class="text-xs text-[#475569]">
+                    Apakah Anda yakin ingin menghapus regu ini dari daftar operasional?
+                </p>
 
                 <!-- Card Detail Regu yang Akan Dihapus -->
-                <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-left space-y-2">
+                <div class="p-3.5 rounded-2xl bg-[#F8FAFC] border border-[#E2E8F0] space-y-2">
                     <div class="flex items-center justify-between">
-                        <span id="deleteTeamCodeBadge" class="px-2.5 py-0.5 rounded-md bg-[#1E3A8A] text-white font-mono text-[10px] font-extrabold">
+                        <span id="deleteTeamCodeBadge" class="px-2.5 py-0.5 rounded-full bg-[#2563EB] text-white font-mono text-[10px] font-bold">
                             REGU-01
                         </span>
-                        <span id="deleteTeamMemberCountBadge" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-200 text-slate-700">
+                        <span id="deleteTeamMemberCountBadge" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-200 text-[#334155]">
                             0 Personil
                         </span>
                     </div>
-                    <div class="font-outfit font-extrabold text-sm text-slate-900 leading-snug" id="deleteTeamNameText">
+                    <div class="font-outfit font-bold text-sm text-[#0F172A] leading-snug" id="deleteTeamNameText">
                         Nama Regu
                     </div>
-                    <div class="flex items-center gap-1.5 text-[11px] text-slate-500">
-                        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-slate-400 shrink-0"></i>
+                    <div class="flex items-center gap-1.5 text-[11px] text-[#64748B]">
+                        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#64748B] shrink-0"></i>
                         <span id="deleteTeamDistrictText">Wilayah: Kecamatan Terkait</span>
                     </div>
                 </div>
 
                 <!-- Info Perlindungan Personil -->
-                <div class="p-3 rounded-2xl bg-blue-50 border border-blue-200 text-[#1E3A8A] text-[11px] text-left flex items-start gap-2.5">
-                    <i data-lucide="shield-check" class="w-4 h-4 text-[#1E3A8A] shrink-0 mt-0.5"></i>
+                <div class="p-3.5 rounded-2xl bg-[#EFF6FF]/60 border border-[#BFDBFE] text-[#334155] text-[11px] flex items-start gap-2.5">
+                    <i data-lucide="shield-check" class="w-4 h-4 text-[#2563EB] shrink-0 mt-0.5"></i>
                     <span class="leading-relaxed">
-                        <strong>Perlindungan Personil:</strong> Anggota di dalam regu ini tidak akan dihapus dari sistem, melainkan dialihkan menjadi <em>Petugas Lepas</em> yang siap ditugaskan ke regu lainnya.
+                        <strong class="text-[#0F172A]">Perlindungan Personil:</strong> Anggota di dalam regu ini tidak akan dihapus dari sistem, melainkan dialihkan menjadi <em>Petugas Lepas</em> yang siap ditugaskan ke regu lainnya.
                     </span>
                 </div>
 
-                <div class="flex items-center justify-end gap-2.5 pt-2">
+                <div class="flex items-center justify-end gap-2.5 pt-3 border-t border-[#E2E8F0]">
                     <button type="button" onclick="closeDeleteTeamModal()"
-                        class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer">
+                        class="px-5 py-2.5 rounded-xl bg-[#F1F5F9] hover:bg-slate-200 text-[#334155] font-bold text-xs transition cursor-pointer">
                         Batal
                     </button>
                     <form id="deleteTeamForm" method="POST" action="">
                         @csrf
                         @method('DELETE')
                         <button type="submit"
-                            class="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs transition flex items-center gap-1.5 shadow-md shadow-red-200 cursor-pointer">
+                            class="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs transition flex items-center gap-1.5 shadow-xs cursor-pointer">
                             <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                             <span>Ya, Hapus Regu</span>
                         </button>
@@ -2444,49 +2577,56 @@
     </div>
 
     <!-- 2. MODAL KUSTOM KELUARKAN PERSONIL DARI REGU -->
-    <div id="removeMemberModal" class="fixed inset-0 z-[99999] hidden items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs transition-opacity duration-200">
-        <div id="removeMemberCard" class="bg-white rounded-3xl max-w-md w-full shadow-2xl border border-slate-100 overflow-hidden transform scale-95 opacity-0 transition-all duration-200">
-            <div class="p-6 text-center space-y-4">
-                <div class="w-14 h-14 rounded-2xl bg-amber-50 border border-amber-200 text-amber-600 flex items-center justify-center mx-auto shadow-inner">
-                    <i data-lucide="user-minus" class="w-7 h-7"></i>
+    <div id="removeMemberModal" class="fixed inset-0 z-[99999] hidden items-center justify-center p-3 sm:p-5 bg-slate-900/65 overscroll-contain">
+        <div id="removeMemberCard" class="bg-white rounded-[24px] max-w-md w-full shadow-2xl border border-[#E2E8F0] overflow-hidden transform scale-95 opacity-0 transition-all duration-200">
+            <div class="px-6 py-4 border-b border-[#E2E8F0] bg-white flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-10 h-10 rounded-xl bg-red-50 border border-red-200 text-[#DC2626] flex items-center justify-center shrink-0">
+                        <i data-lucide="user-minus" class="w-5 h-5"></i>
+                    </div>
+                    <div class="min-w-0">
+                        <h3 class="font-outfit font-bold text-base text-[#0F172A] leading-tight truncate">
+                            Keluarkan Petugas dari Regu
+                        </h3>
+                        <p class="text-[11px] text-[#64748B] mt-0.5 truncate">
+                            Konfirmasi pelepasan personil dari formasi regu
+                        </p>
+                    </div>
                 </div>
-                <div>
-                    <h3 class="font-outfit font-extrabold text-lg text-slate-900 leading-tight">
-                        Keluarkan Petugas dari Regu
-                    </h3>
-                    <p class="text-xs text-slate-500 mt-1.5">
-                        Apakah Anda yakin ingin mengeluarkan personil ini dari formasi regu?
-                    </p>
-                </div>
+                <button type="button" onclick="closeRemoveMemberModal()" class="w-9 h-9 rounded-[10px] bg-white hover:bg-slate-100 text-slate-500 border border-[#E2E8F0] flex items-center justify-center transition cursor-pointer shrink-0" aria-label="Tutup">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
 
-                <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-left space-y-1.5">
-                    <div class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Nama Petugas:</div>
-                    <div class="font-outfit font-extrabold text-sm text-slate-900" id="removeMemberNameText">
+            <div class="p-6 space-y-4">
+                <div class="p-3.5 rounded-2xl bg-[#F8FAFC] border border-[#E2E8F0] text-left space-y-1.5">
+                    <div class="text-[10px] font-bold text-[#64748B] uppercase tracking-wider">Nama Petugas</div>
+                    <div class="font-outfit font-bold text-sm text-[#0F172A]" id="removeMemberNameText">
                         Nama Petugas
                     </div>
-                    <div class="text-[11px] text-slate-500 pt-1.5 border-t border-slate-200/60 flex items-center gap-1.5">
-                        <i data-lucide="users" class="w-3.5 h-3.5 text-slate-400 shrink-0"></i>
-                        <span>Dikeluarkan dari: <strong class="text-slate-700" id="removeMemberTeamNameText">Nama Regu</strong></span>
+                    <div class="text-xs text-[#475569] pt-1.5 border-t border-[#E2E8F0] flex items-center gap-1.5">
+                        <i data-lucide="users" class="w-3.5 h-3.5 text-[#64748B] shrink-0"></i>
+                        <span>Dikeluarkan dari: <strong class="text-[#0F172A]" id="removeMemberTeamNameText">Nama Regu</strong></span>
                     </div>
                 </div>
 
-                <div class="p-3 rounded-2xl bg-amber-50 border border-amber-200 text-amber-800 text-[11px] text-left flex items-start gap-2.5">
+                <div class="p-3 rounded-xl bg-amber-50/80 border border-amber-200 text-[#334155] text-xs text-left flex items-start gap-2.5">
                     <i data-lucide="info" class="w-4 h-4 text-amber-600 shrink-0 mt-0.5"></i>
                     <span class="leading-relaxed">
-                        Petugas ini akan kembali berstatus <strong>Petugas Lepas</strong> dan dapat dialokasikan ke regu lainnya kapan saja melalui menu tambah personil.
+                        Petugas akan kembali berstatus <strong class="text-[#0F172A]">Petugas Lepas</strong> dan dapat dialokasikan ke regu lain kapan saja.
                     </span>
                 </div>
 
-                <div class="flex items-center justify-end gap-2.5 pt-2">
+                <div class="flex items-center justify-end gap-2.5 pt-3 border-t border-[#E2E8F0]">
                     <button type="button" onclick="closeRemoveMemberModal()"
-                        class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer">
+                        class="px-5 py-2.5 rounded-xl bg-[#F1F5F9] hover:bg-slate-200 text-[#334155] font-bold text-xs transition cursor-pointer">
                         Batal
                     </button>
                     <form id="removeMemberForm" method="POST" action="">
                         @csrf
                         @method('DELETE')
                         <button type="submit"
-                            class="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs transition flex items-center gap-1.5 shadow-md shadow-red-200 cursor-pointer">
+                            class="px-5 py-2.5 rounded-xl bg-[#DC2626] hover:bg-red-700 text-white font-bold text-xs transition flex items-center gap-1.5 cursor-pointer">
                             <i data-lucide="user-minus" class="w-3.5 h-3.5"></i>
                             <span>Ya, Keluarkan</span>
                         </button>
@@ -2497,64 +2637,62 @@
     </div>
 
     <!-- 3. MODAL KUSTOM KONFIRMASI PERGANTIAN MODE TUGAS -->
-    <div id="confirmDispatchModeModal" class="fixed inset-0 z-[99999] hidden items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs transition-opacity duration-200">
-        <div id="confirmDispatchModeCard" class="bg-white rounded-3xl max-w-lg w-full shadow-2xl border border-slate-100 overflow-hidden transform scale-95 opacity-0 transition-all duration-200">
-            <div class="p-6 space-y-5">
-                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-                    <div class="flex items-center gap-2.5">
-                        <div class="w-10 h-10 rounded-xl bg-blue-50 text-[#1E3A8A] border border-blue-200 flex items-center justify-center font-bold">
-                            <i data-lucide="sliders" class="w-5 h-5"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-outfit font-extrabold text-base text-slate-900">
-                                Konfirmasi Pergantian Mode Tugas
-                            </h3>
-                            <p class="text-xs text-slate-400">
-                                Perubahan alur kerja penanganan laporan infrastruktur daerah
-                            </p>
-                        </div>
+    <div id="confirmDispatchModeModal" class="fixed inset-0 z-[99999] hidden items-center justify-center p-3 sm:p-5 bg-slate-900/65 overscroll-contain">
+        <div id="confirmDispatchModeCard" class="bg-white rounded-[24px] max-w-lg w-full shadow-2xl border border-[#E2E8F0] overflow-hidden transform scale-95 opacity-0 transition-all duration-200">
+            <div class="px-6 py-4 border-b border-[#E2E8F0] bg-white flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-10 h-10 rounded-xl bg-[#EFF6FF] text-[#2563EB] border border-blue-100 flex items-center justify-center shrink-0">
+                        <i data-lucide="sliders" class="w-5 h-5"></i>
                     </div>
-                    <button type="button" onclick="closeDispatchModeModal()" class="p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition cursor-pointer">
-                        <i data-lucide="x" class="w-4 h-4"></i>
-                    </button>
+                    <div class="min-w-0">
+                        <h3 class="font-outfit font-bold text-base text-[#0F172A] truncate">
+                            Konfirmasi Pergantian Mode Tugas
+                        </h3>
+                        <p class="text-[11px] text-[#64748B] truncate">
+                            Perubahan alur kerja penanganan laporan infrastruktur daerah
+                        </p>
+                    </div>
                 </div>
+                <button type="button" onclick="closeDispatchModeModal()" class="w-9 h-9 rounded-[10px] bg-white hover:bg-slate-100 text-slate-500 border border-[#E2E8F0] flex items-center justify-center transition cursor-pointer shrink-0" aria-label="Tutup">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
 
+            <div class="p-6 space-y-4">
                 <!-- Preview Mode Terpilih -->
-                <div class="p-4 rounded-2xl border-2 border-[#1E3A8A] bg-blue-50/50 space-y-2.5" id="modeModalCard">
+                <div class="p-4 rounded-2xl border border-[#BFDBFE] bg-[#EFF6FF]/60 space-y-2" id="modeModalCard">
                     <div class="flex items-center justify-between">
-                        <span class="px-2.5 py-0.5 rounded-full bg-[#1E3A8A] text-white text-[10px] font-extrabold" id="modeModalBadge">
+                        <span class="px-2.5 py-0.5 rounded-full bg-[#2563EB] text-white text-[10px] font-bold" id="modeModalBadge">
                             DIREKOMENDASIKAN
                         </span>
-                        <span class="text-[10px] text-slate-500 font-semibold flex items-center gap-1">
-                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span class="text-[11px] text-[#475569] font-semibold flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-[#10B981]"></span>
                             <span>Akan Diaktifkan</span>
                         </span>
                     </div>
-                    <div class="flex items-center gap-2 text-[#1E3A8A]">
-                        <h4 class="font-outfit font-extrabold text-base text-slate-900" id="modeModalTitle">
-                            Mode Hybrid
-                        </h4>
-                    </div>
-                    <p class="text-xs text-slate-600 leading-relaxed" id="modeModalDesc">
+                    <h4 class="font-outfit font-bold text-base text-[#0F172A]" id="modeModalTitle">
+                        Mode Hybrid
+                    </h4>
+                    <p class="text-xs text-[#475569] leading-relaxed" id="modeModalDesc">
                         Deskripsi dampak alur kerja...
                     </p>
                 </div>
 
                 <!-- Peringatan Sistem -->
-                <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-slate-600 text-[11px] flex items-start gap-2.5">
-                    <i data-lucide="info" class="w-4 h-4 text-[#1E3A8A] shrink-0 mt-0.5"></i>
+                <div class="p-3.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] text-[#475569] text-xs flex items-start gap-2.5">
+                    <i data-lucide="info" class="w-4 h-4 text-[#2563EB] shrink-0 mt-0.5"></i>
                     <span class="leading-relaxed">
-                        Perubahan mode tugas ini akan <strong>langsung disinkronkan</strong> ke Pusat Kendali Operator serta aplikasi mobile Petugas Lapangan di Kabupaten Kolaka Utara.
+                        Perubahan mode tugas ini akan <strong class="text-[#0F172A]">langsung disinkronkan</strong> ke Pusat Kendali Operator serta aplikasi mobile Petugas Lapangan.
                     </span>
                 </div>
 
-                <div class="flex items-center justify-end gap-2.5 pt-2 border-t border-slate-100">
+                <div class="flex items-center justify-end gap-2.5 pt-4 border-t border-[#E2E8F0]">
                     <button type="button" onclick="closeDispatchModeModal()"
-                        class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer">
+                        class="px-5 py-2.5 rounded-xl bg-[#F1F5F9] hover:bg-slate-200 text-[#334155] font-bold text-xs transition cursor-pointer">
                         Batal
                     </button>
                     <button type="button" onclick="confirmAndSubmitDispatchMode()"
-                        class="px-5 py-2.5 rounded-xl bg-[#1E3A8A] hover:bg-[#172e6e] text-white font-bold text-xs transition flex items-center gap-2 shadow-md shadow-[#1E3A8A]/20 cursor-pointer">
+                        class="px-5 py-2.5 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold text-xs transition flex items-center gap-1.5 cursor-pointer">
                         <i data-lucide="check" class="w-4 h-4"></i>
                         <span>Ya, Terapkan Mode Ini</span>
                     </button>
@@ -2569,13 +2707,17 @@
 
 <script>
     const adminMeta = {
+        'overview': {
+            title: 'Dashboard Ringkasan Super Admin',
+            subtitle: 'Pantau kesehatan server, laporan masuk terbaru, dan akses cepat pengelolaan sistem.'
+        },
         'users-management': {
-            title: 'Pengelolaan Akun Pimpinan & Petugas',
-            subtitle: 'Perbarui akun Kepala Daerah serta daftarkan akun Operator dan Petugas Lapangan baru.'
+            title: 'Kelola Akun & Daftar Pengguna',
+            subtitle: 'Perbarui akun Kepala Daerah, daftarkan akun baru, dan kelola kata sandi pengguna dalam satu halaman.'
         },
         'users-list': {
-            title: 'Daftar Pengguna & Pengaturan Kata Sandi',
-            subtitle: 'Lihat daftar seluruh akun berdasarkan peran, cari pengguna, dan atur ulang kata sandi.'
+            title: 'Kelola Akun & Daftar Pengguna',
+            subtitle: 'Perbarui akun Kepala Daerah, daftarkan akun baru, dan kelola kata sandi pengguna dalam satu halaman.'
         },
         'complaints-list': {
             title: 'Daftar Seluruh Pengaduan Infrastruktur',
@@ -2605,19 +2747,33 @@
             panel.classList.add('hidden');
         });
 
-        // 2. Tampilkan tab panel tujuan
-        const targetPanel = document.getElementById('tabPanel-' + tabId);
-        if (targetPanel) {
-            targetPanel.classList.remove('hidden');
+        // 2. Tampilkan tab panel tujuan (gabungkan users-management & users-list)
+        const kpiGrid = document.getElementById('adminKpiSummaryGrid');
+        if (kpiGrid) {
+            kpiGrid.classList.toggle('hidden', tabId === 'users-management' || tabId === 'users-list');
+        }
+        if (tabId === 'users-management' || tabId === 'users-list') {
+            const p1 = document.getElementById('tabPanel-users-management');
+            const p2 = document.getElementById('tabPanel-users-list');
+            if (p1) p1.classList.remove('hidden');
+            if (p2) p2.classList.remove('hidden');
+        } else {
+            const targetPanel = document.getElementById('tabPanel-' + tabId);
+            if (targetPanel) {
+                targetPanel.classList.remove('hidden');
+            }
+        }
+        if (typeof window.syncSidebarSubItemActive === 'function') {
+            window.syncSidebarSubItemActive('admin', tabId);
         }
 
         // 3. Update styling tombol tab
         document.querySelectorAll('.admin-tab-btn').forEach(btn => {
-            btn.classList.remove('bg-[#1E3A8A]', 'text-white', 'border-[#1E3A8A]');
+            btn.classList.remove('bg-[#2563EB]', 'text-white', 'border-[#2563EB]');
             btn.classList.add('bg-white', 'text-[#0F172A]', 'border-[#E2E8F0]', 'hover:bg-[#F8FAFC]');
             const badge = btn.querySelector('.tab-badge');
             if (badge) {
-                badge.className = 'tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 bg-blue-50 text-[#1E3A8A] border border-blue-200';
+                badge.className = 'tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 bg-blue-50 text-[#2563EB] border border-blue-200';
             }
             const sub = btn.querySelector('.tab-sub');
             if (sub) {
@@ -2629,10 +2785,10 @@
         const activeBtn = document.getElementById('tabBtn-' + tabId);
         if (activeBtn) {
             activeBtn.classList.remove('bg-white', 'text-[#0F172A]', 'border-[#E2E8F0]', 'hover:bg-[#F8FAFC]');
-            activeBtn.classList.add('bg-[#1E3A8A]', 'text-white', 'border-[#1E3A8A]');
+            activeBtn.classList.add('bg-[#2563EB]', 'text-white', 'border-[#2563EB]');
             const badge = activeBtn.querySelector('.tab-badge');
             if (badge) {
-                badge.className = 'tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 bg-white text-[#1E3A8A]';
+                badge.className = 'tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 bg-white text-[#2563EB]';
             }
             const sub = activeBtn.querySelector('.tab-sub');
             if (sub) {
@@ -2701,7 +2857,7 @@
 
         const btnBase = 'px-2.5 py-1.5 rounded-lg border text-xs font-semibold transition cursor-pointer';
         const btnIdle = `${btnBase} bg-white border-[#E2E8F0] text-[#0F172A] hover:bg-slate-100`;
-        const btnActive = `${btnBase} bg-[#1E3A8A] border-[#1E3A8A] text-white`;
+        const btnActive = `${btnBase} bg-[#2563EB] border-[#2563EB] text-white`;
         const btnDisabled = 'px-2.5 py-1.5 rounded-lg border border-[#E2E8F0] bg-slate-100 text-slate-400 text-xs font-semibold cursor-not-allowed';
 
         let html = '';
@@ -2782,8 +2938,8 @@
         const listBtn = document.getElementById('usersLayoutBtn-list');
         const gridBtn = document.getElementById('usersLayoutBtn-grid');
         if (listBtn && gridBtn) {
-            listBtn.className = `px-2.5 py-1.5 rounded-md text-xs font-semibold flex items-center gap-1 transition cursor-pointer ${mode === 'list' ? 'bg-[#1E3A8A] text-white' : 'text-[#475569] hover:text-[#0F172A]'}`;
-            gridBtn.className = `px-2.5 py-1.5 rounded-md text-xs font-semibold flex items-center gap-1 transition cursor-pointer ${mode === 'grid' ? 'bg-[#1E3A8A] text-white' : 'text-[#475569] hover:text-[#0F172A]'}`;
+            listBtn.className = `px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition cursor-pointer ${mode === 'list' ? 'bg-[#2563EB] text-white' : 'text-[#475569] hover:text-[#0F172A]'}`;
+            gridBtn.className = `px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition cursor-pointer ${mode === 'grid' ? 'bg-[#2563EB] text-white' : 'text-[#475569] hover:text-[#0F172A]'}`;
         }
     }
 
@@ -2797,8 +2953,8 @@
         const listBtn = document.getElementById('complaintsLayoutBtn-list');
         const gridBtn = document.getElementById('complaintsLayoutBtn-grid');
         if (listBtn && gridBtn) {
-            listBtn.className = `px-2.5 py-1 rounded-md text-xs font-semibold flex items-center gap-1 transition cursor-pointer ${mode === 'list' ? 'bg-[#1E3A8A] text-white' : 'text-[#475569] hover:text-[#0F172A]'}`;
-            gridBtn.className = `px-2.5 py-1 rounded-md text-xs font-semibold flex items-center gap-1 transition cursor-pointer ${mode === 'grid' ? 'bg-[#1E3A8A] text-white' : 'text-[#475569] hover:text-[#0F172A]'}`;
+            listBtn.className = `px-2.5 py-1 rounded-md text-xs font-semibold flex items-center gap-1 transition cursor-pointer ${mode === 'list' ? 'bg-[#2563EB] text-white' : 'text-[#475569] hover:text-[#0F172A]'}`;
+            gridBtn.className = `px-2.5 py-1 rounded-md text-xs font-semibold flex items-center gap-1 transition cursor-pointer ${mode === 'grid' ? 'bg-[#2563EB] text-white' : 'text-[#475569] hover:text-[#0F172A]'}`;
         }
     }
 
@@ -2810,8 +2966,8 @@
         const listBtn = document.getElementById('teamsLayoutBtn-list');
         const gridBtn = document.getElementById('teamsLayoutBtn-grid');
         if (listBtn && gridBtn) {
-            listBtn.className = `px-2.5 py-1.5 rounded-md text-xs font-semibold flex items-center gap-1 transition cursor-pointer ${mode === 'list' ? 'bg-[#1E3A8A] text-white' : 'text-[#475569] hover:text-[#0F172A]'}`;
-            gridBtn.className = `px-2.5 py-1.5 rounded-md text-xs font-semibold flex items-center gap-1 transition cursor-pointer ${mode === 'grid' ? 'bg-[#1E3A8A] text-white' : 'text-[#475569] hover:text-[#0F172A]'}`;
+            listBtn.className = `px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition cursor-pointer ${mode === 'list' ? 'bg-[#2563EB] text-white' : 'text-[#475569] hover:text-[#0F172A]'}`;
+            gridBtn.className = `px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition cursor-pointer ${mode === 'grid' ? 'bg-[#2563EB] text-white' : 'text-[#475569] hover:text-[#0F172A]'}`;
         }
     }
 
@@ -2938,12 +3094,12 @@
         if (mode === 'grid') {
             listWrap.classList.add('hidden');
             gridWrap.classList.remove('hidden');
-            if (btnGrid) btnGrid.className = 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition bg-[#1E3A8A] text-white shadow-sm';
+            if (btnGrid) btnGrid.className = 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition bg-[#2563EB] text-white shadow-sm';
             if (btnList) btnList.className = 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:bg-slate-50';
         } else {
             listWrap.classList.remove('hidden');
             gridWrap.classList.add('hidden');
-            if (btnList) btnList.className = 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition bg-[#1E3A8A] text-white shadow-sm';
+            if (btnList) btnList.className = 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition bg-[#2563EB] text-white shadow-sm';
             if (btnGrid) btnGrid.className = 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:bg-slate-50';
         }
     }
@@ -3118,7 +3274,7 @@
                 L.geoJSON(geoJsonData, {
                     interactive: false, // PENTING: nonaktifkan intercept agar klik atau double-click user tembus langsung ke peta dan tidak terhalang popup batas
                     style: {
-                        color: "#1E3A8A",
+                        color: "#2563EB",
                         weight: 2.5,
                         dashArray: '6, 6',
                         fillColor: "#3B82F6",
@@ -3136,7 +3292,7 @@
                     html: `
                         <div style="
                             width: 28px; height: 28px; 
-                            background: #1E3A8A; 
+                            background: #2563EB; 
                             border: 2px solid #FFFFFF; 
                             border-radius: 999px; 
                             box-shadow: 0 4px 10px rgba(30,58,138,0.4); 
@@ -3157,7 +3313,7 @@
                 const marker = L.marker([ds.latitude, ds.longitude], { icon: distIcon }).addTo(adminRegionMap);
                 marker.bindPopup(`
                     <div style="font-family: 'Outfit', 'Inter', sans-serif; min-width: 170px; padding: 12px 14px;">
-                        <div style="font-size:10px; font-weight:800; color:#1E3A8A; text-transform:uppercase; margin-bottom:2px;">
+                        <div style="font-size:10px; font-weight:800; color:#2563EB; text-transform:uppercase; margin-bottom:2px;">
                             Pusat Administratif
                         </div>
                         <strong style="font-size:13px; color:#0F172A; display:block; line-height:1.3; margin-bottom:2px;">
@@ -3168,7 +3324,7 @@
                             Lat: ${Number(ds.latitude).toFixed(4)}, Lon: ${Number(ds.longitude).toFixed(4)}
                         </div>
                         <button type="button" onclick="startPickingCoordinate(${ds.id}, '${ds.district}', ${ds.latitude}, ${ds.longitude})" style="
-                            margin-top: 6px; width: 100%; padding: 4px 8px; border-radius: 8px; background: #1E3A8A; color: white;
+                            margin-top: 6px; width: 100%; padding: 4px 8px; border-radius: 8px; background: #2563EB; color: white;
                             font-size: 10px; font-weight: bold; border: none; cursor: pointer; text-align: center;
                         ">
                             Atur Titik di Peta
@@ -3234,10 +3390,10 @@
                             </svg>
                         `;
                     } else if (cp.status === 'DISPATCHED') {
-                        color = '#1E40AF';
+                        color = '#2563EB';
                         statusText = 'DITUGASKAN';
                         statusBg = '#EEF2FF';
-                        statusColor = '#1E3A8A';
+                        statusColor = '#2563EB';
                         statusBorder = '#C7D2FE';
                         iconSvg = `
                             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -3320,7 +3476,7 @@
                             ${photoHtml}
                             <div style="padding:12px 14px 14px 14px;background:#FFFFFF;">
                                 <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;">
-                                    <span style="font-size:11px;font-weight:800;color:#1E3A8A;background:#EFF6FF;border:1px solid #DBEAFE;padding:2px 8px;border-radius:6px;font-family:monospace;">
+                                    <span style="font-size:11px;font-weight:800;color:#2563EB;background:#EFF6FF;border:1px solid #DBEAFE;padding:2px 8px;border-radius:6px;font-family:monospace;">
                                         #${cp.public_code}
                                     </span>
                                     <span style="font-size:10px;font-weight:700;background:${statusBg};color:${statusColor};border:1px solid ${statusBorder};padding:2px 8px;border-radius:999px;white-space:nowrap;">
@@ -3345,8 +3501,8 @@
                                     <span style="color:#94A3B8;">${cp.created_at_human}</span>
                                 </div>
                                 <button type="button" onclick="openAdminDetailModal(${cp.id})" 
-                                    style="width:100%;background:#1E3A8A;color:#FFFFFF;border:none;padding:8px 12px;border-radius:10px;font-size:11.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 2px 5px rgba(30,58,138,0.25);transition:background 0.15s;"
-                                    onmouseover="this.style.background='#172554'" onmouseout="this.style.background='#1E3A8A'">
+                                    style="width:100%;background:#2563EB;color:#FFFFFF;border:none;padding:8px 12px;border-radius:10px;font-size:11.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 2px 5px rgba(30,58,138,0.25);transition:background 0.15s;"
+                                    onmouseover="this.style.background='#1D4ED8'" onmouseout="this.style.background='#2563EB'">
                                     <span>Buka Detail Lengkap</span>
                                     <span>&rarr;</span>
                                 </button>
@@ -3448,7 +3604,7 @@
                     .setContent(`
                         <div style="font-family: 'Outfit', 'Inter', sans-serif;">
                             <div style="display:flex; align-items:center; gap:6px; margin-bottom:3px;">
-                                <span style="width:8px; height:8px; border-radius:999px; background:#1E3A8A; display:inline-block;"></span>
+                                <span style="width:8px; height:8px; border-radius:999px; background:#2563EB; display:inline-block;"></span>
                                 <span style="font-size:12px; font-weight:800; color:#0F172A;">${districtName}</span>
                             </div>
                             <span style="font-size:11px; color:#64748B; display:block;">Pusat Wilayah Administratif Kolaka Utara</span>
@@ -3921,7 +4077,7 @@
             statusClass = 'bg-amber-50 text-amber-800 border-amber-300';
         } else if (item.status === 'DISPATCHED') {
             statusLabel = 'DITUGASKAN';
-            statusClass = 'bg-blue-50 text-[#1E3A8A] border-blue-200';
+            statusClass = 'bg-blue-50 text-[#2563EB] border-blue-200';
         } else if (item.status === 'SUBMITTED' || item.status === 'VERIFICATION') {
             statusLabel = 'VERIFIKASI';
             statusClass = 'bg-red-50 text-red-700 border-red-200';
@@ -4078,14 +4234,14 @@
                 citizenPhotos.forEach((url, idx) => {
                     const thumb = document.createElement('img');
                     thumb.src = url;
-                    thumb.className = `w-14 h-14 rounded-xl object-cover cursor-pointer border-2 transition ${idx === 0 ? 'border-[#1E3A8A] ring-2 ring-blue-200' : 'border-slate-200 opacity-70 hover:opacity-100'}`;
+                    thumb.className = `w-14 h-14 rounded-xl object-cover cursor-pointer border-2 transition ${idx === 0 ? 'border-[#2563EB] ring-2 ring-blue-200' : 'border-slate-200 opacity-70 hover:opacity-100'}`;
                     thumb.onclick = () => {
                         photoImg.src = url;
                         if (photoLabel) photoLabel.innerText = `Foto Bukti Kerusakan ${idx + 1} dari ${citizenPhotos.length}`;
                         gallery.querySelectorAll('img').forEach(img => {
                             img.className = 'w-14 h-14 rounded-xl object-cover cursor-pointer border-2 border-slate-200 opacity-70 hover:opacity-100 transition';
                         });
-                        thumb.className = 'w-14 h-14 rounded-xl object-cover cursor-pointer border-2 border-[#1E3A8A] ring-2 ring-blue-200 transition';
+                        thumb.className = 'w-14 h-14 rounded-xl object-cover cursor-pointer border-2 border-[#2563EB] ring-2 ring-blue-200 transition';
                     };
                     gallery.appendChild(thumb);
                 });
@@ -4108,9 +4264,10 @@
             }
         }
 
-        // 2. Foto Bukti Penanganan Petugas Lapangan & Galeri Foto
+        // 2. Foto Bukti Penanganan Petugas Lapangan & Galeri Foto (Selalu tampil berdampingan)
         const compContainer = document.getElementById('admModalCompletionPhotoContainer');
         const compImg = document.getElementById('admModalCompletionPhoto');
+        const compPlaceholder = document.getElementById('admModalCompletionPlaceholder');
         const compGallery = document.getElementById('admModalOfficerGallery');
         const compLabel = document.getElementById('admModalCompletionPhotoLabel');
 
@@ -4118,12 +4275,16 @@
             ? item.officer_photos
             : (item.completion_photo_url ? [item.completion_photo_url] : (item.photo_after_url ? [item.photo_after_url] : []));
 
+        if (compContainer) compContainer.classList.remove('hidden');
         if (officerPhotos.length > 0) {
             compImg.src = officerPhotos[0];
-            compContainer.classList.remove('hidden');
-            if (compLabel) compLabel.innerText = 'Foto Bukti Penyelesaian Fisik';
+            compImg.classList.remove('hidden');
+            if (compPlaceholder) compPlaceholder.classList.add('hidden');
+            if (compLabel) compLabel.innerText = 'Foto Hasil Pengerjaan';
         } else {
-            compContainer.classList.add('hidden');
+            compImg.classList.add('hidden');
+            if (compPlaceholder) compPlaceholder.classList.remove('hidden');
+            if (compLabel) compLabel.innerText = 'Foto Hasil Pengerjaan';
         }
 
         if (compGallery) {
@@ -4177,18 +4338,39 @@
     });
 
     // Modal Tim / Regu Lapangan
+    function formatAutoTeamName(rawInput, numStr, coverageArea) {
+        const clean = (rawInput || '').trim();
+        if (!clean) return '';
+        const loc = (coverageArea || 'Semua Wilayah').replace(/^Kecamatan\s+/i, '').trim();
+        if (/^Regu\s+.+\s+\d{2}\s*-\s*.+$/i.test(clean)) {
+            return clean.replace(/\s*-\s*.+$/, ' - ' + loc);
+        }
+        const stripped = clean.replace(/^Regu\s+/i, '').replace(/\s+\d{2}$/, '').trim();
+        const titled = stripped.replace(/\b\w/g, c => c.toUpperCase());
+        return `Regu ${titled} ${numStr} - ${loc}`;
+    }
+
+    function updateCreateTeamPreview(numStr) {
+        const inp = document.getElementById('createTeamNameInput');
+        const cov = document.getElementById('createTeamCoverageSelect');
+        const preview = document.getElementById('createTeamNamePreview');
+        if (!preview || !cov) return;
+        const val = inp && inp.value.trim() ? inp.value.trim() : 'Combat';
+        preview.textContent = formatAutoTeamName(val, numStr, cov.value);
+    }
+
     function openCreateTeamModal() {
         const modal = document.getElementById('createTeamModal');
         const card = document.getElementById('createTeamCard');
         if (modal && card) {
             modal.classList.remove('hidden');
             modal.classList.add('flex');
-            setTimeout(() => {
+            requestAnimationFrame(() => {
                 card.classList.remove('scale-95', 'opacity-0');
                 card.classList.add('scale-100', 'opacity-100');
-            }, 10);
+            });
+            if (window.lucide) lucide.createIcons({ root: modal });
         }
-        if (window.lucide) lucide.createIcons();
     }
 
     function closeCreateTeamModal() {
@@ -4204,12 +4386,33 @@
         }
     }
 
+    function getEditTeamNumStr() {
+        const codeVal = document.getElementById('editTeamCode')?.value || '';
+        const m = codeVal.match(/(\d+)$/);
+        return m ? m[1].padStart(2, '0') : '01';
+    }
+
+    function updateEditTeamPreview() {
+        const inp = document.getElementById('editTeamName');
+        const cov = document.getElementById('editTeamCoverageArea');
+        const preview = document.getElementById('editTeamNamePreview');
+        if (!preview || !cov) return;
+        const val = inp && inp.value.trim() ? inp.value.trim() : 'Aspal';
+        preview.textContent = formatAutoTeamName(val, getEditTeamNumStr(), cov.value);
+    }
+
     function openEditTeamModal(team) {
         const modal = document.getElementById('editTeamModal');
         const card = document.getElementById('editTeamCard');
         const form = document.getElementById('editTeamForm');
 
-        document.getElementById('editTeamName').value = team.name || '';
+        // Ekstrak nama dasar jika sudah berformat "Regu <Nama> <NN> - <Wilayah>"
+        let baseName = team.name || '';
+        const matchBase = baseName.match(/^Regu\s+(.+?)\s+\d{2}\s*-\s*.+$/i);
+        if (matchBase) {
+            baseName = matchBase[1].trim();
+        }
+        document.getElementById('editTeamName').value = baseName;
         document.getElementById('editTeamCode').value = team.code || '';
 
         // Select matching district in dropdown or fallback
@@ -4235,6 +4438,7 @@
                 }
             }
         }
+        updateEditTeamPreview();
 
         // Leader select: retain current team leader if already assigned
         const leaderSelect = document.getElementById('editTeamLeaderId');

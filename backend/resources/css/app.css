@@ -2,8 +2,41 @@
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
+@source '../views/**/*.blade.php';
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-outfit: 'Outfit', ui-sans-serif, system-ui, sans-serif;
+    --color-primary: #2563EB;
+    --color-primaryLight: #3B82F6;
+    --color-primaryDark: #1D4ED8;
+    --color-secondary: #0D9488;
+    --color-accent: #F59E0B;
+    --color-textPrimary: #0F172A;
+    --color-textSecondary: #64748B;
+    --color-borderSlate: #E2E8F0;
+    --color-bgSlate: #F8FAFC;
+}
+
+@layer base {
+    button:not(:disabled),
+    [role="button"]:not([aria-disabled="true"]),
+    a[href],
+    select:not(:disabled) {
+        cursor: pointer;
+    }
+}
+
+/* Modal Zero-Lag Performance: hilangkan backdrop-filter blur berat & transisi scale pada seluruh modal */
+[id$="Modal"].fixed.inset-0,
+[id$="modal"].fixed.inset-0 {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+[id$="Modal"] [id$="Card"],
+[id$="Modal"] [id$="Content"] {
+    transition-property: opacity !important;
+    transition-duration: 120ms !important;
+    transform: none !important;
 }

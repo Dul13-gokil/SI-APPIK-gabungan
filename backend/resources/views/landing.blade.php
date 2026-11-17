@@ -1,165 +1,237 @@
 @extends('layouts.app')
 
 @section('content')
-<!-- Hero Section (tanpa z-index agar anak-anaknya ikut stacking global: bg z-0 < teks z-10 < stat cards z-20 < search z-30) -->
-<section id="top" class="relative w-full bg-[#172554] text-white py-12 sm:py-16 pb-16 sm:pb-20 border-b border-[#172554]">
-    <!-- 5-Photo Kolaka Utara Background Slideshow -->
-    <div id="heroBgSlides" class="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none" aria-hidden="true">
-        <img src="{{ asset('images/hero/hero-1.jpg') }}" alt="" class="hero-slide absolute inset-0 w-full h-full object-cover opacity-100 transition-opacity duration-1000">
-        <img src="{{ asset('images/hero/hero-2.jpg') }}" alt="" class="hero-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000">
-        <img src="{{ asset('images/hero/hero-3.jpg') }}" alt="" class="hero-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000">
-        <img src="{{ asset('images/hero/hero-4.jpg') }}" alt="" class="hero-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000">
-        <img src="{{ asset('images/hero/hero-5.jpg') }}" alt="" class="hero-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000">
-        <!-- Solid Dark Navy Scrim for WCAG AA Contrast -->
-        <div class="absolute inset-0 bg-[#172554]/80"></div>
+<!-- Hero Section Asimetris 2 Kolom (Dark Scenic Backdrop Kolaka Utara + Perbaikan Jalan, High-Contrast + Bento KPI Grid) -->
+<section id="top" class="relative z-30 w-full bg-[#0F172A] {{ auth()->check() ? 'pt-8 sm:pt-10 pb-10 sm:pb-12' : '-mt-[76px] pt-[108px] sm:pt-[120px] pb-12 sm:pb-16' }}">
+    <!-- Slideshow Latar Belakang Hero (Terklip di dalam overflow-hidden agar parallax tidak menimpa section di bawah) -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none z-0">
+        <div id="landingHeroSlideshow" class="absolute inset-0 will-change-transform">
+            <img src="{{ asset('images/hero/hero-1.webp') }}" alt="Pemandangan Kolaka Utara" fetchpriority="high" decoding="async" class="landing-hero-slide active-slide absolute inset-0 w-full h-full object-cover opacity-100 transition-opacity duration-1000">
+            <img data-src="{{ asset('images/hero/hero-2.webp') }}" alt="Perbaikan Jalan Regu PUPR" decoding="async" class="landing-hero-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000">
+            <img data-src="{{ asset('images/hero/hero-3.webp') }}" alt="Infrastruktur Kolaka Utara" decoding="async" class="landing-hero-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000">
+            <img data-src="{{ asset('images/hero/hero-4.webp') }}" alt="Kawasan Kolaka Utara" decoding="async" class="landing-hero-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000">
+            <img data-src="{{ asset('images/hero/hero-5.webp') }}" alt="Pelayanan Infrastruktur Daerah" decoding="async" class="landing-hero-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000">
+            <!-- Overlay Gelap Kontras Tinggi -->
+            <div class="absolute inset-0 bg-gradient-to-b from-slate-950/85 via-slate-950/70 to-slate-950/90"></div>
+        </div>
     </div>
 
-    <div class="max-w-4xl mx-auto px-6 sm:px-10 lg:px-12 text-center flex flex-col items-center justify-center">
-        <!-- Headline -->
-        <h1 class="relative z-10 font-outfit font-bold text-2xl sm:text-3xl lg:text-4xl text-white tracking-tight leading-tight max-w-3xl mx-auto">
-            Pemantauan Kondisi Jalan, Jembatan, dan Prasarana Umum Kabupaten Kolaka Utara
-        </h1>
+    <style>
+        @keyframes landingKenBurnsInOut {
+            0%   { transform: scale(1.12); }
+            50%  { transform: scale(1.00); }
+            100% { transform: scale(1.12); }
+        }
+        #landingHeroSlideshow .landing-hero-slide.active-slide {
+            animation: landingKenBurnsInOut 11s ease-in-out infinite;
+        }
+    </style>
 
-        <!-- Subtitle -->
-        <p class="relative z-10 text-xs sm:text-sm lg:text-base text-blue-100 leading-relaxed mt-4 max-w-2xl mx-auto font-normal">
-            Seluruh laporan masyarakat tercatat dan ditampilkan secara terbuka pada peta sebaran. Pilih salah satu titik untuk melihat dokumentasi lokasi, status penanganan, dan perkembangan perbaikannya.
-        </p>
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
 
-        <!-- Kotak Pencarian / Lacak Laporan (z-30 agar dropdown hasil selalu di depan kartu statistik z-20) -->
-        <div id="searchContainer" class="mt-8 w-full max-w-2xl lg:max-w-3xl mx-auto relative z-30 text-left">
-            <form id="trackForm" class="flex flex-col sm:flex-row gap-2 bg-white p-1.5 rounded-xl border border-[#CBD5E1] relative z-20">
-                <div class="relative flex-1">
-                    <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-3.5 text-[#475569]"></i>
-                    <input type="text" id="trackCodeInput" autocomplete="off" 
-                        placeholder="Cari aduan: ketik lokasi, jenis kerusakan (misal: aspal), atau nomor tiket" 
-                        class="w-full bg-white border-0 rounded-lg pl-10 pr-4 min-h-[44px] text-xs sm:text-sm text-[#0F172A] placeholder-[#64748B] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A8A]">
+            <!-- Kolom Kiri: Copy Utama -->
+            <div class="lg:col-span-6 space-y-5 text-left">
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[#93C5FD] text-xs font-bold tracking-wide shadow-xs">
+                    <span class="w-2 h-2 rounded-full bg-[#10B981] shrink-0"></span>
+                    <span>Layanan Resmi Pemkab Kolaka Utara</span>
                 </div>
-                <button type="submit" class="bg-[#1E3A8A] hover:bg-[#172554] text-white font-semibold px-6 min-h-[44px] rounded-lg text-xs sm:text-sm transition flex items-center justify-center gap-2 shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1E3A8A] cursor-pointer">
+
+                <h1 class="font-outfit font-bold text-3xl sm:text-4xl lg:text-[2.65rem] text-white tracking-tight leading-[1.16] drop-shadow-sm">
+                    Pemantauan Jalan, Jembatan, dan Prasarana Kolaka Utara
+                </h1>
+
+                <p class="text-sm sm:text-base text-slate-200 leading-relaxed max-w-xl drop-shadow-xs">
+                    Laporkan kerusakan infrastruktur atau pantau progres perbaikan regu PUPR secara transparan dan real-time.
+                </p>
+            </div>
+
+            <!-- Kolom Kanan: Bento Grid 1+2 KPI + Kolase Foto Infrastruktur (1:1 FigCraft) -->
+            <div class="lg:col-span-6 space-y-3.5" data-reveal-group>
+                <div class="grid grid-cols-2 gap-3.5">
+                    <!-- 1. Semua Laporan (Full Width Top Bento Card) -->
+                    <button type="button" onclick="filterMapByStatus('ALL')" data-reveal style="transition-delay: 0ms;"
+                        class="col-span-2 relative overflow-hidden bg-white rounded-[24px] border border-[#E2E8F0] shadow-[0_8px_20px_rgba(15,23,42,0.05)] hover:shadow-md hover:-translate-y-0.5 p-5 sm:p-6 text-left cursor-pointer transition-all duration-200 group kpi-filter-box focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2563EB]"
+                        data-status="ALL" title="Ketuk untuk melihat seluruh titik sebaran aduan">
+                        <div class="flex items-center justify-between gap-3">
+                            <div>
+                                <span class="text-xs font-bold uppercase tracking-wider text-[#475569] group-hover:text-[#2563EB] transition">Semua Laporan Masyarakat</span>
+                                <div class="font-outfit font-bold text-3xl sm:text-4xl text-[#0F172A] mt-1 leading-none">
+                                    {{ $stats['total'] ?? 0 }}
+                                </div>
+                            </div>
+                            <div class="w-12 h-12 rounded-[14px] bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE] flex items-center justify-center shrink-0">
+                                <i data-lucide="layers" class="w-5 h-5"></i>
+                            </div>
+                        </div>
+                    </button>
+
+                    <!-- 2. Diproses -->
+                    <button type="button" onclick="filterMapByStatus('PROCESSING')" data-reveal style="transition-delay: 80ms;"
+                        class="relative overflow-hidden bg-white rounded-[24px] border border-[#FDE68A] shadow-[0_8px_20px_rgba(15,23,42,0.05)] hover:shadow-md hover:-translate-y-0.5 p-5 text-left cursor-pointer transition-all duration-200 group kpi-filter-box focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F59E0B]"
+                        data-status="PROCESSING" title="Ketuk untuk memfilter aduan yang sedang diproses">
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-xs font-bold uppercase tracking-wider text-[#B45309]">Diproses</span>
+                            <div class="w-8 h-8 rounded-lg bg-amber-50 text-[#F59E0B] border border-[#FDE68A] flex items-center justify-center shrink-0">
+                                <i data-lucide="clock" class="w-4 h-4"></i>
+                            </div>
+                        </div>
+                        <div class="font-outfit font-bold text-3xl text-[#0F172A] mt-2 leading-none">
+                            {{ ($stats['submitted'] ?? 0) + ($stats['dispatched'] ?? 0) + ($stats['in_progress'] ?? 0) + ($stats['waiting_validation'] ?? 0) }}
+                        </div>
+                    </button>
+
+                    <!-- 3. Selesai -->
+                    <button type="button" onclick="filterMapByStatus('COMPLETED')" data-reveal style="transition-delay: 160ms;"
+                        class="relative overflow-hidden bg-white rounded-[24px] border border-[#A7F3D0] shadow-[0_8px_20px_rgba(15,23,42,0.05)] hover:shadow-md hover:-translate-y-0.5 p-5 text-left cursor-pointer transition-all duration-200 group kpi-filter-box focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#10B981]"
+                        data-status="COMPLETED" title="Ketuk untuk memfilter aduan yang telah selesai diperbaiki">
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-xs font-bold uppercase tracking-wider text-[#047857]">Selesai</span>
+                            <div class="w-8 h-8 rounded-lg bg-emerald-50 text-[#10B981] border border-[#A7F3D0] flex items-center justify-center shrink-0">
+                                <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                            </div>
+                        </div>
+                        <div class="font-outfit font-bold text-3xl text-[#10B981] mt-2 leading-none">
+                            {{ $stats['completed'] ?? 0 }}
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Kotak Pencarian Memanjang Penuh Kiri ke Kanan (rounded-[18px] + #2563EB CTA) -->
+        <div id="searchContainer" class="mt-7 lg:mt-8 w-full relative z-30 text-left">
+            <form id="trackForm" class="flex flex-col sm:flex-row gap-2 bg-white p-2 rounded-[18px] border border-white/25 shadow-[0_12px_32px_rgba(2,6,23,0.35)] relative z-20">
+                <div class="relative flex-1">
+                    <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#64748B] pointer-events-none"></i>
+                    <input type="text" id="trackCodeInput" autocomplete="off"
+                        placeholder="Cari lokasi, jenis kerusakan, atau nomor tiket..."
+                        class="w-full bg-white border-0 rounded-xl pl-10 pr-4 min-h-[50px] text-sm text-[#0F172A] placeholder-[#64748B] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB]/25">
+                </div>
+                <button type="submit" class="bg-[#2563EB] hover:bg-[#1D4ED8] active:scale-[0.99] text-white font-bold px-7 min-h-[50px] rounded-[12px] text-sm transition-all flex items-center justify-center gap-2 shrink-0 shadow-xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2563EB] cursor-pointer">
                     <i data-lucide="search" class="w-4 h-4 text-white"></i>
                     <span>Cari Aduan</span>
                 </button>
             </form>
 
             <!-- Floating Live Autocomplete Suggestions -->
-            <div id="searchSuggestions" class="absolute left-0 right-0 top-full mt-2 bg-white rounded-xl border border-[#E2E8F0] shadow-md overflow-hidden z-50 hidden text-left text-[#0F172A]">
-                <div class="px-4 py-2 bg-[#F8FAFC] border-b border-[#E2E8F0] flex items-center justify-between text-[11px] font-bold text-[#475569] uppercase tracking-wider">
+            <div id="searchSuggestions" class="absolute left-0 right-0 top-full mt-2.5 bg-white rounded-[20px] border border-[#E2E8F0] shadow-[0_20px_48px_rgba(15,23,42,0.14)] overflow-hidden z-50 hidden text-left text-[#0F172A]">
+                <div class="px-5 py-3 bg-[#F8FAFC] border-b border-[#E2E8F0] flex items-center justify-between text-[11px] font-bold text-[#475569] uppercase tracking-wider">
                     <span>Daftar Hasil Pencarian</span>
-                    <span id="searchResultCount" class="text-[#1E3A8A] font-bold lowercase"></span>
+                    <span id="searchResultCount" class="text-[#2563EB] font-bold lowercase"></span>
                 </div>
-                <div id="searchSuggestionsList" class="divide-y divide-slate-100 max-h-[360px] overflow-y-auto">
+                <div id="searchSuggestionsList" class="divide-y divide-[#E2E8F0]/70 max-h-[360px] overflow-y-auto">
                     <!-- Item hasil pencarian disuntikkan via JavaScript -->
                 </div>
-                <div class="px-4 py-2 bg-[#F8FAFC] border-t border-[#E2E8F0] flex items-center justify-between text-[11px] text-[#475569]">
-                    <span>Gunakan tombol <kbd class="px-1.5 py-0.5 bg-white border border-slate-300 rounded font-mono text-[10px]">↑</kbd> <kbd class="px-1.5 py-0.5 bg-white border border-slate-300 rounded font-mono text-[10px]">↓</kbd> dan <kbd class="px-1.5 py-0.5 bg-white border border-slate-300 rounded font-mono text-[10px]">Enter</kbd> untuk memilih</span>
-                    <span><kbd class="px-1.5 py-0.5 bg-white border border-slate-300 rounded font-mono text-[10px]">ESC</kbd> untuk menutup</span>
+                <div class="px-5 py-2.5 bg-[#F8FAFC] border-t border-[#E2E8F0] flex items-center justify-between text-[11px] text-[#475569]">
+                    <span>Gunakan tombol <kbd class="px-1.5 py-0.5 bg-white border border-[#E2E8F0] rounded font-mono text-[10px]">↑</kbd> <kbd class="px-1.5 py-0.5 bg-white border border-[#E2E8F0] rounded font-mono text-[10px]">↓</kbd> dan <kbd class="px-1.5 py-0.5 bg-white border border-[#E2E8F0] rounded font-mono text-[10px]">Enter</kbd></span>
+                    <span><kbd class="px-1.5 py-0.5 bg-white border border-[#E2E8F0] rounded font-mono text-[10px]">ESC</kbd> tutup</span>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Statistik Ringkasan (Sedikit tumpang-tindih Hero dengan z-20, Datar & Bersih) -->
-<div class="relative z-20 max-w-7xl mx-auto px-4 sm:px-10 lg:px-12 -mt-8 sm:-mt-10 space-y-10">
-    <div class="grid grid-cols-3 gap-2 sm:gap-4" data-reveal-group>
-        <!-- 1. Semua Laporan -->
-        <button type="button" onclick="filterMapByStatus('ALL')" data-reveal style="transition-delay: 0ms;" class="relative overflow-hidden bg-white rounded-xl border border-[#E2E8F0] p-2.5 sm:p-5 text-left cursor-pointer hover:bg-[#F8FAFC] transition group kpi-filter-box focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1E3A8A]" data-status="ALL" title="Ketuk untuk melihat seluruh titik sebaran aduan">
-            <div class="absolute top-0 inset-x-0 h-1 bg-[#1E3A8A]"></div>
-            <div class="flex items-center justify-between gap-1 pt-0.5">
-                <span class="text-[9px] sm:text-xs font-bold uppercase tracking-wide sm:tracking-wider text-[#475569] group-hover:text-[#1E3A8A] transition leading-tight">Semua Laporan</span>
-                <div class="w-6 h-6 sm:w-8 sm:h-8 rounded-md sm:rounded-lg bg-blue-50 text-[#1E3A8A] border border-blue-200 flex items-center justify-center shrink-0">
-                    <i data-lucide="layers" class="w-3 h-3 sm:w-4 sm:h-4"></i>
-                </div>
-            </div>
-            <div class="font-outfit font-bold text-xl sm:text-3xl text-[#0F172A] mt-1.5 sm:mt-2 leading-none">
-                {{ $stats['total'] ?? 0 }}
-            </div>
-            <span class="hidden sm:block text-xs text-[#475569] mt-2">Akumulasi pengaduan masyarakat</span>
-        </button>
+<!-- Konten Utama (Peta, Kategori, Alur, Unduh Aplikasi) -->
+<div class="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-6 space-y-12">
 
-        <!-- 2. Diproses -->
-        <button type="button" onclick="filterMapByStatus('PROCESSING')" data-reveal style="transition-delay: 80ms;" class="relative overflow-hidden bg-white rounded-xl border border-[#E2E8F0] p-2.5 sm:p-5 text-left cursor-pointer hover:bg-[#F8FAFC] transition group kpi-filter-box focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1E3A8A]" data-status="PROCESSING" title="Ketuk untuk memfilter aduan yang sedang dalam verifikasi atau penanganan dinas">
-            <div class="absolute top-0 inset-x-0 h-1 bg-[#F59E0B]"></div>
-            <div class="flex items-center justify-between gap-1 pt-0.5">
-                <span class="text-[9px] sm:text-xs font-bold uppercase tracking-wide sm:tracking-wider text-[#475569] group-hover:text-[#D97706] transition leading-tight">Diproses</span>
-                <div class="w-6 h-6 sm:w-8 sm:h-8 rounded-md sm:rounded-lg bg-amber-50 text-[#D97706] border border-amber-200 flex items-center justify-center shrink-0">
-                    <i data-lucide="clock" class="w-3 h-3 sm:w-4 sm:h-4"></i>
-                </div>
-            </div>
-            <div class="font-outfit font-bold text-xl sm:text-3xl text-[#0F172A] mt-1.5 sm:mt-2 leading-none">
-                {{ ($stats['submitted'] ?? 0) + ($stats['dispatched'] ?? 0) + ($stats['in_progress'] ?? 0) + ($stats['waiting_validation'] ?? 0) }}
-            </div>
-            <span class="hidden sm:block text-xs text-[#475569] mt-2">Verifikasi, penugasan, dan pengerjaan</span>
-        </button>
-
-        <!-- 3. Selesai -->
-        <button type="button" onclick="filterMapByStatus('COMPLETED')" data-reveal style="transition-delay: 160ms;" class="relative overflow-hidden bg-white rounded-xl border border-[#E2E8F0] p-2.5 sm:p-5 text-left cursor-pointer hover:bg-[#F8FAFC] transition group kpi-filter-box focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1E3A8A]" data-status="COMPLETED" title="Ketuk untuk memfilter aduan yang telah selesai diperbaiki">
-            <div class="absolute top-0 inset-x-0 h-1 bg-[#10B981]"></div>
-            <div class="flex items-center justify-between gap-1 pt-0.5">
-                <span class="text-[9px] sm:text-xs font-bold uppercase tracking-wide sm:tracking-wider text-[#475569] group-hover:text-[#10B981] transition leading-tight">Selesai</span>
-                <div class="w-6 h-6 sm:w-8 sm:h-8 rounded-md sm:rounded-lg bg-emerald-50 text-[#10B981] border border-emerald-200 flex items-center justify-center shrink-0">
-                    <i data-lucide="check-circle-2" class="w-3 h-3 sm:w-4 sm:h-4"></i>
-                </div>
-            </div>
-            <div class="font-outfit font-bold text-xl sm:text-3xl text-[#0F172A] mt-1.5 sm:mt-2 leading-none">
-                {{ $stats['completed'] ?? 0 }}
-            </div>
-            <span class="hidden sm:block text-xs text-[#475569] mt-2">Tuntas diperbaiki dan tervalidasi</span>
-        </button>
-    </div>
-
-    <!-- Peta Sebaran Titik Kerusakan -->
+    <!-- Peta Sebaran Interaktif Titik Kerusakan (Desain FigCraft Gambar 7) -->
     <div class="space-y-4 scroll-mt-20" id="mapSectionContainer">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
                 <h2 class="font-outfit font-bold text-xl sm:text-2xl text-[#0F172A]">
-                    Peta Sebaran Titik Kerusakan
+                    Peta Sebaran Interaktif Titik Kerusakan
                 </h2>
-            </div>
-
-            <!-- Toolbar Kanan -->
-            <div class="flex flex-nowrap items-center gap-1.5 sm:gap-2 w-full md:w-auto shrink-0">
-                <!-- Dropdown Filter Kecamatan -->
-                <div class="relative flex-1 md:flex-initial min-w-0">
-                    <select id="districtFilterSelect" onchange="onDistrictFilterChange(this.value)" aria-label="Filter Kecamatan"
-                        class="w-full md:w-auto min-w-0 truncate bg-white border border-[#E2E8F0] text-xs font-semibold text-[#0F172A] min-h-[44px] pl-2.5 sm:pl-3 pr-7 sm:pr-8 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A8A] focus:border-[#1E3A8A] cursor-pointer">
-                        <option value="ALL">Semua Kecamatan</option>
-                        @foreach($districts as $d)
-                            <option value="{{ $d }}">{{ str_starts_with($d, 'Kecamatan ') ? $d : 'Kecamatan ' . $d }}</option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <!-- Tombol Reset Filter -->
-                <button type="button" id="resetFilterBtn" onclick="resetAllFilters()" 
-                    class="hidden items-center gap-1.5 px-2.5 sm:px-3.5 min-h-[44px] rounded-lg text-xs font-semibold bg-red-50 hover:bg-red-100 text-[#DC2626] border border-red-200 transition shrink-0 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#DC2626]" title="Reset filter status & kecamatan">
-                    <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
-                    <span class="hidden sm:inline">Reset</span>
-                </button>
-
-                <!-- Tombol Toggle Daftar Titik -->
-                <button type="button" id="toggleDrawerBtn" onclick="toggleReportDrawer()" 
-                    class="flex items-center gap-1.5 px-3 sm:px-4 min-h-[44px] rounded-lg text-xs font-semibold bg-white border border-[#E2E8F0] text-[#0F172A] hover:bg-[#F8FAFC] transition shrink-0 whitespace-nowrap cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1E3A8A]">
-                    <i data-lucide="list" class="w-3.5 h-3.5 text-current shrink-0"></i>
-                    <span id="drawerToggleText">Daftar Titik</span>
-                    <span id="drawerCountBadge" class="ml-0.5 px-1.5 py-0.5 rounded-md text-[10px] bg-blue-50 text-[#1E3A8A] font-bold border border-blue-200">0</span>
-                </button>
             </div>
         </div>
 
-        <!-- Peta Leaflet -->
-        <div class="bg-white rounded-xl border border-[#E2E8F0] overflow-hidden relative h-[540px] lg:h-[620px]">
+        <!-- Peta Leaflet + Floating Left Filter & Daftar Aduan Card -->
+        <div class="bg-white rounded-[24px] border border-[#E2E8F0] shadow-[0_8px_24px_rgba(15,23,42,0.05)] overflow-hidden relative h-[540px] lg:h-[620px]">
             <!-- Full-Width GIS Map -->
             <div id="gisMap" class="w-full h-full relative z-10"></div>
             
             <div id="mapLoading" class="absolute inset-0 bg-slate-900/10 flex items-center justify-center z-30 pointer-events-none">
-                <div class="bg-white px-5 py-2.5 rounded-lg border border-[#E2E8F0] flex items-center gap-2 text-xs font-semibold text-[#0F172A]">
-                    <i data-lucide="loader-2" class="w-4 h-4 animate-spin text-[#1E3A8A]"></i>
+                <div class="bg-white px-5 py-2.5 rounded-xl border border-[#E2E8F0] flex items-center gap-2 text-xs font-semibold text-[#0F172A]">
+                    <i data-lucide="loader-2" class="w-4 h-4 animate-spin text-[#2563EB]"></i>
                     <span>Memuat titik persebaran laporan...</span>
                 </div>
             </div>
 
-            <!-- Legend Status Peta (Solid Matte & Bordered) -->
-            <div class="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 z-20 flex flex-wrap items-center gap-2.5 sm:gap-3.5 px-3 py-2 rounded-lg bg-white border border-[#E2E8F0] shadow-sm text-[11px] font-semibold text-[#0F172A] select-none max-w-[92vw]">
+            <!-- Panel Kiri Mengambang: Filter & Daftar Aduan (Selalu tampil di Desktop & Mobile; di Mobile ringkas & bisa dibuka/tutup) -->
+            <div id="reportDrawer" class="flex absolute top-3 left-3 right-3 md:right-auto md:top-4 md:left-4 z-20 md:w-[360px] lg:w-[385px] max-h-[calc(100%-1.5rem)] md:max-h-[calc(100%-2rem)] bg-white rounded-2xl border border-[#E2E8F0] shadow-lg flex-col overflow-hidden transition-all duration-300">
+                <!-- Header Button (Klik untuk menutup ke atas / membuka ke bawah) -->
+                <div class="px-4 py-3 bg-white flex items-center justify-between gap-2 shrink-0 border-b border-[#E2E8F0]">
+                    <button type="button" id="filterCollapseBtn" onclick="toggleFilterPanelBody()" aria-expanded="true" aria-controls="filterDrawerBody"
+                        class="flex-1 flex items-center justify-between gap-2 text-left rounded-xl py-1 px-1.5 -ml-1.5 hover:bg-[#EFF6FF]/70 transition cursor-pointer focus-visible:outline-2 focus-visible:outline-[#2563EB]">
+                        <span class="flex items-center gap-2 min-w-0">
+                            <span class="w-7 h-7 rounded-lg bg-[#EFF6FF] text-[#2563EB] flex items-center justify-center shrink-0">
+                                <i data-lucide="list-filter" class="w-4 h-4"></i>
+                            </span>
+                            <span class="font-outfit font-bold text-sm text-[#0F172A] truncate">Filter &amp; Daftar Aduan</span>
+                        </span>
+                        <i id="filterCollapseChevron" data-lucide="chevron-up" class="w-4 h-4 text-[#2563EB] shrink-0 transition-transform duration-300"></i>
+                    </button>
+                    <div class="flex items-center gap-1.5 shrink-0">
+                        <span id="drawerTotalText" class="text-[11px] font-bold px-2 py-0.5 bg-[#EFF6FF] text-[#2563EB] rounded-full border border-[#BFDBFE]">
+                            0 Aduan
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Konten Panel yang Bisa Collapse ke Atas & Expand ke Bawah -->
+                <div id="filterDrawerBody" class="flex flex-col flex-1 min-h-0 overflow-hidden transition-[max-height,opacity] duration-300 ease-in-out" style="max-height: 540px; opacity: 1;">
+                    <!-- Filter Kecamatan & Status -->
+                    <div class="p-4 border-b border-[#E2E8F0] bg-white space-y-3 shrink-0">
+                        <!-- Dropdown 15 Kecamatan -->
+                        <div class="relative">
+                            <select id="districtFilterSelect" onchange="onDistrictFilterChange(this.value)" aria-label="Filter 15 Kecamatan"
+                                class="w-full bg-white border border-[#E2E8F0] text-xs font-semibold text-[#0F172A] min-h-[42px] pl-3 pr-8 rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] focus:border-[#2563EB] cursor-pointer">
+                                <option value="ALL">15 Kecamatan (Batu Putih - Wawo)</option>
+                                @foreach($districts as $d)
+                                    <option value="{{ $d }}">{{ str_starts_with($d, 'Kecamatan ') ? $d : 'Kecamatan ' . $d }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <!-- Filter Status Ringkas + Reset (Sejajar 1 Baris di Desktop) -->
+                        <div class="flex flex-wrap md:flex-nowrap items-center gap-1 text-[11px] font-semibold text-[#475569]">
+                            <button type="button" onclick="filterMapByStatus('SUBMITTED')" class="inline-flex items-center gap-1 px-1.5 py-1 rounded-full hover:bg-red-50 hover:text-[#EF4444] transition cursor-pointer whitespace-nowrap">
+                                <span class="w-2 h-2 rounded-full bg-[#EF4444] shrink-0"></span>Verifikasi
+                            </button>
+                            <button type="button" onclick="filterMapByStatus('DISPATCHED')" class="inline-flex items-center gap-1 px-1.5 py-1 rounded-full hover:bg-[#EFF6FF] hover:text-[#2563EB] transition cursor-pointer whitespace-nowrap">
+                                <span class="w-2 h-2 rounded-full bg-[#2563EB] shrink-0"></span>Ditugaskan
+                            </button>
+                            <button type="button" onclick="filterMapByStatus('PROCESSING')" class="inline-flex items-center gap-1 px-1.5 py-1 rounded-full hover:bg-amber-50 hover:text-[#B45309] transition cursor-pointer whitespace-nowrap">
+                                <span class="w-2 h-2 rounded-full bg-[#F59E0B] shrink-0"></span>Diproses
+                            </button>
+                            <button type="button" onclick="filterMapByStatus('COMPLETED')" class="inline-flex items-center gap-1 px-1.5 py-1 rounded-full hover:bg-emerald-50 hover:text-[#047857] transition cursor-pointer whitespace-nowrap">
+                                <span class="w-2 h-2 rounded-full bg-[#10B981] shrink-0"></span>Selesai
+                            </button>
+                            <button type="button" id="resetFilterBtn" onclick="resetAllFilters()"
+                                class="hidden items-center gap-1 px-2 py-1 rounded-full bg-red-50 hover:bg-red-100 text-[#DC2626] font-bold transition cursor-pointer ml-auto whitespace-nowrap shrink-0" title="Reset filter">
+                                Reset
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- List Content -->
+                    <div id="drawerListContainer" class="p-3 space-y-2.5 overflow-y-auto flex-1 overscroll-contain bg-[#FAFAFA]" style="-webkit-overflow-scrolling: touch;">
+                        <!-- Kartu-kartu aduan di-generate dinamis oleh JS -->
+                    </div>
+
+                    <!-- Mini Footer Hint -->
+                    <div class="px-3.5 py-2 border-t border-[#E2E8F0] bg-white text-[11px] text-[#475569] flex items-center justify-between shrink-0">
+                        <span class="flex items-center gap-1.5 truncate">
+                            <i data-lucide="mouse-pointer-click" class="w-3.5 h-3.5 text-[#2563EB] shrink-0"></i>
+                            <span class="truncate">Pilih aduan untuk menuju lokasi pada peta</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Legend Status Peta (Pojok Kanan Bawah agar tidak bentrok dengan kartu kiri) -->
+            <div class="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 z-20 flex flex-wrap items-center gap-2.5 sm:gap-3.5 px-3 py-2 rounded-xl bg-white/95 backdrop-blur-sm border border-[#E2E8F0] shadow-sm text-[11px] font-semibold text-[#0F172A] select-none max-w-[92vw]">
                 <span class="flex items-center gap-1.5">
                     <span class="w-3.5 h-3.5 rounded-full bg-[#EF4444] flex items-center justify-center text-white shrink-0">
                         <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
@@ -167,7 +239,7 @@
                     Verifikasi
                 </span>
                 <span class="flex items-center gap-1.5">
-                    <span class="w-3.5 h-3.5 rounded-full bg-[#1E3A8A] flex items-center justify-center text-white shrink-0">
+                    <span class="w-3.5 h-3.5 rounded-full bg-[#2563EB] flex items-center justify-center text-white shrink-0">
                         <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
                     </span>
                     Ditugaskan
@@ -185,43 +257,6 @@
                     Selesai
                 </span>
             </div>
-
-            <!-- Panel Daftar Titik Aduan (Solid Matte, Flat & Bordered) -->
-            <div id="reportDrawer" class="hidden absolute top-4 right-4 z-20 w-[92%] sm:w-[350px] md:w-[370px] max-h-[460px] bg-white rounded-xl border border-[#E2E8F0] shadow-md flex flex-col overflow-hidden">
-                <!-- Header Panel -->
-                <div class="px-4 py-3 border-b border-[#E2E8F0] bg-[#F8FAFC] flex items-center justify-between shrink-0">
-                    <div>
-                        <div class="flex items-center gap-1.5">
-                            <i data-lucide="list-filter" class="w-4 h-4 text-[#1E3A8A]"></i>
-                            <h3 class="font-outfit font-bold text-sm text-[#0F172A]">Daftar Titik Aduan</h3>
-                        </div>
-                        <p id="drawerFilterStatusText" class="text-[11px] text-[#475569] mt-0.5 font-medium">
-                            Menampilkan semua titik
-                        </p>
-                    </div>
-                    <div class="flex items-center gap-1.5">
-                        <span id="drawerTotalText" class="text-[11px] font-bold px-2 py-0.5 bg-blue-50 text-[#1E3A8A] rounded-md border border-blue-200">
-                            0 Aduan
-                        </span>
-                        <button type="button" onclick="toggleReportDrawer()" class="w-8 h-8 rounded-lg hover:bg-slate-200 text-[#475569] hover:text-[#0F172A] flex items-center justify-center transition cursor-pointer focus-visible:outline-2 focus-visible:outline-[#1E3A8A]" title="Tutup Panel" aria-label="Tutup Daftar Titik">
-                            <i data-lucide="x" class="w-4 h-4"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- List Content -->
-                <div id="drawerListContainer" class="p-2.5 space-y-2 overflow-y-auto max-h-[380px] overscroll-contain" style="-webkit-overflow-scrolling: touch;">
-                    <!-- Kartu-kartu aduan di-generate dinamis oleh JS -->
-                </div>
-
-                <!-- Mini Footer Hint -->
-                <div class="px-3.5 py-2 border-t border-[#E2E8F0] bg-[#F8FAFC] text-[11px] text-[#475569] flex items-center justify-between shrink-0">
-                    <span class="flex items-center gap-1.5 truncate">
-                        <i data-lucide="mouse-pointer-click" class="w-3.5 h-3.5 text-[#1E3A8A] shrink-0"></i>
-                        <span class="truncate">Pilih aduan untuk menuju lokasi pada peta</span>
-                    </span>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -233,55 +268,55 @@
             </h2>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-4">
-            <div data-reveal style="transition-delay: 0ms;" class="bg-white rounded-xl border border-[#E2E8F0] p-3 sm:p-5 flex flex-col justify-between gap-2 sm:gap-3">
-                <div class="flex items-start justify-between gap-1.5 sm:gap-2">
-                    <div class="w-7 h-7 sm:w-9 sm:h-9 rounded-lg bg-blue-50 text-[#1E3A8A] border border-blue-200 flex items-center justify-center shrink-0">
-                        <i data-lucide="route" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+            <div data-reveal style="transition-delay: 0ms;" class="bg-white rounded-[24px] border border-[#E2E8F0] shadow-[0_6px_18px_rgba(15,23,42,0.04)] hover:shadow-md hover:border-[#2563EB]/40 transition-all duration-200 p-5 sm:p-6 flex flex-col justify-between gap-4">
+                <div class="flex items-start justify-between gap-2">
+                    <div class="w-11 h-11 rounded-[12px] bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE] flex items-center justify-center shrink-0">
+                        <i data-lucide="route" class="w-5 h-5"></i>
                     </div>
-                    <span id="catCountJalan" class="px-1.5 sm:px-2.5 py-0.5 rounded-md bg-[#F8FAFC] border border-[#E2E8F0] text-[10px] sm:text-[11px] font-bold text-[#0F172A] whitespace-nowrap">
+                    <span id="catCountJalan" class="px-3 py-1 rounded-full bg-[#EFF6FF] border border-[#BFDBFE] text-xs font-bold text-[#2563EB] whitespace-nowrap">
                         {{ $categoryStats['jalan'] ?? 0 }} Laporan
                     </span>
                 </div>
                 <div>
-                    <h3 class="font-outfit font-bold text-xs sm:text-sm text-[#0F172A] leading-snug">Jalan &amp; Jembatan</h3>
-                    <p class="text-[11px] sm:text-xs text-[#475569] mt-1 leading-snug sm:leading-relaxed line-clamp-3 sm:line-clamp-none">Jalan berlubang, aspal retak, paving rusak, longsoran bahu jalan, dan kerusakan jembatan.</p>
+                    <h3 class="font-outfit font-bold text-base sm:text-lg text-[#0F172A] leading-snug">Jalan &amp; Jembatan</h3>
+                    <p class="text-xs sm:text-sm text-[#475569] mt-1.5 leading-relaxed">Jalan berlubang, aspal retak, paving rusak, longsoran bahu jalan, dan kerusakan jembatan.</p>
                 </div>
             </div>
 
-            <div data-reveal style="transition-delay: 90ms;" class="bg-white rounded-xl border border-[#E2E8F0] p-3 sm:p-5 flex flex-col justify-between gap-2 sm:gap-3">
-                <div class="flex items-start justify-between gap-1.5 sm:gap-2">
-                    <div class="w-7 h-7 sm:w-9 sm:h-9 rounded-lg bg-blue-50 text-[#1E3A8A] border border-blue-200 flex items-center justify-center shrink-0">
-                        <i data-lucide="lightbulb" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+            <div data-reveal style="transition-delay: 90ms;" class="bg-white rounded-[24px] border border-[#E2E8F0] shadow-[0_6px_18px_rgba(15,23,42,0.04)] hover:shadow-md hover:border-[#2563EB]/40 transition-all duration-200 p-5 sm:p-6 flex flex-col justify-between gap-4">
+                <div class="flex items-start justify-between gap-2">
+                    <div class="w-11 h-11 rounded-[12px] bg-[#FEF3C7] text-[#D97706] border border-[#FDE68A] flex items-center justify-center shrink-0">
+                        <i data-lucide="lightbulb" class="w-5 h-5"></i>
                     </div>
-                    <span id="catCountPju" class="px-1.5 sm:px-2.5 py-0.5 rounded-md bg-[#F8FAFC] border border-[#E2E8F0] text-[10px] sm:text-[11px] font-bold text-[#0F172A] whitespace-nowrap">
+                    <span id="catCountPju" class="px-3 py-1 rounded-full bg-[#EFF6FF] border border-[#BFDBFE] text-xs font-bold text-[#2563EB] whitespace-nowrap">
                         {{ $categoryStats['pju'] ?? 0 }} Laporan
                     </span>
                 </div>
                 <div>
-                    <h3 class="font-outfit font-bold text-xs sm:text-sm text-[#0F172A] leading-snug">Penerangan Jalan Umum</h3>
-                    <p class="text-[11px] sm:text-xs text-[#475569] mt-1 leading-snug sm:leading-relaxed line-clamp-3 sm:line-clamp-none">Lampu jalan padam, tiang miring, atau jaringan kabel penerangan putus.</p>
+                    <h3 class="font-outfit font-bold text-base sm:text-lg text-[#0F172A] leading-snug">Penerangan Jalan Umum</h3>
+                    <p class="text-xs sm:text-sm text-[#475569] mt-1.5 leading-relaxed">Lampu jalan padam, tiang miring, atau jaringan kabel penerangan putus.</p>
                 </div>
             </div>
 
-            <div data-reveal style="transition-delay: 180ms;" class="bg-white rounded-xl border border-[#E2E8F0] p-3 sm:p-5 flex flex-col justify-between gap-2 sm:gap-3">
-                <div class="flex items-start justify-between gap-1.5 sm:gap-2">
-                    <div class="w-7 h-7 sm:w-9 sm:h-9 rounded-lg bg-blue-50 text-[#1E3A8A] border border-blue-200 flex items-center justify-center shrink-0">
-                        <i data-lucide="building-2" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+            <div data-reveal style="transition-delay: 180ms;" class="bg-white rounded-[24px] border border-[#E2E8F0] shadow-[0_6px_18px_rgba(15,23,42,0.04)] hover:shadow-md hover:border-[#2563EB]/40 transition-all duration-200 p-5 sm:p-6 flex flex-col justify-between gap-4">
+                <div class="flex items-start justify-between gap-2">
+                    <div class="w-11 h-11 rounded-[12px] bg-[#ECFDF5] text-[#10B981] border border-[#A7F3D0] flex items-center justify-center shrink-0">
+                        <i data-lucide="building-2" class="w-5 h-5"></i>
                     </div>
-                    <span id="catCountFasilitas" class="px-1.5 sm:px-2.5 py-0.5 rounded-md bg-[#F8FAFC] border border-[#E2E8F0] text-[10px] sm:text-[11px] font-bold text-[#0F172A] whitespace-nowrap">
+                    <span id="catCountFasilitas" class="px-3 py-1 rounded-full bg-[#EFF6FF] border border-[#BFDBFE] text-xs font-bold text-[#2563EB] whitespace-nowrap">
                         {{ $categoryStats['fasilitas'] ?? 0 }} Laporan
                     </span>
                 </div>
                 <div>
-                    <h3 class="font-outfit font-bold text-xs sm:text-sm text-[#0F172A] leading-snug">Fasilitas Umum</h3>
-                    <p class="text-[11px] sm:text-xs text-[#475569] mt-1 leading-snug sm:leading-relaxed line-clamp-3 sm:line-clamp-none">Trotoar, taman kota, rambu, dan prasarana umum daerah lainnya.</p>
+                    <h3 class="font-outfit font-bold text-base sm:text-lg text-[#0F172A] leading-snug">Fasilitas Umum</h3>
+                    <p class="text-xs sm:text-sm text-[#475569] mt-1.5 leading-relaxed">Trotoar, taman kota, rambu, dan prasarana umum daerah lainnya.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Blok 2: Alur Penanganan Aduan (Terhubung Rapi, Penomoran Biru Seragam, Tanpa Glow/Gradient) -->
+    <!-- Blok 2: Alur Penanganan Aduan (Stepper Card Horizontal 01-04 di Desktop, Vertical Timeline di Mobile) -->
     <section id="alur-penanganan" class="scroll-mt-20 space-y-5">
         <div data-reveal>
             <h2 class="font-outfit font-bold text-xl sm:text-2xl text-[#0F172A]">
@@ -290,137 +325,162 @@
         </div>
 
         <div class="relative">
-            <!-- Garis Penghubung Horizontal (Desktop: menghubungkan pusat lingkaran 1 ke 4) -->
-            <div class="hidden lg:block absolute top-5 left-[12.5%] right-[12.5%] h-0.5 bg-[#CBD5E1] z-0" aria-hidden="true"></div>
+            <!-- Garis Penghubung Putus-putus Horizontal (Desktop) -->
+            <div class="hidden lg:block absolute top-1/2 left-[8%] right-[8%] border-t-2 border-dashed border-[#CBD5E1] z-0" aria-hidden="true"></div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-4 gap-y-0 lg:gap-5 relative z-10">
-                <!-- Tahap 1 -->
-                <div data-reveal style="transition-delay: 0ms;" class="flex lg:flex-col items-stretch gap-4 lg:gap-3 pb-5 lg:pb-0">
-                    <div class="flex flex-col items-center lg:justify-center shrink-0">
-                        <div class="w-10 h-10 rounded-full bg-[#1E3A8A] text-white font-outfit font-bold text-sm flex items-center justify-center ring-4 ring-[#F8FAFC] shrink-0">
-                            1
-                        </div>
-                        <div class="w-0.5 flex-1 bg-[#CBD5E1] lg:hidden mt-1.5" aria-hidden="true"></div>
-                    </div>
-                    <div class="bg-white rounded-xl border border-[#E2E8F0] p-5 flex-1 space-y-2.5">
-                        <div class="flex items-center justify-between gap-2">
-                            <span class="px-2 py-0.5 rounded bg-red-50 text-[#DC2626] border border-red-200 text-[10px] font-bold uppercase">Verifikasi</span>
-                            <span class="text-[11px] font-semibold text-[#475569]">Oleh Warga</span>
-                        </div>
-                        <h3 class="font-outfit font-bold text-sm text-[#0F172A]">Lapor Melalui Aplikasi</h3>
-                        <p class="text-xs text-[#475569] leading-relaxed">
-                            Warga memotret kerusakan langsung di lokasi dan menentukan titik GPS atau ruas jalan pada aplikasi mobile.
-                        </p>
-                    </div>
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 lg:gap-5 relative z-10">
+                <!-- Tahap 01 -->
+                <div data-reveal style="transition-delay: 0ms;" class="bg-white rounded-[24px] border border-[#E2E8F0] shadow-[0_6px_18px_rgba(15,23,42,0.04)] p-5 sm:p-6 space-y-2.5">
+                    <span class="font-outfit font-bold text-3xl text-[#2563EB] block leading-none">01</span>
+                    <h3 class="font-outfit font-bold text-base text-[#0F172A]">Lapor Melalui Aplikasi</h3>
+                    <p class="text-xs sm:text-sm text-[#475569] leading-relaxed">
+                        Warga mengirim foto kerusakan &amp; titik GPS langsung dari lokasi melalui aplikasi mobile.
+                    </p>
                 </div>
 
-                <!-- Tahap 2 -->
-                <div data-reveal style="transition-delay: 100ms;" class="flex lg:flex-col items-stretch gap-4 lg:gap-3 pb-5 lg:pb-0">
-                    <div class="flex flex-col items-center lg:justify-center shrink-0">
-                        <div class="w-10 h-10 rounded-full bg-[#1E3A8A] text-white font-outfit font-bold text-sm flex items-center justify-center ring-4 ring-[#F8FAFC] shrink-0">
-                            2
-                        </div>
-                        <div class="w-0.5 flex-1 bg-[#CBD5E1] lg:hidden mt-1.5" aria-hidden="true"></div>
-                    </div>
-                    <div class="bg-white rounded-xl border border-[#E2E8F0] p-5 flex-1 space-y-2.5">
-                        <div class="flex items-center justify-between gap-2">
-                            <span class="px-2 py-0.5 rounded bg-blue-50 text-[#1E40AF] border border-blue-200 text-[10px] font-bold uppercase">Ditugaskan</span>
-                            <span class="text-[11px] font-semibold text-[#475569]">Operator PUPR</span>
-                        </div>
-                        <h3 class="font-outfit font-bold text-sm text-[#0F172A]">Verifikasi &amp; Disposisi Regu</h3>
-                        <p class="text-xs text-[#475569] leading-relaxed">
-                            Operator memeriksa keabsahan laporan, tingkat kerusakan (Ringan/Berat), lalu menugaskan regu lapangan.
-                        </p>
-                    </div>
+                <!-- Tahap 02 -->
+                <div data-reveal style="transition-delay: 100ms;" class="bg-white rounded-[24px] border border-[#E2E8F0] shadow-[0_6px_18px_rgba(15,23,42,0.04)] p-5 sm:p-6 space-y-2.5">
+                    <span class="font-outfit font-bold text-3xl text-[#2563EB] block leading-none">02</span>
+                    <h3 class="font-outfit font-bold text-base text-[#0F172A]">Verifikasi &amp; Disposisi Regu</h3>
+                    <p class="text-xs sm:text-sm text-[#475569] leading-relaxed">
+                        Operator menelaah keabsahan laporan dan menugaskan regu lapangan Dinas PUPR.
+                    </p>
                 </div>
 
-                <!-- Tahap 3 -->
-                <div data-reveal style="transition-delay: 200ms;" class="flex lg:flex-col items-stretch gap-4 lg:gap-3 pb-5 lg:pb-0">
-                    <div class="flex flex-col items-center lg:justify-center shrink-0">
-                        <div class="w-10 h-10 rounded-full bg-[#1E3A8A] text-white font-outfit font-bold text-sm flex items-center justify-center ring-4 ring-[#F8FAFC] shrink-0">
-                            3
-                        </div>
-                        <div class="w-0.5 flex-1 bg-[#CBD5E1] lg:hidden mt-1.5" aria-hidden="true"></div>
-                    </div>
-                    <div class="bg-white rounded-xl border border-[#E2E8F0] p-5 flex-1 space-y-2.5">
-                        <div class="flex items-center justify-between gap-2">
-                            <span class="px-2 py-0.5 rounded bg-amber-50 text-[#D97706] border border-amber-200 text-[10px] font-bold uppercase">Dikerjakan</span>
-                            <span class="text-[11px] font-semibold text-[#475569]">Regu Lapangan</span>
-                        </div>
-                        <h3 class="font-outfit font-bold text-sm text-[#0F172A]">Perbaikan Fisik di Lokasi</h3>
-                        <p class="text-xs text-[#475569] leading-relaxed">
-                            Regu teknis turun ke titik lokasi untuk memperbaiki kerusakan dan mengunggah foto bukti pekerjaan.
-                        </p>
-                    </div>
+                <!-- Tahap 03 -->
+                <div data-reveal style="transition-delay: 200ms;" class="bg-white rounded-[24px] border border-[#E2E8F0] shadow-[0_6px_18px_rgba(15,23,42,0.04)] p-5 sm:p-6 space-y-2.5">
+                    <span class="font-outfit font-bold text-3xl text-[#F59E0B] block leading-none">03</span>
+                    <h3 class="font-outfit font-bold text-base text-[#0F172A]">Perbaikan Fisik di Lokasi</h3>
+                    <p class="text-xs sm:text-sm text-[#475569] leading-relaxed">
+                        Regu teknis mengerjakan perbaikan fisik sesuai batas SLA dan mengunggah foto bukti.
+                    </p>
                 </div>
 
-                <!-- Tahap 4 (Akhir, tanpa garis penghubung di bawahnya) -->
-                <div data-reveal style="transition-delay: 300ms;" class="flex lg:flex-col items-stretch gap-4 lg:gap-3">
-                    <div class="flex flex-col items-center lg:justify-center shrink-0">
-                        <div class="w-10 h-10 rounded-full bg-[#1E3A8A] text-white font-outfit font-bold text-sm flex items-center justify-center ring-4 ring-[#F8FAFC] shrink-0">
-                            4
-                        </div>
-                    </div>
-                    <div class="bg-white rounded-xl border border-[#E2E8F0] p-5 flex-1 space-y-2.5">
-                        <div class="flex items-center justify-between gap-2">
-                            <span class="px-2 py-0.5 rounded bg-emerald-50 text-[#10B981] border border-emerald-200 text-[10px] font-bold uppercase">Selesai</span>
-                            <span class="text-[11px] font-semibold text-[#475569]">Tervalidasi</span>
-                        </div>
-                        <h3 class="font-outfit font-bold text-sm text-[#0F172A]">Uji Mutu &amp; Penutupan</h3>
-                        <p class="text-xs text-[#475569] leading-relaxed">
-                            Operator memvalidasi foto hasil perbaikan. Titik pada peta publik diperbarui menjadi Selesai.
-                        </p>
-                    </div>
+                <!-- Tahap 04 -->
+                <div data-reveal style="transition-delay: 300ms;" class="bg-white rounded-[24px] border border-[#A7F3D0] shadow-[0_6px_18px_rgba(15,23,42,0.04)] p-5 sm:p-6 space-y-2.5">
+                    <span class="font-outfit font-bold text-3xl text-[#10B981] block leading-none">04</span>
+                    <h3 class="font-outfit font-bold text-base text-[#0F172A]">Uji Mutu &amp; Penutupan</h3>
+                    <p class="text-xs sm:text-sm text-[#475569] leading-relaxed">
+                        Operator memvalidasi hasil pekerjaan fisik hingga tuntas dan memperbarui peta publik.
+                    </p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Banner Unduh Aplikasi Mobile + QR Code Desktop -->
-    <div id="download-app" class="scroll-mt-20 rounded-xl p-6 sm:p-8 bg-[#1E3A8A] text-white border border-[#172554]">
-        <div class="flex flex-col lg:flex-row items-center justify-between gap-6 text-center lg:text-left">
-            <div class="max-w-xl space-y-2.5">
-                <h3 class="font-outfit font-bold text-xl sm:text-2xl text-white tracking-tight">
-                    Sampaikan Aduan Infrastruktur Anda Melalui Aplikasi
-                </h3>
+    @php
+        $featuredComplaint = \App\Models\Complaint::with(['category', 'photos', 'latestDisposition.team'])
+            ->where('status', 'SUBMITTED')
+            ->where('rejected_by_superadmin', false)
+            ->where('created_at', '>=', now()->subDays(3))
+            ->latest('created_at')
+            ->first();
+        $featuredBefore = $featuredComplaint?->photos->firstWhere('type', 'evidence_before');
+        $featuredAfter = $featuredComplaint?->photos->firstWhere('type', 'resolution_after');
+        $featuredBeforeUrl = $featuredBefore ? ($featuredBefore->url ?? asset('storage/' . $featuredBefore->storage_key)) : null;
+        $featuredAfterUrl = $featuredAfter ? ($featuredAfter->url ?? asset('storage/' . $featuredAfter->storage_key)) : null;
+    @endphp
+    <!-- Blok 3: Kartu Pelacakan Status Aduan Terkini (Real Database PostgreSQL: Hanya Status Verifikasi dalam 3 Hari Terakhir) -->
+    <section class="space-y-4">
+        <h2 class="font-outfit font-bold text-xl sm:text-2xl text-[#0F172A]">
+            Pelacakan Status Aduan Terkini
+        </h2>
+        @if($featuredComplaint)
+        <div class="bg-white rounded-[24px] border border-[#E2E8F0] shadow-[0_8px_24px_rgba(15,23,42,0.05)] p-5 sm:p-8 space-y-5">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex flex-wrap items-center gap-2 text-xs sm:text-sm font-bold text-[#2563EB]">
+                    <span class="font-mono">#{{ $featuredComplaint->public_code }}</span>
+                    <span>&bull;</span>
+                    <span>{{ $featuredComplaint->category?->name ?? 'Infrastruktur' }}</span>
+                </div>
+                <span class="px-3 py-1 rounded-full text-xs font-bold border bg-red-50 text-[#EF4444] border-red-200">
+                    Verifikasi
+                </span>
             </div>
 
-            <!-- QR Code Desktop + Tombol Unduh Aplikasi -->
-            <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-end gap-4 shrink-0 w-full lg:w-auto">
-                <!-- QR Code untuk Desktop -->
-                <div class="hidden sm:flex items-center gap-3 bg-white text-[#0F172A] p-2.5 rounded-lg border border-[#E2E8F0]">
-                    <div class="w-16 h-16 shrink-0 bg-white">
-                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data={{ urlencode(route('download.apk')) }}" alt="QR Unduh APK SI-APPIK" class="w-full h-full object-contain">
-                    </div>
-                    <div class="text-left pr-1 leading-tight">
-                        <span class="text-[11px] font-bold text-[#0F172A] block">Pindai QR</span>
-                        <span class="text-[10px] text-[#475569] block mt-0.5">Unduh APK<br>di ponsel</span>
-                    </div>
-                </div>
+            <h3 class="font-outfit font-bold text-lg sm:text-2xl text-[#0F172A] leading-snug">
+                {{ $featuredComplaint->title }}
+            </h3>
 
-                <div class="flex flex-col sm:flex-row items-center gap-2.5 w-full sm:w-auto">
-                    <a href="{{ route('download.apk') }}" download="SI-APPIK.APK"
-                        class="flex items-center gap-3 bg-[#0F172A] hover:bg-slate-800 text-white px-4 min-h-[48px] rounded-lg border border-slate-700 transition w-full sm:w-44 justify-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
-                        <svg class="w-5 h-5 fill-current shrink-0" viewBox="0 0 24 24">
-                            <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.6 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.5,12.92 20.16,13.19L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z" />
-                        </svg>
-                        <div class="text-left leading-tight">
-                            <span class="text-[9px] uppercase tracking-wider text-slate-300 block font-medium">Unduh APK</span>
-                            <span class="font-outfit font-bold text-xs text-white block">Google Play</span>
-                        </div>
-                    </a>
-
-                    <a href="https://apps.apple.com" target="_blank" rel="noopener noreferrer" 
-                        class="flex items-center gap-3 bg-[#0F172A] hover:bg-slate-800 text-white px-4 min-h-[48px] rounded-lg border border-slate-700 transition w-full sm:w-44 justify-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
-                        <svg class="w-5 h-5 fill-current shrink-0" viewBox="0 0 24 24">
-                            <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.62-.75 1.04-1.8 1.01-2.87-.96.04-2.12.64-2.8 1.44-.59.68-1.11 1.77-1 2.82 1.07.08 2.17-.55 2.79-1.39z"/>
-                        </svg>
-                        <div class="text-left leading-tight">
-                            <span class="text-[9px] uppercase tracking-wider text-slate-300 block font-medium">Tersedia di</span>
-                            <span class="font-outfit font-bold text-xs text-white block">App Store</span>
-                        </div>
-                    </a>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="h-48 sm:h-56 rounded-2xl bg-[#F1F5F9] border border-[#CBD5E1] overflow-hidden flex items-center justify-center relative">
+                    @if($featuredBeforeUrl)
+                        <img src="{{ $featuredBeforeUrl }}" alt="Foto Kondisi Kerusakan" loading="lazy" class="w-full h-full object-cover" onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');">
+                        <span class="hidden text-xs sm:text-sm font-semibold text-[#475569] px-4 text-center">Foto Kondisi Kerusakan (Sebelum)</span>
+                    @else
+                        <span class="text-xs sm:text-sm font-semibold text-[#475569] px-4 text-center">Foto Kondisi Kerusakan (Sebelum)</span>
+                    @endif
                 </div>
+                <div class="h-48 sm:h-56 rounded-2xl bg-[#ECFDF5] border border-[#A7F3D0] overflow-hidden flex items-center justify-center relative">
+                    @if($featuredAfterUrl)
+                        <img src="{{ $featuredAfterUrl }}" alt="Foto Hasil Perbaikan Fisik" loading="lazy" class="w-full h-full object-cover" onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');">
+                        <span class="hidden text-xs sm:text-sm font-semibold text-[#047857] px-4 text-center">Foto Hasil Perbaikan Fisik (Sesudah)</span>
+                    @else
+                        <span class="text-xs sm:text-sm font-semibold text-[#047857] px-4 text-center">Foto Hasil Perbaikan Fisik (Sesudah)</span>
+                    @endif
+                </div>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-[#F8FAFC] border border-[#E2E8F0] flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs sm:text-sm">
+                <span class="font-bold text-[#0F172A]">
+                    {{ $featuredComplaint->latestDisposition?->team?->name ?? 'Menunggu Verifikasi Operator Dinas PUPR' }}
+                </span>
+                <span class="text-[#475569] truncate">{{ $featuredComplaint->address }}</span>
+            </div>
+        </div>
+        @else
+        <div class="bg-white rounded-[24px] border border-[#E2E8F0] shadow-[0_6px_18px_rgba(15,23,42,0.04)] p-8 sm:p-10 text-center space-y-2.5">
+            <div class="w-12 h-12 rounded-2xl bg-[#EFF6FF] border border-[#BFDBFE] text-[#2563EB] flex items-center justify-center mx-auto">
+                <i data-lucide="inbox" class="w-6 h-6"></i>
+            </div>
+            <h3 class="font-outfit font-bold text-base sm:text-lg text-[#0F172A]">
+                Laporan terbaru belum masuk lagi
+            </h3>
+            <p class="text-xs sm:text-sm text-[#475569] max-w-md mx-auto leading-relaxed">
+                Belum ada laporan baru berstatus menunggu verifikasi yang masuk dalam 3 hari terakhir. Seluruh laporan aktif dapat dipantau langsung melalui Peta Sebaran di atas.
+            </p>
+        </div>
+        @endif
+    </section>
+
+    <!-- Banner Unduh Aplikasi Mobile + QR Code Desktop (Dark Accent Card #0F172A) -->
+    <div id="download-app" class="scroll-mt-20 rounded-[24px] p-6 sm:p-10 bg-[#0F172A] text-white border border-slate-800 shadow-lg">
+        <div class="flex flex-col lg:flex-row items-center justify-between gap-6 text-center lg:text-left">
+            <div class="max-w-xl space-y-2.5">
+                <span class="inline-flex items-center px-3 py-1 rounded-full bg-blue-500/15 border border-blue-400/30 text-[#60A5FA] text-xs font-semibold">
+                    Aplikasi Resmi Warga Kolaka Utara
+                </span>
+                <h3 class="font-outfit font-bold text-xl sm:text-2xl lg:text-[26px] text-white tracking-tight">
+                    Sampaikan Aduan Infrastruktur Anda Melalui Aplikasi
+                </h3>
+                <p class="text-sm text-slate-300 leading-relaxed">
+                    Laporkan kerusakan jalan, jembatan, PJU, dan fasilitas umum langsung dari lokasi dengan foto dan titik GPS akurat.
+                </p>
+            </div>
+
+            <!-- Tombol Unduh Aplikasi (Tanpa QR Code, Warna Seragam #2563EB, Terpusat Rapi di Mobile) -->
+            <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-end gap-3 shrink-0 w-full lg:w-auto">
+                <a href="{{ route('download.apk') }}" download="SI-APPIK.APK"
+                    class="flex items-center justify-center gap-3 bg-[#2563EB] hover:bg-[#1D4ED8] text-white px-5 min-h-[52px] rounded-xl shadow-sm transition w-full sm:w-52 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
+                    <svg class="w-5 h-5 fill-current shrink-0" viewBox="0 0 24 24">
+                        <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.6 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.5,12.92 20.16,13.19L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z" />
+                    </svg>
+                    <div class="text-center sm:text-left leading-tight">
+                        <span class="text-[10px] uppercase tracking-wider text-blue-100 block font-semibold">TERSEDIA DI</span>
+                        <span class="font-outfit font-bold text-sm text-white block">Google Play Store</span>
+                    </div>
+                </a>
+
+                <a href="https://apps.apple.com" target="_blank" rel="noopener noreferrer" 
+                    class="flex items-center justify-center gap-3 bg-[#2563EB] hover:bg-[#1D4ED8] text-white px-5 min-h-[52px] rounded-xl shadow-sm transition w-full sm:w-48 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
+                    <svg class="w-5 h-5 fill-current shrink-0" viewBox="0 0 24 24">
+                        <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.62-.75 1.04-1.8 1.01-2.87-.96.04-2.12.64-2.8 1.44-.59.68-1.11 1.77-1 2.82 1.07.08 2.17-.55 2.79-1.39z"/>
+                    </svg>
+                    <div class="text-center sm:text-left leading-tight">
+                        <span class="text-[10px] uppercase tracking-wider text-blue-100 block font-semibold">TERSEDIA DI</span>
+                        <span class="font-outfit font-bold text-sm text-white block">App Store</span>
+                    </div>
+                </a>
             </div>
         </div>
     </div>
@@ -429,11 +489,11 @@
 <!-- Modal Detail Pengaduan Publik -->
 @include('partials.modals.landing_complaint_detail_modal')
 
-<!-- Tombol Mengambang Unduh APK (Muncul saat berada di section Unduh Aplikasi, selalu di atas footer) -->
+<!-- Tombol Mengambang Unduh APK (Konsisten dengan tombol biru #2563EB) -->
 <a id="floatingDownloadApkBtn" href="{{ route('download.apk') }}" download="SI-APPIK.APK"
     aria-label="Unduh APK Android SI-APPIK"
     style="bottom: 24px;"
-    class="fixed right-4 sm:right-6 z-40 inline-flex items-center gap-2.5 bg-[#0F172A] hover:bg-[#1E3A8A] text-white px-4 py-3 rounded-xl border border-white/20 shadow-lg transition-[opacity,transform] duration-300 opacity-0 translate-y-3 pointer-events-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1E3A8A]">
+    class="fixed right-4 sm:right-6 z-40 inline-flex items-center gap-2.5 bg-[#2563EB] hover:bg-[#1D4ED8] text-white px-5 py-3 rounded-full border border-blue-400/30 shadow-lg transition-[opacity,transform] duration-300 opacity-0 translate-y-3 pointer-events-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2563EB]">
     <svg class="w-5 h-5 fill-[#3DDC84] shrink-0" viewBox="0 0 24 24" aria-hidden="true">
         <path d="M17.6 9.48l1.84-3.18c.16-.31.04-.69-.26-.85-.29-.15-.65-.06-.83.22l-1.88 3.24c-1.4-.63-2.96-.98-4.47-.98s-3.07.35-4.47.98L5.65 5.67c-.19-.29-.55-.38-.84-.22-.3.16-.42.54-.26.85l1.84 3.18C4.07 10.94 2.5 13.38 2.13 16.25h19.74c-.37-2.87-1.94-5.31-4.27-6.77zM8.5 13.5c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm7 0c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z"/>
     </svg>
@@ -525,8 +585,8 @@
             scrollWheelZoom: true,
         }).setView([-3.50601, 120.88780], 12);
 
-        // Posisikan kontrol zoom di pojok kiri atas agar tidak tertutup floating card di kanan atas
-        L.control.zoom({ position: 'topleft' }).addTo(map);
+        // Posisikan kontrol zoom di pojok kanan atas agar tidak tertutup panel Filter & Daftar Aduan di sisi kiri
+        L.control.zoom({ position: 'topright' }).addTo(map);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
@@ -542,7 +602,7 @@
                 L.geoJSON(geoJsonData, {
                     interactive: false,
                     style: {
-                        color: "#1E3A8A",
+                        color: "#2563EB",
                         weight: 2.5,
                         dashArray: '6, 6',
                         fillColor: "#3B82F6",
@@ -612,28 +672,39 @@
         });
     }
 
+    let isFilterBodyOpen = window.innerWidth >= 768;
+
+    function syncFilterPanelBodyState() {
+        const body = document.getElementById('filterDrawerBody');
+        const chevron = document.getElementById('filterCollapseChevron');
+        const btn = document.getElementById('filterCollapseBtn');
+        if (!body) return;
+
+        if (isFilterBodyOpen) {
+            body.style.maxHeight = '540px';
+            body.style.opacity = '1';
+            if (chevron) chevron.style.transform = 'rotate(0deg)';
+            if (btn) btn.setAttribute('aria-expanded', 'true');
+        } else {
+            body.style.maxHeight = '0px';
+            body.style.opacity = '0';
+            if (chevron) chevron.style.transform = 'rotate(180deg)';
+            if (btn) btn.setAttribute('aria-expanded', 'false');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', syncFilterPanelBodyState);
+
+    function toggleFilterPanelBody() {
+        isFilterBodyOpen = !isFilterBodyOpen;
+        syncFilterPanelBodyState();
+    }
+
     function toggleReportDrawer() {
         isDrawerOpen = !isDrawerOpen;
-        const drawer = document.getElementById('reportDrawer');
-        const toggleBtn = document.getElementById('toggleDrawerBtn');
-        const badge = document.getElementById('drawerCountBadge');
-
-        if (isDrawerOpen) {
-            drawer.classList.remove('hidden');
-            if (toggleBtn) {
-                toggleBtn.className = "flex items-center gap-1.5 px-4 min-h-[44px] rounded-lg text-xs font-semibold bg-[#1E3A8A] text-white hover:bg-[#172554] transition shrink-0 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1E3A8A]";
-            }
-            if (badge) {
-                badge.className = "ml-0.5 px-1.5 py-0.5 rounded-md text-[10px] bg-white text-[#1E3A8A] font-bold border border-white";
-            }
-        } else {
-            drawer.classList.add('hidden');
-            if (toggleBtn) {
-                toggleBtn.className = "flex items-center gap-1.5 px-4 min-h-[44px] rounded-lg text-xs font-semibold bg-white border border-[#E2E8F0] text-[#0F172A] hover:bg-[#F8FAFC] transition shrink-0 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1E3A8A]";
-            }
-            if (badge) {
-                badge.className = "ml-0.5 px-1.5 py-0.5 rounded-md text-[10px] bg-blue-50 text-[#1E3A8A] font-bold border border-blue-200";
-            }
+        if (isDrawerOpen && !isFilterBodyOpen) {
+            isFilterBodyOpen = true;
+            syncFilterPanelBodyState();
         }
 
         setTimeout(() => {
@@ -686,14 +757,16 @@
         if (!toast) {
             toast = document.createElement('div');
             toast.id = 'mapToast';
-            toast.className = 'fixed top-6 left-1/2 -translate-x-1/2 z-[9999] px-4 py-2.5 rounded-lg bg-[#0F172A] text-white text-xs font-semibold shadow-md flex items-center gap-2.5 border border-slate-700 transition-all duration-300 opacity-0 pointer-events-none transform -translate-y-2';
+            toast.className = 'fixed top-20 sm:top-24 left-1/2 -translate-x-1/2 z-[90] max-w-[92vw] px-4 py-2.5 rounded-full bg-white text-[#0F172A] text-xs font-semibold shadow-[0_12px_32px_rgba(15,23,42,0.14)] flex items-center gap-2.5 border border-[#E2E8F0] transition-all duration-300 opacity-0 pointer-events-none transform -translate-y-2';
             document.body.appendChild(toast);
         }
         toast.innerHTML = `
-            <svg class="w-4 h-4 text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-            </svg>
-            <span>${message}</span>
+            <span class="w-6 h-6 rounded-full bg-[#EFF6FF] border border-[#BFDBFE] text-[#2563EB] flex items-center justify-center shrink-0">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+            </span>
+            <span class="leading-snug">${message}</span>
         `;
         toast.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-2');
         toast.classList.add('opacity-100', 'translate-y-0');
@@ -710,9 +783,9 @@
         document.querySelectorAll('.kpi-filter-box').forEach(box => {
             if (box.getAttribute('data-status') === currentStatusFilter) {
                 box.classList.remove('border-[#E2E8F0]');
-                box.classList.add('border-[#1E3A8A]', 'bg-[#F8FAFC]');
+                box.classList.add('border-[#2563EB]', 'bg-[#F8FAFC]');
             } else {
-                box.classList.remove('border-[#1E3A8A]', 'bg-[#F8FAFC]');
+                box.classList.remove('border-[#2563EB]', 'bg-[#F8FAFC]');
                 box.classList.add('border-[#E2E8F0]');
             }
         });
@@ -1130,7 +1203,7 @@
             const cleanQuery = query.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
             if (!cleanQuery) return text;
             const regex = new RegExp(`(${cleanQuery})`, 'gi');
-            return text.replace(regex, '<mark class="bg-amber-100 text-amber-900 font-extrabold px-0.5 rounded">$1</mark>');
+            return text.replace(regex, '<mark class="bg-[#EFF6FF] text-[#2563EB] font-bold rounded px-0.5">$1</mark>');
         }
 
         function renderStatusPill(status) {
@@ -1139,19 +1212,19 @@
                 case 'PENDING':
                 case 'VERIFIED':
                 case 'VERIFICATION':
-                    return '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-600 border border-rose-200 shrink-0">Verifikasi</span>';
+                    return '<span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-red-50 text-[#EF4444] border border-red-200 shrink-0">Verifikasi</span>';
                 case 'DISPATCHED':
-                    return '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-[#1E3A8A] border border-blue-200 shrink-0">Ditugaskan</span>';
+                    return '<span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE] shrink-0">Ditugaskan</span>';
                 case 'IN_PROGRESS':
                 case 'REVISION_REQUIRED':
                 case 'WAITING_VERIFICATION':
-                    return '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200 shrink-0">Validasi</span>';
+                    return '<span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-50 text-[#B45309] border border-[#FDE68A] shrink-0">Validasi</span>';
                 case 'COMPLETED':
                 case 'RESOLVED':
                 case 'CLOSED':
-                    return '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 shrink-0">Selesai</span>';
+                    return '<span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-50 text-[#047857] border border-[#A7F3D0] shrink-0">Selesai</span>';
                 default:
-                    return '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-600 shrink-0">Verifikasi</span>';
+                    return '<span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-slate-100 text-[#475569] border border-[#E2E8F0] shrink-0">Verifikasi</span>';
             }
         }
 
@@ -1221,22 +1294,22 @@
                 suggestionsList.innerHTML = displayMatches.map((r, idx) => {
                     const addressSnippet = r.address ? r.address.split(',')[0] : 'Kab. Kolaka Utara';
                     return `
-                        <div class="suggestion-item p-3.5 hover:bg-[#F8FAFC] transition flex items-center justify-between gap-3 cursor-pointer group" data-index="${idx}">
-                            <div class="flex items-start gap-3 min-w-0">
-                                <div class="suggestion-icon-box w-8 h-8 rounded-lg bg-slate-100 group-hover:bg-[#1E3A8A] group-hover:text-white text-[#475569] flex items-center justify-center shrink-0 mt-0.5 transition">
+                        <div class="suggestion-item px-5 py-3.5 hover:bg-[#F8FAFC] transition flex items-center justify-between gap-3 cursor-pointer group" data-index="${idx}">
+                            <div class="flex items-center gap-3.5 min-w-0">
+                                <div class="suggestion-icon-box w-9 h-9 rounded-xl bg-[#EFF6FF] border border-[#BFDBFE] text-[#2563EB] group-hover:bg-[#2563EB] group-hover:text-white group-hover:border-[#2563EB] flex items-center justify-center shrink-0 transition">
                                     <i data-lucide="map-pin" class="w-4 h-4"></i>
                                 </div>
-                                <div class="min-w-0">
-                                    <div class="text-[13px] font-bold text-[#0F172A] group-hover:text-[#1E3A8A] transition truncate">
+                                <div class="min-w-0 space-y-1">
+                                    <div class="text-sm font-bold text-[#0F172A] group-hover:text-[#2563EB] transition truncate leading-snug">
                                         ${highlightMatch(r.title, query)}
                                     </div>
-                                    <div class="text-[11px] text-[#475569] flex flex-wrap items-center gap-1.5 mt-0.5">
-                                        <span class="font-bold text-[#0F172A] bg-slate-100 px-1.5 py-0.5 rounded text-[10px] tracking-wide font-mono border border-slate-200">
+                                    <div class="text-xs text-[#475569] flex flex-wrap items-center gap-1.5">
+                                        <span class="font-bold text-[#2563EB] bg-[#EFF6FF] px-2 py-0.5 rounded-md text-[11px] tracking-wide font-mono border border-[#BFDBFE]">
                                             ${highlightMatch(r.public_code, query)}
                                         </span>
-                                        <span>•</span>
-                                        <span class="truncate">Pelapor: <strong class="text-[#0F172A] font-medium">${highlightMatch(r.reporter_name || 'Warga', query)}</strong></span>
-                                        <span>•</span>
+                                        <span class="text-slate-300">&bull;</span>
+                                        <span class="truncate">Pelapor: <strong class="text-[#0F172A] font-semibold">${highlightMatch(r.reporter_name || 'Warga', query)}</strong></span>
+                                        <span class="text-slate-300">&bull;</span>
                                         <span class="text-[#475569] truncate">${addressSnippet}</span>
                                     </div>
                                 </div>
@@ -1371,24 +1444,52 @@
         });
     }
 
-    // Slideshow latar belakang Hero (5 foto ikonik Kolaka Utara)
+    // Slideshow latar belakang Hero + Parallax halus saat di-scroll ke bawah
     (function initHeroSlideshow() {
-        const slides = document.querySelectorAll('#heroBgSlides .hero-slide');
-        if (slides.length <= 1) return;
-        if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-        let current = 0;
-        setInterval(() => {
-            slides[current].classList.remove('opacity-100');
-            slides[current].classList.add('opacity-0');
-            current = (current + 1) % slides.length;
-            slides[current].classList.remove('opacity-0');
-            slides[current].classList.add('opacity-100');
-        }, 5000);
+        const bgWrapper = document.getElementById('landingHeroSlideshow');
+        const slides = document.querySelectorAll('#landingHeroSlideshow .landing-hero-slide');
+        const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        if (slides.length > 1 && !reduced) {
+            window.addEventListener('load', () => {
+                setTimeout(() => {
+                    slides.forEach(s => {
+                        if (s.dataset && s.dataset.src && !s.getAttribute('src')) {
+                            s.src = s.dataset.src;
+                        }
+                    });
+                }, 1200);
+            }, { once: true });
+            let current = 0;
+            setInterval(() => {
+                slides[current].classList.remove('opacity-100', 'active-slide');
+                slides[current].classList.add('opacity-0');
+                current = (current + 1) % slides.length;
+                if (slides[current].dataset && slides[current].dataset.src && !slides[current].getAttribute('src')) {
+                    slides[current].src = slides[current].dataset.src;
+                }
+                slides[current].classList.remove('opacity-0');
+                slides[current].classList.add('opacity-100', 'active-slide');
+            }, 5000);
+        }
+
+        if (bgWrapper && !reduced) {
+            let ticking = false;
+            window.addEventListener('scroll', () => {
+                if (ticking) return;
+                ticking = true;
+                window.requestAnimationFrame(() => {
+                    const y = Math.min(window.scrollY || 0, 520);
+                    bgWrapper.style.transform = `translate3d(0, ${y * 0.16}px, 0)`;
+                    ticking = false;
+                });
+            }, { passive: true });
+        }
     })();
 
-    // Animasi Scroll Reveal satu per satu saat pertama kali dibuka
+    // Transisi Scroll Reveal Modern saat user menggeser halaman ke bawah
     (function initScrollReveal() {
-        const items = document.querySelectorAll('[data-reveal]');
+        const items = document.querySelectorAll('[data-reveal], #mapSectionContainer, #download-app');
         if (!items.length) return;
         const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         if (reduced || !('IntersectionObserver' in window)) {
@@ -1398,13 +1499,8 @@
             });
             return;
         }
-        items.forEach(el => {
-            el.style.opacity = '0';
-            el.style.transform = 'translateY(14px)';
-            el.style.transitionProperty = 'opacity, transform';
-            el.style.transitionDuration = '450ms';
-            el.style.transitionTimingFunction = 'cubic-bezier(0.22, 1, 0.36, 1)';
-        });
+
+        const vh = window.innerHeight || 900;
         const observer = new IntersectionObserver((entries, obs) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -1413,8 +1509,22 @@
                     obs.unobserve(entry.target);
                 }
             });
-        }, { threshold: 0.12, rootMargin: '0px 0px -24px 0px' });
-        items.forEach(el => observer.observe(el));
+        }, { threshold: 0.08, rootMargin: '0px 0px -16px 0px' });
+
+        items.forEach(el => {
+            const rect = el.getBoundingClientRect();
+            if (rect.top < vh * 0.95) {
+                el.style.opacity = '1';
+                el.style.transform = 'none';
+            } else {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(22px)';
+                el.style.transitionProperty = 'opacity, transform';
+                el.style.transitionDuration = '550ms';
+                el.style.transitionTimingFunction = 'cubic-bezier(0.22, 1, 0.36, 1)';
+                observer.observe(el);
+            }
+        });
     })();
 
     // Tombol Mengambang Unduh APK saat berada di Section #download-app (Selalu di atas Footer)

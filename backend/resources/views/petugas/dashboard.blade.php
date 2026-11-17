@@ -16,13 +16,10 @@
             <h2 class="font-outfit font-bold text-lg sm:text-xl text-[#0F172A] leading-tight">
                 Pusat Penugasan &amp; Pengerjaan Lapangan
             </h2>
-            <p class="text-xs text-[#475569] mt-0.5">
-                Kelola tugas regu, unggah foto bukti perbaikan fisik, dan pantau status validasi.
-            </p>
         </div>
         <div class="flex items-center gap-2 shrink-0">
             <span class="px-3.5 py-2 rounded-lg bg-white text-[#0F172A] text-xs font-semibold border border-[#E2E8F0] flex items-center gap-2">
-                <i data-lucide="clock" class="w-4 h-4 text-[#1E3A8A]"></i>
+                <i data-lucide="clock" class="w-4 h-4 text-[#2563EB]"></i>
                 <span class="live-wita-clock">{{ $todayStr }}</span>
             </span>
         </div>
@@ -30,9 +27,9 @@
 
     @if(isset($myTeam) && $myTeam)
         <!-- BANNER IDENTITAS REGU PETUGAS (Flat Solid Navy, Tanpa Gradient/Glassmorphism) -->
-        <div class="p-4 sm:p-5 rounded-xl bg-[#1E3A8A] border border-[#172554] text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="p-4 sm:p-5 rounded-xl bg-[#2563EB] border border-[#1D4ED8] text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div class="flex items-center gap-3.5">
-                <div class="w-11 h-11 rounded-lg bg-[#172554] border border-blue-800 flex items-center justify-center shrink-0">
+                <div class="w-11 h-11 rounded-lg bg-[#1D4ED8] border border-blue-800 flex items-center justify-center shrink-0">
                     <i data-lucide="shield" class="w-5 h-5 text-amber-300"></i>
                 </div>
                 <div>
@@ -54,7 +51,7 @@
                 </div>
             </div>
             <div class="flex items-center gap-2 shrink-0">
-                <span class="px-3 py-1.5 rounded-lg bg-[#172554] border border-blue-800 text-xs font-semibold text-amber-200">
+                <span class="px-3 py-1.5 rounded-lg bg-[#1D4ED8] border border-blue-800 text-xs font-semibold text-amber-200">
                     {{ $myTeam->leader_id === auth()->id() ? 'Ketua Regu (Koordinator)' : 'Anggota Regu' }}
                 </span>
             </div>
@@ -67,7 +64,7 @@
         <div class="p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
             <div class="flex items-center justify-between gap-1.5">
                 <span class="text-[8.5px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-normal sm:tracking-wider leading-tight">Total Aduan</span>
-                <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-blue-50 text-[#1E3A8A] border border-blue-200 flex items-center justify-center shrink-0">
+                <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-blue-50 text-[#2563EB] border border-blue-200 flex items-center justify-center shrink-0">
                     <i data-lucide="inbox" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                 </div>
             </div>
@@ -99,7 +96,7 @@
         <div class="p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
             <div class="flex items-center justify-between gap-1.5">
                 <span class="text-[8.5px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-normal sm:tracking-wider leading-tight">Ditugaskan</span>
-                <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-blue-50 text-[#1E40AF] border border-blue-200 flex items-center justify-center shrink-0">
+                <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-blue-50 text-[#2563EB] border border-blue-200 flex items-center justify-center shrink-0">
                     <i data-lucide="send" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                 </div>
             </div>
@@ -163,7 +160,7 @@
         <div class="col-span-3 sm:col-span-1 p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
             <div class="flex items-center justify-between gap-1.5">
                 <span class="text-[8.5px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-normal sm:tracking-wider leading-tight">Rasio Sukses</span>
-                <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-blue-50 text-[#1E3A8A] border border-blue-200 flex items-center justify-center shrink-0">
+                <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-blue-50 text-[#2563EB] border border-blue-200 flex items-center justify-center shrink-0">
                     <i data-lucide="trending-up" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                 </div>
             </div>
@@ -176,11 +173,11 @@
         </div>
     </div>
 
-    <!-- Navigasi Tab Petugas (Seragam Desain Admin) -->
-    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-2.5 w-full">
+    <!-- Navigasi Tab Petugas (Dipindahkan ke Sidebar Accordion) -->
+    <div class="hidden grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-2.5 w-full">
         <!-- 1. Tab Peta Tugas -->
         <button type="button" onclick="switchPetugasTab('spatial')" id="petugasTabBtn-spatial"
-            class="petugas-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer bg-[#1E3A8A] text-white border-[#1E3A8A]">
+            class="petugas-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer bg-[#2563EB] text-white border-[#2563EB]">
             <i data-lucide="map" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
                 <span class="text-[11px] sm:text-xs font-bold block leading-tight">Peta Tugas</span>
@@ -194,7 +191,7 @@
             <div class="min-w-0 flex-1">
                 <span class="text-[11px] sm:text-xs font-bold block leading-tight">Penugasan</span>
             </div>
-            <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 bg-blue-50 text-[#1E3A8A] border border-blue-200">{{ $dispatchedTasks->count() }}</span>
+            <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 bg-blue-50 text-[#2563EB] border border-blue-200">{{ $dispatchedTasks->count() }}</span>
         </button>
 
         <!-- 3. Tab Dikerjakan -->
@@ -204,7 +201,7 @@
             <div class="min-w-0 flex-1">
                 <span class="text-[11px] sm:text-xs font-bold block leading-tight">Dikerjakan</span>
             </div>
-            <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 bg-blue-50 text-[#1E3A8A] border border-blue-200">{{ $inProgressTasks->count() }}</span>
+            <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 bg-blue-50 text-[#2563EB] border border-blue-200">{{ $inProgressTasks->count() }}</span>
         </button>
 
         <!-- 4. Tab Validasi -->
@@ -214,7 +211,7 @@
             <div class="min-w-0 flex-1">
                 <span class="text-[11px] sm:text-xs font-bold block leading-tight">Validasi</span>
             </div>
-            <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 bg-blue-50 text-[#1E3A8A] border border-blue-200">{{ $waitingVerificationTasks->count() }}</span>
+            <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 bg-blue-50 text-[#2563EB] border border-blue-200">{{ $waitingVerificationTasks->count() }}</span>
         </button>
 
         <!-- 5. Tab Tugas Selesai -->
@@ -224,108 +221,85 @@
             <div class="min-w-0 flex-1">
                 <span class="text-[11px] sm:text-xs font-bold block leading-tight">Tugas Selesai</span>
             </div>
-            <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 bg-blue-50 text-[#1E3A8A] border border-blue-200">{{ $completedTasks->count() }}</span>
+            <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 bg-blue-50 text-[#2563EB] border border-blue-200">{{ $completedTasks->count() }}</span>
         </button>
     </div>
 
-    <!-- Filter Pencarian dan Kategori -->
-    <div id="petugasFilterContainer" class="hidden p-3.5 rounded-xl bg-white border border-[#E2E8F0]">
-        <div class="flex flex-col sm:flex-row flex-wrap sm:items-center justify-between gap-3">
-            <!-- Search Input -->
-            <div class="relative w-full sm:flex-1 sm:min-w-[200px]">
-                <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
-                <input type="text" id="petugasSearchInput" oninput="applyPetugasFilters()"
-                    placeholder="Cari kode tugas, judul, atau lokasi perbaikan..."
-                    class="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-[#1E3A8A] focus:ring-1 focus:ring-[#1E3A8A] transition">
+    <!-- Tab 1: Peta Tugas (Di luar #petugasUnifiedCard agar tidak ikut tersembunyi) -->
+    <div id="petugasTabContent-spatial" class="space-y-6">
+        @include('partials.role_split_gis', [
+            'mapId' => 'petugasMap',
+            'prefix' => 'petugas',
+            'focusFn' => 'focusDistrictOnPetugasMap',
+            'mapTitle' => 'Peta Spasial 15 Kecamatan',
+            'districtStats' => $districtStats
+        ])
+    </div>
+
+    <!-- Wadah Kartu Terpadu Daftar Tugas Lapangan (Seragam Admin & Kepala Daerah) -->
+    <div id="petugasUnifiedCard" class="hidden card-white rounded-2xl p-5 sm:p-6 bg-white border border-[#E2E8F0] shadow-xs space-y-4">
+    <!-- Filter Pencarian dan Kategori (Seragam Daftar Pengguna & Daftar Aduan) -->
+    <div id="petugasFilterContainer" class="hidden">
+        <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-3">
+            <div class="flex items-center gap-2.5 shrink-0">
+                <div class="w-9 h-9 rounded-xl bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE] flex items-center justify-center shrink-0">
+                    <i data-lucide="clipboard-list" class="w-4 h-4"></i>
+                </div>
+                <h3 class="font-outfit font-bold text-sm sm:text-base text-[#0F172A]">Daftar Tugas Lapangan</h3>
             </div>
 
-            <!-- Filter Controls (Kompak 2-Kolom di Mobile, Satu Baris di Desktop) -->
-            <div class="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 w-full sm:w-auto">
-                <!-- Dropdown Filter Kategori -->
-                <div class="flex flex-col sm:flex-row sm:items-center gap-1 min-w-0">
-                    <div class="flex items-center gap-1 text-[11px] sm:text-xs text-slate-500 shrink-0 font-medium whitespace-nowrap">
-                        <i data-lucide="layers" class="w-3.5 h-3.5 text-[#1E3A8A]"></i>
-                        <span>Kategori:</span>
-                    </div>
-                    <select id="petugasCategorySelect" onchange="applyPetugasFilters()"
-                        class="w-full sm:w-auto text-xs font-semibold rounded-xl border border-slate-200 py-2 px-2.5 bg-slate-50 text-slate-700 focus:outline-none focus:border-[#1E3A8A] focus:bg-white transition shrink-0">
-                        <option value="ALL">Semua Kategori</option>
-                        @foreach($categories as $cat)
-                            <option value="{{ $cat->id }}">{{ $cat->name }}</option>
-                        @endforeach
-                    </select>
+            <div class="flex flex-wrap items-center gap-2 flex-1 xl:justify-end">
+                <div class="relative flex-1 min-w-[160px] sm:max-w-xs">
+                    <i data-lucide="search" class="w-4 h-4 text-[#64748B] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                    <input type="text" id="petugasSearchInput" oninput="applyPetugasFilters()"
+                        placeholder="Cari kode tugas, judul, atau lokasi..."
+                        class="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] focus:bg-white focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/15 transition">
                 </div>
 
-                <!-- Dropdown Tipe Laporan (Ringan vs Berat) -->
-                <div class="flex flex-col sm:flex-row sm:items-center gap-1 min-w-0">
-                    <div class="flex items-center gap-1 text-[11px] sm:text-xs text-slate-500 shrink-0 font-medium whitespace-nowrap">
-                        <i data-lucide="git-commit" class="w-3.5 h-3.5 text-[#1E3A8A]"></i>
-                        <span>Tipe:</span>
-                    </div>
-                    <select id="petugasDamageTypeSelect" onchange="applyPetugasFilters()"
-                        class="w-full sm:w-auto text-xs font-semibold rounded-xl border border-slate-200 py-2 px-2.5 bg-slate-50 text-slate-700 focus:outline-none focus:border-[#1E3A8A] focus:bg-white transition shrink-0">
-                        <option value="ALL">Semua Tipe</option>
-                        <option value="minor">Kerusakan Ringan</option>
-                        <option value="major">Kerusakan Berat</option>
-                    </select>
-                </div>
+                <select id="petugasCategorySelect" onchange="applyPetugasFilters()"
+                    class="text-xs font-semibold rounded-xl border border-[#E2E8F0] py-2 px-3 bg-[#F8FAFC] text-[#334155] focus:outline-none focus:border-[#2563EB] focus:bg-white transition shrink-0">
+                    <option value="ALL">Kategori: Semua</option>
+                    @foreach($categories as $cat)
+                        <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                    @endforeach
+                </select>
 
-                <div class="col-span-2 sm:col-span-1 flex items-center justify-end gap-1.5 shrink-0">
-                    <!-- Tombol Reset -->
-                    <button type="button" id="petugasResetBtn" onclick="resetPetugasFilters()"
-                        class="hidden px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition flex items-center gap-1 shrink-0 cursor-pointer">
-                        <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
-                        <span>Reset</span>
+                <select id="petugasDamageTypeSelect" onchange="applyPetugasFilters()"
+                    class="text-xs font-semibold rounded-xl border border-[#E2E8F0] py-2 px-3 bg-[#F8FAFC] text-[#334155] focus:outline-none focus:border-[#2563EB] focus:bg-white transition shrink-0">
+                    <option value="ALL">Tipe: Semua</option>
+                    <option value="minor">Ringan</option>
+                    <option value="major">Berat</option>
+                </select>
+
+                <button type="button" id="petugasResetBtn" onclick="resetPetugasFilters()"
+                    class="hidden px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition flex items-center gap-1 shrink-0 cursor-pointer">
+                    <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                    <span>Reset</span>
+                </button>
+
+                <!-- Toggle Tata Letak Daftar / Petak (Rata Kanan) -->
+                <div class="inline-flex items-center p-0.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] shrink-0 ml-auto" role="group" aria-label="Tata letak tugas">
+                    <button type="button" id="petugasLayoutBtn-list" onclick="setPetugasLayout('list')"
+                        class="px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer bg-[#2563EB] text-white">
+                        <i data-lucide="list" class="w-3.5 h-3.5"></i>
+                        <span>Daftar</span>
                     </button>
-
-                    <!-- Toggle Tata Letak Daftar / Petak -->
-                    <div class="inline-flex items-center p-0.5 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] shrink-0" role="group" aria-label="Tata letak tugas">
-                        <button type="button" id="petugasLayoutBtn-list" onclick="setPetugasLayout('list')"
-                            class="px-2.5 py-1.5 rounded-md text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer bg-[#1E3A8A] text-white">
-                            <i data-lucide="list" class="w-3.5 h-3.5"></i>
-                            <span>Daftar</span>
-                        </button>
-                        <button type="button" id="petugasLayoutBtn-grid" onclick="setPetugasLayout('grid')"
-                            class="px-2.5 py-1.5 rounded-md text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer text-[#475569] hover:text-[#0F172A]">
-                            <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
-                            <span>Petak</span>
-                        </button>
-                    </div>
+                    <button type="button" id="petugasLayoutBtn-grid" onclick="setPetugasLayout('grid')"
+                        class="px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer text-[#475569] hover:text-[#0F172A]">
+                        <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
+                        <span>Petak</span>
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Tab 1: Peta Spasial Penanganan Fisik -->
-    <div id="petugasTabContent-spatial" class="space-y-6">
-        <div class="card-white rounded-2xl p-5 bg-white border border-[#E2E8F0] space-y-3">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
-                <div>
-                    <h3 class="font-outfit font-bold text-base text-slate-900 flex items-center gap-2">
-                        <i data-lucide="map-pin" class="w-4 h-4 text-[#1E3A8A]"></i>
-                        <span>Peta Sebaran Infrastruktur Rusak Seluruh Kabupaten</span>
-                    </h3>
-                </div>
-                <div class="flex items-center gap-2 sm:gap-3 text-[10px] sm:text-xs font-semibold overflow-x-auto whitespace-nowrap w-full sm:w-auto pb-0.5 sm:pb-0">
-                    <span class="inline-flex items-center gap-1 shrink-0"><span class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#EF4444]"></span> Verifikasi</span>
-                    <span class="inline-flex items-center gap-1 shrink-0"><span class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#1E40AF]"></span> Ditugaskan</span>
-                    <span class="inline-flex items-center gap-1 shrink-0"><span class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#F59E0B]"></span> <span class="hidden sm:inline">Sedang </span>Dikerjakan</span>
-                    <span class="inline-flex items-center gap-1 shrink-0"><span class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#F59E0B]"></span> Validasi</span>
-                    <span class="inline-flex items-center gap-1 shrink-0"><span class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#10B981]"></span> Selesai</span>
-                    <span class="inline-flex items-center gap-1 shrink-0"><span class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#DC2626]"></span> Ditolak</span>
-                </div>
-            </div>
-
-            <!-- Leaflet Map Container -->
-            <div id="petugasMap" class="w-full h-[450px] rounded-xl border border-[#E2E8F0] z-10"></div>
-        </div>
-    </div>
-
     <!-- Tab 2: Penugasan Baru Masuk -->
     <div id="petugasTabContent-assigned" class="hidden space-y-4">
         @if($dispatchedTasks->isEmpty())
             <div class="card-white rounded-2xl p-12 text-center space-y-2 bg-white border border-[#E2E8F0]">
-                <div class="w-10 h-10 rounded-full bg-blue-50 text-[#1E3A8A] flex items-center justify-center mx-auto">
+                <div class="w-10 h-10 rounded-full bg-blue-50 text-[#2563EB] flex items-center justify-center mx-auto">
                     <i data-lucide="check" class="w-5 h-5"></i>
                 </div>
                 <h4 class="font-bold text-sm text-slate-800">Belum Ada Penugasan Baru</h4>
@@ -348,7 +322,7 @@
                             <!-- 1. Header Card: 1 Baris Sejajar - Kode + Tipe + Kategori (Kiri) & Status Ditugaskan (Kanan) -->
                             <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-slate-100 min-w-0">
                                 <div class="flex items-center gap-1.5 min-w-0 flex-nowrap overflow-hidden">
-                                    <span class="px-2 py-0.5 rounded-lg bg-[#1E3A8A]/10 text-[#1E3A8A] font-bold text-xs font-mono tracking-tight border border-blue-100/60 whitespace-nowrap shrink-0">
+                                    <span class="px-2 py-0.5 rounded-lg bg-[#2563EB]/10 text-[#2563EB] font-bold text-xs font-mono tracking-tight border border-blue-100/60 whitespace-nowrap shrink-0">
                                         #{{ $t->public_code }}
                                     </span>
                                     <span class="px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-red-50 text-red-700 border border-red-200/80 inline-flex items-center gap-1 whitespace-nowrap shrink-0">
@@ -359,7 +333,7 @@
                                         {{ $t->category?->name ?? 'Infrastruktur' }}
                                     </span>
                                 </div>
-                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-[#1E3A8A] border border-blue-200 shrink-0 whitespace-nowrap">
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-[#2563EB] border border-blue-200 shrink-0 whitespace-nowrap">
                                     ● DITUGASKAN
                                 </span>
                             </div>
@@ -371,7 +345,7 @@
                                     : null;
                             @endphp
                             <div class="flex gap-4 items-stretch">
-                                <div onclick="openPetugasDetailModal({{ $t->id }})" class="relative w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden border border-slate-200/90 bg-slate-100 shrink-0 shadow-2xs cursor-pointer group hover:ring-2 hover:ring-[#1E3A8A] transition" title="Klik untuk lihat rincian foto">
+                                <div onclick="openPetugasDetailModal({{ $t->id }})" class="relative w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden border border-slate-200/90 bg-slate-100 shrink-0 shadow-2xs cursor-pointer group hover:ring-2 hover:ring-[#2563EB] transition" title="Klik untuk lihat rincian foto">
                                     @if($firstPhotoUrl)
                                         <img src="{{ $firstPhotoUrl }}" alt="Foto Kerusakan" class="w-full h-full object-cover group-hover:scale-105 transition duration-200">
                                         @if($t->photos->count() > 1)
@@ -399,14 +373,14 @@
 
                                     <!-- Baris 2: Lokasi Fisik -->
                                     <div class="text-xs text-slate-600 flex items-center gap-1.5 min-w-0">
-                                        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#1E3A8A] shrink-0"></i>
+                                        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#2563EB] shrink-0"></i>
                                         <span class="truncate font-medium" title="{{ $t->address }}">{{ $t->address }}</span>
                                     </div>
 
                                     <!-- Baris 3: Info Pelapor & No Telepon -->
                                     <div class="flex items-center gap-2 text-xs min-w-0">
                                         <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-blue-50/90 border border-blue-100/90 text-slate-700 min-w-0 max-w-full">
-                                            <i data-lucide="user" class="w-3 h-3 text-[#1E3A8A] shrink-0"></i>
+                                            <i data-lucide="user" class="w-3 h-3 text-[#2563EB] shrink-0"></i>
                                             <span class="font-semibold text-slate-800 text-[11px] truncate">{{ $t->citizen?->name ?? 'Warga' }}</span>
                                             @if($t->citizen?->phone)
                                                 <span class="text-blue-300 shrink-0">•</span>
@@ -417,7 +391,7 @@
 
                                     <!-- Baris 4: Tombol Detail Lengkap & Foto -->
                                     <div class="relative z-10 hidden md:block">
-                                        <button type="button" onclick="openPetugasDetailModal({{ $t->id }})" class="text-xs font-bold text-[#1E3A8A] hover:underline inline-flex items-center gap-1 cursor-pointer">
+                                        <button type="button" onclick="openPetugasDetailModal({{ $t->id }})" class="text-xs font-bold text-[#2563EB] hover:underline inline-flex items-center gap-1 cursor-pointer">
                                             <span>Lihat Rincian Lengkap & Foto</span>
                                             <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
                                         </button>
@@ -429,10 +403,10 @@
                             <div class="pt-2 border-t border-slate-100">
                                 <div class="p-2.5 rounded-xl {{ $isOverdue ? 'bg-red-50 border border-red-200 text-red-800' : 'bg-blue-50/50 border border-blue-100/90' }} flex items-center justify-between text-[10px]">
                                     <span class="flex items-center gap-1.5 {{ $isOverdue ? 'text-red-700 font-bold' : 'text-slate-600 font-medium' }}">
-                                        <i data-lucide="{{ $isOverdue ? 'alert-triangle' : 'clock' }}" class="w-3 h-3 {{ $isOverdue ? 'text-red-600' : 'text-[#1E3A8A]' }} shrink-0"></i>
+                                        <i data-lucide="{{ $isOverdue ? 'alert-triangle' : 'clock' }}" class="w-3 h-3 {{ $isOverdue ? 'text-red-600' : 'text-[#2563EB]' }} shrink-0"></i>
                                         <span>{{ $isOverdue ? 'PERINGATAN: MELEWATI BATAS WAKTU!' : 'Batas Waktu Penyelesaian:' }}</span>
                                     </span>
-                                    <span class="px-1.5 py-0.5 rounded text-[9px] font-bold shrink-0 {{ $isOverdue ? 'bg-red-100 text-red-800' : 'bg-blue-100/80 text-[#1E3A8A]' }}">
+                                    <span class="px-1.5 py-0.5 rounded text-[9px] font-bold shrink-0 {{ $isOverdue ? 'bg-red-100 text-red-800' : 'bg-blue-100/80 text-[#2563EB]' }}">
                                         {{ $deadline ? $deadline->diffForHumans() : '2 hari dari sekarang' }}
                                     </span>
                                 </div>
@@ -448,7 +422,7 @@
                         <div onclick="event.stopPropagation();" class="pt-2 border-t border-slate-100 cursor-default">
                             <form method="POST" action="{{ route('petugas.complaints.start', $t->id) }}">
                                 @csrf
-                                <button type="submit" class="w-full py-2.5 rounded-xl bg-[#1E3A8A] hover:bg-blue-900 text-white font-bold text-xs shadow-xs transition flex items-center justify-center gap-2 cursor-pointer">
+                                <button type="submit" class="w-full py-2.5 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold text-xs shadow-xs transition flex items-center justify-center gap-2 cursor-pointer">
                                     <i data-lucide="play" class="w-3.5 h-3.5"></i>
                                     <span>Mulai Kerja Lapangan</span>
                                 </button>
@@ -465,7 +439,7 @@
         @if($inProgressTasks->isEmpty())
             <div class="card-white rounded-2xl p-12 text-center space-y-2 bg-white border border-[#E2E8F0]">
                 <div class="w-10 h-10 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
-                    <i data-lucide="hard-hat" class="w-5 h-5 text-[#1E3A8A]"></i>
+                    <i data-lucide="hard-hat" class="w-5 h-5 text-[#2563EB]"></i>
                 </div>
                 <h4 class="font-bold text-sm text-slate-800">Tidak Ada Pekerjaan Aktif</h4>
                 <p class="text-xs text-slate-400">Silakan buka tab "Penugasan" lalu tekan "Mulai Kerja Lapangan" untuk memulai penanganan tugas.</p>
@@ -489,7 +463,7 @@
                             <!-- 1. Header Badges -->
                             <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-slate-100 min-w-0">
                                 <div class="flex items-center gap-1.5 min-w-0 flex-nowrap overflow-hidden">
-                                    <span class="px-2 py-0.5 rounded-lg bg-[#1E3A8A]/10 text-[#1E3A8A] font-bold text-xs font-mono tracking-tight border border-blue-100/60 whitespace-nowrap shrink-0">
+                                    <span class="px-2 py-0.5 rounded-lg bg-[#2563EB]/10 text-[#2563EB] font-bold text-xs font-mono tracking-tight border border-blue-100/60 whitespace-nowrap shrink-0">
                                         #{{ $t->public_code }}
                                     </span>
                                     <span class="px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-red-50 text-red-700 border border-red-200/80 inline-flex items-center gap-1 whitespace-nowrap shrink-0">
@@ -504,7 +478,7 @@
                                     $pStatusBadgeClass = 'bg-amber-50 text-amber-700 border border-amber-300';
                                     $pStatusLabel = 'DIKERJAKAN';
                                     if ($t->status === 'WAITING_VERIFICATION') {
-                                        $pStatusBadgeClass = 'bg-blue-50 text-[#1E3A8A] border border-blue-200';
+                                        $pStatusBadgeClass = 'bg-blue-50 text-[#2563EB] border border-blue-200';
                                         $pStatusLabel = 'VALIDASI';
                                     } elseif ($t->status === 'REVISION_REQUIRED') {
                                         $pStatusBadgeClass = 'bg-amber-50 text-amber-800 border border-amber-200';
@@ -523,7 +497,7 @@
                                     : null;
                             @endphp
                             <div class="flex gap-4 items-stretch">
-                                <div onclick="openPetugasDetailModal({{ $t->id }})" class="relative w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden border border-slate-200/90 bg-slate-100 shrink-0 shadow-2xs cursor-pointer group hover:ring-2 hover:ring-[#1E3A8A] transition" title="Klik untuk lihat rincian foto">
+                                <div onclick="openPetugasDetailModal({{ $t->id }})" class="relative w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden border border-slate-200/90 bg-slate-100 shrink-0 shadow-2xs cursor-pointer group hover:ring-2 hover:ring-[#2563EB] transition" title="Klik untuk lihat rincian foto">
                                     @if($firstPhotoUrl)
                                         <img src="{{ $firstPhotoUrl }}" alt="Foto Kerusakan" class="w-full h-full object-cover group-hover:scale-105 transition duration-200">
                                         @if($t->photos->count() > 1)
@@ -551,14 +525,14 @@
 
                                     <!-- Baris 2: Lokasi Fisik -->
                                     <div class="text-xs text-slate-600 flex items-center gap-1.5 min-w-0">
-                                        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#1E3A8A] shrink-0"></i>
+                                        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#2563EB] shrink-0"></i>
                                         <span class="truncate font-medium" title="{{ $t->address }}">{{ $t->address }}</span>
                                     </div>
 
                                     <!-- Baris 3: Info Pelapor & No Telepon -->
                                     <div class="flex items-center gap-2 text-xs min-w-0">
                                         <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-blue-50/90 border border-blue-100/90 text-slate-700 min-w-0 max-w-full">
-                                            <i data-lucide="user" class="w-3 h-3 text-[#1E3A8A] shrink-0"></i>
+                                            <i data-lucide="user" class="w-3 h-3 text-[#2563EB] shrink-0"></i>
                                             <span class="font-semibold text-slate-800 text-[11px] truncate">{{ $t->citizen?->name ?? 'Warga' }}</span>
                                             @if($t->citizen?->phone)
                                                 <span class="text-blue-300 shrink-0">•</span>
@@ -569,7 +543,7 @@
 
                                     <!-- Baris 4: Tombol Detail Lengkap & Foto -->
                                     <div class="relative z-10 hidden md:block">
-                                        <button type="button" onclick="openPetugasDetailModal({{ $t->id }})" class="text-xs font-bold text-[#1E3A8A] hover:underline inline-flex items-center gap-1 cursor-pointer">
+                                        <button type="button" onclick="openPetugasDetailModal({{ $t->id }})" class="text-xs font-bold text-[#2563EB] hover:underline inline-flex items-center gap-1 cursor-pointer">
                                             <span>Lihat Rincian Lengkap & Foto</span>
                                             <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
                                         </button>
@@ -594,7 +568,7 @@
                         <!-- Action Button: Buka Modal Unggah Bukti Penyelesaian -->
                         <div onclick="event.stopPropagation();" class="pt-2 border-t border-slate-100 cursor-default">
                             <button type="button" onclick="openPetugasFinishModal({{ $t->id }}, '{{ $t->public_code }}', '{{ addslashes($t->title) }}')"
-                                class="w-full py-2.5 rounded-xl bg-[#1E3A8A] hover:bg-blue-900 text-white font-bold text-xs shadow-xs transition flex items-center justify-center gap-2 cursor-pointer">
+                                class="w-full py-2.5 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold text-xs shadow-xs transition flex items-center justify-center gap-2 cursor-pointer">
                                 <i data-lucide="upload-cloud" class="w-3.5 h-3.5"></i>
                                 <span>Kirim Bukti Selesai Lapangan</span>
                             </button>
@@ -633,7 +607,7 @@
                             <!-- 1. Header Badges -->
                             <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-slate-100 min-w-0">
                                 <div class="flex items-center gap-1.5 min-w-0 flex-nowrap overflow-hidden">
-                                    <span class="px-2 py-0.5 rounded-lg bg-[#1E3A8A]/10 text-[#1E3A8A] font-bold text-xs font-mono tracking-tight border border-blue-100/60 whitespace-nowrap shrink-0">
+                                    <span class="px-2 py-0.5 rounded-lg bg-[#2563EB]/10 text-[#2563EB] font-bold text-xs font-mono tracking-tight border border-blue-100/60 whitespace-nowrap shrink-0">
                                         #{{ $t->public_code }}
                                     </span>
                                     <span class="px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-red-50 text-red-700 border border-red-200/80 inline-flex items-center gap-1 whitespace-nowrap shrink-0">
@@ -675,13 +649,13 @@
                                     </div>
 
                                     <div class="text-xs text-slate-600 flex items-center gap-1.5 min-w-0">
-                                        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#1E3A8A] shrink-0"></i>
+                                        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#2563EB] shrink-0"></i>
                                         <span class="truncate font-medium" title="{{ $t->address }}">{{ $t->address }}</span>
                                     </div>
 
                                     <div class="flex items-center gap-2 text-xs min-w-0">
                                         <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-blue-50/90 border border-blue-100/90 text-slate-700 min-w-0 max-w-full">
-                                            <i data-lucide="user" class="w-3 h-3 text-[#1E3A8A] shrink-0"></i>
+                                            <i data-lucide="user" class="w-3 h-3 text-[#2563EB] shrink-0"></i>
                                             <span class="font-semibold text-slate-800 text-[11px] truncate">{{ $t->citizen?->name ?? 'Warga' }}</span>
                                             @if($t->citizen?->phone)
                                                 <span class="text-blue-300 shrink-0">•</span>
@@ -691,7 +665,7 @@
                                     </div>
 
                                     <div class="relative z-10 hidden md:block">
-                                        <button type="button" onclick="openPetugasDetailModal({{ $t->id }})" class="text-xs font-bold text-[#1E3A8A] hover:underline inline-flex items-center gap-1 cursor-pointer">
+                                        <button type="button" onclick="openPetugasDetailModal({{ $t->id }})" class="text-xs font-bold text-[#2563EB] hover:underline inline-flex items-center gap-1 cursor-pointer">
                                             <span>Lihat Rincian Lengkap & Foto</span>
                                             <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
                                         </button>
@@ -715,8 +689,8 @@
 
                         <!-- Action / Status Banner -->
                         <div class="pt-2 border-t border-slate-100">
-                            <div class="p-2.5 rounded-xl bg-blue-50 border border-blue-200 text-[#1E3A8A] text-xs text-center font-bold flex items-center justify-center gap-2">
-                                <i data-lucide="shield-check" class="w-4 h-4 text-[#1E3A8A] shrink-0"></i>
+                            <div class="p-2.5 rounded-xl bg-blue-50 border border-blue-200 text-[#2563EB] text-xs text-center font-bold flex items-center justify-center gap-2">
+                                <i data-lucide="shield-check" class="w-4 h-4 text-[#2563EB] shrink-0"></i>
                                 <span>Bukti fisik telah dikirim. Menunggu verifikasi & validasi Operator Dinas PUPR.</span>
                             </div>
                         </div>
@@ -755,7 +729,7 @@
                             <!-- 1. Header Card: 1 Baris Sejajar - Kode + Tipe + Kategori (Kiri) & Waktu (Kanan) -->
                             <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-slate-100 min-w-0">
                                 <div class="flex items-center gap-1.5 min-w-0 flex-nowrap overflow-hidden">
-                                    <span class="px-2 py-0.5 rounded-lg bg-[#1E3A8A]/10 text-[#1E3A8A] font-bold text-xs font-mono tracking-tight border border-blue-100/60 whitespace-nowrap shrink-0">
+                                    <span class="px-2 py-0.5 rounded-lg bg-[#2563EB]/10 text-[#2563EB] font-bold text-xs font-mono tracking-tight border border-blue-100/60 whitespace-nowrap shrink-0">
                                         #{{ $c->public_code }}
                                     </span>
                                     <span class="px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-red-50 text-red-700 border border-red-200/80 inline-flex items-center gap-1 whitespace-nowrap shrink-0">
@@ -774,7 +748,7 @@
 
                             <!-- 2. Konten Utama: 1 Foto Bukti + Rincian (Sejajar Sempurna Gaya Tab Arsip) -->
                             <div class="flex gap-4 items-stretch">
-                                <div onclick="openPetugasDetailModal({{ $c->id }})" class="relative w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden border border-slate-200/90 bg-slate-100 shrink-0 shadow-2xs cursor-pointer group hover:ring-2 hover:ring-[#1E3A8A] transition" title="Klik untuk lihat rincian foto">
+                                <div onclick="openPetugasDetailModal({{ $c->id }})" class="relative w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden border border-slate-200/90 bg-slate-100 shrink-0 shadow-2xs cursor-pointer group hover:ring-2 hover:ring-[#2563EB] transition" title="Klik untuk lihat rincian foto">
                                     @if($displayPhoto)
                                         <img src="{{ $displayPhoto }}" alt="Foto Aduan" class="w-full h-full object-cover group-hover:scale-105 transition duration-200">
                                         @if($afterUrl)
@@ -801,14 +775,14 @@
 
                                     <!-- Baris 2: Lokasi Fisik -->
                                     <div class="text-xs text-slate-600 flex items-center gap-1.5 min-w-0">
-                                        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#1E3A8A] shrink-0"></i>
+                                        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#2563EB] shrink-0"></i>
                                         <span class="truncate font-medium" title="{{ $c->address }}">{{ $c->address }}</span>
                                     </div>
 
                                     <!-- Baris 3: Info Pelapor & No Telepon -->
                                     <div class="flex items-center gap-2 text-xs min-w-0">
                                         <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-blue-50/90 border border-blue-100/90 text-slate-700 min-w-0 max-w-full">
-                                            <i data-lucide="user" class="w-3 h-3 text-[#1E3A8A] shrink-0"></i>
+                                            <i data-lucide="user" class="w-3 h-3 text-[#2563EB] shrink-0"></i>
                                             <span class="font-semibold text-slate-800 text-[11px] truncate">{{ $c->citizen?->name ?? 'Warga' }}</span>
                                             @if($c->citizen?->phone)
                                                 <span class="text-blue-300 shrink-0">•</span>
@@ -819,7 +793,7 @@
 
                                     <!-- Baris 4: Tombol Detail Lengkap & Foto -->
                                     <div class="relative z-10 hidden md:block">
-                                        <button type="button" onclick="openPetugasDetailModal({{ $c->id }})" class="text-xs font-bold text-[#1E3A8A] hover:underline inline-flex items-center gap-1 cursor-pointer">
+                                        <button type="button" onclick="openPetugasDetailModal({{ $c->id }})" class="text-xs font-bold text-[#2563EB] hover:underline inline-flex items-center gap-1 cursor-pointer">
                                             <span>Lihat Rincian Lengkap & Foto</span>
                                             <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
                                         </button>
@@ -832,10 +806,10 @@
                         <div class="pt-2 border-t border-slate-100">
                             <div class="p-2.5 rounded-xl bg-blue-50/50 border border-blue-100/90 flex items-center justify-between text-[10px]">
                                 <span class="flex items-center gap-1.5 text-slate-600 font-medium">
-                                    <i data-lucide="clock" class="w-3 h-3 text-[#1E3A8A] shrink-0"></i>
+                                    <i data-lucide="clock" class="w-3 h-3 text-[#2563EB] shrink-0"></i>
                                     <span>Target: <strong class="text-slate-900 font-semibold">{{ $archiveDeadline->locale('id')->isoFormat('D MMM Y') }}</strong></span>
                                 </span>
-                                <span class="px-1.5 py-0.5 rounded text-[9px] font-bold shrink-0 bg-blue-100/80 text-[#1E3A8A]">
+                                <span class="px-1.5 py-0.5 rounded text-[9px] font-bold shrink-0 bg-blue-100/80 text-[#2563EB]">
                                     {{ $archiveDeadline->diffForHumans() }}
                                 </span>
                             </div>
@@ -847,12 +821,12 @@
     </div>
 
     <!-- Pagination Bar Pekerja Lapangan (5 / 10 / 50 per halaman, default 10) -->
-    <div id="petugasPaginationBar" class="hidden p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+    <div id="petugasPaginationBar" class="hidden pt-3 border-t border-[#E2E8F0] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
         <div class="flex flex-wrap items-center gap-3 text-[#475569]">
             <div class="flex items-center gap-2">
                 <span class="font-medium">Tampilkan:</span>
                 <select id="petugasPageSizeSelect" onchange="changePetugasPageSize(this.value)" aria-label="Jumlah tugas per halaman"
-                    class="text-xs font-semibold rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] text-[#0F172A] px-2.5 py-1.5 focus:outline-none focus:border-[#1E3A8A] cursor-pointer">
+                    class="text-xs font-semibold rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] text-[#0F172A] px-2.5 py-1.5 focus:outline-none focus:border-[#2563EB] cursor-pointer">
                     <option value="5">5 tugas</option>
                     <option value="10" selected>10 tugas</option>
                     <option value="50">50 tugas</option>
@@ -861,6 +835,7 @@
             <span id="petugasPageInfo" class="font-medium">Menampilkan 0 dari 0 tugas</span>
         </div>
         <div id="petugasPageControls" class="flex items-center gap-1 flex-wrap"></div>
+    </div>
     </div>
 
 </div>
@@ -878,15 +853,25 @@
         }, function() {}, { timeout: 6000, maximumAge: 300000 });
     }
 
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlTab = new URLSearchParams(window.location.search).get('tab');
+        if (urlTab && ['spatial', 'assigned', 'tasks', 'validation', 'history'].includes(urlTab)) {
+            switchPetugasTab(urlTab);
+        }
+    });
+
     function switchPetugasTab(tabName) {
         activePetugasTab = tabName;
+        if (typeof window.syncSidebarSubItemActive === 'function') {
+            window.syncSidebarSubItemActive('petugas', tabName);
+        }
 
         // 1. Update button tabs style seragam desain Admin
         document.querySelectorAll('.petugas-tab-btn').forEach(btn => {
-            btn.classList.remove('bg-[#1E3A8A]', 'text-white', 'border-[#1E3A8A]');
+            btn.classList.remove('bg-[#2563EB]', 'text-white', 'border-[#2563EB]');
             btn.classList.add('bg-white', 'text-[#0F172A]', 'border-[#E2E8F0]', 'hover:bg-[#F8FAFC]');
             const badge = btn.querySelector('.tab-badge');
-            if (badge) badge.className = 'tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 bg-blue-50 text-[#1E3A8A] border border-blue-200';
+            if (badge) badge.className = 'tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 bg-blue-50 text-[#2563EB] border border-blue-200';
             const sub = btn.querySelector('.tab-sub');
             if (sub) {
                 sub.classList.remove('text-blue-100');
@@ -897,9 +882,9 @@
         const activeBtn = document.getElementById('petugasTabBtn-' + tabName);
         if (activeBtn) {
             activeBtn.classList.remove('bg-white', 'text-[#0F172A]', 'border-[#E2E8F0]', 'hover:bg-[#F8FAFC]');
-            activeBtn.classList.add('bg-[#1E3A8A]', 'text-white', 'border-[#1E3A8A]');
+            activeBtn.classList.add('bg-[#2563EB]', 'text-white', 'border-[#2563EB]');
             const badge = activeBtn.querySelector('.tab-badge');
-            if (badge) badge.className = 'tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 bg-white text-[#1E3A8A]';
+            if (badge) badge.className = 'tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 bg-white text-[#2563EB]';
             const sub = activeBtn.querySelector('.tab-sub');
             if (sub) {
                 sub.classList.remove('text-[#475569]');
@@ -920,10 +905,12 @@
             targetContent.classList.remove('hidden');
         }
 
-        // Toggle visibility Filter Bar & Pagination Bar (hanya tampil di tab penugasan, pengerjaan, validasi, & riwayat)
+        // Toggle visibility Unified Card, Filter Bar & Pagination Bar
+        const unifiedCard = document.getElementById('petugasUnifiedCard');
         const filterContainer = document.getElementById('petugasFilterContainer');
         const paginationBar = document.getElementById('petugasPaginationBar');
         const isSpatial = (tabName === 'spatial');
+        if (unifiedCard) unifiedCard.classList.toggle('hidden', isSpatial);
         if (filterContainer) filterContainer.classList.toggle('hidden', isSpatial);
         if (paginationBar) paginationBar.classList.toggle('hidden', isSpatial);
         if (typeof petugasPaginationState !== 'undefined') petugasPaginationState.page = 1;
@@ -958,8 +945,8 @@
         const listBtn = document.getElementById('petugasLayoutBtn-list');
         const gridBtn = document.getElementById('petugasLayoutBtn-grid');
         if (listBtn && gridBtn) {
-            listBtn.className = `px-2.5 py-1.5 rounded-md text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer ${mode === 'list' ? 'bg-[#1E3A8A] text-white' : 'text-[#475569] hover:text-[#0F172A]'}`;
-            gridBtn.className = `px-2.5 py-1.5 rounded-md text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer ${mode === 'grid' ? 'bg-[#1E3A8A] text-white' : 'text-[#475569] hover:text-[#0F172A]'}`;
+            listBtn.className = `px-2.5 py-1.5 rounded-md text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer ${mode === 'list' ? 'bg-[#2563EB] text-white' : 'text-[#475569] hover:text-[#0F172A]'}`;
+            gridBtn.className = `px-2.5 py-1.5 rounded-md text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer ${mode === 'grid' ? 'bg-[#2563EB] text-white' : 'text-[#475569] hover:text-[#0F172A]'}`;
         }
     }
 
@@ -1051,7 +1038,7 @@
             } else {
                 const btnBase = 'px-2.5 py-1.5 rounded-lg border text-xs font-semibold transition cursor-pointer';
                 const btnIdle = `${btnBase} bg-white border-[#E2E8F0] text-[#0F172A] hover:bg-slate-100`;
-                const btnActive = `${btnBase} bg-[#1E3A8A] border-[#1E3A8A] text-white`;
+                const btnActive = `${btnBase} bg-[#2563EB] border-[#2563EB] text-white`;
                 const btnDisabled = 'px-2.5 py-1.5 rounded-lg border border-[#E2E8F0] bg-slate-100 text-slate-400 text-xs font-semibold cursor-not-allowed';
 
                 let html = petugasPaginationState.page > 1
@@ -1087,13 +1074,22 @@
         applyPetugasFilters();
     }
 
+    function focusDistrictOnPetugasMap(lat, lng, districtName) {
+        if (!petugasMapInstance) initPetugasMap();
+        if (petugasMapInstance) {
+            petugasMapInstance.flyTo([lat, lng], 13, { duration: 0.7 });
+            const mapEl = document.getElementById('petugasMap');
+            if (mapEl) mapEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }
+
     // Inisialisasi Peta Spasial Kabupaten Kolaka Utara (Leaflet & GeoJSON Resmi)
     function initPetugasMap() {
         const mapEl = document.getElementById('petugasMap');
         if (!mapEl || petugasMapInstance) return;
 
         try {
-            petugasMapInstance = L.map('petugasMap', { scrollWheelZoom: true }).setView([-3.50601, 120.88780], 12);
+            petugasMapInstance = L.map('petugasMap', { scrollWheelZoom: true }).setView([-3.5020, 120.8850], 13);
             L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 19,
                 attribution: '© OpenStreetMap | GIS Kolaka Utara'
@@ -1106,7 +1102,7 @@
                     L.geoJSON(geoJsonData, {
                         interactive: false,
                         style: {
-                            color: "#1E3A8A",
+                            color: "#2563EB",
                             weight: 2.5,
                             dashArray: '6, 6',
                             fillColor: "#3B82F6",
@@ -1171,10 +1167,10 @@
                                 </svg>
                             `;
                         } else if (p.status === 'DISPATCHED') {
-                            color = '#1E40AF';
+                            color = '#2563EB';
                             statusText = 'DITUGASKAN';
                             statusBg = '#EEF2FF';
-                            statusColor = '#1E3A8A';
+                            statusColor = '#2563EB';
                             statusBorder = '#C7D2FE';
                             iconSvg = `
                                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -1265,7 +1261,7 @@
                                 ${photoHtml}
                                 <div style="padding:12px 14px 14px 14px;background:#FFFFFF;">
                                     <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;">
-                                        <span style="font-size:11px;font-weight:800;color:#1E3A8A;background:#EFF6FF;border:1px solid #DBEAFE;padding:2px 8px;border-radius:6px;font-family:monospace;">
+                                        <span style="font-size:11px;font-weight:800;color:#2563EB;background:#EFF6FF;border:1px solid #DBEAFE;padding:2px 8px;border-radius:6px;font-family:monospace;">
                                             #${p.public_code}
                                         </span>
                                         <span style="font-size:10px;font-weight:700;background:${statusBg};color:${statusColor};border:1px solid ${statusBorder};padding:2px 8px;border-radius:999px;white-space:nowrap;">
@@ -1290,8 +1286,8 @@
                                         <span style="color:#94A3B8;">${p.created_at_human}</span>
                                     </div>
                                     <button type="button" onclick="openPetugasDetailModal(${p.id})" 
-                                        style="width:100%;background:#1E3A8A;color:#FFFFFF;border:none;padding:8px 12px;border-radius:10px;font-size:11.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 2px 5px rgba(30,58,138,0.25);transition:background 0.15s;"
-                                        onmouseover="this.style.background='#172554'" onmouseout="this.style.background='#1E3A8A'">
+                                        style="width:100%;background:#2563EB;color:#FFFFFF;border:none;padding:8px 12px;border-radius:10px;font-size:11.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 2px 5px rgba(30,58,138,0.25);transition:background 0.15s;"
+                                        onmouseover="this.style.background='#1D4ED8'" onmouseout="this.style.background='#2563EB'">
                                         <span>Buka Detail Lengkap</span>
                                         <span>&rarr;</span>
                                     </button>
@@ -1340,7 +1336,7 @@
             statusClass = 'bg-amber-50 text-amber-800 border-amber-300';
         } else if (item.status === 'DISPATCHED') {
             statusLabel = 'DITUGASKAN';
-            statusClass = 'bg-blue-50 text-[#1E3A8A] border-blue-200';
+            statusClass = 'bg-blue-50 text-[#2563EB] border-blue-200';
         } else if (item.status === 'WAITING_VERIFICATION') {
             statusLabel = 'VALIDASI';
             statusClass = 'bg-amber-50 text-amber-700 border-amber-300';
@@ -1384,14 +1380,14 @@
                 citizenPhotos.forEach((url, idx) => {
                     const thumb = document.createElement('img');
                     thumb.src = url;
-                    thumb.className = `w-14 h-14 rounded-xl object-cover cursor-pointer border-2 transition ${idx === 0 ? 'border-[#1E3A8A] ring-2 ring-blue-200' : 'border-slate-200 opacity-70 hover:opacity-100'}`;
+                    thumb.className = `w-14 h-14 rounded-xl object-cover cursor-pointer border-2 transition ${idx === 0 ? 'border-[#2563EB] ring-2 ring-blue-200' : 'border-slate-200 opacity-70 hover:opacity-100'}`;
                     thumb.onclick = () => {
                         photoBefore.src = url;
                         if (photoLabel) photoLabel.innerText = `Foto Bukti ${idx + 1} dari ${citizenPhotos.length}`;
                         gallery.querySelectorAll('img').forEach(img => {
                             img.className = 'w-14 h-14 rounded-xl object-cover cursor-pointer border-2 border-slate-200 opacity-70 hover:opacity-100 transition';
                         });
-                        thumb.className = 'w-14 h-14 rounded-xl object-cover cursor-pointer border-2 border-[#1E3A8A] ring-2 ring-blue-200 transition';
+                        thumb.className = 'w-14 h-14 rounded-xl object-cover cursor-pointer border-2 border-[#2563EB] ring-2 ring-blue-200 transition';
                     };
                     gallery.appendChild(thumb);
                 });
@@ -1400,9 +1396,10 @@
             }
         }
 
-        // 2b. Foto Bukti Penanganan Petugas Lapangan (Bagian Bawah)
+        // 2b. Foto Bukti Penanganan Petugas Lapangan (Selalu tampil berdampingan)
         const photoAfter = document.getElementById('pmPhotoAfter');
         const photoAfterContainer = document.getElementById('pmPhotoAfterContainer');
+        const photoAfterPlaceholder = document.getElementById('pmPhotoAfterPlaceholder');
         const officerGallery = document.getElementById('pmPhotoOfficerGallery');
         const photoAfterLabel = document.getElementById('pmPhotoAfterLabel');
 
@@ -1410,12 +1407,16 @@
             ? item.officer_photos
             : (item.completion_photo_url ? [item.completion_photo_url] : (item.photo_after_url ? [item.photo_after_url] : []));
 
+        if (photoAfterContainer) photoAfterContainer.classList.remove('hidden');
         if (officerPhotos.length > 0) {
             photoAfter.src = officerPhotos[0];
-            photoAfterContainer.classList.remove('hidden');
-            if (photoAfterLabel) photoAfterLabel.innerText = 'Foto Bukti Hasil Pengerjaan Tuntas';
+            photoAfter.classList.remove('hidden');
+            if (photoAfterPlaceholder) photoAfterPlaceholder.classList.add('hidden');
+            if (photoAfterLabel) photoAfterLabel.innerText = 'Foto Hasil Pengerjaan';
         } else {
-            photoAfterContainer.classList.add('hidden');
+            photoAfter.classList.add('hidden');
+            if (photoAfterPlaceholder) photoAfterPlaceholder.classList.remove('hidden');
+            if (photoAfterLabel) photoAfterLabel.innerText = 'Foto Hasil Pengerjaan';
         }
 
         if (officerGallery) {
@@ -1518,24 +1519,24 @@
             }
         }
 
-        // Action Buttons in Modal
+        // Action Buttons in Modal Footer (Left Side)
         const actionContainer = document.getElementById('pmActionContainer');
         if (actionContainer) {
             if (item.status === 'DISPATCHED') {
                 actionContainer.innerHTML = `
-                    <form method="POST" action="/petugas/complaints/${item.id}/start" class="w-full">
+                    <form method="POST" action="/petugas/complaints/${item.id}/start" class="w-full sm:w-auto">
                         <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}'}">
-                        <button type="submit" class="w-full py-2.5 rounded-xl bg-[#1E3A8A] hover:bg-blue-900 text-white font-bold text-xs shadow-xs transition flex items-center justify-center gap-2 cursor-pointer">
+                        <button type="submit" class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold text-xs shadow-xs transition flex items-center justify-center gap-2 cursor-pointer">
                             <i data-lucide="play" class="w-4 h-4"></i>
-                            <span>Mulai Kerja Lapangan Sekarang</span>
+                            <span>Mulai Kerja</span>
                         </button>
                     </form>
                 `;
             } else if (item.status === 'IN_PROGRESS' || item.status === 'REVISION_REQUIRED') {
                 actionContainer.innerHTML = `
-                    <button type="button" onclick="closePetugasDetailModal(); switchPetugasTab('tasks');" class="w-full py-2.5 rounded-xl bg-[#1E3A8A] hover:bg-blue-900 text-white font-bold text-xs shadow-xs transition flex items-center justify-center gap-2 cursor-pointer">
+                    <button type="button" onclick="const cid = ${item.id}; closePetugasDetailModal(); openPetugasFinishModal(cid);" class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold text-xs shadow-xs transition flex items-center justify-center gap-2 cursor-pointer">
                         <i data-lucide="upload" class="w-4 h-4"></i>
-                        <span>Buka Form Unggah Bukti di Tab Pengerjaan</span>
+                        <span>Unggah Bukti</span>
                     </button>
                 `;
             } else {
@@ -1586,12 +1587,41 @@
     }
 
     function openPetugasFinishModal(id, code, title) {
+        const item = (typeof petugasComplaintsMap !== 'undefined' && petugasComplaintsMap[id]) ? petugasComplaintsMap[id] : {};
         const form = document.getElementById('petugasFinishForm');
         if (form) {
             form.action = `/petugas/complaints/${id}/finish`;
+            form.reset();
         }
-        document.getElementById('finishModalCode').innerText = '#' + code;
-        document.getElementById('finishModalTitle').innerText = title;
+
+        const finalCode = code || item.public_code || '';
+        const finalTitle = title || item.title || '-';
+        const reporterName = item.reporter_name || '-';
+        const locationAddr = item.address || '-';
+        const photoUrl = (item.citizen_photos && item.citizen_photos.length > 0)
+            ? item.citizen_photos[0]
+            : (item.photo_url || '');
+
+        document.getElementById('finishModalCode').innerText = finalCode ? ('#' + finalCode) : '#-';
+        document.getElementById('finishModalTitle').innerText = finalTitle;
+        const reporterEl = document.getElementById('finishModalReporter');
+        if (reporterEl) reporterEl.innerText = reporterName;
+        const addrEl = document.getElementById('finishModalAddress');
+        if (addrEl) addrEl.innerText = locationAddr;
+
+        const imgEl = document.getElementById('finishModalPhoto');
+        const fallbackEl = document.getElementById('finishModalPhotoFallback');
+        if (imgEl && fallbackEl) {
+            if (photoUrl) {
+                imgEl.src = photoUrl;
+                imgEl.classList.remove('hidden');
+                fallbackEl.classList.add('hidden');
+            } else {
+                imgEl.src = '';
+                imgEl.classList.add('hidden');
+                fallbackEl.classList.remove('hidden');
+            }
+        }
 
         const modal = document.getElementById('petugasFinishModal');
         if (modal) {
@@ -1638,221 +1668,227 @@
 </script>
 
 @push('modals')
-    <!-- MODAL DETAIL LENGKAP PENGADUAN PETUGAS LAPANGAN (ZERO LAG & ELEGAN) -->
-    <div id="petugasDetailModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/65 flex items-center justify-center p-3 sm:p-5 overscroll-contain">
-        <div class="bg-white rounded-xl border border-[#E2E8F0] shadow-md max-w-xl w-full max-h-[92vh] overflow-hidden flex flex-col relative">
-            
-            <!-- Modal Top Bar (Selaras Landing Page: Kerusakan -> Kategori -> Status) -->
-            <div class="px-4 sm:px-5 py-3 sm:py-3.5 border-b border-[#E2E8F0] flex items-center justify-between bg-[#F8FAFC] gap-2">
-                <div class="flex items-center gap-1.5 sm:gap-2 flex-nowrap min-w-0 overflow-x-auto no-scrollbar py-0.5">
-                    <!-- 1. Tingkat Kerusakan -->
-                    <span id="pmType" class="shrink-0 px-2.5 py-1 rounded-md text-xs font-semibold bg-red-50 text-red-700 border border-red-200 inline-flex items-center gap-1.5 whitespace-nowrap">
-                        <span class="w-1.5 h-1.5 rounded-full bg-red-600 shrink-0"></span>
-                        <span>Kerusakan Ringan</span>
-                    </span>
-                    <!-- 2. Kategori Infrastruktur -->
-                    <span id="pmCategory" class="shrink-0 px-2.5 py-1 rounded-md text-xs font-semibold bg-slate-100 text-[#0F172A] border border-[#E2E8F0] inline-flex items-center whitespace-nowrap">
-                        Infrastruktur
-                    </span>
-                    <!-- 3. Status Pengerjaan -->
-                    <span id="pmStatus" class="shrink-0 text-xs font-bold px-2.5 py-1 rounded-md bg-blue-50 text-[#1E3A8A] border border-blue-200 whitespace-nowrap">
-                        DIKERJAKAN
-                    </span>
+    <!-- MODAL DETAIL LENGKAP PENGADUAN PETUGAS LAPANGAN (Desain 1:1 Landing & Admin SI-APPIK V2 — 760px Desktop & Mobile Bottom Sheet) -->
+    <div id="petugasDetailModal" class="hidden fixed inset-0 z-50 bg-slate-900/65 flex items-end sm:items-center justify-center p-3.5 sm:p-5 overscroll-contain">
+        <div class="bg-white rounded-[24px] border border-[#E2E8F0] shadow-[0_20px_50px_rgba(15,23,42,0.22)] sm:max-w-[760px] w-full max-h-[86vh] sm:max-h-[90vh] overflow-hidden flex flex-col relative">
+
+            <!-- Drag Handle Khusus Mobile Bottom Sheet -->
+            <div class="sm:hidden flex justify-center pt-3 pb-1 bg-white shrink-0">
+                <span class="w-11 h-1 rounded-full bg-[#CBD5E1]"></span>
+            </div>
+
+            <!-- Sticky Modal Top Bar (3 Badge 1 Baris + Tanggal & Kode Aduan + Tombol X di Tengah Kanan) -->
+            <div class="px-4 sm:px-7 pt-2.5 pb-3.5 sm:py-5 border-b border-[#E2E8F0] bg-white flex items-center justify-between gap-2.5 shrink-0">
+                <div class="min-w-0 flex-1 space-y-2">
+                    <div class="flex items-center gap-1 sm:gap-2 flex-nowrap overflow-x-auto no-scrollbar">
+                        <span id="pmType" class="shrink-0 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10.5px] sm:text-xs font-bold bg-[#FEF2F2] text-[#DC2626] border border-[#FECACA] inline-flex items-center gap-1 whitespace-nowrap">
+                            <span class="w-1.5 h-1.5 rounded-full bg-[#DC2626] shrink-0"></span>
+                            <span>Kerusakan Ringan</span>
+                        </span>
+                        <span id="pmCategory" class="shrink min-w-0 truncate px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10.5px] sm:text-xs font-semibold bg-[#F1F5F9] text-[#475569] border border-[#E2E8F0]">
+                            Infrastruktur
+                        </span>
+                        <span id="pmStatus" class="shrink-0 text-[10.5px] sm:text-xs font-bold px-2 sm:px-3 py-0.5 sm:py-1 rounded-full bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE] whitespace-nowrap">
+                            DIKERJAKAN
+                        </span>
+                    </div>
+                    <div class="flex items-center flex-wrap gap-2 text-[11.5px] sm:text-[13px] text-[#475569]">
+                        <div class="flex items-center gap-1.5 font-medium">
+                            <i data-lucide="calendar" class="w-3.5 h-3.5 text-[#64748B] shrink-0"></i>
+                            <span id="pmCreated">02 Sep 2026, 16:28 WITA</span>
+                        </div>
+                        <span class="text-slate-300">&bull;</span>
+                        <span id="pmCode" class="font-mono font-bold text-[#2563EB] bg-[#EFF6FF] border border-[#BFDBFE] px-2 py-0.5 rounded-full text-[10.5px] sm:text-[11px]">#ADU-0001</span>
+                    </div>
                 </div>
-                <button type="button" onclick="closePetugasDetailModal()" class="w-9 h-9 rounded-lg bg-white hover:bg-slate-100 text-[#475569] hover:text-[#0F172A] border border-[#E2E8F0] flex items-center justify-center transition cursor-pointer shrink-0 ml-1" title="Tutup Detail" aria-label="Tutup Rincian">
+                <button type="button" onclick="closePetugasDetailModal()" class="w-8 h-8 sm:w-9 sm:h-9 rounded-[10px] bg-[#F8FAFC] hover:bg-slate-100 text-[#475569] hover:text-[#0F172A] border border-[#E2E8F0] flex items-center justify-center transition cursor-pointer shrink-0" title="Tutup Detail" aria-label="Tutup Rincian">
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
             </div>
 
             <!-- Modal Body Scrollable -->
-            <div class="p-4 sm:p-5 overflow-y-auto space-y-4 flex-1 overscroll-contain" style="-webkit-overflow-scrolling: touch;">
-                <!-- 1. Foto Bukti Kerusakan Warga -->
-                <div id="pmPhotoBeforeContainer" class="space-y-2">
-                    <div class="rounded-xl overflow-hidden border border-[#E2E8F0] bg-slate-100 relative max-h-64 sm:max-h-72 flex items-center justify-center">
-                        <img id="pmPhotoBefore" src="" alt="Foto Kerusakan Warga" class="w-full h-full object-cover max-h-64 sm:max-h-72">
-                        <div class="absolute bottom-2.5 left-2.5 bg-[#0F172A] text-white text-[11px] font-semibold px-2.5 py-1 rounded-md flex items-center gap-1.5 border border-slate-700">
-                            <i data-lucide="image" class="w-3.5 h-3.5 text-white"></i>
-                            <span id="pmPhotoBeforeLabel">Foto Bukti Kerusakan</span>
-                        </div>
-                    </div>
-                    <!-- Gallery Thumbnails Strip (Khusus Foto Warga) -->
-                    <div id="pmPhotoGallery" class="flex items-center gap-2 overflow-x-auto pb-1 hidden"></div>
-                </div>
+            <div class="px-5 py-4 sm:px-7 sm:py-5 overflow-y-auto space-y-4 flex-1 overscroll-contain bg-white" style="-webkit-overflow-scrolling: touch;">
 
-                <!-- 2. Foto Bukti Penanganan Petugas Lapangan -->
-                <div id="pmPhotoAfterContainer" class="space-y-2 hidden">
-                    <div class="rounded-xl overflow-hidden border border-emerald-300 bg-emerald-50 relative max-h-64 sm:max-h-72 flex items-center justify-center">
-                        <img id="pmPhotoAfter" src="" alt="Foto Hasil Pengerjaan" class="w-full h-full object-cover max-h-64 sm:max-h-72">
-                        <div class="absolute bottom-2.5 left-2.5 bg-[#064E3B] text-white text-[11px] font-semibold px-2.5 py-1 rounded-md flex items-center gap-1.5 border border-emerald-800">
-                            <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-300"></i>
-                            <span id="pmPhotoAfterLabel">Bukti Penyelesaian Lapangan</span>
-                        </div>
-                    </div>
-                    <!-- Gallery Thumbnails Strip (Khusus Foto Petugas) -->
-                    <div id="pmPhotoOfficerGallery" class="flex items-center gap-2 overflow-x-auto pb-1 hidden"></div>
-                </div>
+                <!-- Judul Aduan -->
+                <h3 id="pmTitle" class="font-outfit font-bold text-lg sm:text-xl text-[#0F172A] leading-snug">
+                    Judul Laporan
+                </h3>
 
-                <!-- Judul & Info Waktu Laporan -->
-                <div>
-                    <span id="pmCode" class="text-[11px] font-mono font-semibold text-[#475569] block tracking-wide mb-0.5">
-                        #ADU-0001
-                    </span>
-                    <h3 id="pmTitle" class="font-outfit font-bold text-lg sm:text-xl text-[#0F172A] leading-snug">
-                        Judul Laporan
-                    </h3>
-                    <div class="flex items-center gap-1.5 text-xs text-[#475569] pt-1">
-                        <i data-lucide="calendar" class="w-3.5 h-3.5 text-[#475569]"></i>
-                        <span id="pmCreated">02 Sep 2026, 16:28 WIB</span>
-                    </div>
-                </div>
-
-                <!-- Identitas Pelapor Aduan (Clean, Compact, Sesuai Gambar 2) -->
-                <div class="p-3 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-between gap-3">
-                    <div class="flex items-center gap-2.5 min-w-0">
-                        <div class="w-9 h-9 rounded-xl bg-slate-200/80 text-slate-700 flex items-center justify-center font-bold text-xs shrink-0">
-                            <i data-lucide="user" class="w-4 h-4 text-[#1E3A8A]"></i>
-                        </div>
-                        <div class="min-w-0">
-                            <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Pelapor Aduan</span>
-                            <div class="flex items-center gap-2">
-                                <span id="pmReporter" class="font-outfit font-extrabold text-xs sm:text-sm text-slate-900 truncate">
-                                    Nama Pelapor
-                                </span>
+                <!-- 1. Galeri Foto Berdampingan 2 Kolom (Rasio 16:10 Side-by-Side) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3.5">
+                    <!-- Kiri: Foto Kondisi Lokasi -->
+                    <div id="pmPhotoBeforeContainer" class="space-y-1.5">
+                        <div class="aspect-[16/10] rounded-xl sm:rounded-2xl overflow-hidden border border-[#E2E8F0] bg-[#1E293B] relative flex items-center justify-center">
+                            <img id="pmPhotoBefore" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Foto Kondisi Lokasi" class="w-full h-full object-cover">
+                            <div class="absolute bottom-2 left-2 sm:bottom-3 sm:left-3 bg-[#0F172A]/85 text-white text-[10px] sm:text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5 pointer-events-none">
+                                <i data-lucide="camera" class="w-3 h-3 shrink-0 hidden sm:inline"></i>
+                                <span id="pmPhotoBeforeLabel">Foto Kondisi Lokasi</span>
                             </div>
                         </div>
+                        <div id="pmPhotoGallery" class="flex items-center gap-1.5 overflow-x-auto pb-0.5 hidden"></div>
                     </div>
-                    <div class="flex items-center gap-2 text-xs text-slate-700 font-bold shrink-0">
-                        <span id="pmPhone" class="font-mono text-slate-600 hidden sm:inline">081344697178</span>
-                        <a id="pmPhoneLink" href="#" target="_blank" class="px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-xs flex items-center gap-1.5 transition">
-                            <i data-lucide="phone" class="w-3.5 h-3.5 text-emerald-600"></i>
-                            <span>Hubungi</span>
-                        </a>
+
+                    <!-- Kanan: Foto Hasil Pengerjaan -->
+                    <div id="pmPhotoAfterContainer" class="space-y-1.5">
+                        <div class="aspect-[16/10] rounded-xl sm:rounded-2xl overflow-hidden border border-[#A7F3D0] bg-[#ECFDF5] relative flex items-center justify-center">
+                            <img id="pmPhotoAfter" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Foto Hasil Pengerjaan" class="w-full h-full object-cover">
+                            <div id="pmPhotoAfterPlaceholder" class="hidden inset-0 absolute flex flex-col items-center justify-center text-center p-3 text-[#047857] bg-[#ECFDF5]">
+                                <i data-lucide="clock" class="w-5 h-5 mb-1 text-[#10B981]"></i>
+                                <span class="text-[11px] sm:text-xs font-semibold leading-tight">Menunggu Foto Hasil Pengerjaan</span>
+                            </div>
+                            <div class="absolute bottom-2 left-2 sm:bottom-3 sm:left-3 bg-[#047857]/90 text-white text-[10px] sm:text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5 pointer-events-none">
+                                <i data-lucide="badge-check" class="w-3 h-3 shrink-0 hidden sm:inline"></i>
+                                <span id="pmPhotoAfterLabel">Foto Hasil Pengerjaan</span>
+                            </div>
+                        </div>
+                        <div id="pmPhotoOfficerGallery" class="flex items-center gap-1.5 overflow-x-auto pb-0.5 hidden"></div>
                     </div>
                 </div>
 
-                <!-- Regu Penanganan Lapangan (Sesuai Permintaan User: Menampilkan Regu, Ketua Regu, & Nomor HP) -->
-                <div id="pmOfficerCard" class="p-3.5 rounded-2xl bg-blue-50/60 border border-blue-200/80 space-y-2.5">
+                <!-- 2. Grid Informasi Pelapor & Lokasi (2 Kolom Seimbang) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-3.5">
+                    <!-- Kartu Kiri: Pelapor Aduan -->
+                    <div class="p-4 rounded-2xl bg-[#F8FAFC] border border-[#E2E8F0] space-y-1.5">
+                        <div class="flex items-center gap-1.5 text-[11px] font-bold text-[#475569] uppercase tracking-wider">
+                            <i data-lucide="user" class="w-3.5 h-3.5 text-[#2563EB]"></i>
+                            <span>Pelapor Aduan</span>
+                        </div>
+                        <span id="pmReporter" class="font-outfit font-bold text-sm sm:text-base text-[#0F172A] block truncate">Nama Pelapor</span>
+                        <div class="flex items-center gap-2 text-xs font-bold text-[#047857]">
+                            <i data-lucide="shield-check" class="w-3.5 h-3.5 text-[#10B981] shrink-0"></i>
+                            <span id="pmPhone" class="font-mono">081344697178</span>
+                            <a id="pmPhoneLink" href="#" target="_blank" class="ml-auto px-2 py-0.5 rounded-lg bg-[#ECFDF5] hover:bg-[#D1FAE5] text-[#047857] border border-[#A7F3D0] font-bold text-[11px] inline-flex items-center gap-1 transition">
+                                <i data-lucide="phone" class="w-3 h-3"></i>
+                                <span>Hubungi</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Kartu Kanan: Lokasi Kerusakan -->
+                    <div class="p-4 rounded-2xl bg-[#F8FAFC] border border-[#E2E8F0] space-y-2 flex flex-col justify-between">
+                        <div class="space-y-1">
+                            <div class="flex items-center gap-1.5 text-[11px] font-bold text-[#475569] uppercase tracking-wider">
+                                <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#2563EB]"></i>
+                                <span>Lokasi Kerusakan</span>
+                            </div>
+                            <p id="pmAddress" class="text-xs sm:text-[13px] font-semibold text-[#0F172A] leading-relaxed">
+                                Alamat lokasi kerusakan...
+                            </p>
+                        </div>
+                        <div class="flex items-center justify-between gap-2 pt-0.5">
+                            <span id="pmCoords" class="hidden">-</span>
+                            <button type="button" onclick="const c = (document.getElementById('pmCoords')?.textContent || '').trim(); if(c && c !== '-') window.open('https://www.google.com/maps?q=' + encodeURIComponent(c.replace(/\s+/g,'')), '_blank', 'noopener');"
+                                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#EFF6FF] hover:bg-[#DBEAFE] text-[#2563EB] border border-[#BFDBFE] text-xs font-bold transition cursor-pointer">
+                                <i data-lucide="map" class="w-3.5 h-3.5"></i>
+                                <span>Buka di Peta</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Regu Penanganan Lapangan -->
+                <div id="pmOfficerCard" class="p-4 rounded-2xl bg-[#EFF6FF]/60 border border-[#BFDBFE] space-y-2.5">
                     <div class="flex items-start justify-between gap-2">
                         <div class="flex items-center gap-2.5 min-w-0">
-                            <div class="w-9 h-9 rounded-xl bg-[#1E3A8A] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
+                            <div class="w-9 h-9 rounded-xl bg-[#2563EB] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
                                 <i data-lucide="hard-hat" class="w-4 h-4"></i>
                             </div>
                             <div class="min-w-0">
-                                <span class="text-[10px] text-[#1E3A8A] font-extrabold uppercase tracking-wider block">Regu Lapangan Pelaksana</span>
-                                <h4 id="pmTeamName" class="font-outfit font-extrabold text-xs sm:text-sm text-slate-900 truncate leading-tight">
+                                <span class="text-[10px] text-[#2563EB] font-extrabold uppercase tracking-wider block">Regu Lapangan Pelaksana</span>
+                                <h4 id="pmTeamName" class="font-outfit font-bold text-xs sm:text-sm text-[#0F172A] truncate leading-tight">
                                     Regu Lapangan PUPR
                                 </h4>
-                                <span id="pmOfficerDept" class="text-[10.5px] font-semibold text-slate-500 block truncate">
+                                <span id="pmOfficerDept" class="text-[11px] font-medium text-[#475569] block truncate">
                                     Dinas Pekerjaan Umum dan Penataan Ruang (PUPR)
                                 </span>
                             </div>
                         </div>
                         <div id="pmDeadlineBox" class="text-right shrink-0">
-                            <span class="text-[10px] text-slate-400 block font-medium">Batas Waktu:</span>
-                            <span id="pmDeadline" class="text-xs font-bold text-[#1E3A8A] bg-white px-2 py-0.5 rounded border border-blue-200">Segera</span>
+                            <span class="text-[10px] text-[#64748B] block font-medium">Batas Waktu:</span>
+                            <span id="pmDeadline" class="text-xs font-bold text-[#2563EB] bg-white px-2.5 py-0.5 rounded-lg border border-[#BFDBFE] inline-block mt-0.5">Segera</span>
                         </div>
                     </div>
 
-                    <!-- Baris Kontak Ketua Regu (Koordinator Lapangan) -->
-                    <div class="p-2.5 rounded-xl bg-white border border-blue-100 flex items-center justify-between gap-2 text-xs">
+                    <div class="p-2.5 rounded-xl bg-white border border-[#E2E8F0] flex items-center justify-between gap-2 text-xs">
                         <div class="flex items-center gap-2 min-w-0">
-                            <div class="w-6 h-6 rounded-lg bg-blue-100 text-[#1E3A8A] flex items-center justify-center shrink-0">
+                            <div class="w-6 h-6 rounded-lg bg-[#EFF6FF] text-[#2563EB] flex items-center justify-center shrink-0">
                                 <i data-lucide="crown" class="w-3.5 h-3.5"></i>
                             </div>
                             <div class="min-w-0">
-                                <span class="text-[10px] text-slate-400 font-bold block leading-none">Ketua Regu (Koordinator Lapangan):</span>
-                                <span id="pmTeamLeader" class="font-bold text-slate-900 truncate block mt-0.5">Nama Ketua Regu</span>
+                                <span class="text-[10px] text-[#64748B] font-bold block leading-none">Ketua Regu:</span>
+                                <span id="pmTeamLeader" class="font-bold text-[#0F172A] truncate block mt-0.5">Nama Ketua Regu</span>
                             </div>
                         </div>
-                        <a id="pmTeamPhone" href="#" class="px-2.5 py-1 rounded-lg bg-blue-50 hover:bg-blue-100 text-[#1E3A8A] font-bold font-mono text-xs flex items-center gap-1.5 transition shrink-0">
+                        <a id="pmTeamPhone" href="#" class="px-2.5 py-1 rounded-lg bg-[#EFF6FF] hover:bg-[#DBEAFE] text-[#2563EB] font-bold font-mono text-xs flex items-center gap-1.5 transition shrink-0">
                             <i data-lucide="phone-call" class="w-3 h-3"></i>
                             <span id="pmTeamPhoneText">081234567816</span>
                         </a>
                     </div>
 
-                    <!-- Hidden legacy fields to prevent JS reference errors -->
                     <span id="pmDepartment" class="hidden"></span>
                     <span id="pmAssignee" class="hidden"></span>
 
-                    <!-- Arahan Instruksi Teknis -->
-                    <div id="pmInstructionRow" class="text-xs text-slate-600 flex items-start gap-1.5 pt-1.5 border-t border-blue-200/50">
-                        <i data-lucide="clipboard-list" class="w-3.5 h-3.5 text-[#1E3A8A] shrink-0 mt-0.5"></i>
-                        <span>Instruksi: <span id="pmInstruction" class="text-slate-800 font-medium italic">Lakukan perbaikan</span></span>
+                    <div id="pmInstructionRow" class="text-xs text-[#475569] flex items-start gap-1.5 pt-1.5 border-t border-[#BFDBFE]/60">
+                        <i data-lucide="clipboard-list" class="w-3.5 h-3.5 text-[#2563EB] shrink-0 mt-0.5"></i>
+                        <span>Instruksi: <span id="pmInstruction" class="text-[#0F172A] font-medium italic">Lakukan perbaikan</span></span>
                     </div>
                 </div>
 
-                <!-- Lokasi Kerusakan (Satu Kartu Bersih & Jelas) -->
-                <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1.5">
-                    <div class="flex items-center justify-between text-xs font-bold text-slate-700">
+                <!-- 4. Detail Kerusakan Ruas Panjang -->
+                <div id="pmMajorRoadBox" class="hidden p-4 rounded-2xl bg-[#EFF6FF]/60 border border-[#BFDBFE] space-y-2">
+                    <div class="flex items-center justify-between text-xs font-bold text-[#2563EB]">
                         <span class="flex items-center gap-1.5">
-                            <i data-lucide="map-pin" class="w-4 h-4 text-[#1E3A8A]"></i>
-                            <span>Lokasi Kerusakan</span>
-                        </span>
-                        <span id="pmCoords" class="font-mono text-[11px] font-bold text-[#1E3A8A] bg-white px-2 py-0.5 rounded-md border border-slate-200">
-                            -
-                        </span>
-                    </div>
-                    <p id="pmAddress" class="text-xs font-semibold text-slate-800 leading-relaxed">
-                        Alamat lokasi kerusakan...
-                    </p>
-                </div>
-
-                <!-- Detail Kerusakan Ruas Panjang (Tipe Major) -->
-                <div id="pmMajorRoadBox" class="hidden p-3.5 rounded-2xl bg-blue-50/80 border border-blue-200 space-y-2">
-                    <div class="flex items-center justify-between text-xs font-bold text-[#1E3A8A]">
-                        <span class="flex items-center gap-1.5">
-                            <i data-lucide="git-commit" class="w-4 h-4 text-[#1E3A8A]"></i>
+                            <i data-lucide="git-commit" class="w-4 h-4 text-[#2563EB]"></i>
                             <span>Detail Kerusakan Ruas Panjang</span>
                         </span>
-                        <span class="text-[10px] text-[#1E3A8A] bg-white px-2 py-0.5 rounded-md border border-blue-300 font-bold">
+                        <span class="text-[10px] text-white bg-[#2563EB] px-2.5 py-0.5 rounded-full font-bold">
                             ≥ 500 Meter
                         </span>
                     </div>
                     <div class="grid grid-cols-2 gap-2 text-xs">
-                        <div class="p-2 rounded-xl bg-white border border-blue-200">
-                            <span class="text-[10px] text-slate-400 block font-semibold">Estimasi Panjang Ruas:</span>
-                            <span id="pmRoadLength" class="font-bold text-[#1E3A8A]">-</span>
+                        <div class="p-2.5 rounded-xl bg-white border border-[#E2E8F0]">
+                            <span class="text-[10px] text-[#64748B] block font-semibold">Estimasi Panjang Ruas:</span>
+                            <span id="pmRoadLength" class="font-bold text-[#0F172A]">-</span>
                         </div>
-                        <div class="p-2 rounded-xl bg-white border border-blue-200">
-                            <span class="text-[10px] text-slate-400 block font-semibold">Kondisi Permukaan:</span>
-                            <span id="pmRoadCondition" class="font-bold text-[#1E3A8A]">-</span>
+                        <div class="p-2.5 rounded-xl bg-white border border-[#E2E8F0]">
+                            <span class="text-[10px] text-[#64748B] block font-semibold">Kondisi Permukaan:</span>
+                            <span id="pmRoadCondition" class="font-bold text-[#0F172A]">-</span>
                         </div>
-                        <div class="p-2 rounded-xl bg-white border border-blue-200 col-span-2">
-                            <span class="text-[10px] text-slate-400 block font-semibold">Koordinat Titik Awal & Akhir:</span>
-                            <div class="font-mono text-[11px] text-slate-700 flex flex-col gap-0.5 mt-1">
-                                <div><span class="font-bold text-blue-700">Titik Awal:</span> <span id="pmStartCoords">-</span></div>
-                                <div><span class="font-bold text-slate-700">Titik Akhir:</span> <span id="pmEndCoords">-</span></div>
+                        <div class="p-2.5 rounded-xl bg-white border border-[#E2E8F0] col-span-2">
+                            <span class="text-[10px] text-[#64748B] block font-semibold">Koordinat Titik Awal &amp; Akhir:</span>
+                            <div class="font-mono text-[11px] text-[#334155] flex flex-col gap-0.5 mt-1">
+                                <div><span class="font-bold text-[#2563EB]">Titik Awal:</span> <span id="pmStartCoords">-</span></div>
+                                <div><span class="font-bold text-[#0F172A]">Titik Akhir:</span> <span id="pmEndCoords">-</span></div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Deskripsi Lengkap -->
-                <div class="space-y-1">
-                    <span class="text-xs font-bold text-slate-700 block">Deskripsi Kerusakan Lengkap:</span>
-                    <div id="pmDescription" class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-700 leading-relaxed whitespace-pre-line font-sans">
+                <!-- 5. Deskripsi Lengkap -->
+                <div class="space-y-1.5">
+                    <span class="text-[11px] font-bold text-[#475569] uppercase tracking-wider block">Deskripsi Kondisi Kerusakan</span>
+                    <div id="pmDescription" class="p-4 rounded-2xl bg-[#F8FAFC] border border-[#E2E8F0] text-xs sm:text-[13px] text-[#334155] leading-relaxed whitespace-pre-line font-sans">
                         Deskripsi lengkap...
                     </div>
                 </div>
 
-                <!-- Estimasi Material & Penanganan AI (Jika Ada) -->
-                <div id="pmAiEstimateBox" class="hidden p-3.5 rounded-2xl bg-emerald-50/70 border border-emerald-100 space-y-1 text-xs">
-                    <span class="text-[10.5px] font-bold text-emerald-800 flex items-center gap-1.5">
-                        <i data-lucide="wrench" class="w-3.5 h-3.5 text-emerald-600"></i>
+                <!-- 6. Estimasi Material & Penanganan AI -->
+                <div id="pmAiEstimateBox" class="hidden p-4 rounded-2xl bg-[#ECFDF5] border border-[#A7F3D0] space-y-1 text-xs">
+                    <span class="text-[11px] font-bold text-[#047857] flex items-center gap-1.5">
+                        <i data-lucide="wrench" class="w-3.5 h-3.5 text-[#10B981]"></i>
                         <span>Rekomendasi Material / Tindakan Teknis:</span>
                     </span>
-                    <p id="pmAiEstimate" class="text-slate-700 font-medium pl-5 leading-relaxed">-</p>
+                    <p id="pmAiEstimate" class="text-[#334155] font-medium pl-5 leading-relaxed">-</p>
                 </div>
 
-                <!-- Action Button in Modal Container -->
-                <div id="pmActionContainer" class="pt-2"></div>
             </div>
 
             <!-- Modal Footer -->
-            <div class="px-5 py-3 border-t border-slate-100 bg-slate-50 flex items-center justify-end gap-2">
+            <div class="px-5 py-3.5 sm:px-7 border-t border-[#E2E8F0] bg-white flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-2.5 shrink-0">
+                <div id="pmActionContainer" class="shrink-0"></div>
                 <button type="button" onclick="closePetugasDetailModal()" 
-                    class="px-5 py-2.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold text-xs transition cursor-pointer">
-                    Tutup
+                    class="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-[#F1F5F9] hover:bg-slate-200 text-[#334155] font-bold text-xs transition cursor-pointer sm:ml-auto">
+                    Tutup Rincian
                 </button>
             </div>
 
@@ -1865,7 +1901,7 @@
             <div class="p-6 space-y-4">
                 <div class="flex items-center justify-between pb-3 border-b border-slate-100">
                     <div class="flex items-center gap-2.5">
-                        <div class="w-10 h-10 rounded-xl bg-blue-50 text-[#1E3A8A] flex items-center justify-center font-bold">
+                        <div class="w-10 h-10 rounded-xl bg-blue-50 text-[#2563EB] flex items-center justify-center font-bold">
                             <i data-lucide="user" class="w-5 h-5"></i>
                         </div>
                         <div>
@@ -1890,19 +1926,19 @@
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1">Nama Lengkap</label>
                             <input type="text" name="name" value="{{ auth()->user()->name }}" required
-                                class="w-full text-xs font-medium px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-[#1E3A8A] focus:ring-1 focus:ring-[#1E3A8A] transition">
+                                class="w-full text-xs font-medium px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB] transition">
                         </div>
 
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1">Alamat Email</label>
                             <input type="email" name="email" value="{{ auth()->user()->email }}" required
-                                class="w-full text-xs font-medium px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-[#1E3A8A] focus:ring-1 focus:ring-[#1E3A8A] transition">
+                                class="w-full text-xs font-medium px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB] transition">
                         </div>
 
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1">No. Handphone / WhatsApp</label>
                             <input type="text" name="phone" value="{{ auth()->user()->phone }}" placeholder="08xxxxxxxxxx"
-                                class="w-full text-xs font-medium px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-[#1E3A8A] focus:ring-1 focus:ring-[#1E3A8A] transition">
+                                class="w-full text-xs font-medium px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB] transition">
                         </div>
 
                         <div class="pt-2 border-t border-slate-100">
@@ -1910,13 +1946,13 @@
                                 Kata Sandi Baru <span class="text-slate-400 font-normal">(Kosongkan jika tidak diubah)</span>
                             </label>
                             <input type="password" name="password" minlength="8" placeholder="Minimal 8 karakter (huruf besar, kecil, angka)..."
-                                class="w-full text-xs font-medium px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-[#1E3A8A] focus:ring-1 focus:ring-[#1E3A8A] transition">
+                                class="w-full text-xs font-medium px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB] transition">
                         </div>
 
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1">Konfirmasi Kata Sandi Baru</label>
                             <input type="password" name="password_confirmation" minlength="8" placeholder="Ketik ulang kata sandi baru..."
-                                class="w-full text-xs font-medium px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-[#1E3A8A] focus:ring-1 focus:ring-[#1E3A8A] transition">
+                                class="w-full text-xs font-medium px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB] transition">
                         </div>
                     </div>
 
@@ -1926,7 +1962,7 @@
                             Batal
                         </button>
                         <button type="submit"
-                            class="px-5 py-2.5 rounded-xl bg-[#1E3A8A] hover:bg-blue-900 text-white font-bold text-xs transition flex items-center gap-1.5 shadow-md shadow-blue-900/20 cursor-pointer">
+                            class="px-5 py-2.5 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold text-xs transition flex items-center gap-1.5 shadow-md shadow-blue-600/20 cursor-pointer">
                             <i data-lucide="save" class="w-3.5 h-3.5"></i>
                             <span>Simpan Perubahan</span>
                         </button>
@@ -1938,38 +1974,57 @@
 
     <!-- MODAL KIRIM BUKTI PENYELESAIAN LAPANGAN -->
     <div id="petugasFinishModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/65 flex items-center justify-center p-3 sm:p-5 overscroll-contain">
-        <div class="card-white rounded-2xl bg-white border border-[#E2E8F0] shadow-2xl max-w-md w-full overflow-hidden flex flex-col relative animate-in fade-in zoom-in duration-150">
-            <div class="px-4 sm:px-5 py-3.5 border-b border-[#E2E8F0] flex items-center justify-between bg-[#F8FAFC]">
-                <div class="flex items-center gap-2.5 min-w-0">
-                    <div class="w-8 h-8 rounded-xl bg-blue-50 text-[#1E3A8A] border border-blue-200 flex items-center justify-center shrink-0">
-                        <i data-lucide="upload-cloud" class="w-4 h-4"></i>
+        <div class="card-white rounded-[24px] bg-white border border-[#E2E8F0] shadow-2xl max-w-lg w-full overflow-hidden flex flex-col relative">
+            <div class="px-6 py-4 border-b border-[#E2E8F0] flex items-center justify-between bg-white">
+                <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-10 h-10 rounded-xl bg-[#EFF6FF] text-[#2563EB] border border-blue-100 flex items-center justify-center shrink-0">
+                        <i data-lucide="upload-cloud" class="w-5 h-5"></i>
                     </div>
-                    <h3 class="font-outfit font-bold text-sm sm:text-base text-slate-900 truncate">Kirim Bukti Penyelesaian</h3>
+                    <div class="min-w-0">
+                        <h3 class="font-outfit font-bold text-base text-[#0F172A] truncate">Kirim Bukti Penyelesaian</h3>
+                        <p class="text-[11px] text-[#64748B] truncate">Unggah foto hasil perbaikan &amp; catatan teknis lapangan</p>
+                    </div>
                 </div>
-                <button type="button" onclick="closePetugasFinishModal()" class="w-8 h-8 rounded-lg bg-white hover:bg-slate-100 text-slate-600 border border-[#E2E8F0] flex items-center justify-center transition cursor-pointer shrink-0" aria-label="Tutup">
+                <button type="button" onclick="closePetugasFinishModal()" class="w-9 h-9 rounded-[10px] bg-white hover:bg-slate-100 text-slate-500 border border-[#E2E8F0] flex items-center justify-center transition cursor-pointer shrink-0" aria-label="Tutup">
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
             </div>
-            <form id="petugasFinishForm" method="POST" action="" enctype="multipart/form-data" class="p-4 sm:p-5 space-y-4">
+            <form id="petugasFinishForm" method="POST" action="" enctype="multipart/form-data" class="p-6 space-y-4">
                 @csrf
-                <div class="p-3 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0]">
-                    <span id="finishModalCode" class="text-[11px] font-mono font-bold text-[#1E3A8A] block mb-0.5">#</span>
-                    <h4 id="finishModalTitle" class="font-outfit font-bold text-sm text-slate-900 line-clamp-2 leading-snug"></h4>
+                <div class="p-3.5 rounded-2xl bg-[#F8FAFC] border border-[#E2E8F0] flex items-start gap-3.5">
+                    <div class="w-20 h-20 rounded-xl overflow-hidden border border-[#E2E8F0] bg-slate-100 shrink-0 flex items-center justify-center">
+                        <img id="finishModalPhoto" src="" alt="Foto Aduan" class="w-full h-full object-cover hidden">
+                        <div id="finishModalPhotoFallback" class="text-slate-400 flex items-center justify-center">
+                            <i data-lucide="image" class="w-6 h-6"></i>
+                        </div>
+                    </div>
+                    <div class="min-w-0 flex-1 space-y-1">
+                        <span id="finishModalCode" class="text-[11px] font-mono font-bold text-[#2563EB] block">#</span>
+                        <h4 id="finishModalTitle" class="font-outfit font-bold text-sm text-[#0F172A] line-clamp-2 leading-snug">-</h4>
+                        <div class="flex items-center gap-1.5 text-[11px] text-[#475569] pt-0.5">
+                            <i data-lucide="user" class="w-3.5 h-3.5 text-[#64748B] shrink-0"></i>
+                            <span id="finishModalReporter" class="font-semibold truncate">-</span>
+                        </div>
+                        <div class="flex items-start gap-1.5 text-[11px] text-[#64748B]">
+                            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#64748B] shrink-0 mt-0.5"></i>
+                            <span id="finishModalAddress" class="line-clamp-2 leading-snug">-</span>
+                        </div>
+                    </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Foto Hasil Perbaikan <span class="text-red-500">*</span></label>
-                    <input type="file" name="photos[]" required accept="image/*" class="w-full text-xs text-slate-600 file:mr-2.5 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-[#1E3A8A] file:text-white hover:file:bg-[#172554] file:cursor-pointer border border-[#E2E8F0] rounded-xl p-1.5 bg-[#F8FAFC] focus:bg-white transition">
-                    <p class="text-[11px] text-slate-500 mt-1">Unggah foto kondisi lapangan setelah selesai diperbaiki.</p>
+                    <label class="block text-xs font-bold text-[#334155] mb-1.5">Foto Hasil Perbaikan <span class="text-red-500">*</span></label>
+                    <input type="file" name="photos[]" required accept="image/*" class="w-full text-xs text-slate-600 file:mr-2.5 file:py-2 file:px-3.5 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-[#2563EB] file:text-white hover:file:bg-[#1D4ED8] file:cursor-pointer border border-[#E2E8F0] rounded-xl p-1.5 bg-[#F8FAFC] focus:bg-white transition">
+                    <p class="text-[11px] text-[#64748B] mt-1">Unggah foto kondisi lapangan setelah selesai diperbaiki.</p>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Catatan Teknis <span class="text-red-500">*</span></label>
-                    <textarea name="note" rows="2" required placeholder="Contoh: Penambalan aspal selesai dan rata sesuai standar." class="w-full text-xs rounded-xl border border-slate-300 py-2 px-3 bg-white text-slate-800 focus:ring-2 focus:ring-[#1E3A8A] focus:border-[#1E3A8A] leading-relaxed"></textarea>
+                    <label class="block text-xs font-bold text-[#334155] mb-1.5">Catatan Teknis <span class="text-red-500">*</span></label>
+                    <textarea name="note" rows="3" required placeholder="Contoh: Penambalan aspal selesai dan rata sesuai standar." class="w-full text-xs rounded-xl border border-[#CBD5E1] py-2.5 px-3 bg-white text-[#0F172A] focus:ring-2 focus:ring-[#2563EB] focus:border-[#2563EB] leading-relaxed"></textarea>
                 </div>
-                <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
-                    <button type="button" onclick="closePetugasFinishModal()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer">
+                <div class="flex items-center justify-end gap-2.5 pt-4 border-t border-[#E2E8F0]">
+                    <button type="button" onclick="closePetugasFinishModal()" class="px-5 py-2.5 rounded-xl bg-[#F1F5F9] hover:bg-slate-200 text-[#334155] font-bold text-xs transition cursor-pointer">
                         Batal
                     </button>
-                    <button type="submit" class="px-4 py-2.5 rounded-xl bg-[#1E3A8A] hover:bg-[#172554] text-white font-bold text-xs shadow-sm transition flex items-center gap-1.5 cursor-pointer">
+                    <button type="submit" class="px-5 py-2.5 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold text-xs transition flex items-center gap-1.5 cursor-pointer">
                         <i data-lucide="check-circle" class="w-3.5 h-3.5"></i>
                         <span>Kirim Bukti</span>
                     </button>

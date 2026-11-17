@@ -5,43 +5,6 @@
 
 @section('content')
 
-{{-- Flash Notifications --}}
-@if(session('success'))
-<div id="flashSuccess" class="fixed top-5 right-5 z-[9999] max-w-sm w-full animate-fade-in">
-    <div class="flex items-start gap-3 bg-white border border-emerald-200 shadow-xl rounded-2xl px-4 py-3">
-        <div class="w-8 h-8 rounded-xl bg-emerald-50 flex items-center justify-center shrink-0">
-            <i data-lucide="check-circle-2" class="w-4.5 h-4.5 text-emerald-600"></i>
-        </div>
-        <div class="flex-1 min-w-0">
-            <p class="text-xs font-bold text-slate-900">Berhasil</p>
-            <p class="text-[11px] text-slate-600 mt-0.5 leading-relaxed">{{ session('success') }}</p>
-        </div>
-        <button onclick="document.getElementById('flashSuccess').remove()" class="text-slate-400 hover:text-slate-600 shrink-0 cursor-pointer">
-            <i data-lucide="x" class="w-3.5 h-3.5"></i>
-        </button>
-    </div>
-</div>
-<script>setTimeout(() => { const el = document.getElementById('flashSuccess'); if (el) el.remove(); }, 5000);</script>
-@endif
-
-@if(session('error'))
-<div id="flashError" class="fixed top-5 right-5 z-[9999] max-w-sm w-full animate-fade-in">
-    <div class="flex items-start gap-3 bg-white border border-red-200 shadow-xl rounded-2xl px-4 py-3">
-        <div class="w-8 h-8 rounded-xl bg-red-50 flex items-center justify-center shrink-0">
-            <i data-lucide="alert-circle" class="w-4.5 h-4.5 text-red-600"></i>
-        </div>
-        <div class="flex-1 min-w-0">
-            <p class="text-xs font-bold text-red-700">Gagal</p>
-            <p class="text-[11px] text-slate-600 mt-0.5 leading-relaxed">{{ session('error') }}</p>
-        </div>
-        <button onclick="document.getElementById('flashError').remove()" class="text-slate-400 hover:text-slate-600 shrink-0 cursor-pointer">
-            <i data-lucide="x" class="w-3.5 h-3.5"></i>
-        </button>
-    </div>
-</div>
-<script>setTimeout(() => { const el = document.getElementById('flashError'); if (el) el.remove(); }, 7000);</script>
-@endif
-
 <div class="py-4 sm:py-6 space-y-5">
 
     @php
@@ -88,13 +51,10 @@
             <h2 id="operatorSectionTitle" class="font-outfit font-bold text-lg sm:text-xl text-[#0F172A] leading-tight">
                 {{ $currentTabMeta['title'] }}
             </h2>
-            <p id="operatorSectionSubtitle" class="text-xs text-[#475569] mt-0.5">
-                {{ $currentTabMeta['subtitle'] }}
-            </p>
         </div>
         <div class="flex items-center gap-2 shrink-0">
             <span class="px-3.5 py-2 rounded-lg bg-white text-[#0F172A] text-xs font-semibold border border-[#E2E8F0] flex items-center gap-2">
-                <i data-lucide="clock" class="w-4 h-4 text-[#1E3A8A]"></i>
+                <i data-lucide="clock" class="w-4 h-4 text-[#2563EB]"></i>
                 <span class="live-wita-clock">{{ $todayStr }}</span>
             </span>
         </div>
@@ -106,7 +66,7 @@
         <div class="p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
             <div class="flex items-center justify-between gap-1.5">
                 <span class="text-[8.5px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-normal sm:tracking-wider leading-tight">Total Aduan</span>
-                <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-blue-50 text-[#1E3A8A] border border-blue-200 flex items-center justify-center shrink-0">
+                <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-blue-50 text-[#2563EB] border border-blue-200 flex items-center justify-center shrink-0">
                     <i data-lucide="inbox" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                 </div>
             </div>
@@ -138,7 +98,7 @@
         <div class="p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
             <div class="flex items-center justify-between gap-1.5">
                 <span class="text-[8.5px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-normal sm:tracking-wider leading-tight">Ditugaskan</span>
-                <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-blue-50 text-[#1E40AF] border border-blue-200 flex items-center justify-center shrink-0">
+                <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-blue-50 text-[#2563EB] border border-blue-200 flex items-center justify-center shrink-0">
                     <i data-lucide="send" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                 </div>
             </div>
@@ -202,7 +162,7 @@
         <div class="col-span-3 sm:col-span-1 p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
             <div class="flex items-center justify-between gap-1.5">
                 <span class="text-[8.5px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-normal sm:tracking-wider leading-tight">Rasio Sukses</span>
-                <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-blue-50 text-[#1E3A8A] border border-blue-200 flex items-center justify-center shrink-0">
+                <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-blue-50 text-[#2563EB] border border-blue-200 flex items-center justify-center shrink-0">
                     <i data-lucide="trending-up" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                 </div>
             </div>
@@ -215,71 +175,71 @@
         </div>
     </div>
 
-    <!-- Sub Menu Tab Navigation (Seragam Desain Admin) -->
-    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-2.5 w-full">
+    <!-- Sub Menu Tab Navigation (Dipindahkan ke Sidebar Accordion) -->
+    <div class="hidden grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-2.5 w-full">
         <!-- 1. Verifikasi -->
         <button type="button" onclick="switchTab('verify')" id="tabBtn-verify"
-            class="tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'verify' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
+            class="tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'verify' ? 'bg-[#2563EB] text-white border-[#2563EB]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
             <i data-lucide="filter" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
                 <span class="text-[11px] sm:text-xs font-bold block leading-tight">Verifikasi</span>
             </div>
-            <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'verify' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
+            <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'verify' ? 'bg-white text-[#2563EB]' : 'bg-blue-50 text-[#2563EB] border border-blue-200' }}">
                 {{ $pendingVerification->count() }}
             </span>
         </button>
 
         <!-- 2. Ditugaskan -->
         <button type="button" onclick="switchTab('dispatched')" id="tabBtn-dispatched"
-            class="tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'dispatched' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
+            class="tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'dispatched' ? 'bg-[#2563EB] text-white border-[#2563EB]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
             <i data-lucide="send" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
                 <span class="text-[11px] sm:text-xs font-bold block leading-tight">Ditugaskan</span>
             </div>
-            <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'dispatched' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
+            <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'dispatched' ? 'bg-white text-[#2563EB]' : 'bg-blue-50 text-[#2563EB] border border-blue-200' }}">
                 {{ $dispatched->count() }}
             </span>
         </button>
 
         <!-- 3. Dikerjakan -->
         <button type="button" onclick="switchTab('inprogress')" id="tabBtn-inprogress"
-            class="tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'inprogress' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
+            class="tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'inprogress' ? 'bg-[#2563EB] text-white border-[#2563EB]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
             <i data-lucide="hard-hat" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
                 <span class="text-[11px] sm:text-xs font-bold block leading-tight">Dikerjakan</span>
             </div>
-            <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'inprogress' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
+            <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'inprogress' ? 'bg-white text-[#2563EB]' : 'bg-blue-50 text-[#2563EB] border border-blue-200' }}">
                 {{ $inProgress->count() }}
             </span>
         </button>
 
         <!-- 4. Validasi -->
         <button type="button" onclick="switchTab('validation')" id="tabBtn-validation"
-            class="tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'validation' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
+            class="tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'validation' ? 'bg-[#2563EB] text-white border-[#2563EB]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
             <i data-lucide="check-square" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
                 <span class="text-[11px] sm:text-xs font-bold block leading-tight">Validasi</span>
             </div>
-            <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'validation' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
+            <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'validation' ? 'bg-white text-[#2563EB]' : 'bg-blue-50 text-[#2563EB] border border-blue-200' }}">
                 {{ $waitingValidation->count() }}
             </span>
         </button>
 
         <!-- 5. Arsip Aduan -->
         <button type="button" onclick="switchTab('archive')" id="tabBtn-archive"
-            class="tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'archive' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
+            class="tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'archive' ? 'bg-[#2563EB] text-white border-[#2563EB]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
             <i data-lucide="archive" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
                 <span class="text-[11px] sm:text-xs font-bold block leading-tight">Arsip Aduan</span>
             </div>
-            <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'archive' ? 'bg-white text-[#1E3A8A]' : 'bg-blue-50 text-[#1E3A8A] border border-blue-200' }}">
+            <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'archive' ? 'bg-white text-[#2563EB]' : 'bg-blue-50 text-[#2563EB] border border-blue-200' }}">
                 {{ $completed->count() }}
             </span>
         </button>
 
         <!-- 6. Laporan Kinerja -->
         <button type="button" onclick="switchTab('monitoring')" id="tabBtn-monitoring"
-            class="tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'monitoring' ? 'bg-[#1E3A8A] text-white border-[#1E3A8A]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
+            class="tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'monitoring' ? 'bg-[#2563EB] text-white border-[#2563EB]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
             <i data-lucide="bar-chart-2" class="w-4 h-4 shrink-0 text-current"></i>
             <div class="min-w-0 flex-1">
                 <span class="text-[11px] sm:text-xs font-bold block leading-tight">Laporan Kinerja</span>
@@ -287,83 +247,76 @@
         </button>
     </div>
 
+    <!-- Wadah Kartu Terpadu Operator (Seragam Daftar Pengguna & Daftar Aduan) -->
+    <div id="operatorUnifiedCard" class="card-white rounded-2xl p-5 sm:p-6 bg-white border border-[#E2E8F0] shadow-xs space-y-4 {{ in_array($activeTab, ['monitoring', 'regions-gis']) ? 'hidden' : '' }}">
     <!-- Filter Bar: Tipe Pelaporan & Pencarian Cepat (Di Bawah Sub Halaman) -->
-    <div id="operatorFilterBar" class="bg-white rounded-xl p-3 sm:p-3.5 border border-[#E2E8F0] flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-2.5 {{ $activeTab === 'monitoring' ? 'hidden' : '' }}">
+    <div id="operatorFilterBar" class="flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-3 {{ in_array($activeTab, ['monitoring', 'regions-gis']) ? 'hidden' : '' }}">
+        <div class="flex items-center gap-2.5 shrink-0">
+            <div class="w-9 h-9 rounded-xl bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE] flex items-center justify-center shrink-0">
+                <i data-lucide="layers" class="w-4 h-4"></i>
+            </div>
+            <h3 id="operatorUnifiedTitle" class="font-outfit font-bold text-sm sm:text-base text-[#0F172A]">
+                Daftar Pengaduan
+            </h3>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2 flex-1 xl:justify-end">
         <!-- Search Input -->
-        <div class="relative w-full lg:flex-1 lg:min-w-[140px]">
-            <i data-lucide="search" class="w-4 h-4 absolute left-3 top-2.5 text-slate-400"></i>
+        <div class="relative flex-1 min-w-[160px] sm:max-w-xs">
+            <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#64748B] pointer-events-none"></i>
             <input type="text" id="filterSearchInput" placeholder="Cari kode, pelapor, atau lokasi..." 
-                class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-3 py-2 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#1E3A8A] focus:bg-white transition"
+                class="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl pl-9 pr-3 py-2 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#2563EB] focus:bg-white focus:ring-2 focus:ring-[#2563EB]/15 transition"
                 oninput="applyFilters()">
         </div>
 
-        <!-- Filter Controls (Kompak 2-Kolom di Mobile, Satu Baris di Desktop) -->
-        <div class="grid grid-cols-2 sm:flex sm:flex-wrap lg:flex-nowrap items-center gap-2 w-full lg:w-auto shrink-0">
-            <!-- Dropdown Kategori -->
-            <div class="flex flex-col sm:flex-row sm:items-center gap-1 min-w-0">
-                <div class="flex items-center gap-1 text-[11px] sm:text-xs text-slate-500 shrink-0 font-medium whitespace-nowrap">
-                    <i data-lucide="layers" class="w-3.5 h-3.5 text-[#1E3A8A]"></i>
-                    <span>Kategori:</span>
-                </div>
-                <select id="filterCategorySelect" onchange="applyFilters()" 
-                    class="w-full sm:w-auto text-xs font-semibold rounded-xl border border-slate-200 py-2 px-2.5 lg:max-w-[140px] bg-slate-50 text-slate-700 focus:outline-none focus:border-[#1E3A8A] focus:bg-white transition shrink-0">
-                    <option value="ALL">Semua Kategori</option>
-                    @foreach($categories as $cat)
-                        <option value="{{ $cat->id }}">{{ $cat->name }}</option>
-                    @endforeach
-                </select>
-            </div>
+        <!-- Filter Controls -->
+        <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto shrink-0">
+            <select id="filterCategorySelect" onchange="applyFilters()" 
+                class="text-xs font-semibold rounded-xl border border-[#E2E8F0] py-2 px-3 bg-[#F8FAFC] text-[#334155] focus:outline-none focus:border-[#2563EB] focus:bg-white transition shrink-0">
+                <option value="ALL">Kategori: Semua</option>
+                @foreach($categories as $cat)
+                    <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                @endforeach
+            </select>
 
-            <!-- Dropdown Tipe Kerusakan / Tipe Laporan (Ringan vs Berat) -->
-            <div class="flex flex-col sm:flex-row sm:items-center gap-1 min-w-0">
-                <div class="flex items-center gap-1 text-[11px] sm:text-xs text-slate-500 shrink-0 font-medium whitespace-nowrap">
-                    <i data-lucide="git-commit" class="w-3.5 h-3.5 text-[#1E3A8A]"></i>
-                    <span>Tipe:</span>
-                </div>
-                <select id="filterDamageTypeSelect" onchange="applyFilters()" 
-                    class="w-full sm:w-auto text-xs font-semibold rounded-xl border border-slate-200 py-2 px-2.5 lg:max-w-[125px] bg-slate-50 text-slate-700 focus:outline-none focus:border-[#1E3A8A] focus:bg-white transition shrink-0">
-                    <option value="ALL">Semua Tipe</option>
-                    <option value="minor">Kerusakan Ringan</option>
-                    <option value="major">Kerusakan Berat</option>
-                </select>
-            </div>
+            <select id="filterDamageTypeSelect" onchange="applyFilters()" 
+                class="text-xs font-semibold rounded-xl border border-[#E2E8F0] py-2 px-3 bg-[#F8FAFC] text-[#334155] focus:outline-none focus:border-[#2563EB] focus:bg-white transition shrink-0">
+                <option value="ALL">Tipe: Semua</option>
+                <option value="minor">Ringan</option>
+                <option value="major">Berat</option>
+            </select>
 
             <!-- Dropdown Status Khusus Tab Arsip (Selesai vs Ditolak) -->
-            <div id="filterArchiveStatusContainer" class="col-span-2 sm:col-span-1 flex-col sm:flex-row sm:items-center gap-1 min-w-0 {{ $activeTab === 'archive' ? 'flex' : 'hidden' }} shrink-0">
-                <div class="flex items-center gap-1 text-[11px] sm:text-xs text-slate-500 shrink-0 font-medium whitespace-nowrap">
-                    <i data-lucide="check-square" class="w-3.5 h-3.5 text-[#1E3A8A]"></i>
-                    <span>Status:</span>
-                </div>
+            <div id="filterArchiveStatusContainer" class="{{ $activeTab === 'archive' ? 'flex' : 'hidden' }} shrink-0">
                 <select id="filterArchiveStatusSelect" onchange="applyFilters()" 
-                    class="w-full sm:w-auto text-xs font-semibold rounded-xl border border-slate-200 py-2 px-2.5 lg:max-w-[130px] bg-slate-50 text-slate-700 focus:outline-none focus:border-[#1E3A8A] focus:bg-white transition shrink-0">
-                    <option value="ALL">Semua Status</option>
+                    class="text-xs font-semibold rounded-xl border border-[#E2E8F0] py-2 px-3 bg-[#F8FAFC] text-[#334155] focus:outline-none focus:border-[#2563EB] focus:bg-white transition shrink-0">
+                    <option value="ALL">Status: Semua</option>
                     <option value="COMPLETED">Selesai</option>
                     <option value="REJECTED">Ditolak</option>
                 </select>
             </div>
 
-            <div class="col-span-2 sm:col-span-1 flex items-center justify-end gap-1.5 shrink-0">
-                <!-- Tombol Reset Filter -->
-                <button type="button" id="operatorResetBtn" onclick="resetFilters()"
-                    class="hidden px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition flex items-center gap-1 shrink-0 cursor-pointer">
-                    <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
-                    <span>Reset</span>
-                </button>
+            <!-- Tombol Reset Filter -->
+            <button type="button" id="operatorResetBtn" onclick="resetFilters()"
+                class="hidden px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition flex items-center gap-1 shrink-0 cursor-pointer">
+                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                <span>Reset</span>
+            </button>
 
-                <!-- Toggle Tata Letak Daftar / Petak -->
-                <div class="inline-flex items-center p-0.5 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] shrink-0" role="group" aria-label="Tata letak aduan">
-                    <button type="button" id="opLayoutBtn-list" onclick="setOperatorLayout('list')"
-                        class="px-2.5 py-1.5 rounded-md text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer bg-[#1E3A8A] text-white">
-                        <i data-lucide="list" class="w-3.5 h-3.5"></i>
-                        <span>Daftar</span>
-                    </button>
-                    <button type="button" id="opLayoutBtn-grid" onclick="setOperatorLayout('grid')"
-                        class="px-2.5 py-1.5 rounded-md text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer text-[#475569] hover:text-[#0F172A]">
-                        <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
-                        <span>Petak</span>
-                    </button>
-                </div>
+            <!-- Toggle Tata Letak Daftar / Petak (Rata Kanan) -->
+            <div class="inline-flex items-center p-0.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] shrink-0 ml-auto" role="group" aria-label="Tata letak aduan">
+                <button type="button" id="opLayoutBtn-list" onclick="setOperatorLayout('list')"
+                    class="px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer bg-[#2563EB] text-white">
+                    <i data-lucide="list" class="w-3.5 h-3.5"></i>
+                    <span>Daftar</span>
+                </button>
+                <button type="button" id="opLayoutBtn-grid" onclick="setOperatorLayout('grid')"
+                    class="px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer text-[#475569] hover:text-[#0F172A]">
+                    <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
+                    <span>Petak</span>
+                </button>
             </div>
+        </div>
         </div>
     </div>
 
@@ -392,7 +345,7 @@
                                 <!-- 1. Header Card: 1 Baris Sejajar - Kode + Tipe + Kategori (Kiri) & Waktu (Kanan) -->
                                 <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-slate-100 min-w-0">
                                     <div class="flex items-center gap-1.5 min-w-0 flex-nowrap overflow-hidden">
-                                        <span class="px-2 py-0.5 rounded-lg bg-[#1E3A8A]/10 text-[#1E3A8A] font-bold text-xs font-mono tracking-tight border border-blue-100/60 whitespace-nowrap shrink-0">
+                                        <span class="px-2 py-0.5 rounded-lg bg-[#2563EB]/10 text-[#2563EB] font-bold text-xs font-mono tracking-tight border border-blue-100/60 whitespace-nowrap shrink-0">
                                             #{{ $c->public_code }}
                                         </span>
                                         <span class="px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-red-50 text-red-700 border border-red-200/80 inline-flex items-center gap-1 whitespace-nowrap shrink-0">
@@ -446,14 +399,14 @@
 
                                         <!-- Baris 2: Lokasi Fisik (1 Baris Rapi) -->
                                         <div class="text-xs text-slate-600 flex items-center gap-1.5 min-w-0">
-                                            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#1E3A8A] shrink-0"></i>
+                                            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#2563EB] shrink-0"></i>
                                             <span class="truncate font-medium" title="{{ $c->address }}">{{ $c->address }}</span>
                                         </div>
 
                                         <!-- Baris 3: Info Pelapor & No Telepon (1 Baris Rapi) -->
                                         <div class="flex items-center gap-2 text-xs min-w-0">
                                             <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-blue-50/90 border border-blue-100/90 text-slate-700 min-w-0 max-w-full">
-                                                <i data-lucide="user" class="w-3 h-3 text-[#1E3A8A] shrink-0"></i>
+                                                <i data-lucide="user" class="w-3 h-3 text-[#2563EB] shrink-0"></i>
                                                 <span class="font-semibold text-slate-800 text-[11px] truncate">{{ $c->citizen?->name ?? 'Warga' }}</span>
                                                 @if($c->citizen?->phone)
                                                     <span class="text-blue-300 shrink-0">•</span>
@@ -464,7 +417,7 @@
 
                                         <!-- Baris 4: Tombol Detail Lengkap & Foto (1 Baris Rapi) -->
                                         <div class="relative z-10 hidden md:block">
-                                            <button type="button" onclick="openOperatorModal({{ $c->id }})" class="text-xs font-bold text-[#1E3A8A] hover:underline inline-flex items-center gap-1 cursor-pointer">
+                                            <button type="button" onclick="openOperatorModal({{ $c->id }})" class="text-xs font-bold text-[#2563EB] hover:underline inline-flex items-center gap-1 cursor-pointer">
                                                 <span>Lihat Rincian Lengkap & Foto</span>
                                                 <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
                                             </button>
@@ -476,7 +429,7 @@
                             <!-- 3. Tombol Aksi Verifikasi -->
                             <div onclick="event.stopPropagation();" class="pt-3 border-t border-slate-100/90 cursor-default">
                                 <button type="button" onclick="openDispatchModal({{ $c->id }})" 
-                                    class="w-full py-2.5 px-3 rounded-xl bg-[#1E3A8A] hover:bg-[#172554] active:scale-[0.99] text-white font-bold text-xs shadow-xs hover:shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
+                                    class="w-full py-2.5 px-3 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] active:scale-[0.99] text-white font-bold text-xs shadow-xs hover:shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
                                     <i data-lucide="send" class="w-4 h-4"></i>
                                     <span>Lakukan Verifikasi</span>
                                 </button>
@@ -520,7 +473,7 @@
                                 <!-- 1. Header Card: 1 Baris Sejajar - Kode + Tipe + Kategori (Kiri) & Waktu (Kanan) -->
                                 <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-slate-100 min-w-0">
                                     <div class="flex items-center gap-1.5 min-w-0 flex-nowrap overflow-hidden">
-                                        <span class="px-2 py-0.5 rounded-lg bg-[#1E3A8A]/10 text-[#1E3A8A] font-bold text-xs font-mono tracking-tight border border-blue-100/60 whitespace-nowrap shrink-0">
+                                        <span class="px-2 py-0.5 rounded-lg bg-[#2563EB]/10 text-[#2563EB] font-bold text-xs font-mono tracking-tight border border-blue-100/60 whitespace-nowrap shrink-0">
                                             #{{ $c->public_code }}
                                         </span>
                                         <span class="px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-red-50 text-red-700 border border-red-200/80 inline-flex items-center gap-1 whitespace-nowrap shrink-0">
@@ -567,14 +520,14 @@
 
                                         <!-- Baris 2: Lokasi Fisik (1 Baris Rapi) -->
                                         <div class="text-xs text-slate-600 flex items-center gap-1.5 min-w-0">
-                                            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#1E3A8A] shrink-0"></i>
+                                            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#2563EB] shrink-0"></i>
                                             <span class="truncate font-medium" title="{{ $c->address }}">{{ $c->address }}</span>
                                         </div>
 
                                         <!-- Baris 3: Info Pelapor & No Telepon (1 Baris Rapi) -->
                                         <div class="flex items-center gap-2 text-xs min-w-0">
                                             <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-blue-50/90 border border-blue-100/90 text-slate-700 min-w-0 max-w-full">
-                                                <i data-lucide="user" class="w-3 h-3 text-[#1E3A8A] shrink-0"></i>
+                                                <i data-lucide="user" class="w-3 h-3 text-[#2563EB] shrink-0"></i>
                                                 <span class="font-semibold text-slate-800 text-[11px] truncate">{{ $c->citizen?->name ?? 'Warga' }}</span>
                                                 @if($c->citizen?->phone)
                                                     <span class="text-blue-300 shrink-0">•</span>
@@ -585,7 +538,7 @@
 
                                         <!-- Baris 4: Tombol Detail Lengkap & Foto (1 Baris Rapi) -->
                                         <div class="relative z-10 hidden md:block">
-                                            <button type="button" onclick="openOperatorModal({{ $c->id }})" class="text-xs font-bold text-[#1E3A8A] hover:underline inline-flex items-center gap-1 cursor-pointer">
+                                            <button type="button" onclick="openOperatorModal({{ $c->id }})" class="text-xs font-bold text-[#2563EB] hover:underline inline-flex items-center gap-1 cursor-pointer">
                                                 <span>Lihat Rincian Lengkap & Foto</span>
                                                 <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
                                             </button>
@@ -599,10 +552,10 @@
                                 @if($deadline)
                                 <div class="p-2.5 rounded-xl bg-blue-50/50 border border-blue-100/90 flex items-center justify-between text-[10px]">
                                     <span class="flex items-center gap-1.5 text-slate-600 font-medium">
-                                        <i data-lucide="clock" class="w-3 h-3 text-[#1E3A8A] shrink-0"></i>
+                                        <i data-lucide="clock" class="w-3 h-3 text-[#2563EB] shrink-0"></i>
                                         <span>Target: <strong class="text-slate-900 font-semibold">{{ \Carbon\Carbon::parse($deadline)->locale('id')->isoFormat('D MMM Y') }}</strong></span>
                                     </span>
-                                    <span class="px-1.5 py-0.5 rounded text-[9px] font-bold shrink-0 bg-blue-100/80 text-[#1E3A8A]">
+                                    <span class="px-1.5 py-0.5 rounded text-[9px] font-bold shrink-0 bg-blue-100/80 text-[#2563EB]">
                                         {{ \Carbon\Carbon::parse($deadline)->diffForHumans() }}
                                     </span>
                                 </div>
@@ -612,8 +565,8 @@
                                 <div class="flex items-center justify-between gap-2 pt-1 text-xs">
                                     <div class="flex items-center gap-1.5 min-w-0">
                                         @if($disp && $disp->team)
-                                            <span class="px-2.5 py-1 rounded-lg bg-blue-50 text-[#1E3A8A] border border-blue-200 font-bold text-[11px] flex items-center gap-1.5 truncate">
-                                                <i data-lucide="users" class="w-3.5 h-3.5 text-[#1E3A8A] shrink-0"></i>
+                                            <span class="px-2.5 py-1 rounded-lg bg-blue-50 text-[#2563EB] border border-blue-200 font-bold text-[11px] flex items-center gap-1.5 truncate">
+                                                <i data-lucide="users" class="w-3.5 h-3.5 text-[#2563EB] shrink-0"></i>
                                                 <span class="truncate">Regu: [{{ $disp->team->code }}] {{ $disp->team->name }}</span>
                                             </span>
                                         @else
@@ -631,7 +584,7 @@
                                     @else
                                         <button type="button" 
                                             onclick="openAssignTeamModal({{ $c->id }}, '{{ $c->public_code }}', '{{ addslashes($c->title) }}', '{{ $disp?->team_id ?? '' }}', '{{ addslashes($disp?->instruction ?? '') }}')"
-                                            class="px-3 py-1.5 rounded-xl bg-[#1E3A8A] hover:bg-blue-900 text-white font-bold text-xs flex items-center gap-1.5 shadow-2xs transition cursor-pointer shrink-0">
+                                            class="px-3 py-1.5 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold text-xs flex items-center gap-1.5 shadow-2xs transition cursor-pointer shrink-0">
                                             <i data-lucide="user-plus" class="w-3.5 h-3.5"></i>
                                             <span>{{ $disp?->team_id ? 'Ubah Regu' : 'Tempatkan Regu' }}</span>
                                         </button>
@@ -678,7 +631,7 @@
                                 <!-- 1. Header Card: 1 Baris Sejajar - Kode + Tipe + Kategori (Kiri) & Waktu (Kanan) -->
                                 <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-slate-100 min-w-0">
                                     <div class="flex items-center gap-1.5 min-w-0 flex-nowrap overflow-hidden">
-                                        <span class="px-2 py-0.5 rounded-lg bg-[#1E3A8A]/10 text-[#1E3A8A] font-bold text-xs font-mono tracking-tight border border-blue-100/60 whitespace-nowrap shrink-0">
+                                        <span class="px-2 py-0.5 rounded-lg bg-[#2563EB]/10 text-[#2563EB] font-bold text-xs font-mono tracking-tight border border-blue-100/60 whitespace-nowrap shrink-0">
                                             #{{ $c->public_code }}
                                         </span>
                                         <span class="px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-red-50 text-red-700 border border-red-200/80 inline-flex items-center gap-1 whitespace-nowrap shrink-0">
@@ -725,14 +678,14 @@
 
                                         <!-- Baris 2: Lokasi Fisik (1 Baris Rapi) -->
                                         <div class="text-xs text-slate-600 flex items-center gap-1.5 min-w-0">
-                                            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#1E3A8A] shrink-0"></i>
+                                            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#2563EB] shrink-0"></i>
                                             <span class="truncate font-medium" title="{{ $c->address }}">{{ $c->address }}</span>
                                         </div>
 
                                         <!-- Baris 3: Info Pelapor & No Telepon (1 Baris Rapi) -->
                                         <div class="flex items-center gap-2 text-xs min-w-0">
                                             <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-blue-50/90 border border-blue-100/90 text-slate-700 min-w-0 max-w-full">
-                                                <i data-lucide="user" class="w-3 h-3 text-[#1E3A8A] shrink-0"></i>
+                                                <i data-lucide="user" class="w-3 h-3 text-[#2563EB] shrink-0"></i>
                                                 <span class="font-semibold text-slate-800 text-[11px] truncate">{{ $c->citizen?->name ?? 'Warga' }}</span>
                                                 @if($c->citizen?->phone)
                                                     <span class="text-blue-300 shrink-0">•</span>
@@ -743,7 +696,7 @@
 
                                         <!-- Baris 4: Tombol Detail Lengkap & Foto (1 Baris Rapi) -->
                                         <div class="relative z-10 hidden md:block">
-                                            <button type="button" onclick="openOperatorModal({{ $c->id }})" class="text-xs font-bold text-[#1E3A8A] hover:underline inline-flex items-center gap-1 cursor-pointer">
+                                            <button type="button" onclick="openOperatorModal({{ $c->id }})" class="text-xs font-bold text-[#2563EB] hover:underline inline-flex items-center gap-1 cursor-pointer">
                                                 <span>Lihat Rincian Lengkap & Foto</span>
                                                 <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
                                             </button>
@@ -756,10 +709,10 @@
                             <div class="pt-2 border-t border-slate-100">
                                 <div class="p-2.5 rounded-xl {{ $isOverdue ? 'bg-red-50/80 border border-red-200/90' : 'bg-blue-50/50 border border-blue-100/90' }} flex items-center justify-between text-[10px]">
                                     <span class="flex items-center gap-1.5 {{ $isOverdue ? 'text-red-700 font-bold' : 'text-slate-600 font-medium' }}">
-                                        <i data-lucide="{{ $isOverdue ? 'alert-triangle' : 'clock' }}" class="w-3 h-3 {{ $isOverdue ? 'text-red-600' : 'text-[#1E3A8A]' }} shrink-0"></i>
+                                        <i data-lucide="{{ $isOverdue ? 'alert-triangle' : 'clock' }}" class="w-3 h-3 {{ $isOverdue ? 'text-red-600' : 'text-[#2563EB]' }} shrink-0"></i>
                                         <span>{{ $isOverdue ? 'Lewat Batas' : 'Target' }}: <strong class="{{ $isOverdue ? 'text-red-800' : 'text-slate-900' }} font-semibold">{{ $deadline ? \Carbon\Carbon::parse($deadline)->locale('id')->isoFormat('D MMM Y') : 'Segera' }}</strong></span>
                                     </span>
-                                    <span class="px-1.5 py-0.5 rounded text-[9px] font-bold shrink-0 {{ $isOverdue ? 'bg-red-100 text-red-700' : 'bg-blue-100/80 text-[#1E3A8A]' }}">
+                                    <span class="px-1.5 py-0.5 rounded text-[9px] font-bold shrink-0 {{ $isOverdue ? 'bg-red-100 text-red-700' : 'bg-blue-100/80 text-[#2563EB]' }}">
                                         {{ $deadline ? $deadline->diffForHumans() : 'SOP' }}
                                     </span>
                                 </div>
@@ -803,7 +756,7 @@
                                 <!-- 1. Header Card: 1 Baris Sejajar - Kode + Tipe + Kategori (Kiri) & Waktu (Kanan) -->
                                 <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-slate-100 min-w-0">
                                     <div class="flex items-center gap-1.5 min-w-0 flex-nowrap overflow-hidden">
-                                        <span class="px-2 py-0.5 rounded-lg bg-[#1E3A8A]/10 text-[#1E3A8A] font-bold text-xs font-mono tracking-tight border border-blue-100/60 whitespace-nowrap shrink-0">
+                                        <span class="px-2 py-0.5 rounded-lg bg-[#2563EB]/10 text-[#2563EB] font-bold text-xs font-mono tracking-tight border border-blue-100/60 whitespace-nowrap shrink-0">
                                             #{{ $c->public_code }}
                                         </span>
                                         <span class="px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-red-50 text-red-700 border border-red-200/80 inline-flex items-center gap-1 whitespace-nowrap shrink-0">
@@ -852,14 +805,14 @@
 
                                         <!-- Baris 2: Lokasi Fisik (1 Baris Rapi) -->
                                         <div class="text-xs text-slate-600 flex items-center gap-1.5 min-w-0">
-                                            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#1E3A8A] shrink-0"></i>
+                                            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#2563EB] shrink-0"></i>
                                             <span class="truncate font-medium" title="{{ $c->address }}">{{ $c->address }}</span>
                                         </div>
 
                                         <!-- Baris 3: Info Pelapor & No Telepon (1 Baris Rapi) -->
                                         <div class="flex items-center gap-2 text-xs min-w-0">
                                             <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-blue-50/90 border border-blue-100/90 text-slate-700 min-w-0 max-w-full">
-                                                <i data-lucide="user" class="w-3 h-3 text-[#1E3A8A] shrink-0"></i>
+                                                <i data-lucide="user" class="w-3 h-3 text-[#2563EB] shrink-0"></i>
                                                 <span class="font-semibold text-slate-800 text-[11px] truncate">{{ $c->citizen?->name ?? 'Warga' }}</span>
                                                 @if($c->citizen?->phone)
                                                     <span class="text-blue-300 shrink-0">•</span>
@@ -870,7 +823,7 @@
 
                                         <!-- Baris 4: Tombol Detail Lengkap & Foto (1 Baris Rapi) -->
                                         <div class="relative z-10 hidden md:block">
-                                            <button type="button" onclick="openOperatorModal({{ $c->id }})" class="text-xs font-bold text-[#1E3A8A] hover:underline inline-flex items-center gap-1 cursor-pointer">
+                                            <button type="button" onclick="openOperatorModal({{ $c->id }})" class="text-xs font-bold text-[#2563EB] hover:underline inline-flex items-center gap-1 cursor-pointer">
                                                 <span>Lihat Rincian Lengkap & Foto</span>
                                                 <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
                                             </button>
@@ -882,7 +835,7 @@
                             <!-- 3. Tombol Aksi Validasi (Full-width Dominan Biru) -->
                             <div onclick="event.stopPropagation();" class="pt-3 border-t border-slate-100/90 cursor-default">
                                 <button type="button" onclick="openValidationModal({{ $c->id }})" 
-                                    class="w-full py-2.5 px-3 rounded-xl bg-[#1E3A8A] hover:bg-[#172554] active:scale-[0.99] text-white font-bold text-xs shadow-xs hover:shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
+                                    class="w-full py-2.5 px-3 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] active:scale-[0.99] text-white font-bold text-xs shadow-xs hover:shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
                                     <i data-lucide="check-circle-2" class="w-4 h-4"></i>
                                     <span>Lakukan Validasi</span>
                                 </button>
@@ -928,7 +881,7 @@
                             <!-- 1. Header Card: 1 Baris Sejajar - Kode + Tipe + Status + Kategori (Kiri) & Waktu (Kanan) -->
                             <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-slate-100 min-w-0">
                                 <div class="flex items-center gap-1.5 min-w-0 flex-nowrap overflow-hidden">
-                                    <span class="px-2 py-0.5 rounded-lg bg-[#1E3A8A]/10 text-[#1E3A8A] font-bold text-xs font-mono tracking-tight border border-blue-100/60 whitespace-nowrap shrink-0">
+                                    <span class="px-2 py-0.5 rounded-lg bg-[#2563EB]/10 text-[#2563EB] font-bold text-xs font-mono tracking-tight border border-blue-100/60 whitespace-nowrap shrink-0">
                                         #{{ $c->public_code }}
                                     </span>
                                     <span class="px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-red-50 text-red-700 border border-red-200 inline-flex items-center gap-1 whitespace-nowrap shrink-0">
@@ -979,14 +932,14 @@
 
                                     <!-- Baris 2: Lokasi Fisik (1 Baris Rapi) -->
                                     <div class="text-xs text-slate-600 flex items-center gap-1.5 min-w-0">
-                                        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#1E3A8A] shrink-0"></i>
+                                        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#2563EB] shrink-0"></i>
                                         <span class="truncate font-medium" title="{{ $c->address }}">{{ $c->address }}</span>
                                     </div>
 
                                     <!-- Baris 3: Info Pelapor & No Telepon (1 Baris Rapi) -->
                                     <div class="flex items-center gap-2 text-xs min-w-0">
                                         <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-blue-50/90 border border-blue-100/90 text-slate-700 min-w-0 max-w-full">
-                                            <i data-lucide="user" class="w-3 h-3 text-[#1E3A8A] shrink-0"></i>
+                                            <i data-lucide="user" class="w-3 h-3 text-[#2563EB] shrink-0"></i>
                                             <span class="font-semibold text-slate-800 text-[11px] truncate">{{ $c->citizen?->name ?? 'Warga' }}</span>
                                             @if($c->citizen?->phone)
                                                 <span class="text-blue-300 shrink-0">•</span>
@@ -997,7 +950,7 @@
 
                                     <!-- Baris 4: Tombol Detail Lengkap & Foto (1 Baris Rapi) -->
                                     <div class="relative z-10 hidden md:block">
-                                        <button type="button" onclick="openOperatorModal({{ $c->id }})" class="text-xs font-bold text-[#1E3A8A] hover:underline inline-flex items-center gap-1 cursor-pointer">
+                                        <button type="button" onclick="openOperatorModal({{ $c->id }})" class="text-xs font-bold text-[#2563EB] hover:underline inline-flex items-center gap-1 cursor-pointer">
                                             <span>Lihat Rincian Lengkap & Foto</span>
                                             <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
                                         </button>
@@ -1014,7 +967,7 @@
                                     <span>Laporan Ditolak</span>
                                 </span>
                                 <button type="button" onclick="openOperatorModal({{ $c->id }})" 
-                                    class="py-1 px-3 rounded-lg bg-[#1E3A8A] hover:bg-[#172554] text-white font-bold text-xs transition flex items-center gap-1 cursor-pointer" 
+                                    class="py-1 px-3 rounded-lg bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold text-xs transition flex items-center gap-1 cursor-pointer" 
                                     title="Lihat Detail Lengkap">
                                     <span>Rincian</span>
                                     <i data-lucide="chevron-right" class="w-3 h-3"></i>
@@ -1029,10 +982,10 @@
                             <div class="pt-2 border-t border-slate-100">
                                 <div class="p-2.5 rounded-xl bg-blue-50/50 border border-blue-100/90 flex items-center justify-between text-[10px]">
                                     <span class="flex items-center gap-1.5 text-slate-600 font-medium">
-                                        <i data-lucide="clock" class="w-3 h-3 text-[#1E3A8A] shrink-0"></i>
+                                        <i data-lucide="clock" class="w-3 h-3 text-[#2563EB] shrink-0"></i>
                                         <span>Target: <strong class="text-slate-900 font-semibold">{{ $archiveDeadline->locale('id')->isoFormat('D MMM Y') }}</strong></span>
                                     </span>
-                                    <span class="px-1.5 py-0.5 rounded text-[9px] font-bold shrink-0 bg-blue-100/80 text-[#1E3A8A]">
+                                    <span class="px-1.5 py-0.5 rounded text-[9px] font-bold shrink-0 bg-blue-100/80 text-[#2563EB]">
                                         {{ $archiveDeadline->diffForHumans() }}
                                     </span>
                                 </div>
@@ -1050,12 +1003,12 @@
     </div>
 
     <!-- Pagination Bar Operator (5 / 10 / 50 per halaman, default 10) -->
-    <div id="operatorPaginationBar" class="p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs {{ $activeTab === 'monitoring' ? 'hidden' : '' }}">
+    <div id="operatorPaginationBar" class="p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs {{ in_array($activeTab, ['monitoring', 'regions-gis']) ? 'hidden' : '' }}">
         <div class="flex flex-wrap items-center gap-3 text-[#475569]">
             <div class="flex items-center gap-2">
                 <span class="font-medium">Tampilkan:</span>
                 <select id="operatorPageSizeSelect" onchange="changeOperatorPageSize(this.value)" aria-label="Jumlah laporan per halaman"
-                    class="text-xs font-semibold rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] text-[#0F172A] px-2.5 py-1.5 focus:outline-none focus:border-[#1E3A8A] cursor-pointer">
+                    class="text-xs font-semibold rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] text-[#0F172A] px-2.5 py-1.5 focus:outline-none focus:border-[#2563EB] cursor-pointer">
                     <option value="5">5 laporan</option>
                     <option value="10" selected>10 laporan</option>
                     <option value="50">50 laporan</option>
@@ -1065,425 +1018,269 @@
         </div>
         <div id="operatorPageControls" class="flex items-center gap-1 flex-wrap"></div>
     </div>
+    </div>
 
-    <!-- TAB 5: MONITORING EKSEKUTIF & KINERJA DINAS (LENGKAP ANALITIK EKSEKUTIF & PETA SPASIAL KOLAKA UTARA) -->
+    <!-- TAB 5: PETA WILAYAH GIS -->
+    <div id="tabPanel-regions-gis" class="tab-panel {{ $activeTab === 'regions-gis' ? '' : 'hidden' }} space-y-6">
+        @include('partials.role_split_gis', [
+            'mapId' => 'operatorMap',
+            'prefix' => 'operator',
+            'focusFn' => 'focusDistrictOnOperatorMap',
+            'mapTitle' => 'Peta Spasial 15 Kecamatan',
+            'districtStats' => $districtStats
+        ])
+    </div>
+
+    <!-- TAB 6: LAPORAN KINERJA & EVALUASI PENANGANAN -->
     <div id="tabPanel-monitoring" class="tab-panel {{ $activeTab === 'monitoring' ? '' : 'hidden' }} space-y-6">
-        
-        <!-- 1. PETA SEBARAN INFRASTRUKTUR -->
-        <div class="card-white rounded-2xl p-5 bg-white border border-[#E2E8F0] space-y-3">
-            <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-3 border-b border-slate-100 pb-3">
-                <div class="min-w-0">
-                    <h3 class="font-outfit font-bold text-base text-slate-900 flex items-center gap-2">
-                        <i data-lucide="map-pin" class="w-4 h-4 text-[#1E3A8A] shrink-0"></i>
-                        <span>Peta Sebaran Infrastruktur Rusak Seluruh Kabupaten</span>
-                    </h3>
-                </div>
-                <div class="flex items-center gap-2 sm:gap-3 text-[10px] sm:text-xs font-semibold overflow-x-auto whitespace-nowrap w-full sm:w-auto pb-0.5 sm:pb-0 shrink-0">
-                    <span class="inline-flex items-center gap-1 shrink-0"><span class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#EF4444] shrink-0"></span> Verifikasi</span>
-                    <span class="inline-flex items-center gap-1 shrink-0"><span class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#1E40AF] shrink-0"></span> Ditugaskan</span>
-                    <span class="inline-flex items-center gap-1 shrink-0"><span class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#F59E0B] shrink-0"></span> <span class="hidden sm:inline">Sedang </span>Dikerjakan</span>
-                    <span class="inline-flex items-center gap-1 shrink-0"><span class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#F59E0B] shrink-0"></span> Validasi</span>
-                    <span class="inline-flex items-center gap-1 shrink-0"><span class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#10B981] shrink-0"></span> Selesai</span>
-                    <span class="inline-flex items-center gap-1 shrink-0"><span class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#DC2626] shrink-0"></span> Ditolak</span>
-                </div>
-            </div>
-
-            <!-- Leaflet Map Container -->
-            <div id="operatorMap" class="w-full h-[420px] rounded-xl border border-[#E2E8F0] z-10"></div>
-        </div>
-
-        <!-- 2. MODUL TERPADU: MONITORING EKSEKUTIF, GRAFIK KINERJA & PELAPORAN RESMI (PDF) -->
         @include('partials.executive_monitoring_reporting')
-
-        <!-- 3. SECTION MANDIRI: SEBARAN PENGADUAN PER WILAYAH KECAMATAN & DESA (KOLAKA UTARA) -->
-        <div class="card-white rounded-2xl p-5 sm:p-6 bg-white border border-[#E2E8F0] shadow-2xs space-y-5">
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-100 pb-4">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-2xl bg-blue-50 text-[#1E3A8A] flex items-center justify-center border border-blue-200 shrink-0">
-                        <i data-lucide="map" class="w-5 h-5"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-outfit font-extrabold text-sm sm:text-base text-slate-900 leading-tight">
-                            Sebaran Pengaduan Infrastruktur per Wilayah Kecamatan & Desa
-                        </h3>
-                        <p class="text-xs text-slate-500 mt-0.5">
-                            Distribusi laporan masyarakat, efektivitas penanganan fisik Dinas PUPR, dan status wilayah di 15 Kecamatan Kabupaten Kolaka Utara.
-                        </p>
-                    </div>
-                </div>
-                <div class="flex items-center gap-2 self-start md:self-auto shrink-0">
-                    <span class="px-3 py-1 rounded-full bg-blue-50 text-[#1E3A8A] text-xs font-bold border border-blue-200 flex items-center gap-1.5">
-                        <i data-lucide="shield-check" class="w-3.5 h-3.5 text-blue-600"></i>
-                        <span>15 Kecamatan Terintegrasi</span>
-                    </span>
-                </div>
-            </div>
-
-            <!-- Ringkasan Statistik Kewilayahan Kolaka Utara -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-between">
-                    <div>
-                        <span class="text-[11px] text-slate-500 font-semibold block">Total Kecamatan Terlayani</span>
-                        <span class="text-lg font-outfit font-extrabold text-slate-900">15 Kecamatan</span>
-                    </div>
-                    <div class="w-8 h-8 rounded-xl bg-blue-50/80 text-[#1E3A8A] border border-blue-100/70 flex items-center justify-center shrink-0">
-                        <i data-lucide="building-2" class="w-4 h-4"></i>
-                    </div>
-                </div>
-
-                <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-between">
-                    <div>
-                        <span class="text-[11px] text-slate-500 font-semibold block">Pusat Pemerintahan (Ibukota)</span>
-                        <span class="text-lg font-outfit font-extrabold text-[#1E3A8A]">Lasusua</span>
-                    </div>
-                    <div class="w-8 h-8 rounded-xl bg-blue-50/80 text-[#1E3A8A] border border-blue-100/70 flex items-center justify-center shrink-0">
-                        <i data-lucide="navigation" class="w-4 h-4"></i>
-                    </div>
-                </div>
-
-                <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-between">
-                    <div>
-                        <span class="text-[11px] text-slate-500 font-semibold block">Perlindungan Geofencing</span>
-                        <span class="text-xs font-extrabold text-[#1E3A8A] flex items-center gap-1.5 mt-1">
-                            <span class="w-2 h-2 rounded-full bg-[#1E3A8A]"></span>
-                            100% Terproteksi Kolaka Utara
-                        </span>
-                    </div>
-                    <div class="w-8 h-8 rounded-xl bg-blue-50/80 text-[#1E3A8A] border border-blue-100/70 flex items-center justify-center shrink-0">
-                        <i data-lucide="radar" class="w-4 h-4"></i>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Grid 15 Kecamatan Kolaka Utara -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
-                @foreach($districtStats as $ds)
-                    <div class="p-3.5 rounded-xl bg-slate-50/90 border border-slate-200/80 hover:bg-white hover:border-blue-300 hover:shadow-sm transition flex flex-col justify-between space-y-3">
-                        <div class="flex items-start justify-between gap-2">
-                            <div class="min-w-0">
-                                <span class="font-extrabold text-slate-900 text-xs sm:text-sm block truncate">{{ $ds['district'] }}</span>
-                                <span class="text-[11px] text-slate-500 block truncate flex items-center gap-1.5 mt-0.5">
-                                    <span class="w-1.5 h-1.5 rounded-full {{ $ds['total'] > 0 ? 'bg-blue-600' : 'bg-slate-400' }}"></span>
-                                    <span>Pusat: {{ $ds['village'] }}</span>
-                                </span>
-                            </div>
-                            @if($ds['total'] > 0)
-                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-blue-100 text-[#1E3A8A] shrink-0 whitespace-nowrap">
-                                    {{ $ds['total'] }} Laporan
-                                </span>
-                            @else
-                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-slate-200/70 text-slate-600 shrink-0 whitespace-nowrap">
-                                    Nihil (Aman)
-                                </span>
-                            @endif
-                        </div>
-
-                        <div class="pt-2 border-t border-slate-200/70 space-y-1.5 text-[11px]">
-                            <div class="flex items-center justify-between text-slate-500">
-                                <span>Status Penanganan:</span>
-                                @if($ds['total'] === 0)
-                                    <span class="text-slate-400 font-medium">Kondusif & Terpantau</span>
-                                @elseif($ds['completed'] === $ds['total'])
-                                    <span class="font-bold text-emerald-600 flex items-center gap-1">
-                                        <i data-lucide="check-check" class="w-3.5 h-3.5"></i>
-                                        100% Selesai
-                                    </span>
-                                @endif
-                            </div>
-                            @if($ds['total'] > 0 && $ds['completed'] !== $ds['total'])
-                                <div class="flex items-center gap-1.5 flex-wrap">
-                                    @if(($ds['pending'] ?? 0) > 0)
-                                        <span class="px-2 py-0.5 rounded-md bg-red-50 text-red-700 border border-red-200 text-[10px] font-bold flex items-center gap-1">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
-                                            {{ $ds['pending'] }} Verifikasi
-                                        </span>
-                                    @endif
-                                    @if(($ds['dispatched'] ?? 0) > 0)
-                                        <span class="px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-200 text-[10px] font-bold flex items-center gap-1">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
-                                            {{ $ds['dispatched'] }} Ditugaskan
-                                        </span>
-                                    @endif
-                                    @if(($ds['in_progress'] ?? 0) > 0)
-                                        <span class="px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 border border-amber-200 text-[10px] font-bold flex items-center gap-1">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-                                            {{ $ds['in_progress'] }} Dikerjakan
-                                        </span>
-                                    @endif
-                                    @if(($ds['waiting_verification'] ?? 0) > 0)
-                                        <span class="px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 border border-amber-200 text-[10px] font-bold flex items-center gap-1">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-                                            {{ $ds['waiting_verification'] }} Validasi
-                                        </span>
-                                    @endif
-                                    @if(($ds['completed'] ?? 0) > 0)
-                                        <span class="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold flex items-center gap-1">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                            {{ $ds['completed'] }} Selesai
-                                        </span>
-                                    @endif
-                                    @if(($ds['rejected'] ?? 0) > 0)
-                                        <span class="px-2 py-0.5 rounded-md bg-red-50 text-red-700 border border-red-200 text-[10px] font-bold flex items-center gap-1">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
-                                            {{ $ds['rejected'] }} Ditolak
-                                        </span>
-                                    @endif
-                                </div>
-                            @endif
-                        </div>
-
-                        <div class="pt-1 flex items-center justify-between">
-                            <span class="font-mono text-[10px] text-slate-400">
-                                {{ number_format($ds['latitude'], 3) }}, {{ number_format($ds['longitude'], 3) }}
-                            </span>
-                            <button type="button" onclick="focusDistrictOnOperatorMap({{ $ds['latitude'] }}, {{ $ds['longitude'] }}, '{{ $ds['district'] }}')"
-                                class="px-2.5 py-1 rounded-lg bg-white border border-slate-200 hover:border-[#1E3A8A] text-[#1E3A8A] font-bold text-[10px] transition flex items-center gap-1 cursor-pointer">
-                                <i data-lucide="crosshair" class="w-3 h-3"></i>
-                                <span>Fokus Peta</span>
-                            </button>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-        </div>
-
     </div>
 
 </div>
 
-<!-- Pop-up Modal Detail Lengkap Operator (Super Cepat, Bersih & Langsung Fokus) -->
-<div id="operatorDetailModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-3 sm:p-5 bg-slate-900/65 transition-opacity duration-150 overscroll-contain">
-    <div class="bg-white w-full max-w-xl rounded-xl shadow-md border border-[#E2E8F0] overflow-hidden flex flex-col max-h-[92vh]">
-        
-        <!-- Modal Top Header (Selaras Landing Page: Kerusakan -> Kategori -> Status) -->
-        <div class="px-4 sm:px-5 py-3 sm:py-3.5 border-b border-[#E2E8F0] flex items-center justify-between bg-[#F8FAFC] gap-2">
-            <div class="flex items-center gap-1.5 sm:gap-2 flex-nowrap min-w-0 overflow-x-auto no-scrollbar py-0.5">
-                <!-- 1. Tingkat Kerusakan -->
-                <span id="opModalTypeBadge" class="shrink-0 px-2.5 py-1 rounded-md text-xs font-semibold bg-red-50 text-red-700 border border-red-200 inline-flex items-center gap-1.5 whitespace-nowrap">
-                    <span class="w-1.5 h-1.5 rounded-full bg-red-600 shrink-0"></span>
-                    <span>Kerusakan Ringan</span>
-                </span>
-                <!-- 2. Kategori Infrastruktur -->
-                <span id="opModalCategoryBadge" class="shrink-0 px-2.5 py-1 rounded-md bg-slate-100 text-[#0F172A] font-semibold text-xs border border-[#E2E8F0] inline-flex items-center whitespace-nowrap">
-                    Kategori
-                </span>
-                <!-- 3. Status Pengerjaan -->
-                <span id="opModalStatusBadge" class="shrink-0 px-2.5 py-1 rounded-md text-xs font-bold border border-blue-200 bg-blue-50 text-[#1E3A8A] whitespace-nowrap">
-                    STATUS
-                </span>
+<!-- Pop-up Modal Detail Lengkap Operator (Desain 1:1 Landing Page & Admin SI-APPIK V2 — 760px Desktop & Mobile Bottom Sheet) -->
+<div id="operatorDetailModal" class="fixed inset-0 z-50 hidden flex items-end sm:items-center justify-center p-3.5 sm:p-5 bg-slate-900/65 overscroll-contain">
+    <div class="bg-white w-full sm:max-w-[760px] rounded-[24px] shadow-[0_20px_50px_rgba(15,23,42,0.22)] border border-[#E2E8F0] overflow-hidden flex flex-col max-h-[86vh] sm:max-h-[90vh]">
+
+        <!-- Drag Handle Khusus Mobile Bottom Sheet -->
+        <div class="sm:hidden flex justify-center pt-3 pb-1 bg-white shrink-0">
+            <span class="w-11 h-1 rounded-full bg-[#CBD5E1]"></span>
+        </div>
+
+        <!-- Sticky Modal Top Header (3 Badge 1 Baris + Tanggal & Kode Aduan + Tombol X di Tengah Kanan) -->
+        <div class="px-4 sm:px-7 pt-2.5 pb-3.5 sm:py-5 border-b border-[#E2E8F0] bg-white flex items-center justify-between gap-2.5 shrink-0">
+            <div class="min-w-0 flex-1 space-y-2">
+                <!-- Baris 1: Selalu 1 Baris di Mobile & Desktop -->
+                <div class="flex items-center gap-1 sm:gap-2 flex-nowrap overflow-x-auto no-scrollbar">
+                    <span id="opModalTypeBadge" class="shrink-0 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10.5px] sm:text-xs font-bold bg-[#FEF2F2] text-[#DC2626] border border-[#FECACA] inline-flex items-center gap-1 whitespace-nowrap">
+                        <span class="w-1.5 h-1.5 rounded-full bg-[#DC2626] shrink-0"></span>
+                        <span>Kerusakan Ringan</span>
+                    </span>
+                    <span id="opModalCategoryBadge" class="shrink min-w-0 truncate px-2 sm:px-3 py-0.5 sm:py-1 rounded-full bg-[#F1F5F9] text-[#475569] font-semibold text-[10.5px] sm:text-xs border border-[#E2E8F0]">
+                        Kategori
+                    </span>
+                    <span id="opModalStatusBadge" class="shrink-0 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10.5px] sm:text-xs font-bold whitespace-nowrap border bg-[#EFF6FF] text-[#2563EB] border-[#BFDBFE]">
+                        STATUS
+                    </span>
+                </div>
+
+                <!-- Baris 2: Tanggal Aduan + Kode Aduan -->
+                <div class="flex items-center flex-wrap gap-2 text-[11.5px] sm:text-[13px] text-[#475569]">
+                    <div class="flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-3.5 h-3.5 text-[#64748B] shrink-0"></i>
+                        <span id="opModalDate">03 Sep 2026</span>
+                    </div>
+                    <span class="text-slate-300">&bull;</span>
+                    <span id="opModalCode" class="font-mono font-bold text-[#2563EB] bg-[#EFF6FF] border border-[#BFDBFE] px-2 py-0.5 rounded-full text-[10.5px] sm:text-[11px]">#ADU-0000</span>
+                </div>
             </div>
-            <button type="button" onclick="closeOperatorModal()" class="w-9 h-9 rounded-lg bg-white hover:bg-slate-100 text-[#475569] hover:text-[#0F172A] border border-[#E2E8F0] flex items-center justify-center transition cursor-pointer shrink-0 ml-1" title="Tutup Detail" aria-label="Tutup Rincian">
+
+            <button type="button" onclick="closeOperatorModal()" class="w-8 h-8 sm:w-9 sm:h-9 rounded-[10px] bg-[#F8FAFC] hover:bg-slate-100 text-[#475569] hover:text-[#0F172A] border border-[#E2E8F0] flex items-center justify-center transition cursor-pointer shrink-0" title="Tutup Detail" aria-label="Tutup Rincian">
                 <i data-lucide="x" class="w-4 h-4"></i>
             </button>
         </div>
 
         <!-- Modal Scrollable Body -->
-        <div class="p-4 sm:p-5 overflow-y-auto space-y-4 flex-1 overscroll-contain" style="-webkit-overflow-scrolling: touch;">
-            
-            <!-- 1. Foto Bukti Kerusakan Warga -->
-            <div id="opModalCitizenPhotoSection" class="space-y-2">
-                <div class="rounded-xl overflow-hidden border border-[#E2E8F0] bg-slate-100 relative max-h-64 sm:max-h-72 flex items-center justify-center">
-                    <img id="opModalCitizenPhoto" src="" alt="Foto Kerusakan Warga" class="w-full h-full object-cover max-h-64 sm:max-h-72">
-                    <div class="absolute bottom-2.5 left-2.5 bg-[#0F172A] text-white text-[11px] font-semibold px-2.5 py-1 rounded-md flex items-center gap-1.5 border border-slate-700">
-                        <i data-lucide="image" class="w-3.5 h-3.5 text-white"></i>
-                        <span id="opModalCitizenPhotoLabel">Foto Bukti Warga</span>
-                    </div>
-                </div>
-                <!-- Gallery Thumbnails Strip -->
-                <div id="opModalCitizenGallery" class="flex items-center gap-2 overflow-x-auto pb-1 hidden"></div>
-            </div>
+        <div class="px-5 py-4 sm:px-7 sm:py-5 overflow-y-auto space-y-4 flex-1 overscroll-contain bg-white" style="-webkit-overflow-scrolling: touch;">
 
-            <!-- 2. Foto Bukti Penanganan Petugas Lapangan -->
-            <div id="opModalOfficerPhotoSection" class="space-y-2 hidden">
-                <div class="rounded-xl overflow-hidden border border-emerald-300 bg-emerald-50 relative max-h-64 sm:max-h-72 flex items-center justify-center">
-                    <img id="opModalOfficerPhoto" src="" alt="Foto Hasil Pengerjaan Petugas" class="w-full h-full object-cover max-h-64 sm:max-h-72">
-                    <div class="absolute bottom-2.5 left-2.5 bg-[#064E3B] text-white text-[11px] font-semibold px-2.5 py-1 rounded-md flex items-center gap-1.5 border border-emerald-800">
-                        <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-300"></i>
-                        <span id="opModalOfficerPhotoLabel">Bukti Penyelesaian Lapangan</span>
-                    </div>
-                </div>
-                <!-- Gallery Thumbnails Strip -->
-                <div id="opModalOfficerGallery" class="flex items-center gap-2 overflow-x-auto pb-1 hidden"></div>
-            </div>
+            <!-- Judul Aduan -->
+            <h3 id="opModalTitle" class="font-outfit font-bold text-lg sm:text-xl text-[#0F172A] leading-snug">
+                Judul Laporan
+            </h3>
 
-            <!-- Judul & Info Waktu Laporan -->
-            <div>
-                <span id="opModalCode" class="text-[11px] font-mono font-semibold text-[#475569] block tracking-wide mb-0.5">
-                    #ADU-0000
-                </span>
-                <h3 id="opModalTitle" class="font-outfit font-bold text-lg sm:text-xl text-[#0F172A] leading-snug">
-                    Judul Laporan
-                </h3>
-                <div class="flex items-center gap-1.5 text-xs text-[#475569] pt-1">
-                    <i data-lucide="calendar" class="w-3.5 h-3.5 text-[#475569]"></i>
-                    <span id="opModalDate">03 Sep 2026</span>
-                </div>
-            </div>
-
-            <!-- Identitas Pelapor Aduan (Clean, Compact, Tanpa Label Berulang) -->
-            <div class="p-3 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-between gap-3">
-                <div class="flex items-center gap-2.5 min-w-0">
-                    <div class="w-9 h-9 rounded-xl bg-slate-200/80 text-slate-700 flex items-center justify-center font-bold text-xs shrink-0">
-                        <i data-lucide="user" class="w-4 h-4 text-[#1E3A8A]"></i>
-                    </div>
-                    <div class="min-w-0">
-                        <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Pelapor Aduan</span>
-                        <div class="flex items-center gap-2">
-                            <span id="opModalCitizenName" class="font-outfit font-extrabold text-xs sm:text-sm text-slate-900 truncate">
-                                Nama Pelapor
-                            </span>
-                            <span id="opModalAnonymousBadge" class="hidden text-[9px] font-bold px-1.5 py-0.5 rounded bg-slate-200 text-slate-600">Anonim</span>
+            <!-- 1. Galeri Foto Berdampingan 2 Kolom (Rasio 16:10 Side-by-Side) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3.5">
+                <!-- Kiri: Foto Kondisi Lokasi -->
+                <div id="opModalCitizenPhotoSection" class="space-y-1.5">
+                    <div class="aspect-[16/10] rounded-xl sm:rounded-2xl overflow-hidden border border-[#E2E8F0] bg-[#1E293B] relative flex items-center justify-center">
+                        <img id="opModalCitizenPhoto" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Foto Kondisi Lokasi" class="w-full h-full object-cover">
+                        <div class="absolute bottom-2 left-2 sm:bottom-3 sm:left-3 bg-[#0F172A]/85 text-white text-[10px] sm:text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5 pointer-events-none">
+                            <i data-lucide="camera" class="w-3 h-3 shrink-0 hidden sm:inline"></i>
+                            <span id="opModalCitizenPhotoLabel">Foto Kondisi Lokasi</span>
                         </div>
                     </div>
+                    <div id="opModalCitizenGallery" class="flex items-center gap-1.5 overflow-x-auto pb-0.5 hidden"></div>
                 </div>
-                <div class="flex items-center gap-1.5 text-xs text-slate-700 font-bold shrink-0">
-                    <i data-lucide="phone" class="w-3.5 h-3.5 text-[#1E3A8A]"></i>
-                    <a id="opModalCitizenPhone" href="#" class="font-mono hover:underline text-[#1E3A8A]">08123456789</a>
+
+                <!-- Kanan: Foto Hasil Pengerjaan (Selalu tampil berdampingan, placeholder bila belum ada) -->
+                <div id="opModalOfficerPhotoSection" class="space-y-1.5">
+                    <div class="aspect-[16/10] rounded-xl sm:rounded-2xl overflow-hidden border border-[#A7F3D0] bg-[#ECFDF5] relative flex items-center justify-center">
+                        <img id="opModalOfficerPhoto" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Foto Hasil Pengerjaan" class="w-full h-full object-cover">
+                        <div id="opModalOfficerPlaceholder" class="hidden inset-0 absolute flex flex-col items-center justify-center text-center p-3 text-[#047857] bg-[#ECFDF5]">
+                            <i data-lucide="clock" class="w-5 h-5 mb-1 text-[#10B981]"></i>
+                            <span class="text-[11px] sm:text-xs font-semibold leading-tight">Menunggu Foto Hasil Pengerjaan</span>
+                        </div>
+                        <div class="absolute bottom-2 left-2 sm:bottom-3 sm:left-3 bg-[#047857]/90 text-white text-[10px] sm:text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5 pointer-events-none">
+                            <i data-lucide="badge-check" class="w-3 h-3 shrink-0 hidden sm:inline"></i>
+                            <span id="opModalOfficerPhotoLabel">Foto Hasil Pengerjaan</span>
+                        </div>
+                    </div>
+                    <div id="opModalOfficerGallery" class="flex items-center gap-1.5 overflow-x-auto pb-0.5 hidden"></div>
                 </div>
             </div>
 
-            <!-- Regu Penanganan Lapangan (Sesuai Permintaan User: Menampilkan Regu, Ketua Regu, & Nomor HP) -->
-            <div id="opModalOfficerCard" class="hidden p-3.5 rounded-2xl bg-blue-50/60 border border-blue-200/80 space-y-2.5">
+            <!-- 2. Grid Informasi Pelapor & Lokasi (2 Kolom Seimbang) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-3.5">
+                <!-- Kartu Kiri: Pelapor Aduan -->
+                <div class="p-4 rounded-2xl bg-[#F8FAFC] border border-[#E2E8F0] space-y-1.5">
+                    <div class="flex items-center gap-1.5 text-[11px] font-bold text-[#475569] uppercase tracking-wider">
+                        <i data-lucide="user" class="w-3.5 h-3.5 text-[#2563EB]"></i>
+                        <span>Pelapor Aduan</span>
+                    </div>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span id="opModalCitizenName" class="font-outfit font-bold text-sm sm:text-base text-[#0F172A] truncate">Nama Pelapor</span>
+                        <span id="opModalAnonymousBadge" class="hidden text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-200 text-slate-700">Anonim</span>
+                    </div>
+                    <div class="flex items-center gap-1.5 text-xs font-bold text-[#047857]">
+                        <i data-lucide="shield-check" class="w-3.5 h-3.5 text-[#10B981] shrink-0"></i>
+                        <a id="opModalCitizenPhone" href="#" class="font-mono hover:underline text-[#047857]">08123456789</a>
+                    </div>
+                </div>
+
+                <!-- Kartu Kanan: Lokasi Kerusakan -->
+                <div class="p-4 rounded-2xl bg-[#F8FAFC] border border-[#E2E8F0] space-y-2 flex flex-col justify-between">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-1.5 text-[11px] font-bold text-[#475569] uppercase tracking-wider">
+                            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#2563EB]"></i>
+                            <span>Lokasi Kerusakan</span>
+                        </div>
+                        <p id="opModalFullAddress" class="text-xs sm:text-[13px] font-semibold text-[#0F172A] leading-relaxed">
+                            Alamat lokasi kerusakan...
+                        </p>
+                        <span id="opModalRoad" class="hidden"></span>
+                        <span id="opModalVillage" class="hidden"></span>
+                        <span id="opModalDistrict" class="hidden"></span>
+                        <span id="opModalRegency" class="hidden"></span>
+                    </div>
+                    <div class="flex items-center justify-between gap-2 pt-0.5">
+                        <span id="opModalCoords" class="hidden">-</span>
+                        <button type="button" onclick="const c = (document.getElementById('opModalCoords')?.textContent || '').trim(); if(c && c !== '-') window.open('https://www.google.com/maps?q=' + encodeURIComponent(c.replace(/\s+/g,'')), '_blank', 'noopener');"
+                            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#EFF6FF] hover:bg-[#DBEAFE] text-[#2563EB] border border-[#BFDBFE] text-xs font-bold transition cursor-pointer">
+                            <i data-lucide="map" class="w-3.5 h-3.5"></i>
+                            <span>Buka di Peta</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Regu Penanganan Lapangan -->
+            <div id="opModalOfficerCard" class="hidden p-4 rounded-2xl bg-[#EFF6FF]/60 border border-[#BFDBFE] space-y-2.5">
                 <div class="flex items-start justify-between gap-2">
                     <div class="flex items-center gap-2.5 min-w-0">
-                        <div class="w-9 h-9 rounded-xl bg-[#1E3A8A] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
+                        <div class="w-9 h-9 rounded-xl bg-[#2563EB] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
                             <i data-lucide="hard-hat" class="w-4 h-4"></i>
                         </div>
                         <div class="min-w-0">
-                            <span class="text-[10px] text-[#1E3A8A] font-extrabold uppercase tracking-wider block">Regu Lapangan Pelaksana</span>
-                            <h4 id="opModalTeamName" class="font-outfit font-extrabold text-xs sm:text-sm text-slate-900 truncate leading-tight">
+                            <span class="text-[10px] text-[#2563EB] font-extrabold uppercase tracking-wider block">Regu Lapangan Pelaksana</span>
+                            <h4 id="opModalTeamName" class="font-outfit font-bold text-xs sm:text-sm text-[#0F172A] truncate leading-tight">
                                 Regu Aspal 01 - Lasusua
                             </h4>
-                            <span id="opModalOfficerDept" class="text-[10.5px] font-semibold text-slate-500 block truncate">
+                            <span id="opModalOfficerDept" class="text-[11px] font-medium text-[#475569] block truncate">
                                 Dinas Pekerjaan Umum dan Penataan Ruang (PUPR)
                             </span>
                         </div>
                     </div>
                     <div id="opModalDeadlineBox" class="text-right shrink-0">
-                        <span class="text-[10px] text-slate-400 block font-medium">Batas Waktu:</span>
-                        <span id="opModalOfficerDeadline" class="text-xs font-bold text-[#1E3A8A] bg-white px-2 py-0.5 rounded border border-blue-200">-</span>
+                        <span class="text-[10px] text-[#64748B] block font-medium">Batas Waktu:</span>
+                        <span id="opModalOfficerDeadline" class="text-xs font-bold text-[#2563EB] bg-white px-2.5 py-0.5 rounded-lg border border-[#BFDBFE] inline-block mt-0.5">-</span>
                     </div>
                 </div>
 
-                <!-- Baris Kontak Ketua Regu (Koordinator Lapangan) -->
-                <div class="p-2.5 rounded-xl bg-white border border-blue-100 flex items-center justify-between gap-2 text-xs">
+                <div class="p-2.5 rounded-xl bg-white border border-[#E2E8F0] flex items-center justify-between gap-2 text-xs">
                     <div class="flex items-center gap-2 min-w-0">
-                        <div class="w-6 h-6 rounded-lg bg-blue-100 text-[#1E3A8A] flex items-center justify-center shrink-0">
+                        <div class="w-6 h-6 rounded-lg bg-[#EFF6FF] text-[#2563EB] flex items-center justify-center shrink-0">
                             <i data-lucide="crown" class="w-3.5 h-3.5"></i>
                         </div>
                         <div class="min-w-0">
-                            <span class="text-[10px] text-slate-400 font-bold block leading-none">Ketua Regu (Koordinator Lapangan):</span>
-                            <span id="opModalTeamLeader" class="font-bold text-slate-900 truncate block mt-0.5">Nama Ketua Regu</span>
+                            <span class="text-[10px] text-[#64748B] font-bold block leading-none">Ketua Regu:</span>
+                            <span id="opModalTeamLeader" class="font-bold text-[#0F172A] truncate block mt-0.5">Nama Ketua Regu</span>
                         </div>
                     </div>
-                    <a id="opModalTeamPhone" href="#" class="px-2.5 py-1 rounded-lg bg-blue-50 hover:bg-blue-100 text-[#1E3A8A] font-bold font-mono text-xs flex items-center gap-1.5 transition shrink-0">
+                    <a id="opModalTeamPhone" href="#" class="px-2.5 py-1 rounded-lg bg-[#EFF6FF] hover:bg-[#DBEAFE] text-[#2563EB] font-bold font-mono text-xs flex items-center gap-1.5 transition shrink-0">
                         <i data-lucide="phone-call" class="w-3 h-3"></i>
                         <span id="opModalTeamPhoneText">081234567816</span>
                     </a>
                 </div>
 
-                <!-- Hidden legacy fields to prevent JS reference errors -->
                 <span id="opModalOfficerName" class="hidden"></span>
                 <span id="opModalOfficerPhone" class="hidden"></span>
 
-                <!-- Arahan Instruksi Teknis -->
-                <div id="opModalInstructionRow" class="hidden text-xs text-slate-600 flex items-start gap-1.5 pt-1.5 border-t border-blue-200/50">
-                    <i data-lucide="clipboard-list" class="w-3.5 h-3.5 text-[#1E3A8A] shrink-0 mt-0.5"></i>
-                    <span>Instruksi: <span id="opModalOfficerInstruction" class="text-slate-800 font-medium italic">Lakukan perbaikan</span></span>
+                <div id="opModalInstructionRow" class="hidden text-xs text-[#475569] flex items-start gap-1.5 pt-1.5 border-t border-[#BFDBFE]/60">
+                    <i data-lucide="clipboard-list" class="w-3.5 h-3.5 text-[#2563EB] shrink-0 mt-0.5"></i>
+                    <span>Instruksi: <span id="opModalOfficerInstruction" class="text-[#0F172A] font-medium italic">Lakukan perbaikan</span></span>
                 </div>
             </div>
 
-            <!-- Lokasi Kerusakan (Satu Kartu Bersih & Jelas) -->
-            <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1.5">
-                <div class="flex items-center justify-between text-xs font-bold text-slate-700">
-                    <span class="flex items-center gap-1.5">
-                        <i data-lucide="map-pin" class="w-4 h-4 text-[#1E3A8A]"></i>
-                        <span>Lokasi Kerusakan</span>
-                    </span>
-                    <span id="opModalCoords" class="font-mono text-[11px] font-bold text-[#1E3A8A] bg-white px-2 py-0.5 rounded-md border border-slate-200">
-                        -
-                    </span>
-                </div>
-                <p id="opModalFullAddress" class="text-xs font-semibold text-slate-800 leading-relaxed">
-                    Alamat lokasi kerusakan...
-                </p>
-                <!-- Hidden dummy elements to maintain parseAdministrativeAddress compatibility without crashes -->
-                <span id="opModalRoad" class="hidden"></span>
-                <span id="opModalVillage" class="hidden"></span>
-                <span id="opModalDistrict" class="hidden"></span>
-                <span id="opModalRegency" class="hidden"></span>
-            </div>
-
-            <!-- Detail Kerusakan Ruas Panjang (Major) -->
-            <div id="opModalMajorRoadBox" class="hidden p-3 rounded-2xl bg-blue-50/70 border border-blue-200 space-y-2 text-xs">
-                <div class="flex items-center justify-between font-bold text-[#1E3A8A]">
+            <!-- 4. Detail Kerusakan Ruas Panjang (Major) -->
+            <div id="opModalMajorRoadBox" class="hidden p-4 rounded-2xl bg-[#EFF6FF]/60 border border-[#BFDBFE] space-y-2 text-xs">
+                <div class="flex items-center justify-between font-bold text-[#2563EB]">
                     <span class="flex items-center gap-1.5">
                         <i data-lucide="route" class="w-4 h-4"></i>
                         <span>Kerusakan Ruas Panjang</span>
                     </span>
-                    <span id="opModalRoadLengthBadge" class="text-[10px] text-white bg-[#1E3A8A] px-2.5 py-0.5 rounded-full font-bold">
+                    <span id="opModalRoadLengthBadge" class="text-[10px] text-white bg-[#2563EB] px-2.5 py-0.5 rounded-full font-bold">
                         ≥ 500 Meter
                     </span>
                 </div>
                 <div class="grid grid-cols-2 gap-2">
-                    <div class="p-2 rounded-xl bg-white border border-blue-100">
-                        <span class="text-[10px] text-slate-400 block font-semibold">Estimasi Panjang:</span>
-                        <span id="opModalRoadLength" class="font-bold text-[#1E3A8A]">-</span>
+                    <div class="p-2.5 rounded-xl bg-white border border-[#E2E8F0]">
+                        <span class="text-[10px] text-[#64748B] block font-semibold">Estimasi Panjang:</span>
+                        <span id="opModalRoadLength" class="font-bold text-[#0F172A]">-</span>
                     </div>
-                    <div class="p-2 rounded-xl bg-white border border-blue-100">
-                        <span class="text-[10px] text-slate-400 block font-semibold">Kondisi:</span>
-                        <span id="opModalRoadCondition" class="font-bold text-[#1E3A8A]">-</span>
+                    <div class="p-2.5 rounded-xl bg-white border border-[#E2E8F0]">
+                        <span class="text-[10px] text-[#64748B] block font-semibold">Kondisi:</span>
+                        <span id="opModalRoadCondition" class="font-bold text-[#0F172A]">-</span>
                     </div>
                 </div>
-                <div class="p-2 rounded-xl bg-white border border-blue-100 font-mono text-[11px] text-slate-600 space-y-0.5">
-                    <div><span class="font-bold text-[#1E3A8A]">Awal:</span> <span id="opModalStartCoords">-</span></div>
-                    <div><span class="font-bold text-slate-700">Akhir:</span> <span id="opModalEndCoords">-</span></div>
+                <div class="p-2.5 rounded-xl bg-white border border-[#E2E8F0] font-mono text-[11px] text-[#334155] space-y-0.5">
+                    <div><span class="font-bold text-[#2563EB]">Awal:</span> <span id="opModalStartCoords">-</span></div>
+                    <div><span class="font-bold text-[#0F172A]">Akhir:</span> <span id="opModalEndCoords">-</span></div>
                 </div>
             </div>
 
-            <!-- Deskripsi Lengkap -->
+            <!-- 5. Deskripsi Lengkap -->
             <div class="space-y-1.5">
-                <h4 class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
-                    <i data-lucide="file-text" class="w-3.5 h-3.5 text-slate-400"></i>
-                    <span>Keterangan Tambahan Pelapor</span>
+                <h4 class="text-[11px] font-bold text-[#475569] uppercase tracking-wider flex items-center gap-1.5">
+                    <i data-lucide="file-text" class="w-3.5 h-3.5 text-[#64748B]"></i>
+                    <span>Deskripsi Kondisi Kerusakan</span>
                 </h4>
-                <div id="opModalDescription" class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 leading-relaxed whitespace-pre-line font-sans">
+                <div id="opModalDescription" class="p-4 rounded-2xl bg-[#F8FAFC] border border-[#E2E8F0] text-xs sm:text-[13px] text-[#334155] leading-relaxed whitespace-pre-line font-sans">
                     Deskripsi lengkap...
                 </div>
             </div>
 
-            <!-- Analisis AI Vision -->
-            <div id="opModalAiBox" class="p-3 rounded-2xl bg-blue-50/60 border border-blue-100 space-y-2 text-xs">
-                <div class="flex items-center justify-between font-bold text-[#1E3A8A]">
+            <!-- 6. Analisis AI Vision -->
+            <div id="opModalAiBox" class="p-4 rounded-2xl bg-[#EFF6FF]/50 border border-[#BFDBFE] space-y-2 text-xs">
+                <div class="flex items-center justify-between font-bold text-[#2563EB]">
                     <span class="flex items-center gap-1.5">
                         <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
                         <span>Analisis Computer Vision AI</span>
                     </span>
-                    <span id="opModalAiConfidence" class="text-[10px] text-emerald-700 bg-white px-2 py-0.5 rounded-md border border-emerald-200 font-semibold">
+                    <span id="opModalAiConfidence" class="text-[10px] text-[#047857] bg-white px-2 py-0.5 rounded-full border border-[#A7F3D0] font-semibold">
                         Akurasi 90%
                     </span>
                 </div>
                 <div class="grid grid-cols-2 gap-2">
-                    <div class="p-2 rounded-xl bg-white border border-blue-100">
-                        <span class="text-[10px] text-slate-400 block font-semibold">Tipe Kerusakan:</span>
-                        <span id="opModalAiType" class="font-bold text-slate-800">-</span>
+                    <div class="p-2.5 rounded-xl bg-white border border-[#E2E8F0]">
+                        <span class="text-[10px] text-[#64748B] block font-semibold">Tipe Kerusakan:</span>
+                        <span id="opModalAiType" class="font-bold text-[#0F172A]">-</span>
                     </div>
-                    <div class="p-2 rounded-xl bg-white border border-blue-100">
-                        <span class="text-[10px] text-slate-400 block font-semibold">Tingkat Prioritas:</span>
-                        <span id="opModalAiPriority" class="font-bold text-slate-800">-</span>
+                    <div class="p-2.5 rounded-xl bg-white border border-[#E2E8F0]">
+                        <span class="text-[10px] text-[#64748B] block font-semibold">Tingkat Prioritas:</span>
+                        <span id="opModalAiPriority" class="font-bold text-[#0F172A]">-</span>
                     </div>
                 </div>
-                <div class="p-2 rounded-xl bg-white border border-blue-100">
-                    <span class="text-[10px] text-slate-400 block font-semibold">Estimasi Dimensi & Material:</span>
-                    <span id="opModalAiEstimate" class="font-semibold text-slate-700">-</span>
+                <div class="p-2.5 rounded-xl bg-white border border-[#E2E8F0]">
+                    <span class="text-[10px] text-[#64748B] block font-semibold">Estimasi Dimensi &amp; Material:</span>
+                    <span id="opModalAiEstimate" class="font-semibold text-[#334155]">-</span>
                 </div>
             </div>
 
         </div>
 
-        <!-- Modal Footer: Tombol Tutup Saja -->
-        <div class="px-5 py-3 border-t border-slate-100 bg-slate-50 flex items-center justify-end">
-            <button type="button" onclick="closeOperatorModal()" class="px-5 py-2.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold text-xs transition cursor-pointer">
+        <!-- Modal Footer -->
+        <div class="px-5 py-3.5 sm:px-7 border-t border-[#E2E8F0] bg-white flex items-center justify-end shrink-0">
+            <button type="button" onclick="closeOperatorModal()" class="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold text-xs shadow-xs transition cursor-pointer">
                 Tutup Rincian
             </button>
         </div>
@@ -1491,31 +1288,36 @@
     </div>
 </div>
 
-<!-- MODAL VERIFIKASI & DISPOSISI PENUGASAN PETUGAS (CLEAN, FOKUS INPUT & VERIFIKASI) -->
-<div id="dispatchModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/65 flex items-center justify-center p-3 sm:p-5 overscroll-contain">
-    <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl border border-[#E2E8F0] overflow-hidden flex flex-col max-h-[92vh]">
-        
+<!-- MODAL VERIFIKASI & DISPOSISI PENUGASAN PETUGAS (Desain 760px Clean & Konsisten SI-APPIK V2) -->
+<div id="dispatchModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/65 flex items-end sm:items-center justify-center p-3.5 sm:p-5 overscroll-contain">
+    <div class="bg-white w-full sm:max-w-[760px] rounded-[24px] shadow-[0_20px_50px_rgba(15,23,42,0.22)] border border-[#E2E8F0] overflow-hidden flex flex-col max-h-[88vh] sm:max-h-[90vh]">
+
+        <!-- Drag Handle Khusus Mobile -->
+        <div class="sm:hidden flex justify-center pt-3 pb-1 bg-white shrink-0">
+            <span class="w-11 h-1 rounded-full bg-[#CBD5E1]"></span>
+        </div>
+
         <!-- Header Modal Verifikasi -->
-        <div class="px-4 sm:px-5 py-3.5 border-b border-[#E2E8F0] flex items-center justify-between bg-[#F8FAFC] gap-2">
+        <div class="px-4 sm:px-7 py-3.5 sm:py-5 border-b border-[#E2E8F0] flex items-center justify-between bg-white gap-2 shrink-0">
             <div class="flex items-center gap-2.5 min-w-0">
-                <div class="w-8 h-8 rounded-xl bg-blue-50 text-[#1E3A8A] border border-blue-200 flex items-center justify-center shrink-0">
+                <div class="w-9 h-9 rounded-xl bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE] flex items-center justify-center shrink-0">
                     <i data-lucide="clipboard-check" class="w-4 h-4"></i>
                 </div>
-                <h3 class="font-outfit font-bold text-sm sm:text-base text-slate-900 truncate">Verifikasi &amp; Penugasan</h3>
+                <h3 class="font-outfit font-bold text-base sm:text-lg text-[#0F172A] truncate">Verifikasi &amp; Penugasan</h3>
             </div>
-            <button type="button" onclick="closeDispatchModal()" class="w-8 h-8 rounded-lg bg-white hover:bg-slate-100 text-[#475569] hover:text-[#0F172A] border border-[#E2E8F0] flex items-center justify-center transition cursor-pointer shrink-0" title="Tutup" aria-label="Tutup">
+            <button type="button" onclick="closeDispatchModal()" class="w-8 h-8 sm:w-9 sm:h-9 rounded-[10px] bg-[#F8FAFC] hover:bg-slate-100 text-[#475569] hover:text-[#0F172A] border border-[#E2E8F0] flex items-center justify-center transition cursor-pointer shrink-0" title="Tutup" aria-label="Tutup">
                 <i data-lucide="x" class="w-4 h-4"></i>
             </button>
         </div>
 
         <!-- Scrollable Modal Body -->
-        <div class="p-4 sm:p-5 overflow-y-auto space-y-4 flex-1 overscroll-contain">
+        <div class="px-5 py-4 sm:px-7 sm:py-5 overflow-y-auto space-y-4 flex-1 overscroll-contain bg-white">
             
             <!-- Ringkasan Laporan (Kode di atas Judul, Badge Rapi) -->
             <div class="p-3 sm:p-3.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] space-y-2.5">
                 <div class="flex items-start gap-3">
                     <div class="relative w-14 h-14 rounded-xl overflow-hidden border border-[#E2E8F0] bg-white shrink-0">
-                        <img id="dispatchModalPhoto" src="" alt="Foto Kerusakan" class="w-full h-full object-cover"
+                        <img id="dispatchModalPhoto" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Foto Kerusakan" class="w-full h-full object-cover"
                              onerror="this.classList.add('hidden'); document.getElementById('dispatchModalNoPhoto')?.classList.remove('hidden');">
                         <div id="dispatchModalNoPhoto" class="hidden w-full h-full flex flex-col items-center justify-center text-slate-400 text-[9px] p-1 text-center bg-slate-100">
                             <i data-lucide="image-off" class="w-3.5 h-3.5 text-slate-300"></i>
@@ -1524,7 +1326,7 @@
                     </div>
                     <div class="flex-1 min-w-0">
                         <div class="flex items-center justify-between gap-2 mb-0.5">
-                            <span id="dispatchModalCode" class="text-[11px] font-mono font-bold text-[#1E3A8A]">#ADU-0000</span>
+                            <span id="dispatchModalCode" class="text-[11px] font-mono font-bold text-[#2563EB]">#ADU-0000</span>
                             <span id="dispatchModalStatusBadge" class="shrink-0 px-2 py-0.5 rounded-md text-[10px] font-bold bg-red-50 text-red-700 border border-red-200 whitespace-nowrap">
                                 VERIFIKASI
                             </span>
@@ -1550,7 +1352,7 @@
                     <div class="flex items-center gap-2 text-[11px] text-slate-600">
                         <span id="dispatchModalCitizen" class="font-semibold text-slate-700 truncate max-w-[140px]">Pelapor</span>
                         <span class="text-slate-300">•</span>
-                        <button type="button" onclick="openOperatorModalFromDispatch()" class="font-bold text-[#1E3A8A] hover:underline inline-flex items-center gap-0.5 cursor-pointer shrink-0">
+                        <button type="button" onclick="openOperatorModalFromDispatch()" class="font-bold text-[#2563EB] hover:underline inline-flex items-center gap-0.5 cursor-pointer shrink-0">
                             <span>Lihat Foto</span>
                             <i data-lucide="arrow-right" class="w-3 h-3"></i>
                         </button>
@@ -1596,7 +1398,7 @@
                         <input type="hidden" name="team_id" value="">
                     @else
                         <select id="dispatchTeamSelect" name="team_id" {{ ($dispatchMode ?? 'HYBRID') === 'OPERATOR_ONLY' ? 'required' : '' }}
-                            class="w-full text-xs rounded-xl border border-slate-300 py-2.5 px-3 bg-white text-slate-800 font-semibold focus:ring-2 focus:ring-[#1E3A8A] focus:border-[#1E3A8A]">
+                            class="w-full text-xs rounded-xl border border-slate-300 py-2.5 px-3 bg-white text-slate-800 font-semibold focus:ring-2 focus:ring-[#2563EB] focus:border-[#2563EB]">
                             @if(($dispatchMode ?? 'HYBRID') !== 'OPERATOR_ONLY')
                                 <option value="">Terbuka (Klaim Mandiri Regu)</option>
                             @else
@@ -1615,25 +1417,25 @@
                 <div>
                     <div class="flex flex-wrap items-center justify-between gap-1.5 text-xs font-bold text-slate-700 mb-1.5">
                         <span>Batas Waktu (SLA) <span class="text-red-500">*</span></span>
-                        <span id="dispatchDeadlinePreview" class="text-[10.5px] font-bold text-[#1E3A8A] bg-blue-50 px-2 py-0.5 rounded border border-blue-100">
+                        <span id="dispatchDeadlinePreview" class="text-[10.5px] font-bold text-[#2563EB] bg-blue-50 px-2 py-0.5 rounded border border-blue-100">
                             Target: 3 Hari
                         </span>
                     </div>
 
                     <div class="grid grid-cols-4 gap-1.5 sm:gap-2">
-                        <label class="flex items-center justify-center py-2 px-1 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 cursor-pointer text-center transition has-[:checked]:border-[#1E3A8A] has-[:checked]:bg-[#1E3A8A] has-[:checked]:text-white">
+                        <label class="flex items-center justify-center py-2 px-1 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 cursor-pointer text-center transition has-[:checked]:border-[#2563EB] has-[:checked]:bg-[#2563EB] has-[:checked]:text-white">
                             <input type="radio" name="deadline_days" value="1" class="sr-only" onchange="updateDispatchSlaPreview(1, '1 Hari')">
                             <span class="text-[11px] sm:text-xs font-bold">1 Hari</span>
                         </label>
-                        <label class="flex items-center justify-center py-2 px-1 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 cursor-pointer text-center transition has-[:checked]:border-[#1E3A8A] has-[:checked]:bg-[#1E3A8A] has-[:checked]:text-white">
+                        <label class="flex items-center justify-center py-2 px-1 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 cursor-pointer text-center transition has-[:checked]:border-[#2563EB] has-[:checked]:bg-[#2563EB] has-[:checked]:text-white">
                             <input type="radio" name="deadline_days" value="3" checked class="sr-only" onchange="updateDispatchSlaPreview(3, '3 Hari')">
                             <span class="text-[11px] sm:text-xs font-bold">3 Hari</span>
                         </label>
-                        <label class="flex items-center justify-center py-2 px-1 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 cursor-pointer text-center transition has-[:checked]:border-[#1E3A8A] has-[:checked]:bg-[#1E3A8A] has-[:checked]:text-white">
+                        <label class="flex items-center justify-center py-2 px-1 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 cursor-pointer text-center transition has-[:checked]:border-[#2563EB] has-[:checked]:bg-[#2563EB] has-[:checked]:text-white">
                             <input type="radio" name="deadline_days" value="5" class="sr-only" onchange="updateDispatchSlaPreview(5, '5 Hari')">
                             <span class="text-[11px] sm:text-xs font-bold">5 Hari</span>
                         </label>
-                        <label class="flex items-center justify-center py-2 px-1 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 cursor-pointer text-center transition has-[:checked]:border-[#1E3A8A] has-[:checked]:bg-[#1E3A8A] has-[:checked]:text-white">
+                        <label class="flex items-center justify-center py-2 px-1 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 cursor-pointer text-center transition has-[:checked]:border-[#2563EB] has-[:checked]:bg-[#2563EB] has-[:checked]:text-white">
                             <input type="radio" name="deadline_days" value="7" class="sr-only" onchange="updateDispatchSlaPreview(7, '7 Hari')">
                             <span class="text-[11px] sm:text-xs font-bold">7 Hari</span>
                         </label>
@@ -1645,7 +1447,7 @@
                     <div class="flex items-center justify-between gap-2 text-xs font-bold text-slate-700 mb-1.5">
                         <span>Instruksi Petugas <span class="text-red-500">*</span></span>
                         <select id="dispatchTemplateSelect" onchange="applyDispatchTemplate(this.value)" 
-                            class="text-[11px] rounded-lg border border-slate-200 py-1 px-2 bg-slate-50 text-slate-600 font-medium focus:ring-1 focus:ring-[#1E3A8A] cursor-pointer max-w-[165px] sm:max-w-none truncate">
+                            class="text-[11px] rounded-lg border border-slate-200 py-1 px-2 bg-slate-50 text-slate-600 font-medium focus:ring-1 focus:ring-[#2563EB] cursor-pointer max-w-[165px] sm:max-w-none truncate">
                             <option value="Lakukan perbaikan dan penanganan fisik sesuai SOP dinas teknis">Standar SOP</option>
                             <option value="Lakukan survei, pengukuran dimensi kerusakan, dan asesmen teknis di lokasi">Survei &amp; Asesmen</option>
                             <option value="Lakukan tindakan darurat dan pengamanan area secepatnya">Tindakan Darurat</option>
@@ -1654,7 +1456,7 @@
                     </div>
 
                     <textarea id="dispatchInstructionInput" name="instruction" rows="2" required
-                        class="w-full text-xs rounded-xl border border-slate-200 py-2 px-3 bg-white text-slate-800 font-medium focus:ring-2 focus:ring-[#1E3A8A] focus:border-[#1E3A8A] leading-relaxed"
+                        class="w-full text-xs rounded-xl border border-slate-200 py-2 px-3 bg-white text-slate-800 font-medium focus:ring-2 focus:ring-[#2563EB] focus:border-[#2563EB] leading-relaxed"
                         placeholder="Tulis instruksi singkat untuk regu...">Lakukan perbaikan dan penanganan fisik sesuai SOP dinas teknis</textarea>
                 </div>
 
@@ -1672,7 +1474,7 @@
                             Tutup
                         </button>
                         <button type="submit" 
-                            class="py-2.5 px-3.5 sm:px-5 rounded-xl bg-[#1E3A8A] hover:bg-[#172554] active:scale-[0.99] text-white font-bold text-xs shadow-sm transition flex items-center gap-1.5 cursor-pointer">
+                            class="py-2.5 px-3.5 sm:px-5 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] active:scale-[0.99] text-white font-bold text-xs shadow-sm transition flex items-center gap-1.5 cursor-pointer">
                             <i data-lucide="check-circle" class="w-4 h-4"></i>
                             <span class="sm:hidden">Verifikasi</span>
                             <span class="hidden sm:inline">Konfirmasi &amp; Verifikasi</span>
@@ -1690,7 +1492,7 @@
     <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col animate-in fade-in zoom-in-95">
         <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
             <div class="flex items-center gap-2">
-                <span id="assignTeamCode" class="px-2.5 py-1 rounded-lg bg-[#1E3A8A]/10 text-[#1E3A8A] font-bold text-xs font-mono">
+                <span id="assignTeamCode" class="px-2.5 py-1 rounded-lg bg-[#2563EB]/10 text-[#2563EB] font-bold text-xs font-mono">
                     #ADU-0000
                 </span>
                 <span class="font-outfit font-extrabold text-sm text-slate-900">
@@ -1716,7 +1518,7 @@
                     Pilih Regu Lapangan Pelaksana <span class="text-red-500">*</span>
                 </label>
                 <select id="assignTeamSelect" name="team_id" required
-                    class="w-full text-xs sm:text-sm rounded-xl border border-slate-300 py-2.5 px-3 bg-white text-slate-800 font-semibold focus:ring-2 focus:ring-[#1E3A8A]/20 focus:border-[#1E3A8A]">
+                    class="w-full text-xs sm:text-sm rounded-xl border border-slate-300 py-2.5 px-3 bg-white text-slate-800 font-semibold focus:ring-2 focus:ring-[#2563EB]/20 focus:border-[#2563EB]">
                     <option value="" disabled selected>Pilih Regu Lapangan...</option>
                     @if(($dispatchMode ?? 'HYBRID') === 'HYBRID')
                         <option value="">-- Buka Terbuka untuk Klaim Mandiri --</option>
@@ -1732,22 +1534,22 @@
             <div>
                 <label class="block text-xs font-bold text-slate-700 mb-1">Instruksi Khusus untuk Regu</label>
                 <textarea id="assignTeamInstruction" name="instruction" rows="2"
-                    class="w-full text-xs rounded-xl border border-slate-300 p-2.5 focus:ring-2 focus:ring-[#1E3A8A]/20 focus:border-[#1E3A8A]"
+                    class="w-full text-xs rounded-xl border border-slate-300 p-2.5 focus:ring-2 focus:ring-[#2563EB]/20 focus:border-[#2563EB]"
                     placeholder="Instruksi pengerjaan perbaikan fisik di lapangan..."></textarea>
             </div>
 
             <div>
                 <label class="block text-xs font-bold text-slate-700 mb-1.5">Tenggat Waktu Pengerjaan (SLA)</label>
                 <div class="grid grid-cols-3 gap-2">
-                    <label class="flex items-center justify-center p-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 cursor-pointer text-center text-xs font-bold text-slate-700 has-[:checked]:border-[#1E3A8A] has-[:checked]:bg-blue-50 has-[:checked]:text-[#1E3A8A]">
+                    <label class="flex items-center justify-center p-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 cursor-pointer text-center text-xs font-bold text-slate-700 has-[:checked]:border-[#2563EB] has-[:checked]:bg-blue-50 has-[:checked]:text-[#2563EB]">
                         <input type="radio" name="deadline_days" value="1" class="sr-only">
                         <span>1 Hari</span>
                     </label>
-                    <label class="flex items-center justify-center p-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 cursor-pointer text-center text-xs font-bold text-slate-700 has-[:checked]:border-[#1E3A8A] has-[:checked]:bg-blue-50 has-[:checked]:text-[#1E3A8A]">
+                    <label class="flex items-center justify-center p-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 cursor-pointer text-center text-xs font-bold text-slate-700 has-[:checked]:border-[#2563EB] has-[:checked]:bg-blue-50 has-[:checked]:text-[#2563EB]">
                         <input type="radio" name="deadline_days" value="3" checked class="sr-only">
                         <span>3 Hari (SOP)</span>
                     </label>
-                    <label class="flex items-center justify-center p-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 cursor-pointer text-center text-xs font-bold text-slate-700 has-[:checked]:border-[#1E3A8A] has-[:checked]:bg-blue-50 has-[:checked]:text-[#1E3A8A]">
+                    <label class="flex items-center justify-center p-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 cursor-pointer text-center text-xs font-bold text-slate-700 has-[:checked]:border-[#2563EB] has-[:checked]:bg-blue-50 has-[:checked]:text-[#2563EB]">
                         <input type="radio" name="deadline_days" value="7" class="sr-only">
                         <span>7 Hari</span>
                     </label>
@@ -1758,7 +1560,7 @@
                 <button type="button" onclick="closeAssignTeamModal()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer">
                     Batal
                 </button>
-                <button type="submit" class="px-5 py-2.5 rounded-xl bg-[#1E3A8A] hover:bg-blue-900 text-white font-bold text-xs flex items-center gap-1.5 shadow-md shadow-blue-900/20 transition cursor-pointer">
+                <button type="submit" class="px-5 py-2.5 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold text-xs flex items-center gap-1.5 shadow-md shadow-blue-600/20 transition cursor-pointer">
                     <i data-lucide="check" class="w-3.5 h-3.5"></i>
                     <span>Tetapkan Regu</span>
                 </button>
@@ -1767,252 +1569,241 @@
     </div>
 </div>
 
-<!-- MODAL VALIDASI HASIL PENGERJAAN LAPANGAN (DETAIL LENGKAP DENGAN FOTO ATAS-BAWAH & AKSI REVISI/SELESAI) -->
-<div id="operatorValidationModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-3 sm:p-5 bg-slate-900/75 transition-opacity duration-150 overscroll-contain">
-    <div class="bg-white w-full max-w-xl rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92vh] animate-in fade-in zoom-in-95" style="transform: translateZ(0); will-change: transform;">
-        
-        <!-- Modal Top Header: Status Ringkas & Elegan (Kerusakan -> Kategori -> Status) -->
-        <div class="px-3.5 sm:px-5 py-3 border-b border-slate-100 flex items-center justify-between bg-slate-50/80 gap-2">
-            <div class="flex items-center gap-1.5 flex-nowrap min-w-0 overflow-x-auto no-scrollbar py-0.5">
-                <!-- 1. Tingkat Kerusakan -->
-                <span id="valModalTypeBadge" class="shrink-0 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold bg-red-50 text-red-700 border border-red-200 inline-flex items-center gap-1 whitespace-nowrap">
-                    <span class="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0"></span>
-                    <span>Kerusakan Ringan</span>
-                </span>
-                <!-- 2. Kategori Infrastruktur -->
-                <span id="valModalCategoryBadge" class="shrink-0 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full bg-slate-100 text-slate-700 font-semibold text-[10px] sm:text-xs border border-slate-200 inline-flex items-center whitespace-nowrap">
-                    Kategori
-                </span>
-                <!-- 3. Status Pengerjaan -->
-                <span class="shrink-0 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200/80 whitespace-nowrap">
-                    <span class="sm:hidden">VALIDASI</span>
-                    <span class="hidden sm:inline">MENUNGGU VALIDASI</span>
-                </span>
+<!-- MODAL VALIDASI HASIL PENGERJAAN LAPANGAN (Desain 760px Side-by-Side SI-APPIK V2 + Aksi Tutup, Revisi & Selesai) -->
+<div id="operatorValidationModal" class="fixed inset-0 z-50 hidden flex items-end sm:items-center justify-center p-3.5 sm:p-5 bg-slate-900/65 overscroll-contain">
+    <div class="bg-white w-full sm:max-w-[760px] rounded-[24px] shadow-[0_20px_50px_rgba(15,23,42,0.22)] border border-[#E2E8F0] overflow-hidden flex flex-col max-h-[86vh] sm:max-h-[90vh]">
+
+        <!-- Drag Handle Khusus Mobile -->
+        <div class="sm:hidden flex justify-center pt-3 pb-1 bg-white shrink-0">
+            <span class="w-11 h-1 rounded-full bg-[#CBD5E1]"></span>
+        </div>
+
+        <!-- Sticky Modal Top Header (3 Badge 1 Baris + Tanggal & Kode Aduan + Tombol X di Tengah Kanan) -->
+        <div class="px-4 sm:px-7 pt-2.5 pb-3.5 sm:py-5 border-b border-[#E2E8F0] bg-white flex items-center justify-between gap-2.5 shrink-0">
+            <div class="min-w-0 flex-1 space-y-2">
+                <div class="flex items-center gap-1 sm:gap-2 flex-nowrap overflow-x-auto no-scrollbar">
+                    <span id="valModalTypeBadge" class="shrink-0 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10.5px] sm:text-xs font-bold bg-[#FEF2F2] text-[#DC2626] border border-[#FECACA] inline-flex items-center gap-1 whitespace-nowrap">
+                        <span class="w-1.5 h-1.5 rounded-full bg-[#DC2626] shrink-0"></span>
+                        <span>Kerusakan Ringan</span>
+                    </span>
+                    <span id="valModalCategoryBadge" class="shrink min-w-0 truncate px-2 sm:px-3 py-0.5 sm:py-1 rounded-full bg-[#F1F5F9] text-[#475569] font-semibold text-[10.5px] sm:text-xs border border-[#E2E8F0]">
+                        Kategori
+                    </span>
+                    <span class="shrink-0 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10.5px] sm:text-xs font-bold bg-amber-50 text-[#D97706] border border-amber-200 whitespace-nowrap">
+                        MENUNGGU VALIDASI
+                    </span>
+                </div>
+                <div class="flex items-center flex-wrap gap-2 text-[11.5px] sm:text-[13px] text-[#475569]">
+                    <div class="flex items-center gap-1.5 font-medium">
+                        <i data-lucide="calendar" class="w-3.5 h-3.5 text-[#64748B] shrink-0"></i>
+                        <span id="valModalDate">03 Sep 2026</span>
+                    </div>
+                    <span class="text-slate-300">&bull;</span>
+                    <span id="valModalCode" class="font-mono font-bold text-[#2563EB] bg-[#EFF6FF] border border-[#BFDBFE] px-2 py-0.5 rounded-full text-[10.5px] sm:text-[11px]">#ADU-0000</span>
+                </div>
             </div>
-            <button type="button" onclick="closeValidationModal()" class="w-8 h-8 rounded-lg bg-white hover:bg-slate-100 text-slate-600 border border-slate-200 flex items-center justify-center transition cursor-pointer shrink-0">
+            <button type="button" onclick="closeValidationModal()" class="w-8 h-8 sm:w-9 sm:h-9 rounded-[10px] bg-[#F8FAFC] hover:bg-slate-100 text-[#475569] hover:text-[#0F172A] border border-[#E2E8F0] flex items-center justify-center transition cursor-pointer shrink-0" title="Tutup Detail" aria-label="Tutup Rincian">
                 <i data-lucide="x" class="w-4 h-4"></i>
             </button>
         </div>
 
-        <!-- Modal Scrollable Body (Fokus, Bersih & Terstruktur) -->
-        <div class="p-5 overflow-y-auto space-y-4 flex-1 overscroll-contain" style="transform: translateZ(0); -webkit-overflow-scrolling: touch; will-change: scroll-position;">
-            
-            <!-- 1. Foto Bukti Kerusakan Warga (Sebelum) -->
-            <div id="valModalCitizenPhotoSection" class="space-y-1.5">
-                <div class="rounded-2xl overflow-hidden border border-slate-200 bg-slate-900/5 relative max-h-64 sm:max-h-72 flex items-center justify-center">
-                    <img id="valModalCitizenPhoto" src="" alt="Foto Kerusakan Warga" class="w-full h-full object-cover max-h-64 sm:max-h-72">
-                    <div class="absolute bottom-2.5 left-2.5 bg-black/75 backdrop-blur-xs text-white text-[10px] font-bold px-2.5 py-1 rounded-lg flex items-center gap-1.5 shadow-xs">
-                        <i data-lucide="image" class="w-3.5 h-3.5"></i>
-                        <span id="valModalCitizenPhotoLabel">Foto Bukti Kerusakan</span>
-                    </div>
-                </div>
-                <!-- Gallery Thumbnails Strip (Khusus Foto Warga) -->
-                <div id="valModalCitizenGallery" class="flex items-center gap-2 overflow-x-auto pb-1 hidden"></div>
-            </div>
+        <!-- Modal Scrollable Body -->
+        <div class="px-5 py-4 sm:px-7 sm:py-5 overflow-y-auto space-y-4 flex-1 overscroll-contain bg-white" style="-webkit-overflow-scrolling: touch;">
 
-            <!-- 2. Foto Bukti Penanganan Petugas Lapangan (Sesudah) -->
-            <div id="valModalOfficerPhotoSection" class="space-y-1.5">
-                <div class="rounded-2xl overflow-hidden border border-emerald-300 bg-emerald-50/50 relative max-h-64 sm:max-h-72 flex items-center justify-center">
-                    <img id="valModalOfficerPhoto" src="" alt="Foto Hasil Pengerjaan Petugas" class="w-full h-full object-cover max-h-64 sm:max-h-72">
-                    <div class="absolute bottom-2.5 left-2.5 bg-emerald-950/90 backdrop-blur-xs text-white text-[10px] font-bold px-2.5 py-1 rounded-lg flex items-center gap-1.5 shadow-md">
-                        <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400"></i>
-                        <span id="valModalOfficerPhotoLabel">Foto Bukti Penyelesaian Fisik</span>
-                    </div>
-                </div>
-                <!-- Gallery Thumbnails Strip (Khusus Foto Petugas) -->
-                <div id="valModalOfficerGallery" class="flex items-center gap-2 overflow-x-auto pb-1 hidden"></div>
-            </div>
+            <!-- Judul Aduan -->
+            <h3 id="valModalTitle" class="font-outfit font-bold text-lg sm:text-xl text-[#0F172A] leading-snug">
+                Judul Laporan
+            </h3>
 
-            <!-- Judul & Info Waktu Laporan -->
-            <div class="pt-0.5">
-                <span id="valModalCode" class="text-[11px] font-mono font-medium text-slate-400 block tracking-wide mb-0.5">
-                    #ADU-0000
-                </span>
-                <h3 id="valModalTitle" class="font-outfit font-extrabold text-lg sm:text-xl text-slate-900 leading-snug">
-                    Judul Laporan
-                </h3>
-                <div class="flex items-center gap-1.5 text-xs text-slate-500 pt-0.5">
-                    <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-400"></i>
-                    <span id="valModalDate">03 Sep 2026</span>
-                </div>
-            </div>
-
-            <!-- Identitas Pelapor Aduan (Bersih & Rapi) -->
-            <div class="p-3 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-between">
-                <div class="flex items-center gap-2.5 min-w-0">
-                    <div class="w-8 h-8 rounded-full bg-[#1E3A8A] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
-                        <i data-lucide="user" class="w-4 h-4"></i>
-                    </div>
-                    <div class="min-w-0">
-                        <span class="text-[10px] text-slate-400 block font-bold uppercase tracking-wider leading-none">Pelapor Aduan</span>
-                        <div class="flex items-center gap-1.5 mt-0.5">
-                            <span id="valModalCitizenName" class="font-outfit font-extrabold text-xs sm:text-sm text-slate-900 truncate">
-                                Nama Pelapor
-                            </span>
-                            <span id="valModalAnonymousBadge" class="hidden text-[9px] font-bold px-1.5 py-0.5 rounded bg-slate-200 text-slate-600 shrink-0">Anonim</span>
+            <!-- 1. Galeri Foto Berdampingan 2 Kolom (Rasio 16:10 Side-by-Side) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3.5">
+                <div id="valModalCitizenPhotoSection" class="space-y-1.5">
+                    <div class="aspect-[16/10] rounded-xl sm:rounded-2xl overflow-hidden border border-[#E2E8F0] bg-[#1E293B] relative flex items-center justify-center">
+                        <img id="valModalCitizenPhoto" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Foto Kondisi Lokasi" class="w-full h-full object-cover">
+                        <div class="absolute bottom-2 left-2 sm:bottom-3 sm:left-3 bg-[#0F172A]/85 text-white text-[10px] sm:text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5 pointer-events-none">
+                            <i data-lucide="camera" class="w-3 h-3 shrink-0 hidden sm:inline"></i>
+                            <span id="valModalCitizenPhotoLabel">Foto Kondisi Lokasi</span>
                         </div>
                     </div>
+                    <div id="valModalCitizenGallery" class="flex items-center gap-1.5 overflow-x-auto pb-0.5 hidden"></div>
                 </div>
-                <div class="flex items-center gap-1.5 text-xs text-slate-700 font-bold shrink-0">
-                    <i data-lucide="phone" class="w-3.5 h-3.5 text-[#1E3A8A]"></i>
-                    <a id="valModalCitizenPhone" href="#" class="font-mono hover:underline text-[#1E3A8A]">08123456789</a>
+
+                <div id="valModalOfficerPhotoSection" class="space-y-1.5">
+                    <div class="aspect-[16/10] rounded-xl sm:rounded-2xl overflow-hidden border border-[#A7F3D0] bg-[#ECFDF5] relative flex items-center justify-center">
+                        <img id="valModalOfficerPhoto" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Foto Hasil Pengerjaan" class="w-full h-full object-cover">
+                        <div class="absolute bottom-2 left-2 sm:bottom-3 sm:left-3 bg-[#047857]/90 text-white text-[10px] sm:text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5 pointer-events-none">
+                            <i data-lucide="badge-check" class="w-3 h-3 shrink-0 hidden sm:inline"></i>
+                            <span id="valModalOfficerPhotoLabel">Foto Hasil Pengerjaan</span>
+                        </div>
+                    </div>
+                    <div id="valModalOfficerGallery" class="flex items-center gap-1.5 overflow-x-auto pb-0.5 hidden"></div>
                 </div>
             </div>
 
-            <!-- Regu Penanganan Lapangan -->
-            <div id="valModalOfficerCard" class="p-3 sm:p-3.5 rounded-2xl bg-blue-50/60 border border-blue-200/80 space-y-2.5">
+            <!-- 2. Grid Informasi Pelapor & Lokasi (2 Kolom Seimbang) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-3.5">
+                <div class="p-4 rounded-2xl bg-[#F8FAFC] border border-[#E2E8F0] space-y-1.5">
+                    <div class="flex items-center gap-1.5 text-[11px] font-bold text-[#475569] uppercase tracking-wider">
+                        <i data-lucide="user" class="w-3.5 h-3.5 text-[#2563EB]"></i>
+                        <span>Pelapor Aduan</span>
+                    </div>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span id="valModalCitizenName" class="font-outfit font-bold text-sm sm:text-base text-[#0F172A] truncate">Nama Pelapor</span>
+                        <span id="valModalAnonymousBadge" class="hidden text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-200 text-slate-700">Anonim</span>
+                    </div>
+                    <div class="flex items-center gap-1.5 text-xs font-bold text-[#047857]">
+                        <i data-lucide="shield-check" class="w-3.5 h-3.5 text-[#10B981] shrink-0"></i>
+                        <a id="valModalCitizenPhone" href="#" class="font-mono hover:underline text-[#047857]">08123456789</a>
+                    </div>
+                </div>
+
+                <div class="p-4 rounded-2xl bg-[#F8FAFC] border border-[#E2E8F0] space-y-2 flex flex-col justify-between">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-1.5 text-[11px] font-bold text-[#475569] uppercase tracking-wider">
+                            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#2563EB]"></i>
+                            <span>Lokasi Kerusakan</span>
+                        </div>
+                        <p id="valModalFullAddress" class="text-xs sm:text-[13px] font-semibold text-[#0F172A] leading-relaxed">
+                            Alamat lokasi kerusakan...
+                        </p>
+                        <span id="valModalRoad" class="hidden"></span>
+                        <span id="valModalVillage" class="hidden"></span>
+                        <span id="valModalDistrict" class="hidden"></span>
+                        <span id="valModalRegency" class="hidden"></span>
+                    </div>
+                    <div class="flex items-center justify-between gap-2 pt-0.5">
+                        <span id="valModalCoords" class="hidden">-</span>
+                        <button type="button" onclick="const c = (document.getElementById('valModalCoords')?.textContent || '').trim(); if(c && c !== '-') window.open('https://www.google.com/maps?q=' + encodeURIComponent(c.replace(/\s+/g,'')), '_blank', 'noopener');"
+                            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#EFF6FF] hover:bg-[#DBEAFE] text-[#2563EB] border border-[#BFDBFE] text-xs font-bold transition cursor-pointer">
+                            <i data-lucide="map" class="w-3.5 h-3.5"></i>
+                            <span>Buka di Peta</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Regu Penanganan Lapangan -->
+            <div id="valModalOfficerCard" class="p-4 rounded-2xl bg-[#EFF6FF]/60 border border-[#BFDBFE] space-y-2.5">
                 <div class="flex items-start justify-between gap-2">
                     <div class="flex items-center gap-2.5 min-w-0">
-                        <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[#1E3A8A] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
+                        <div class="w-9 h-9 rounded-xl bg-[#2563EB] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
                             <i data-lucide="hard-hat" class="w-4 h-4"></i>
                         </div>
                         <div class="min-w-0">
-                            <span class="text-[10px] text-[#1E3A8A] font-extrabold uppercase tracking-wider block whitespace-nowrap">Regu Pelaksana</span>
-                            <h4 id="valModalTeamName" class="font-outfit font-extrabold text-xs sm:text-sm text-slate-900 truncate leading-tight">
-                                Regu Lapangan PUPR
-                            </h4>
-                            <span id="valModalOfficerDept" class="text-[10.5px] font-semibold text-slate-500 block truncate">
-                                Dinas Pekerjaan Umum dan Penataan Ruang (PUPR)
-                            </span>
+                            <span class="text-[10px] text-[#2563EB] font-extrabold uppercase tracking-wider block">Regu Lapangan Pelaksana</span>
+                            <h4 id="valModalTeamName" class="font-outfit font-bold text-xs sm:text-sm text-[#0F172A] truncate leading-tight">Regu Lapangan PUPR</h4>
+                            <span id="valModalOfficerDept" class="text-[11px] font-medium text-[#475569] block truncate">Dinas Pekerjaan Umum dan Penataan Ruang (PUPR)</span>
                         </div>
                     </div>
                     <div id="valModalDeadlineBox" class="text-right shrink-0">
-                        <span class="text-[10px] text-slate-400 block font-medium whitespace-nowrap">Target Waktu:</span>
-                        <span id="valModalOfficerDeadline" class="text-[11px] sm:text-xs font-bold text-[#1E3A8A] bg-white px-2 py-0.5 rounded border border-blue-200 whitespace-nowrap inline-block mt-0.5">-</span>
+                        <span class="text-[10px] text-[#64748B] block font-medium">Target Waktu:</span>
+                        <span id="valModalOfficerDeadline" class="text-xs font-bold text-[#2563EB] bg-white px-2.5 py-0.5 rounded-lg border border-[#BFDBFE] inline-block mt-0.5">-</span>
                     </div>
                 </div>
 
-                <!-- Baris Kontak Ketua Regu -->
-                <div class="p-2.5 rounded-xl bg-white border border-blue-100 flex items-center justify-between gap-2 text-xs">
+                <div class="p-2.5 rounded-xl bg-white border border-[#E2E8F0] flex items-center justify-between gap-2 text-xs">
                     <div class="flex items-center gap-2 min-w-0">
-                        <div class="w-6 h-6 rounded-lg bg-blue-100 text-[#1E3A8A] flex items-center justify-center shrink-0">
+                        <div class="w-6 h-6 rounded-lg bg-[#EFF6FF] text-[#2563EB] flex items-center justify-center shrink-0">
                             <i data-lucide="crown" class="w-3.5 h-3.5"></i>
                         </div>
                         <div class="min-w-0">
-                            <span class="text-[10px] text-slate-400 font-bold block leading-none whitespace-nowrap">Ketua Regu:</span>
-                            <span id="valModalTeamLeader" class="font-bold text-slate-900 truncate block mt-0.5">Nama Ketua Regu</span>
+                            <span class="text-[10px] text-[#64748B] font-bold block leading-none">Ketua Regu:</span>
+                            <span id="valModalTeamLeader" class="font-bold text-[#0F172A] truncate block mt-0.5">Nama Ketua Regu</span>
                         </div>
                     </div>
-                    <a id="valModalTeamPhone" href="#" class="px-2.5 py-1 rounded-lg bg-blue-50 hover:bg-blue-100 text-[#1E3A8A] font-bold font-mono text-[11px] sm:text-xs flex items-center gap-1.5 transition shrink-0 whitespace-nowrap">
+                    <a id="valModalTeamPhone" href="#" class="px-2.5 py-1 rounded-lg bg-[#EFF6FF] hover:bg-[#DBEAFE] text-[#2563EB] font-bold font-mono text-xs flex items-center gap-1.5 transition shrink-0">
                         <i data-lucide="phone-call" class="w-3 h-3"></i>
                         <span id="valModalTeamPhoneText">081234567890</span>
                     </a>
                 </div>
 
-                <!-- Hidden legacy elements for JS safety -->
                 <span id="valModalOfficerName" class="hidden"></span>
                 <span id="valModalOfficerPhone" class="hidden"></span>
 
-                <!-- Arahan Instruksi Teknis -->
-                <div id="valModalInstructionRow" class="hidden text-xs text-slate-600 flex items-start gap-1.5 pt-1.5 border-t border-blue-200/50">
-                    <i data-lucide="clipboard-list" class="w-3.5 h-3.5 text-[#1E3A8A] shrink-0 mt-0.5"></i>
-                    <span>Instruksi: <span id="valModalOfficerInstruction" class="text-slate-800 font-medium italic">Lakukan perbaikan</span></span>
+                <div id="valModalInstructionRow" class="hidden text-xs text-[#475569] flex items-start gap-1.5 pt-1.5 border-t border-[#BFDBFE]/60">
+                    <i data-lucide="clipboard-list" class="w-3.5 h-3.5 text-[#2563EB] shrink-0 mt-0.5"></i>
+                    <span>Instruksi: <span id="valModalOfficerInstruction" class="text-[#0F172A] font-medium italic">Lakukan perbaikan</span></span>
                 </div>
             </div>
 
-            <!-- Lokasi Kerusakan (Satu Kartu Bersih & Jelas) -->
-            <div class="p-3 sm:p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1.5">
-                <div class="flex items-center justify-between gap-2 text-xs font-bold text-slate-700">
-                    <span class="flex items-center gap-1.5 shrink-0 whitespace-nowrap">
-                        <i data-lucide="map-pin" class="w-4 h-4 text-[#1E3A8A] shrink-0"></i>
-                        <span>Lokasi Kerusakan</span>
-                    </span>
-                    <span id="valModalCoords" class="font-mono text-[10px] sm:text-[11px] font-bold text-[#1E3A8A] bg-white px-2 py-0.5 rounded-md border border-slate-200 whitespace-nowrap truncate">
-                        -
-                    </span>
-                </div>
-                <p id="valModalFullAddress" class="text-xs font-semibold text-slate-800 leading-relaxed">
-                    Alamat lokasi kerusakan...
-                </p>
-                <!-- Hidden dummy elements to maintain parseAdminAddress compatibility -->
-                <span id="valModalRoad" class="hidden"></span>
-                <span id="valModalVillage" class="hidden"></span>
-                <span id="valModalDistrict" class="hidden"></span>
-                <span id="valModalRegency" class="hidden"></span>
-            </div>
-
-            <!-- Detail Kerusakan Berat Ruas Panjang (Major) -->
-            <div id="valModalMajorRoadBox" class="hidden p-3 rounded-2xl bg-blue-50/70 border border-blue-200 space-y-2 text-xs">
-                <div class="flex items-center justify-between font-bold text-[#1E3A8A]">
+            <!-- 4. Detail Kerusakan Berat Ruas Panjang (Major) -->
+            <div id="valModalMajorRoadBox" class="hidden p-4 rounded-2xl bg-[#EFF6FF]/60 border border-[#BFDBFE] space-y-2 text-xs">
+                <div class="flex items-center justify-between font-bold text-[#2563EB]">
                     <span class="flex items-center gap-1.5">
-                        <i data-lucide="route" class="w-4 h-4 text-[#1E3A8A]"></i>
+                        <i data-lucide="route" class="w-4 h-4 text-[#2563EB]"></i>
                         <span>Kerusakan Ruas Panjang</span>
                     </span>
-                    <span id="valModalRoadLengthBadge" class="text-[10px] text-white bg-[#1E3A8A] px-2.5 py-0.5 rounded-full font-bold">
-                        ≥ 500 Meter
-                    </span>
+                    <span id="valModalRoadLengthBadge" class="text-[10px] text-white bg-[#2563EB] px-2.5 py-0.5 rounded-full font-bold">≥ 500 Meter</span>
                 </div>
                 <div class="grid grid-cols-2 gap-2">
-                    <div class="p-2 rounded-xl bg-white border border-blue-100">
-                        <span class="text-[10px] text-slate-400 block font-semibold">Estimasi Panjang:</span>
-                        <span id="valModalRoadLength" class="font-bold text-[#1E3A8A]">-</span>
+                    <div class="p-2.5 rounded-xl bg-white border border-[#E2E8F0]">
+                        <span class="text-[10px] text-[#64748B] block font-semibold">Estimasi Panjang:</span>
+                        <span id="valModalRoadLength" class="font-bold text-[#0F172A]">-</span>
                     </div>
-                    <div class="p-2 rounded-xl bg-white border border-blue-100">
-                        <span class="text-[10px] text-slate-400 block font-semibold">Kondisi:</span>
-                        <span id="valModalRoadCondition" class="font-bold text-[#1E3A8A]">-</span>
+                    <div class="p-2.5 rounded-xl bg-white border border-[#E2E8F0]">
+                        <span class="text-[10px] text-[#64748B] block font-semibold">Kondisi:</span>
+                        <span id="valModalRoadCondition" class="font-bold text-[#0F172A]">-</span>
                     </div>
                 </div>
-                <div class="p-2 rounded-xl bg-white border border-blue-100 font-mono text-[11px] text-slate-600 space-y-0.5">
-                    <div><span class="font-bold text-[#1E3A8A]">Awal:</span> <span id="valModalStartCoords">-</span></div>
-                    <div><span class="font-bold text-slate-700">Akhir:</span> <span id="valModalEndCoords">-</span></div>
+                <div class="p-2.5 rounded-xl bg-white border border-[#E2E8F0] font-mono text-[11px] text-[#334155] space-y-0.5">
+                    <div><span class="font-bold text-[#2563EB]">Awal:</span> <span id="valModalStartCoords">-</span></div>
+                    <div><span class="font-bold text-[#0F172A]">Akhir:</span> <span id="valModalEndCoords">-</span></div>
                 </div>
             </div>
 
-            <!-- Deskripsi Lengkap -->
+            <!-- 5. Deskripsi Lengkap -->
             <div class="space-y-1.5">
-                <h4 class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
-                    <i data-lucide="align-left" class="w-3.5 h-3.5 text-[#1E3A8A]"></i>
-                    <span>Deskripsi Kerusakan</span>
+                <h4 class="text-[11px] font-bold text-[#475569] uppercase tracking-wider flex items-center gap-1.5">
+                    <i data-lucide="file-text" class="w-3.5 h-3.5 text-[#64748B]"></i>
+                    <span>Deskripsi Kondisi Kerusakan</span>
                 </h4>
-                <div id="valModalDescription" class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-700 leading-relaxed whitespace-pre-line font-sans">
+                <div id="valModalDescription" class="p-4 rounded-2xl bg-[#F8FAFC] border border-[#E2E8F0] text-xs sm:text-[13px] text-[#334155] leading-relaxed whitespace-pre-line font-sans">
                     Deskripsi lengkap...
                 </div>
             </div>
 
-            <!-- Analisis AI Vision -->
-            <div id="valModalAiBox" class="p-3 rounded-2xl bg-blue-50/60 border border-blue-200/80 space-y-2 text-xs">
-                <div class="flex items-center justify-between font-bold text-[#1E3A8A]">
+            <!-- 6. Analisis AI Vision -->
+            <div id="valModalAiBox" class="p-4 rounded-2xl bg-[#EFF6FF]/50 border border-[#BFDBFE] space-y-2 text-xs">
+                <div class="flex items-center justify-between font-bold text-[#2563EB]">
                     <span class="flex items-center gap-1.5">
                         <i data-lucide="sparkles" class="w-4 h-4"></i>
                         <span>Analisis AI Vision</span>
                     </span>
-                    <span id="valModalAiConfidence" class="text-[10px] text-[#1E3A8A] bg-white px-2 py-0.5 rounded-md border border-blue-200 font-bold">
-                        Akurasi 90%
-                    </span>
+                    <span id="valModalAiConfidence" class="text-[10px] text-[#047857] bg-white px-2 py-0.5 rounded-full border border-[#A7F3D0] font-bold">Akurasi 90%</span>
                 </div>
                 <div class="grid grid-cols-2 gap-2">
-                    <div class="p-2 rounded-xl bg-white border border-blue-100">
-                        <span class="text-[10px] text-slate-400 block font-semibold">Tipe:</span>
-                        <span id="valModalAiType" class="font-bold text-[#1E3A8A]">-</span>
+                    <div class="p-2.5 rounded-xl bg-white border border-[#E2E8F0]">
+                        <span class="text-[10px] text-[#64748B] block font-semibold">Tipe:</span>
+                        <span id="valModalAiType" class="font-bold text-[#0F172A]">-</span>
                     </div>
-                    <div class="p-2 rounded-xl bg-white border border-blue-100">
-                        <span class="text-[10px] text-slate-400 block font-semibold">Prioritas:</span>
-                        <span id="valModalAiPriority" class="font-bold text-[#1E3A8A]">-</span>
+                    <div class="p-2.5 rounded-xl bg-white border border-[#E2E8F0]">
+                        <span class="text-[10px] text-[#64748B] block font-semibold">Prioritas:</span>
+                        <span id="valModalAiPriority" class="font-bold text-[#0F172A]">-</span>
                     </div>
-                    <div class="p-2 rounded-xl bg-white border border-blue-100 col-span-2">
-                        <span class="text-[10px] text-slate-400 block font-semibold">Estimasi Dimensi & Material:</span>
-                        <span id="valModalAiEstimate" class="font-medium text-slate-700 text-[11px]">-</span>
+                    <div class="p-2.5 rounded-xl bg-white border border-[#E2E8F0] col-span-2">
+                        <span class="text-[10px] text-[#64748B] block font-semibold">Estimasi Dimensi &amp; Material:</span>
+                        <span id="valModalAiEstimate" class="font-medium text-[#334155] text-[11px]">-</span>
                     </div>
                 </div>
             </div>
 
         </div>
 
-        <!-- Modal Footer: Tombol Tutup, Revisi, & Selesai (Satu Baris di Mobile & Desktop) -->
-        <div class="px-4 sm:px-6 py-3 border-t border-slate-100 bg-slate-50 flex items-center justify-between gap-2 flex-nowrap">
-            <button type="button" onclick="closeValidationModal()" class="px-3.5 sm:px-5 py-2.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold text-xs transition cursor-pointer shrink-0 whitespace-nowrap">
+        <!-- Modal Footer: Tombol Tutup, Revisi, & Selesai -->
+        <div class="px-5 py-3.5 sm:px-7 border-t border-[#E2E8F0] bg-white flex items-center justify-between gap-2 flex-nowrap shrink-0">
+            <button type="button" onclick="closeValidationModal()" class="px-4 sm:px-5 py-2.5 rounded-xl bg-[#F1F5F9] hover:bg-slate-200 text-[#334155] font-bold text-xs transition cursor-pointer shrink-0 whitespace-nowrap">
                 <span class="sm:hidden">Tutup</span>
                 <span class="hidden sm:inline">Tutup Rincian</span>
             </button>
             <div class="flex items-center gap-2 shrink-0">
                 <button type="button" onclick="openRevisionFromValidationModal()" 
-                    class="px-3.5 sm:px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-amber-50 text-slate-700 hover:text-amber-800 border border-slate-200 hover:border-amber-300 font-bold text-xs transition flex items-center gap-1.5 cursor-pointer whitespace-nowrap">
-                    <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+                    class="px-4 py-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-[#B45309] border border-amber-200 font-bold text-xs transition flex items-center gap-1.5 cursor-pointer whitespace-nowrap">
+                    <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
                     <span>Revisi</span>
                 </button>
                 <button type="button" onclick="approveFromValidationModal()" 
-                    class="px-4 sm:px-5 py-2.5 rounded-xl bg-[#1E3A8A] hover:bg-[#172554] active:scale-[0.99] text-white font-bold text-xs shadow-md hover:shadow-lg transition flex items-center gap-1.5 sm:gap-2 cursor-pointer whitespace-nowrap">
-                    <i data-lucide="check-circle-2" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+                    class="px-5 py-2.5 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold text-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer whitespace-nowrap">
+                    <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i>
                     <span>Selesai</span>
                 </button>
             </div>
@@ -2035,7 +1826,7 @@
 </form>
 
 <!-- MODAL KONFIRMASI TOLAK LAPORAN (CLEAN, ELEGAN & SNAP-RESPONSE) -->
-<div id="rejectConfirmModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+<div id="rejectConfirmModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 flex items-center justify-center p-4">
     <div class="card-white rounded-3xl p-6 sm:p-7 bg-white border border-slate-200 shadow-2xl max-w-md w-full space-y-5 relative">
         <!-- Tombol Tutup Silang -->
         <button type="button" onclick="closeRejectModal()" class="absolute top-4 right-4 p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition">
@@ -2090,7 +1881,7 @@
 </div>
 
 <!-- MODAL KONFIRMASI MINTA REVISI PEKERJAAN LAPANGAN -->
-<div id="revisionConfirmModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+<div id="revisionConfirmModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 flex items-center justify-center p-4">
     <div class="card-white rounded-3xl p-6 sm:p-7 bg-white border border-slate-200 shadow-2xl max-w-md w-full space-y-5 relative">
         <!-- Tombol Tutup Silang -->
         <button type="button" onclick="closeRevisionModal()" class="absolute top-4 right-4 p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition">
@@ -2246,11 +2037,11 @@
 
         // 3. Update styling tombol tab seragam desain Admin
         document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.classList.remove('bg-[#1E3A8A]', 'text-white', 'border-[#1E3A8A]');
+            btn.classList.remove('bg-[#2563EB]', 'text-white', 'border-[#2563EB]');
             btn.classList.add('bg-white', 'text-[#0F172A]', 'border-[#E2E8F0]', 'hover:bg-[#F8FAFC]');
             const badge = btn.querySelector('.tab-badge');
             if (badge) {
-                badge.className = 'tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 bg-blue-50 text-[#1E3A8A] border border-blue-200';
+                badge.className = 'tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 bg-blue-50 text-[#2563EB] border border-blue-200';
             }
             const sub = btn.querySelector('.tab-sub');
             if (sub) {
@@ -2262,10 +2053,10 @@
         const activeBtn = document.getElementById('tabBtn-' + tabId);
         if (activeBtn) {
             activeBtn.classList.remove('bg-white', 'text-[#0F172A]', 'border-[#E2E8F0]', 'hover:bg-[#F8FAFC]');
-            activeBtn.classList.add('bg-[#1E3A8A]', 'text-white', 'border-[#1E3A8A]');
+            activeBtn.classList.add('bg-[#2563EB]', 'text-white', 'border-[#2563EB]');
             const activeBadge = activeBtn.querySelector('.tab-badge');
             if (activeBadge) {
-                activeBadge.className = 'tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 bg-white text-[#1E3A8A]';
+                activeBadge.className = 'tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 bg-white text-[#2563EB]';
             }
             const activeSub = activeBtn.querySelector('.tab-sub');
             if (activeSub) {
@@ -2301,9 +2092,13 @@
                 title: 'Arsip Resmi Pengaduan & Rekam Jejak Pelayanan',
                 subtitle: 'Dokumentasi permanen laporan yang telah tuntas ditangani demi akuntabilitas dan transparansi publik'
             },
+            'regions-gis': {
+                title: 'Peta Wilayah GIS & Sebaran 15 Kecamatan',
+                subtitle: 'Pantau sebaran spasial aduan infrastruktur di 15 kecamatan Kabupaten Kolaka Utara'
+            },
             'monitoring': {
-                title: 'Pemantauan Eksekutif & Evaluasi Kinerja Penanganan',
-                subtitle: 'Analisis sebaran spasial infrastruktur dan evaluasi indeks respon Organisasi Perangkat Daerah (OPD)'
+                title: 'Laporan Kinerja & Evaluasi Penanganan',
+                subtitle: 'Analisis evaluasi indeks respon Organisasi Perangkat Daerah (OPD) dan pelaporan resmi'
             }
         };
 
@@ -2317,12 +2112,17 @@
         // Simpan active tab untuk keperluan filter
         window.currentActiveTab = tabId;
 
-        // Toggle filter bar & pagination bar: tampilkan di verify, dispatched, inprogress, validation, dan archive (sembunyikan hanya di monitoring)
+        // Toggle filter bar & unified card: tampilkan di verify, dispatched, inprogress, validation, dan archive (sembunyikan hanya di monitoring)
+        const unifiedCard = document.getElementById('operatorUnifiedCard');
         const filterBar = document.getElementById('operatorFilterBar');
         const paginationBar = document.getElementById('operatorPaginationBar');
         const isListTab = ['verify', 'dispatched', 'inprogress', 'validation', 'archive'].includes(tabId);
+        if (unifiedCard) unifiedCard.classList.toggle('hidden', !isListTab);
         if (filterBar) filterBar.classList.toggle('hidden', !isListTab);
         if (paginationBar) paginationBar.classList.toggle('hidden', !isListTab);
+        const opTabTitles = { verify: 'Antrean Verifikasi', dispatched: 'Daftar Ditugaskan', inprogress: 'Sedang Dikerjakan', validation: 'Validasi Hasil Kerja', archive: 'Arsip Aduan' };
+        const opTitleEl = document.getElementById('operatorUnifiedTitle');
+        if (opTitleEl && opTabTitles[tabId]) opTitleEl.textContent = opTabTitles[tabId];
         if (typeof operatorPaginationState !== 'undefined') operatorPaginationState.page = 1;
 
         // Toggle filter status khusus tab arsip (Selesai vs Ditolak)
@@ -2340,8 +2140,8 @@
         // Terapkan filter langsung ke tab yang sedang aktif
         applyFilters();
 
-        // 6. Inisialisasi atau redraw peta spasial jika tab monitoring dibuka
-        if (tabId === 'monitoring') {
+        // 6. Inisialisasi atau redraw peta spasial jika tab regions-gis dibuka
+        if (tabId === 'regions-gis') {
             setTimeout(() => {
                 if (!operatorMapInitialized) {
                     initOperatorMap();
@@ -2388,7 +2188,7 @@
                     L.geoJSON(geoJsonData, {
                         interactive: false,
                         style: {
-                            color: "#1E3A8A",
+                            color: "#2563EB",
                             weight: 2.5,
                             dashArray: '6, 6',
                             fillColor: "#3B82F6",
@@ -2453,10 +2253,10 @@
                                 </svg>
                             `;
                         } else if (p.status === 'DISPATCHED') {
-                            color = '#1E40AF';
+                            color = '#2563EB';
                             statusText = 'DITUGASKAN';
                             statusBg = '#EEF2FF';
-                            statusColor = '#1E3A8A';
+                            statusColor = '#2563EB';
                             statusBorder = '#C7D2FE';
                             iconSvg = `
                                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -2547,7 +2347,7 @@
                                 ${photoHtml}
                                 <div style="padding:12px 14px 14px 14px;background:#FFFFFF;">
                                     <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;">
-                                        <span style="font-size:11px;font-weight:800;color:#1E3A8A;background:#EFF6FF;border:1px solid #DBEAFE;padding:2px 8px;border-radius:6px;font-family:monospace;">
+                                        <span style="font-size:11px;font-weight:800;color:#2563EB;background:#EFF6FF;border:1px solid #DBEAFE;padding:2px 8px;border-radius:6px;font-family:monospace;">
                                             #${p.public_code}
                                         </span>
                                         <span style="font-size:10px;font-weight:700;background:${statusBg};color:${statusColor};border:1px solid ${statusBorder};padding:2px 8px;border-radius:999px;white-space:nowrap;">
@@ -2572,8 +2372,8 @@
                                         <span style="color:#94A3B8;">${p.created_at_human}</span>
                                     </div>
                                     <button type="button" onclick="openOperatorModal(${p.id})" 
-                                        style="width:100%;background:#1E3A8A;color:#FFFFFF;border:none;padding:8px 12px;border-radius:10px;font-size:11.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 2px 5px rgba(30,58,138,0.25);transition:background 0.15s;"
-                                        onmouseover="this.style.background='#172554'" onmouseout="this.style.background='#1E3A8A'">
+                                        style="width:100%;background:#2563EB;color:#FFFFFF;border:none;padding:8px 12px;border-radius:10px;font-size:11.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 2px 5px rgba(30,58,138,0.25);transition:background 0.15s;"
+                                        onmouseover="this.style.background='#1D4ED8'" onmouseout="this.style.background='#2563EB'">
                                         <span>Buka Detail Lengkap</span>
                                         <span>&rarr;</span>
                                     </button>
@@ -2601,11 +2401,11 @@
         const currentTab = '{{ $activeTab }}';
         window.currentActiveTab = currentTab;
         switchTab(currentTab);
+        if (currentTab === 'regions-gis') {
+            setTimeout(() => { initOperatorMap(); }, 150);
+        }
         if (currentTab === 'monitoring') {
-            setTimeout(() => {
-                initOperatorMap();
-                initExecutiveMonitoringCharts();
-            }, 150);
+            setTimeout(() => { initExecutiveMonitoringCharts(); }, 150);
         }
     });
 
@@ -2640,7 +2440,7 @@
             statusClass = 'bg-amber-50 text-amber-800 border-amber-300';
         } else if (item.status === 'DISPATCHED') {
             statusLabel = 'DITUGASKAN';
-            statusClass = 'bg-blue-50 text-[#1E3A8A] border-blue-200';
+            statusClass = 'bg-blue-50 text-[#2563EB] border-blue-200';
         } else if (item.status === 'SUBMITTED' || item.status === 'VERIFICATION') {
             statusLabel = 'VERIFIKASI';
             statusClass = 'bg-red-50 text-red-700 border-red-200';
@@ -2801,14 +2601,14 @@
                     citizenPhotos.forEach((url, idx) => {
                         const thumb = document.createElement('img');
                         thumb.src = url;
-                        thumb.className = `w-14 h-14 rounded-xl object-cover cursor-pointer border-2 transition ${idx === 0 ? 'border-[#1E3A8A] ring-2 ring-blue-200' : 'border-slate-200 opacity-70 hover:opacity-100'}`;
+                        thumb.className = `w-14 h-14 rounded-xl object-cover cursor-pointer border-2 transition ${idx === 0 ? 'border-[#2563EB] ring-2 ring-blue-200' : 'border-slate-200 opacity-70 hover:opacity-100'}`;
                         thumb.onclick = () => {
                             citizenPhotoImg.src = url;
                             if (citizenLabel) citizenLabel.innerText = `Foto Bukti ${idx + 1} dari ${citizenPhotos.length}`;
                             citizenGallery.querySelectorAll('img').forEach(img => {
                                 img.className = 'w-14 h-14 rounded-xl object-cover cursor-pointer border-2 border-slate-200 opacity-70 hover:opacity-100 transition';
                             });
-                            thumb.className = 'w-14 h-14 rounded-xl object-cover cursor-pointer border-2 border-[#1E3A8A] ring-2 ring-blue-200 transition';
+                            thumb.className = 'w-14 h-14 rounded-xl object-cover cursor-pointer border-2 border-[#2563EB] ring-2 ring-blue-200 transition';
                         };
                         citizenGallery.appendChild(thumb);
                     });
@@ -2821,9 +2621,10 @@
             citizenPhotoSection.classList.add('hidden');
         }
 
-        // 2. Foto Bukti Penanganan Petugas Lapangan (Bagian Bawah)
+        // 2. Foto Bukti Penanganan Petugas Lapangan (Selalu tampil berdampingan)
         const officerPhotoSection = document.getElementById('opModalOfficerPhotoSection');
         const officerPhotoImg = document.getElementById('opModalOfficerPhoto');
+        const officerPlaceholder = document.getElementById('opModalOfficerPlaceholder');
         const officerGallery = document.getElementById('opModalOfficerGallery');
         const officerLabel = document.getElementById('opModalOfficerPhotoLabel');
 
@@ -2831,9 +2632,12 @@
             ? item.officer_photos 
             : (item.completion_photo_url ? [item.completion_photo_url] : []);
 
+        if (officerPhotoSection) officerPhotoSection.classList.remove('hidden');
         if (officerPhotos.length > 0) {
             officerPhotoImg.src = officerPhotos[0];
-            if (officerLabel) officerLabel.innerText = `Bukti Hasil Petugas 1 dari ${officerPhotos.length}`;
+            officerPhotoImg.classList.remove('hidden');
+            if (officerPlaceholder) officerPlaceholder.classList.add('hidden');
+            if (officerLabel) officerLabel.innerText = `Foto Hasil Pengerjaan`;
             if (officerGallery) {
                 officerGallery.innerHTML = '';
                 if (officerPhotos.length > 1) {
@@ -2844,7 +2648,7 @@
                         thumb.className = `w-14 h-14 rounded-xl object-cover cursor-pointer border-2 transition ${idx === 0 ? 'border-emerald-600 ring-2 ring-emerald-200' : 'border-slate-200 opacity-70 hover:opacity-100'}`;
                         thumb.onclick = () => {
                             officerPhotoImg.src = url;
-                            if (officerLabel) officerLabel.innerText = `Bukti Hasil Petugas ${idx + 1} dari ${officerPhotos.length}`;
+                            if (officerLabel) officerLabel.innerText = `Foto Hasil Petugas ${idx + 1} dari ${officerPhotos.length}`;
                             officerGallery.querySelectorAll('img').forEach(img => {
                                 img.className = 'w-14 h-14 rounded-xl object-cover cursor-pointer border-2 border-slate-200 opacity-70 hover:opacity-100 transition';
                             });
@@ -2856,9 +2660,11 @@
                     officerGallery.classList.add('hidden');
                 }
             }
-            officerPhotoSection.classList.remove('hidden');
         } else {
-            officerPhotoSection.classList.add('hidden');
+            officerPhotoImg.classList.add('hidden');
+            if (officerPlaceholder) officerPlaceholder.classList.remove('hidden');
+            if (officerGallery) officerGallery.classList.add('hidden');
+            if (officerLabel) officerLabel.innerText = 'Foto Hasil Pengerjaan';
         }
 
         // Ruas Panjang Box
@@ -2964,14 +2770,14 @@
                     citizenPhotos.forEach((url, idx) => {
                         const thumb = document.createElement('img');
                         thumb.src = url;
-                        thumb.className = `w-14 h-14 rounded-xl object-cover cursor-pointer border-2 transition ${idx === 0 ? 'border-[#1E3A8A] ring-2 ring-blue-200' : 'border-slate-200 opacity-70 hover:opacity-100'}`;
+                        thumb.className = `w-14 h-14 rounded-xl object-cover cursor-pointer border-2 transition ${idx === 0 ? 'border-[#2563EB] ring-2 ring-blue-200' : 'border-slate-200 opacity-70 hover:opacity-100'}`;
                         thumb.onclick = () => {
                             citizenPhotoImg.src = url;
                             if (citizenLabel) citizenLabel.innerText = `Foto Bukti ${idx + 1} dari ${citizenPhotos.length}`;
                             citizenGallery.querySelectorAll('img').forEach(img => {
                                 img.className = 'w-14 h-14 rounded-xl object-cover cursor-pointer border-2 border-slate-200 opacity-70 hover:opacity-100 transition';
                             });
-                            thumb.className = 'w-14 h-14 rounded-xl object-cover cursor-pointer border-2 border-[#1E3A8A] ring-2 ring-blue-200 transition';
+                            thumb.className = 'w-14 h-14 rounded-xl object-cover cursor-pointer border-2 border-[#2563EB] ring-2 ring-blue-200 transition';
                         };
                         citizenGallery.appendChild(thumb);
                     });
@@ -3426,8 +3232,8 @@
         const listBtn = document.getElementById('opLayoutBtn-list');
         const gridBtn = document.getElementById('opLayoutBtn-grid');
         if (listBtn && gridBtn) {
-            listBtn.className = `px-2.5 py-1.5 rounded-md text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer ${mode === 'list' ? 'bg-[#1E3A8A] text-white' : 'text-[#475569] hover:text-[#0F172A]'}`;
-            gridBtn.className = `px-2.5 py-1.5 rounded-md text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer ${mode === 'grid' ? 'bg-[#1E3A8A] text-white' : 'text-[#475569] hover:text-[#0F172A]'}`;
+            listBtn.className = `px-2.5 py-1.5 rounded-md text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer ${mode === 'list' ? 'bg-[#2563EB] text-white' : 'text-[#475569] hover:text-[#0F172A]'}`;
+            gridBtn.className = `px-2.5 py-1.5 rounded-md text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer ${mode === 'grid' ? 'bg-[#2563EB] text-white' : 'text-[#475569] hover:text-[#0F172A]'}`;
         }
     }
 
@@ -3477,7 +3283,7 @@
 
         const btnBase = 'px-2.5 py-1.5 rounded-lg border text-xs font-semibold transition cursor-pointer';
         const btnIdle = `${btnBase} bg-white border-[#E2E8F0] text-[#0F172A] hover:bg-slate-100`;
-        const btnActive = `${btnBase} bg-[#1E3A8A] border-[#1E3A8A] text-white`;
+        const btnActive = `${btnBase} bg-[#2563EB] border-[#2563EB] text-white`;
         const btnDisabled = 'px-2.5 py-1.5 rounded-lg border border-[#E2E8F0] bg-slate-100 text-slate-400 text-xs font-semibold cursor-not-allowed';
 
         let html = operatorPaginationState.page > 1

@@ -9,6 +9,7 @@ use App\Models\ComplaintPhoto;
 use App\Models\ComplaintStatusHistory;
 use App\Models\Disposition;
 use App\Models\Notification;
+use App\Models\Region;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -209,7 +210,42 @@ class WebPetugasController extends Controller
                 ];
             });
 
-        return view('petugas.dashboard', compact('dispatchedTasks', 'inProgressTasks', 'waitingVerificationTasks', 'completedTasks', 'categories', 'summary', 'mapPoints', 'complaintsDetailMap', 'myTeam'));
+        $regionsDb = Region::orderBy('district')->get();
+        $allComplaintsForStats = Complaint::select('id', 'region_id', 'address', 'status')->get();
+        $districtStats = [];
+        foreach ($regionsDb as $r) {
+            $distName = strtolower(str_replace('kecamatan ', '', $r->district));
+            $villName = strtolower(str_replace(['desa ', 'kelurahan '], '', $r->village));
+            $total = 0; $completed = 0; $inProgress = 0; $waitingVerification = 0; $dispatched = 0; $pending = 0; $rejected = 0;
+            foreach ($allComplaintsForStats as $cmp) {
+                $addr = strtolower($cmp->address ?? '');
+                if ($cmp->region_id === $r->id || str_contains($addr, $distName) || str_contains($addr, $villName)) {
+                    $total++;
+                    if (in_array($cmp->status, ['COMPLETED', 'CLOSED'], true)) { $completed++; }
+                    elseif (in_array($cmp->status, ['IN_PROGRESS', 'REVISION_REQUIRED'], true)) { $inProgress++; }
+                    elseif ($cmp->status === 'WAITING_VERIFICATION') { $waitingVerification++; }
+                    elseif ($cmp->status === 'DISPATCHED') { $dispatched++; }
+                    elseif ($cmp->status === 'REJECTED') { $rejected++; }
+                    else { $pending++; }
+                }
+            }
+            $districtStats[] = [
+                'id' => $r->id,
+                'district' => $r->district,
+                'village' => $r->village,
+                'latitude' => (float) $r->latitude,
+                'longitude' => (float) $r->longitude,
+                'total' => $total,
+                'pending' => $pending,
+                'dispatched' => $dispatched,
+                'in_progress' => $inProgress,
+                'waiting_verification' => $waitingVerification,
+                'completed' => $completed,
+                'rejected' => $rejected,
+            ];
+        }
+
+        return view('petugas.dashboard', compact('dispatchedTasks', 'inProgressTasks', 'waitingVerificationTasks', 'completedTasks', 'categories', 'summary', 'mapPoints', 'complaintsDetailMap', 'myTeam', 'districtStats'));
     }
 
     public function startWork(int $id): RedirectResponse
