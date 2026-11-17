@@ -296,9 +296,9 @@
                     <div class="flex items-center gap-3 lg:gap-6 shrink-0">
                         <nav id="publicDesktopNav" class="hidden md:flex items-center gap-5 lg:gap-6 text-[13px] font-semibold text-[#475569]" aria-label="Navigasi Utama">
                             <a href="{{ url('/') }}#top" data-nav-target="top" class="public-nav-link relative py-1.5 text-[#1E3A8A] border-b-2 border-[#1E3A8A] transition-colors duration-200">Beranda</a>
-                            <a href="{{ url('/') }}#mapSectionContainer" data-nav-target="mapSectionContainer" class="public-nav-link relative py-1.5 border-b-2 border-transparent hover:text-[#1E3A8A] hover:border-[#93C5FD] transition-colors duration-200">Peta Sebaran</a>
-                            <a href="{{ url('/') }}#kategori-infrastruktur" data-nav-target="kategori-infrastruktur" class="public-nav-link relative py-1.5 border-b-2 border-transparent hover:text-[#1E3A8A] hover:border-[#93C5FD] transition-colors duration-200 whitespace-nowrap">Kategori &amp; Layanan</a>
-                            <a href="{{ url('/') }}#download-app" data-nav-target="download-app" class="public-nav-link relative py-1.5 border-b-2 border-transparent hover:text-[#1E3A8A] hover:border-[#93C5FD] transition-colors duration-200">Unduh Aplikasi</a>
+                            <a href="{{ url('/') }}#mapSectionContainer" data-nav-target="mapSectionContainer" class="public-nav-link relative py-1.5 border-b-2 border-transparent hover:text-[#1E3A8A] transition-colors duration-200">Peta Sebaran</a>
+                            <a href="{{ url('/') }}#kategori-infrastruktur" data-nav-target="kategori-infrastruktur" class="public-nav-link relative py-1.5 border-b-2 border-transparent hover:text-[#1E3A8A] transition-colors duration-200 whitespace-nowrap">Kategori &amp; Layanan</a>
+                            <a href="{{ url('/') }}#download-app" data-nav-target="download-app" class="public-nav-link relative py-1.5 border-b-2 border-transparent hover:text-[#1E3A8A] transition-colors duration-200">Unduh Aplikasi</a>
                         </nav>
 
                         @auth
