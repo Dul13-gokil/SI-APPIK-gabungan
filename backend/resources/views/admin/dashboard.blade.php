@@ -613,17 +613,17 @@
                                 };
                                 $initial = strtoupper(substr($u->name, 0, 1));
                             @endphp
-                            <tr class="user-row flex md:table-row items-center justify-between gap-2.5 px-3.5 py-3 md:p-0 hover:bg-slate-50/60 transition"
+                            <tr class="user-row flex flex-wrap sm:flex-nowrap md:table-row items-center justify-between gap-2 px-3.5 py-3 md:p-0 hover:bg-slate-50/60 transition"
                                 data-name="{{ strtolower($u->name) }}"
                                 data-email="{{ strtolower($u->email) }}"
                                 data-phone="{{ $u->phone ?? '' }}"
                                 data-role="{{ $roleUpper == 'BUPATI' ? 'KEPALA_DAERAH' : $roleUpper }}"
                                 data-status="{{ ($u->is_active ?? true) ? 'active' : 'inactive' }}">
-                                <td class="block md:table-cell p-0 md:py-3.5 md:px-4 min-w-0 flex-1">
-                                    <div class="flex items-center gap-2 flex-wrap">
+                                <td class="block md:table-cell p-0 md:py-3.5 md:px-4 min-w-0 flex-1 basis-0">
+                                    <div class="flex items-center gap-x-2 gap-y-0.5 flex-wrap min-w-0">
                                         <span class="font-bold text-[#0F172A] text-xs">{{ $u->name }}</span>
                                         <span class="text-slate-300 hidden md:inline">&bull;</span>
-                                        <span class="text-[#475569] text-xs font-medium truncate">{{ $u->email }}</span>
+                                        <span class="text-[#475569] text-xs font-medium break-all md:break-normal md:truncate max-w-full">{{ $u->email }}</span>
                                         @if(!($u->is_active ?? true))
                                             <span class="px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-red-50 text-red-700 border border-red-200">Nonaktif</span>
                                         @endif
@@ -635,7 +635,7 @@
                                     </span>
                                 </td>
                                 <td class="hidden md:table-cell py-3.5 px-4 text-[#475569] font-mono text-xs">{{ $u->phone ?? '-' }}</td>
-                                <td class="block md:table-cell p-0 md:py-3.5 md:px-4 text-right shrink-0">
+                                <td class="block md:table-cell p-0 md:py-3.5 md:px-4 text-right shrink-0 ml-auto">
                                     <div class="flex items-center justify-end gap-1">
                                         <!-- Edit Profil & Akun Pengguna -->
                                         <button type="button" 
