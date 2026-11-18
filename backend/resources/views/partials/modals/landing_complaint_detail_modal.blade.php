@@ -100,7 +100,6 @@
                     <div class="flex items-center gap-1.5 text-[13px] font-semibold text-[#047857]" title="Nomor telepon pelapor disamarkan demi melindungi privasi (hanya 3 digit terakhir terlihat)">
                         <i data-lucide="shield-check" class="w-3.5 h-3.5 shrink-0"></i>
                         <span id="landingModalReporterPhone" class="font-mono tracking-wide">********---</span>
-                        <span class="text-xs font-medium">(Terverifikasi)</span>
                     </div>
                 </div>
 
@@ -121,46 +120,49 @@
                 </div>
             </div>
 
-            <!-- 3. Kartu Regu Lapangan Pelaksana -->
-            <div id="landingModalOfficerCard" class="hidden p-4 rounded-2xl bg-[#EFF6FF] border border-[#BFDBFE] space-y-3">
+            <!-- 3. Kartu Regu Lapangan Pelaksana (Seragam SI-APPIK V2 & Responsif Mobile 360px+) -->
+            <div id="landingModalOfficerCard" class="hidden p-3.5 sm:p-4 rounded-2xl bg-[#EFF6FF]/60 border border-[#BFDBFE] space-y-2.5">
                 <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-2.5">
                     <div class="flex items-start gap-2.5 min-w-0">
-                        <div class="w-8 h-8 rounded-xl bg-[#2563EB] text-white flex items-center justify-center shrink-0 mt-0.5">
+                        <div class="w-9 h-9 rounded-xl bg-[#2563EB] text-white flex items-center justify-center font-bold text-xs shrink-0">
                             <i data-lucide="hard-hat" class="w-4 h-4"></i>
                         </div>
                         <div class="min-w-0">
-                            <h4 id="landingModalOfficerName" class="font-outfit font-bold text-[15px] text-[#0F172A] leading-snug">
+                            <span class="text-[10px] text-[#2563EB] font-extrabold uppercase tracking-wider block">Regu Lapangan Pelaksana</span>
+                            <h4 id="landingModalOfficerName" class="font-outfit font-bold text-xs sm:text-sm text-[#0F172A] break-words leading-snug">
                                 Regu Aspal 01 - Lasusua
                             </h4>
-                            <span id="landingModalOfficerDept" class="text-xs font-medium text-[#475569] block mt-0.5">
+                            <span id="landingModalOfficerDept" class="text-[11px] font-medium text-[#475569] block break-words mt-0.5">
                                 Dinas Pekerjaan Umum dan Penataan Ruang (PUPR)
                             </span>
                         </div>
                     </div>
-                    <div id="landingModalDeadlineBox" class="shrink-0 self-start">
-                        <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white border border-[#BFDBFE] text-[11px] font-bold text-[#1D4ED8]">
-                            <span>Batas Waktu:</span>
-                            <span id="landingModalOfficerDeadline">-</span>
-                        </span>
+                    <div id="landingModalDeadlineBox" class="flex sm:block items-center justify-between sm:text-right gap-2 pt-2 sm:pt-0 border-t sm:border-t-0 border-[#BFDBFE]/50 shrink-0">
+                        <span class="text-[10px] text-[#64748B] font-medium sm:block">Batas Waktu:</span>
+                        <span id="landingModalOfficerDeadline" class="text-xs font-bold text-[#2563EB] bg-white px-2.5 py-0.5 rounded-lg border border-[#BFDBFE] inline-block sm:mt-0.5">-</span>
                     </div>
                 </div>
 
-                <!-- Kontak Ketua Regu -->
-                <div class="flex flex-wrap items-center justify-between gap-2 pt-0.5">
-                    <div class="text-[13px] font-semibold text-[#0F172A]">
-                        <span class="text-[#475569] font-medium">Ketua Regu (Koordinator Lapangan):</span>
-                        <span id="landingModalTeamLeader" class="font-bold text-[#0F172A] ml-1">Petugas Lapangan</span>
+                <div class="p-2.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-wrap items-center justify-between gap-2 text-xs">
+                    <div class="flex items-center gap-2 min-w-0">
+                        <div class="w-6 h-6 rounded-lg bg-[#EFF6FF] text-[#2563EB] flex items-center justify-center shrink-0">
+                            <i data-lucide="crown" class="w-3.5 h-3.5"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <span class="text-[10px] text-[#64748B] font-bold block leading-none">Ketua Regu:</span>
+                            <span id="landingModalTeamLeader" class="font-bold text-[#0F172A] break-words block mt-0.5">Petugas Lapangan</span>
+                        </div>
                     </div>
-                    <a id="landingModalOfficerPhone" href="#" class="px-3 py-1.5 rounded-full bg-white hover:bg-blue-100/70 border border-[#BFDBFE] text-[#2563EB] font-bold font-mono text-xs inline-flex items-center gap-1.5 transition shrink-0" title="Hubungi Petugas Lapangan">
-                        <i data-lucide="phone" class="w-3 h-3"></i>
+                    <a id="landingModalOfficerPhone" href="#" class="px-2.5 py-1 rounded-lg bg-[#EFF6FF] hover:bg-[#DBEAFE] text-[#2563EB] font-bold font-mono text-xs flex items-center gap-1.5 transition shrink-0" title="Hubungi Petugas Lapangan">
+                        <i data-lucide="phone-call" class="w-3 h-3"></i>
                         <span id="landingModalOfficerPhoneText">081100000004</span>
                     </a>
                 </div>
 
                 <!-- Instruksi Teknis -->
-                <div id="landingModalInstructionRow" class="px-3 py-2.5 rounded-xl bg-white border border-[#DBEAFE] text-[13px] text-[#334155] flex items-start gap-2">
-                    <i data-lucide="clipboard-list" class="w-4 h-4 text-[#2563EB] shrink-0 mt-0.5"></i>
-                    <span>Instruksi: <span id="landingModalOfficerInstruction" class="font-medium text-[#0F172A]">Lakukan perbaikan dan penanganan fisik sesuai standar teknis</span></span>
+                <div id="landingModalInstructionRow" class="pt-1.5 text-xs text-[#475569] flex items-start gap-1.5 border-t border-[#BFDBFE]/60">
+                    <i data-lucide="clipboard-list" class="w-3.5 h-3.5 text-[#2563EB] shrink-0 mt-0.5"></i>
+                    <span>Instruksi: <span id="landingModalOfficerInstruction" class="text-[#0F172A] font-medium italic">Lakukan perbaikan dan penanganan fisik sesuai standar teknis</span></span>
                 </div>
             </div>
 

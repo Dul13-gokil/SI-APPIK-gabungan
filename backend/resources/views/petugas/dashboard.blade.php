@@ -322,7 +322,7 @@
                             <!-- 1. Header Card: 1 Baris Sejajar - Kode + Tipe + Kategori (Kiri) & Status Ditugaskan (Kanan) -->
                             <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-slate-100 min-w-0">
                                 <div class="flex items-center gap-1.5 min-w-0 flex-nowrap overflow-hidden">
-                                    <span class="px-2 py-0.5 rounded-lg bg-[#2563EB]/10 text-[#2563EB] font-bold text-xs font-mono tracking-tight border border-blue-100/60 whitespace-nowrap shrink-0">
+                                    <span class="px-2 py-0.5 rounded-md bg-slate-100 text-[#0F172A] font-semibold text-[11px] font-mono border border-[#E2E8F0] whitespace-nowrap shrink-0">
                                         #{{ $t->public_code }}
                                     </span>
                                     <span class="px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-red-50 text-red-700 border border-red-200/80 inline-flex items-center gap-1 whitespace-nowrap shrink-0">
@@ -463,7 +463,7 @@
                             <!-- 1. Header Badges -->
                             <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-slate-100 min-w-0">
                                 <div class="flex items-center gap-1.5 min-w-0 flex-nowrap overflow-hidden">
-                                    <span class="px-2 py-0.5 rounded-lg bg-[#2563EB]/10 text-[#2563EB] font-bold text-xs font-mono tracking-tight border border-blue-100/60 whitespace-nowrap shrink-0">
+                                    <span class="px-2 py-0.5 rounded-md bg-slate-100 text-[#0F172A] font-semibold text-[11px] font-mono border border-[#E2E8F0] whitespace-nowrap shrink-0">
                                         #{{ $t->public_code }}
                                     </span>
                                     <span class="px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-red-50 text-red-700 border border-red-200/80 inline-flex items-center gap-1 whitespace-nowrap shrink-0">
@@ -607,7 +607,7 @@
                             <!-- 1. Header Badges -->
                             <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-slate-100 min-w-0">
                                 <div class="flex items-center gap-1.5 min-w-0 flex-nowrap overflow-hidden">
-                                    <span class="px-2 py-0.5 rounded-lg bg-[#2563EB]/10 text-[#2563EB] font-bold text-xs font-mono tracking-tight border border-blue-100/60 whitespace-nowrap shrink-0">
+                                    <span class="px-2 py-0.5 rounded-md bg-slate-100 text-[#0F172A] font-semibold text-[11px] font-mono border border-[#E2E8F0] whitespace-nowrap shrink-0">
                                         #{{ $t->public_code }}
                                     </span>
                                     <span class="px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-red-50 text-red-700 border border-red-200/80 inline-flex items-center gap-1 whitespace-nowrap shrink-0">
@@ -729,7 +729,7 @@
                             <!-- 1. Header Card: 1 Baris Sejajar - Kode + Tipe + Kategori (Kiri) & Waktu (Kanan) -->
                             <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-slate-100 min-w-0">
                                 <div class="flex items-center gap-1.5 min-w-0 flex-nowrap overflow-hidden">
-                                    <span class="px-2 py-0.5 rounded-lg bg-[#2563EB]/10 text-[#2563EB] font-bold text-xs font-mono tracking-tight border border-blue-100/60 whitespace-nowrap shrink-0">
+                                    <span class="px-2 py-0.5 rounded-md bg-slate-100 text-[#0F172A] font-semibold text-[11px] font-mono border border-[#E2E8F0] whitespace-nowrap shrink-0">
                                         #{{ $c->public_code }}
                                     </span>
                                     <span class="px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-red-50 text-red-700 border border-red-200/80 inline-flex items-center gap-1 whitespace-nowrap shrink-0">
@@ -1787,36 +1787,36 @@
                 </div>
 
                 <!-- 3. Regu Penanganan Lapangan -->
-                <div id="pmOfficerCard" class="p-4 rounded-2xl bg-[#EFF6FF]/60 border border-[#BFDBFE] space-y-2.5">
-                    <div class="flex items-start justify-between gap-2">
-                        <div class="flex items-center gap-2.5 min-w-0">
-                            <div class="w-9 h-9 rounded-xl bg-[#2563EB] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
+                <div id="pmOfficerCard" class="p-3.5 sm:p-4 rounded-2xl bg-[#EFF6FF]/60 border border-[#BFDBFE] space-y-2.5">
+                    <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-2.5">
+                        <div class="flex items-start gap-2.5 min-w-0">
+                            <div class="w-9 h-9 rounded-xl bg-[#2563EB] text-white flex items-center justify-center font-bold text-xs shrink-0">
                                 <i data-lucide="hard-hat" class="w-4 h-4"></i>
                             </div>
                             <div class="min-w-0">
                                 <span class="text-[10px] text-[#2563EB] font-extrabold uppercase tracking-wider block">Regu Lapangan Pelaksana</span>
-                                <h4 id="pmTeamName" class="font-outfit font-bold text-xs sm:text-sm text-[#0F172A] truncate leading-tight">
+                                <h4 id="pmTeamName" class="font-outfit font-bold text-xs sm:text-sm text-[#0F172A] break-words leading-snug">
                                     Regu Lapangan PUPR
                                 </h4>
-                                <span id="pmOfficerDept" class="text-[11px] font-medium text-[#475569] block truncate">
+                                <span id="pmOfficerDept" class="text-[11px] font-medium text-[#475569] block break-words mt-0.5">
                                     Dinas Pekerjaan Umum dan Penataan Ruang (PUPR)
                                 </span>
                             </div>
                         </div>
-                        <div id="pmDeadlineBox" class="text-right shrink-0">
-                            <span class="text-[10px] text-[#64748B] block font-medium">Batas Waktu:</span>
-                            <span id="pmDeadline" class="text-xs font-bold text-[#2563EB] bg-white px-2.5 py-0.5 rounded-lg border border-[#BFDBFE] inline-block mt-0.5">Segera</span>
+                        <div id="pmDeadlineBox" class="flex sm:block items-center justify-between sm:text-right gap-2 pt-2 sm:pt-0 border-t sm:border-t-0 border-[#BFDBFE]/50 shrink-0">
+                            <span class="text-[10px] text-[#64748B] font-medium sm:block">Batas Waktu:</span>
+                            <span id="pmDeadline" class="text-xs font-bold text-[#2563EB] bg-white px-2.5 py-0.5 rounded-lg border border-[#BFDBFE] inline-block sm:mt-0.5">Segera</span>
                         </div>
                     </div>
 
-                    <div class="p-2.5 rounded-xl bg-white border border-[#E2E8F0] flex items-center justify-between gap-2 text-xs">
+                    <div class="p-2.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-wrap items-center justify-between gap-2 text-xs">
                         <div class="flex items-center gap-2 min-w-0">
                             <div class="w-6 h-6 rounded-lg bg-[#EFF6FF] text-[#2563EB] flex items-center justify-center shrink-0">
                                 <i data-lucide="crown" class="w-3.5 h-3.5"></i>
                             </div>
                             <div class="min-w-0">
                                 <span class="text-[10px] text-[#64748B] font-bold block leading-none">Ketua Regu:</span>
-                                <span id="pmTeamLeader" class="font-bold text-[#0F172A] truncate block mt-0.5">Nama Ketua Regu</span>
+                                <span id="pmTeamLeader" class="font-bold text-[#0F172A] break-words block mt-0.5">Nama Ketua Regu</span>
                             </div>
                         </div>
                         <a id="pmTeamPhone" href="#" class="px-2.5 py-1 rounded-lg bg-[#EFF6FF] hover:bg-[#DBEAFE] text-[#2563EB] font-bold font-mono text-xs flex items-center gap-1.5 transition shrink-0">

@@ -361,7 +361,7 @@
                         <div class="px-5 py-3.5 flex items-center justify-between gap-3 hover:bg-[#F8FAFC] transition">
                             <div class="min-w-0 flex-1 space-y-0.5">
                                 <div class="flex items-center gap-2 flex-wrap">
-                                    <span class="text-[11px] font-bold text-[#2563EB]">#{{ $ovItem->ticket_number ?? $ovItem->id }}</span>
+                                    <span class="text-[11px] font-bold text-[#0F172A]">#{{ $ovItem->ticket_number ?? $ovItem->id }}</span>
                                     <span class="px-2 py-0.5 rounded-full text-[10px] font-bold border {{ $stBadge['cls'] }}">{{ $stBadge['label'] }}</span>
                                     <span class="text-[11px] text-[#64748B]">{{ $ovItem->created_at?->timezone('Asia/Makassar')->format('d M Y, H:i') }} WITA</span>
                                 </div>
@@ -933,7 +933,7 @@
                             data-category="{{ $c->category_id }}"
                             data-damage-type="{{ $c->damage_type ?? 'minor' }}"
                             data-status="{{ $c->status }}">
-                            <td class="hidden md:table-cell py-2.5 px-3 font-mono font-bold text-[#2563EB] text-xs whitespace-nowrap">
+                            <td class="hidden md:table-cell py-2.5 px-3 font-mono font-bold text-[#0F172A] text-xs whitespace-nowrap">
                                 <button type="button" onclick="event.stopPropagation(); openAdminDetailModal({{ $c->id }})" class="hover:underline text-left cursor-pointer">
                                     #{{ $c->public_code }}
                                 </button>
@@ -952,7 +952,7 @@
                                     </div>
                                     <div class="min-w-0 flex-1">
                                         <div class="md:hidden flex items-center gap-1.5 flex-wrap mb-0.5">
-                                            <span class="font-mono font-bold text-[#2563EB] text-[10px]">#{{ $c->public_code }}</span>
+                                            <span class="font-mono font-bold text-[#0F172A] text-[10px]">#{{ $c->public_code }}</span>
                                             <span class="px-1.5 py-0.5 rounded-full text-[9px] font-bold border {{ $statusBadgeClass }}">{{ $statusLabel }}</span>
                                         </div>
                                         <div class="flex items-center gap-1.5 flex-wrap mb-0.5">
@@ -1846,7 +1846,7 @@
                             @endphp
                             <tr class="admin-rejected-row block md:table-row p-3.5 md:p-0 hover:bg-slate-50/70 transition space-y-1.5 md:space-y-0"
                                 data-search="{{ $rcSearch }}">
-                                <td class="block md:table-cell md:py-3 md:px-4 font-mono font-bold text-[#2563EB] whitespace-nowrap align-top">
+                                <td class="block md:table-cell md:py-3 md:px-4 font-mono font-bold text-[#0F172A] whitespace-nowrap align-top">
                                     <div class="flex items-center justify-between md:block">
                                         <span>#{{ $rc->public_code }}</span>
                                         <span class="md:hidden px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 text-[10px] font-sans font-semibold border border-slate-200">
@@ -1896,7 +1896,7 @@
                     <div class="admin-rejected-grid-card rounded-xl border border-[#E2E8F0] bg-white p-4 space-y-2.5"
                         data-search="{{ $rcSearch }}">
                         <div class="flex items-center justify-between gap-2 flex-wrap">
-                            <span class="px-2 py-0.5 rounded-md bg-blue-50 text-[#2563EB] font-mono text-[11px] font-bold border border-blue-200">#{{ $rc->public_code }}</span>
+                            <span class="px-2 py-0.5 rounded-md bg-slate-100 text-[#0F172A] font-mono text-[11px] font-semibold border border-[#E2E8F0]">#{{ $rc->public_code }}</span>
                             <span class="px-2 py-0.5 rounded-md text-[10.5px] font-semibold bg-slate-100 text-slate-700 border border-slate-200">
                                 {{ $rc->category?->name ?? 'Infrastruktur' }}
                             </span>

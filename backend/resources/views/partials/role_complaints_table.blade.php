@@ -54,7 +54,7 @@
                     data-search="{{ $searchStr }}"
                     data-status="{{ $stVal }}">
                     <td class="hidden md:table-cell py-3 px-3 align-middle whitespace-nowrap">
-                        <button type="button" onclick="event.stopPropagation(); {{ $detailFn }}({{ $item->id }})" class="font-mono font-bold text-[#2563EB] hover:underline cursor-pointer">
+                        <button type="button" onclick="event.stopPropagation(); {{ $detailFn }}({{ $item->id }})" class="font-mono font-bold text-[#0F172A] hover:underline cursor-pointer">
                             #{{ $item->public_code }}
                         </button>
                         <span class="block text-[10px] text-[#475569]">{{ $item->created_at?->diffForHumans() }}</span>
@@ -70,7 +70,7 @@
                             </div>
                             <div class="min-w-0 flex-1">
                                 <div class="md:hidden flex items-center gap-1.5 flex-wrap mb-0.5">
-                                    <span class="font-mono font-bold text-[#2563EB] text-[10px]">#{{ $item->public_code }}</span>
+                                    <span class="font-mono font-bold text-[#0F172A] text-[10px]">#{{ $item->public_code }}</span>
                                     <span class="px-1.5 py-0.5 rounded text-[9.5px] font-bold border {{ $stClass }}">{{ $stLabel }}</span>
                                 </div>
                                 <button type="button" onclick="{{ $detailFn }}({{ $item->id }})" class="font-bold text-[#0F172A] hover:text-[#2563EB] truncate block w-full md:max-w-[240px] text-left cursor-pointer" title="{{ $item->title }}">

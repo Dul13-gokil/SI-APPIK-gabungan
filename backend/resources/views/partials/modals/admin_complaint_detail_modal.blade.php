@@ -124,36 +124,36 @@
             </div>
 
             <!-- 3. Kartu Regu Lapangan Pelaksana -->
-            <div id="admModalOfficerCard" class="hidden p-4 rounded-2xl bg-[#EFF6FF]/60 border border-[#BFDBFE] space-y-2.5">
-                <div class="flex items-start justify-between gap-2">
-                    <div class="flex items-center gap-2.5 min-w-0">
-                        <div class="w-9 h-9 rounded-xl bg-[#2563EB] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
+            <div id="admModalOfficerCard" class="hidden p-3.5 sm:p-4 rounded-2xl bg-[#EFF6FF]/60 border border-[#BFDBFE] space-y-2.5">
+                <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-2.5">
+                    <div class="flex items-start gap-2.5 min-w-0">
+                        <div class="w-9 h-9 rounded-xl bg-[#2563EB] text-white flex items-center justify-center font-bold text-xs shrink-0">
                             <i data-lucide="hard-hat" class="w-4 h-4"></i>
                         </div>
                         <div class="min-w-0">
                             <span class="text-[10px] text-[#2563EB] font-extrabold uppercase tracking-wider block">Regu Lapangan Pelaksana</span>
-                            <h4 id="admModalTeamName" class="font-outfit font-bold text-xs sm:text-sm text-[#0F172A] truncate leading-tight">
+                            <h4 id="admModalTeamName" class="font-outfit font-bold text-xs sm:text-sm text-[#0F172A] break-words leading-snug">
                                 Regu Aspal 01 - Lasusua
                             </h4>
-                            <span id="admModalOfficerDept" class="text-[11px] font-medium text-[#475569] block truncate">
+                            <span id="admModalOfficerDept" class="text-[11px] font-medium text-[#475569] block break-words mt-0.5">
                                 Dinas Pekerjaan Umum dan Penataan Ruang (PUPR)
                             </span>
                         </div>
                     </div>
-                    <div id="admModalDeadlineBox" class="text-right shrink-0">
-                        <span class="text-[10px] text-[#64748B] block font-medium">Batas Waktu:</span>
-                        <span id="admModalOfficerDeadline" class="text-xs font-bold text-[#2563EB] bg-white px-2.5 py-0.5 rounded-lg border border-[#BFDBFE] inline-block mt-0.5">-</span>
+                    <div id="admModalDeadlineBox" class="flex sm:block items-center justify-between sm:text-right gap-2 pt-2 sm:pt-0 border-t sm:border-t-0 border-[#BFDBFE]/50 shrink-0">
+                        <span class="text-[10px] text-[#64748B] font-medium sm:block">Batas Waktu:</span>
+                        <span id="admModalOfficerDeadline" class="text-xs font-bold text-[#2563EB] bg-white px-2.5 py-0.5 rounded-lg border border-[#BFDBFE] inline-block sm:mt-0.5">-</span>
                     </div>
                 </div>
 
-                <div class="p-2.5 rounded-xl bg-white border border-[#E2E8F0] flex items-center justify-between gap-2 text-xs">
+                <div class="p-2.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-wrap items-center justify-between gap-2 text-xs">
                     <div class="flex items-center gap-2 min-w-0">
                         <div class="w-6 h-6 rounded-lg bg-[#EFF6FF] text-[#2563EB] flex items-center justify-center shrink-0">
                             <i data-lucide="crown" class="w-3.5 h-3.5"></i>
                         </div>
                         <div class="min-w-0">
                             <span class="text-[10px] text-[#64748B] font-bold block leading-none">Ketua Regu:</span>
-                            <span id="admModalTeamLeader" class="font-bold text-[#0F172A] truncate block mt-0.5">Nama Ketua Regu</span>
+                            <span id="admModalTeamLeader" class="font-bold text-[#0F172A] break-words block mt-0.5">Nama Ketua Regu</span>
                         </div>
                     </div>
                     <a id="admModalTeamPhone" href="#" class="px-2.5 py-1 rounded-lg bg-[#EFF6FF] hover:bg-[#DBEAFE] text-[#2563EB] font-bold font-mono text-xs flex items-center gap-1.5 transition shrink-0" title="Hubungi Petugas">

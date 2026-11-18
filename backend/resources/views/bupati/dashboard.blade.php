@@ -305,7 +305,7 @@
                                 data-damage-type="{{ $c->damage_type ?? 'minor' }}"
                                 data-status="{{ $c->status }}">
                                 <td class="hidden md:table-cell py-2.5 px-3 align-middle whitespace-nowrap">
-                                    <button type="button" onclick="event.stopPropagation(); openBupatiDetailModal({{ $c->id }})" class="font-mono font-bold text-[#2563EB] text-xs hover:underline text-left cursor-pointer">
+                                    <button type="button" onclick="event.stopPropagation(); openBupatiDetailModal({{ $c->id }})" class="font-mono font-bold text-[#0F172A] text-xs hover:underline text-left cursor-pointer">
                                         #{{ $c->public_code }}
                                     </button>
                                     <div class="text-[10px] text-slate-400 font-sans mt-0.5">{{ $c->created_at?->diffForHumans() }}</div>
@@ -323,7 +323,7 @@
                                         </div>
                                         <div class="min-w-0 flex-1">
                                             <div class="md:hidden flex items-center gap-1.5 flex-wrap mb-0.5">
-                                                <span class="font-mono font-bold text-[#2563EB] text-[10px]">#{{ $c->public_code }}</span>
+                                                <span class="font-mono font-bold text-[#0F172A] text-[10px]">#{{ $c->public_code }}</span>
                                                 <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-extrabold border {{ $statusBadgeClass }}">{{ $statusLabel }}</span>
                                             </div>
                                             <div class="flex items-center gap-1.5 flex-wrap mb-0.5">
@@ -574,7 +574,7 @@
                                     data-damage-type="{{ $ac->damage_type ?? 'minor' }}"
                                     data-status="{{ $acSt }}">
                                     <td class="hidden md:table-cell py-3 px-3 align-middle whitespace-nowrap">
-                                        <button type="button" onclick="event.stopPropagation(); openBupatiDetailModal({{ $ac->id }})" class="font-mono font-bold text-[#2563EB] hover:underline cursor-pointer">#{{ $ac->public_code }}</button>
+                                        <button type="button" onclick="event.stopPropagation(); openBupatiDetailModal({{ $ac->id }})" class="font-mono font-bold text-[#0F172A] hover:underline cursor-pointer">#{{ $ac->public_code }}</button>
                                         <span class="block text-[10px] text-[#475569]">{{ $ac->created_at?->diffForHumans() }}</span>
                                     </td>
                                     <td class="block md:table-cell p-0 md:py-3 md:px-3 align-middle w-full md:w-auto min-w-0">
@@ -588,7 +588,7 @@
                                             </div>
                                             <div class="min-w-0 flex-1">
                                                 <div class="md:hidden flex items-center gap-1.5 flex-wrap mb-0.5">
-                                                    <span class="font-mono font-bold text-[#2563EB] text-[10px]">#{{ $ac->public_code }}</span>
+                                                    <span class="font-mono font-bold text-[#0F172A] text-[10px]">#{{ $ac->public_code }}</span>
                                                     @if($acIsRejected)
                                                         <span class="px-1.5 py-0.5 rounded text-[9.5px] font-bold bg-red-50 text-red-700 border border-red-200">DITOLAK</span>
                                                     @else
@@ -644,7 +644,7 @@
                                 <!-- 1. Header Card: 1 Baris Sejajar - Kode + Tipe + Status + Kategori (Kiri) & Waktu (Kanan) -->
                                 <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-slate-100 min-w-0">
                                     <div class="flex items-center gap-1.5 min-w-0 flex-nowrap overflow-hidden">
-                                        <span class="px-2 py-0.5 rounded-lg bg-[#2563EB]/10 text-[#2563EB] font-bold text-xs font-mono tracking-tight border border-blue-100/60 whitespace-nowrap shrink-0">
+                                        <span class="px-2 py-0.5 rounded-md bg-slate-100 text-[#0F172A] font-semibold text-[11px] font-mono border border-[#E2E8F0] whitespace-nowrap shrink-0">
                                             #{{ $ac->public_code }}
                                         </span>
                                         <span class="px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-red-50 text-red-700 border border-red-200 inline-flex items-center gap-1 whitespace-nowrap shrink-0">
