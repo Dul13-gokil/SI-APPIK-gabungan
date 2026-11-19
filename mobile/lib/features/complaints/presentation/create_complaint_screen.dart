@@ -128,7 +128,7 @@ class _CreateComplaintScreenState extends State<CreateComplaintScreen> {
     });
   }
 
-  // Validasi Geofencing Akurat: Menggunakan Garis Batas Polygon Administratif Resmi Kabupaten Kolaka Utara
+  // Validasi Geofencing Akurat: Menggunakan Garis Batas Polygon Administratif Resmi Kabupaten
   bool _isWithinKolakaUtara(double lat, double lon) {
     return isPointInKolakaUtaraPolygon(lat, lon);
   }
@@ -171,7 +171,7 @@ class _CreateComplaintScreenState extends State<CreateComplaintScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Sistem Pengaduan Infrastruktur saat ini khusus melayani area administratif Kabupaten Kolaka Utara.',
+              'Sistem Pengaduan Infrastruktur saat ini khusus melayani area administratif Kabupaten.',
               style: TextStyle(fontSize: 13, height: 1.4, color: Color(0xFF334155)),
             ),
             const SizedBox(height: 12),
@@ -188,7 +188,7 @@ class _CreateComplaintScreenState extends State<CreateComplaintScreen> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'Titik: ${lat.toStringAsFixed(4)}, ${lon.toStringAsFixed(4)} (Di Luar Kolaka Utara)',
+                      'Titik: ${lat.toStringAsFixed(4)}, ${lon.toStringAsFixed(4)} (Di Luar Kabupaten)',
                       style: const TextStyle(fontSize: 11, color: Color(0xFF64748B), fontFamily: 'monospace'),
                     ),
                   ),
@@ -197,7 +197,7 @@ class _CreateComplaintScreenState extends State<CreateComplaintScreen> {
             ),
             const SizedBox(height: 10),
             const Text(
-              'Silakan pilih titik lokasi kerusakan jalan atau infrastruktur di dalam wilayah 15 kecamatan Kabupaten Kolaka Utara.',
+              'Silakan pilih titik lokasi kerusakan jalan atau infrastruktur di dalam wilayah 15 kecamatan Kabupaten.',
               style: TextStyle(fontSize: 12, color: Color(0xFF64748B)),
             ),
           ],
@@ -223,7 +223,7 @@ class _CreateComplaintScreenState extends State<CreateComplaintScreen> {
                 } catch (_) {}
                 _reverseGeocode(-3.50601, 120.88780);
               },
-              child: const Text('Paham, Pilih Titik di Kolaka Utara', style: TextStyle(fontWeight: FontWeight.bold)),
+              child: const Text('Paham, Pilih Titik di Kabupaten', style: TextStyle(fontWeight: FontWeight.bold)),
             ),
           ),
         ],
@@ -884,7 +884,7 @@ class _CreateComplaintScreenState extends State<CreateComplaintScreen> {
           children: [
             V2FloatingHeader(
               title: 'Buat Laporan Baru',
-              subtitle: 'Kabupaten Kolaka Utara',
+              subtitle: 'Kabupaten',
               onBack: () => Navigator.of(context).pop(),
             ),
             Expanded(

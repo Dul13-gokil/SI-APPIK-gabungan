@@ -277,8 +277,8 @@ function setReportFormat(format) {
 
     if (subtitleEl) {
         subtitleEl.textContent = activeReportFormat === 'ats'
-            ? 'Format ATS (Teks Terstruktur & Ramah Arsip) • Kabupaten Kolaka Utara'
-            : 'Format Profesional Kedinasan • Kabupaten Kolaka Utara';
+            ? 'Format ATS (Teks Terstruktur & Ramah Arsip) • Kabupaten'
+            : 'Format Profesional Kedinasan • Kabupaten';
     }
 
     document.querySelectorAll('[data-format-btn]').forEach((btn) => {

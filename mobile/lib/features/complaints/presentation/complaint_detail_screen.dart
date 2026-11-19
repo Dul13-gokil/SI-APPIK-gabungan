@@ -1080,7 +1080,7 @@ class _ComplaintDetailScreenState extends State<ComplaintDetailScreen> {
               InkWell(
                 onTap: () => _openWhatsApp(
                   phone,
-                  defaultMessage: 'Halo, saya menghubungi terkait pengaduan infrastruktur #${widget.complaintId} di Kolaka Utara.',
+                  defaultMessage: 'Halo, saya menghubungi terkait pengaduan infrastruktur #${widget.complaintId} di Kabupaten.',
                 ),
                 borderRadius: BorderRadius.circular(8),
                 child: Container(

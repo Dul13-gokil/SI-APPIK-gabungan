@@ -1,16 +1,14 @@
 @extends('layouts.app')
 
 @section('content')
-<!-- Hero Section Asimetris 2 Kolom (Dark Scenic Backdrop Kolaka Utara + Perbaikan Jalan, High-Contrast + Bento KPI Grid) -->
+<!-- Hero Section Asimetris 2 Kolom (Dark Scenic Backdrop Kabupaten + Perbaikan Jalan, High-Contrast + Bento KPI Grid) -->
 <section id="top" class="relative z-30 w-full bg-[#0F172A] {{ auth()->check() ? 'pt-8 sm:pt-10 pb-10 sm:pb-12' : '-mt-[76px] pt-[108px] sm:pt-[120px] pb-12 sm:pb-16' }}">
     <!-- Slideshow Latar Belakang Hero (Terklip di dalam overflow-hidden agar parallax tidak menimpa section di bawah) -->
     <div class="absolute inset-0 overflow-hidden pointer-events-none z-0">
         <div id="landingHeroSlideshow" class="absolute inset-0 will-change-transform">
-            <img src="{{ asset('images/hero/hero-1.webp') }}" alt="Pemandangan Kolaka Utara" fetchpriority="high" decoding="async" class="landing-hero-slide active-slide absolute inset-0 w-full h-full object-cover opacity-100 transition-opacity duration-1000">
-            <img data-src="{{ asset('images/hero/hero-2.webp') }}" alt="Perbaikan Jalan Regu PUPR" decoding="async" class="landing-hero-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000">
-            <img data-src="{{ asset('images/hero/hero-3.webp') }}" alt="Infrastruktur Kolaka Utara" decoding="async" class="landing-hero-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000">
-            <img data-src="{{ asset('images/hero/hero-4.webp') }}" alt="Kawasan Kolaka Utara" decoding="async" class="landing-hero-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000">
-            <img data-src="{{ asset('images/hero/hero-5.webp') }}" alt="Pelayanan Infrastruktur Daerah" decoding="async" class="landing-hero-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000">
+            <img src="{{ asset('images/hero/repair-jalan.jpg') }}" alt="Perbaikan Jalan Regu PUPR" fetchpriority="high" decoding="async" class="landing-hero-slide active-slide absolute inset-0 w-full h-full object-cover opacity-100 transition-opacity duration-1000">
+            <img data-src="{{ asset('images/hero/repair-pju.jpg') }}" alt="Pemeliharaan PJU Kabupaten" decoding="async" class="landing-hero-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000">
+            <img data-src="{{ asset('images/hero/repair-fasum.jpg') }}" alt="Perbaikan Fasilitas Umum Kabupaten" decoding="async" class="landing-hero-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000">
             <!-- Overlay Gelap Kontras Tinggi -->
             <div class="absolute inset-0 bg-gradient-to-b from-slate-950/85 via-slate-950/70 to-slate-950/90"></div>
         </div>
@@ -34,11 +32,11 @@
             <div class="lg:col-span-6 space-y-5 text-left">
                 <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[#93C5FD] text-xs font-bold tracking-wide shadow-xs">
                     <span class="w-2 h-2 rounded-full bg-[#10B981] shrink-0"></span>
-                    <span>Layanan Resmi Pemkab Kolaka Utara</span>
+                    <span>Layanan Resmi Pemerintah Kabupaten</span>
                 </div>
 
                 <h1 class="font-outfit font-bold text-3xl sm:text-4xl lg:text-[2.65rem] text-white tracking-tight leading-[1.16] drop-shadow-sm">
-                    Pemantauan Jalan, Jembatan, dan Prasarana Kolaka Utara
+                    Pemantauan Jalan, Jembatan, dan Prasarana Kabupaten
                 </h1>
 
                 <p class="text-sm sm:text-base text-slate-200 leading-relaxed max-w-xl drop-shadow-xs">
@@ -448,7 +446,7 @@
         <div class="flex flex-col lg:flex-row items-center justify-between gap-6 text-center lg:text-left">
             <div class="max-w-xl space-y-2.5">
                 <span class="inline-flex items-center px-3 py-1 rounded-full bg-blue-500/15 border border-blue-400/30 text-[#60A5FA] text-xs font-semibold">
-                    Aplikasi Resmi Warga Kolaka Utara
+                    Aplikasi Resmi Warga Kabupaten
                 </span>
                 <h3 class="font-outfit font-bold text-xl sm:text-2xl lg:text-[26px] text-white tracking-tight">
                     Sampaikan Aduan Infrastruktur Anda Melalui Aplikasi
@@ -584,7 +582,7 @@
         const mapContainer = document.getElementById('gisMap');
         if (!mapContainer || mapContainer._leaflet_id) return;
 
-        // Inisialisasi Peta GIS Kabupaten (Kabupaten Kolaka Utara)
+        // Inisialisasi Peta GIS Kabupaten (Kabupaten)
         map = L.map('gisMap', {
             zoomControl: false,
             scrollWheelZoom: true,
@@ -600,7 +598,7 @@
 
         markersLayer = L.layerGroup().addTo(map);
 
-        // Batas Administratif Resmi Wilayah Kabupaten Kolaka Utara
+        // Batas Administratif Resmi Wilayah Kabupaten
         fetch('{{ asset("geojson/kolaka_utara.geojson") }}')
             .then(res => res.json())
             .then(geoJsonData => {
@@ -747,14 +745,14 @@
     }
 
     function getDistrictDisplayName(rawAddress) {
-        if (!rawAddress) return 'Kolaka Utara';
+        if (!rawAddress) return 'Kabupaten';
         const parts = rawAddress.split(',').map(s => s.trim());
         for (const p of parts) {
             if (p.toLowerCase().startsWith('kec.') || p.toLowerCase().startsWith('kecamatan')) {
                 return p.replace(/^kecamatan\s*/i, 'Kec. ');
             }
         }
-        return 'Kolaka Utara';
+        return 'Kabupaten';
     }
 
     function showMapToast(message) {
@@ -827,7 +825,7 @@
         if (summaryParts.length > 0) {
             if (drawerFilterStatusText) drawerFilterStatusText.innerText = `Filter: ${summaryParts.join(' • ')}`;
         } else {
-            if (drawerFilterStatusText) drawerFilterStatusText.innerText = 'Menampilkan semua titik di Kolaka Utara';
+            if (drawerFilterStatusText) drawerFilterStatusText.innerText = 'Menampilkan semua titik di Kabupaten';
         }
 
         // Filtering dataset
@@ -908,7 +906,7 @@
         items.forEach(item => {
             const adm = parseAdministrativeAddress(item.address);
             const districtText = getDistrictDisplayName(item.address);
-            const shortLocation = adm.village && adm.village !== 'Desa Wilayah' ? adm.village : (adm.road && adm.road !== 'Jalan / Area Kerusakan' ? adm.road : 'Kab. Kolaka Utara');
+            const shortLocation = adm.village && adm.village !== 'Desa Wilayah' ? adm.village : (adm.road && adm.road !== 'Jalan / Area Kerusakan' ? adm.road : 'Kabupaten');
 
             let badgeBg = 'bg-red-50 text-red-700 border-red-200';
             let badgeText = 'VERIFIKASI';
@@ -1297,7 +1295,7 @@
             } else {
                 countSpan.innerText = `${currentMatches.length} aduan ditemukan`;
                 suggestionsList.innerHTML = displayMatches.map((r, idx) => {
-                    const addressSnippet = r.address ? r.address.split(',')[0] : 'Kab. Kolaka Utara';
+                    const addressSnippet = r.address ? r.address.split(',')[0] : 'Kabupaten';
                     return `
                         <div class="suggestion-item px-5 py-3.5 hover:bg-[#F8FAFC] transition flex items-center justify-between gap-3 cursor-pointer group" data-index="${idx}">
                             <div class="flex items-center gap-3.5 min-w-0">

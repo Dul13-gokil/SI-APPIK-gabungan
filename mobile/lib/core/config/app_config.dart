@@ -1,17 +1,15 @@
-import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AppConfig {
   static const String appName = 'Aduan Jalan';
   static const String appVersion = '1.0.0';
 
-  // Dual Base URL otomatis sesuai platform:
-  // - Chrome / Web (kIsWeb): USB adb / local server http://127.0.0.1:8000
-  // - Mobile Android/iOS: Tailscale VPN http://100.86.30.42:8000
+  // Default Server API Production Railway:
+  // https://si-appik-production.up.railway.app/api/v1
   static String get defaultBaseUrl =>
-      kIsWeb ? 'http://127.0.0.1:8000' : 'http://100.86.30.42:8000';
+      'https://si-appik-production.up.railway.app';
   static String activeOrigin =
-      kIsWeb ? 'http://127.0.0.1:8000' : 'http://100.86.30.42:8000';
+      'https://si-appik-production.up.railway.app';
   static String get baseUrl => normalizeUrl(defaultBaseUrl);
   
   static const int connectTimeout = 15000;
@@ -47,9 +45,12 @@ class AppConfig {
   static String fixMediaUrl(String url) {
     var fixed = url.trim();
     final origin = activeOrigin.isNotEmpty ? activeOrigin : defaultBaseUrl;
-    if (fixed.startsWith('http://localhost:8000') || fixed.startsWith('http://127.0.0.1:8000')) {
+    if (fixed.startsWith('http://localhost:8000') ||
+        fixed.startsWith('http://127.0.0.1:8000') ||
+        fixed.startsWith('http://100.86.30.42:8000')) {
       fixed = fixed.replaceFirst('http://localhost:8000', origin);
       fixed = fixed.replaceFirst('http://127.0.0.1:8000', origin);
+      fixed = fixed.replaceFirst('http://100.86.30.42:8000', origin);
     }
     if (fixed.startsWith('http://si-appik-production.up.railway.app')) {
       fixed = fixed.replaceFirst('http://si-appik-production.up.railway.app', 'https://si-appik-production.up.railway.app');
@@ -67,12 +68,12 @@ class AppConfig {
   static Future<String> getBaseUrl() async {
     final prefs = await SharedPreferences.getInstance();
     var custom = prefs.getString(_keyCustomBaseUrl);
-    // Bersihkan cache lama jika masih menunjuk ke URL production Railway
-    // atau jika platform Web/Mobile masih menyimpan URL default platform lawannya
+    // Bersihkan cache lama jika masih menunjuk ke IP lokal/Tailscale
+    // agar otomatis menggunakan server utama Railway production
     if (custom != null &&
-        (custom.contains('si-appik-production.up.railway.app') ||
-            (kIsWeb && custom.contains('100.86.30.42')) ||
-            (!kIsWeb && custom.contains('127.0.0.1')))) {
+        (custom.contains('100.86.30.42') ||
+            custom.contains('127.0.0.1') ||
+            custom.contains('localhost'))) {
       await prefs.remove(_keyCustomBaseUrl);
       custom = null;
     }

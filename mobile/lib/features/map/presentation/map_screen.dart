@@ -30,7 +30,7 @@ class _MapScreenState extends State<MapScreen> {
   String _selectedFilter = 'ALL';
   Map<String, dynamic>? _selectedComplaintPreview;
 
-  // Titik Pusat Ibukota Lasusua, Kabupaten Kolaka Utara
+  // Titik Pusat Ibukota Lasusua, Kabupaten
   static const LatLng _initialCenter = LatLng(-3.50601, 120.88780);
 
   @override
@@ -246,7 +246,7 @@ class _MapScreenState extends State<MapScreen> {
           children: [
             V2FloatingHeader(
               title: 'Peta GIS Sebaran',
-              subtitle: 'Wilayah Kabupaten Kolaka Utara',
+              subtitle: 'Wilayah Kabupaten',
               leading: Container(
                 width: 36,
                 height: 36,
@@ -291,7 +291,7 @@ class _MapScreenState extends State<MapScreen> {
                 urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                 userAgentPackageName: 'com.kabupaten.aduan',
               ),
-              // Garis Batas Wilayah Administratif Resmi Kabupaten Kolaka Utara (OpenStreetMap Polygon)
+              // Garis Batas Wilayah Administratif Resmi Kabupaten (OpenStreetMap Polygon)
               PolygonLayer(
                 polygons: [
                   Polygon(

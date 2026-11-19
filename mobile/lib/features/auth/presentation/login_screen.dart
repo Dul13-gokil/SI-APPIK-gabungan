@@ -500,7 +500,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(width: 6),
                       Expanded(
                         child: Text(
-                          'Data Anda aman & dilindungi sesuai standar privasi Pemkab Kolaka Utara.',
+                          'Data Anda aman & dilindungi sesuai standar privasi Pemerintah Kabupaten.',
                           style: GoogleFonts.inter(fontSize: 11, color: AppColors.textSecondary),
                         ),
                       ),
@@ -1026,7 +1026,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 2),
                   Center(
                     child: Text(
-                      'Kabupaten Kolaka Utara • Sulawesi Tenggara',
+                      'Kabupaten • Sulawesi Tenggara',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.inter(
                         fontSize: 12,

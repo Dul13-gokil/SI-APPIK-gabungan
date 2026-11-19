@@ -309,7 +309,7 @@ class ComplaintController extends Controller
             $userId = $user->id;
         } else {
             $guestUser = User::firstOrCreate(
-                ['email' => 'tamu@kolakautarakab.go.id'],
+                ['email' => 'tamu@kabupaten.go.id'],
                 [
                     'name'         => 'Warga Tamu (Anonim)',
                     'role'         => 'WARGA',
@@ -321,12 +321,12 @@ class ComplaintController extends Controller
         }
         $category = Category::findOrFail($validated['category_id']);
 
-        // Validasi Geofencing Wilayah: Wajib berada di dalam batas Kabupaten Kolaka Utara
+        // Validasi Geofencing Wilayah: Wajib berada di dalam batas Kabupaten
         $lat = (float) $validated['latitude'];
         $lon = (float) $validated['longitude'];
         if ($lat < -3.80 || $lat > -2.75 || $lon < 120.70 || $lon > 121.50) {
             return ApiResponse::error(
-                'Titik lokasi laporan berada di luar batas wilayah Kabupaten Kolaka Utara. Sistem saat ini hanya melayani wilayah Kabupaten Kolaka Utara.',
+                'Titik lokasi laporan berada di luar batas wilayah Kabupaten. Sistem saat ini hanya melayani wilayah Kabupaten.',
                 422
             );
         }
@@ -728,7 +728,7 @@ class ComplaintController extends Controller
         $lat = (float) $request->lat;
         $lon = (float) $request->lon;
 
-        // Cari kecamatan dan desa/pusat administratif terdekat dari 15 kecamatan resmi Kolaka Utara
+        // Cari kecamatan dan desa/pusat administratif terdekat dari 15 kecamatan resmi Kabupaten
         $nearestRegion = \App\Models\Region::selectRaw('*, (6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance', [$lat, $lon, $lat])
             ->orderBy('distance', 'asc')
             ->first();
@@ -736,7 +736,7 @@ class ComplaintController extends Controller
         $road = '';
         $village = $nearestRegion?->village ?? 'Kel. Lasusua';
         $district = $nearestRegion?->district ?? 'Kecamatan Lasusua';
-        $regency = 'Kabupaten Kolaka Utara';
+        $regency = 'Kabupaten';
 
         try {
             $response = \Illuminate\Support\Facades\Http::withHeaders([
@@ -778,7 +778,7 @@ class ComplaintController extends Controller
         }
         $parts[] = "Desa/Kel. {$cleanVillage}";
         $parts[] = "Kec. {$cleanDistrict}";
-        $parts[] = "Kab. Kolaka Utara";
+        $parts[] = "Kabupaten";
 
         $formatted = implode(', ', $parts);
         $isWithinKolaka = ($lat >= -3.80 && $lat <= -2.50 && $lon >= 120.70 && $lon <= 121.50);
@@ -788,7 +788,7 @@ class ComplaintController extends Controller
             'road'                  => $road,
             'village'               => $cleanVillage,
             'district'              => "Kecamatan {$cleanDistrict}",
-            'regency'               => 'Kabupaten Kolaka Utara',
+            'regency'               => 'Kabupaten',
             'formatted_address'     => $formatted,
             'display_name'          => $formatted,
             'is_within_kolaka_utara'=> $isWithinKolaka,
@@ -821,7 +821,7 @@ class ComplaintController extends Controller
 
         $parts[] = "Desa/Kel. " . trim($villageName);
         $parts[] = "Kec. " . trim($districtName);
-        $parts[] = "Kab. Kolaka Utara";
+        $parts[] = "Kabupaten";
 
         return implode(', ', $parts);
     }

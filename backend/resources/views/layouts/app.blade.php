@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Portal resmi pengaduan dan pemantauan infrastruktur jalan, jembatan, dan fasilitas umum Kabupaten Kolaka Utara (Dinas PUPR).">
+    <meta name="description" content="Portal resmi pengaduan dan pemantauan infrastruktur jalan, jembatan, dan fasilitas umum Kabupaten (Dinas PUPR).">
     <meta name="format-detection" content="telephone=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'SI-APPIK')</title>
     @if(request()->routeIs('home'))
-        <link rel="preload" as="image" href="{{ asset('images/hero/hero-1.webp') }}" fetchpriority="high">
+        <link rel="preload" as="image" href="{{ asset('images/hero/repair-jalan.jpg') }}" fetchpriority="high">
     @endif
     <link rel="icon" type="image/png" href="{{ asset('images/logo-pin.png') }}?v=5">
     <link rel="shortcut icon" type="image/png" href="{{ asset('images/logo-pin.png') }}?v=5">
@@ -150,7 +150,7 @@
                         <a href="{{ url('/') }}" class="font-outfit font-bold text-base block hover:opacity-90 transition text-[#0F172A] tracking-tight">
                             SI-APPIK
                         </a>
-                        <span class="text-[10px] text-[#475569] font-semibold uppercase tracking-wider block mt-1">Kab. Kolaka Utara</span>
+                        <span class="text-[10px] text-[#475569] font-semibold uppercase tracking-wider block mt-1">Kabupaten</span>
                     </div>
                 </div>
 
@@ -365,7 +365,7 @@
             </main>
 
             <footer class="border-t border-[#E2E8F0] bg-white py-4 px-6 text-center text-xs text-slate-600">
-                © 2026 Pemerintah Kabupaten Kolaka Utara • Dinas Pekerjaan Umum dan Penataan Ruang (PUPR)
+                © 2026 Pemerintah Kabupaten • Dinas Pekerjaan Umum dan Penataan Ruang (PUPR)
             </footer>
         </div>
     </div>
@@ -388,7 +388,7 @@
                                     SI-APPIK
                                 </span>
                                 <span class="hidden lg:block text-[11px] text-[#475569] font-medium mt-0.5 truncate">
-                                    Kabupaten Kolaka Utara &bull; Dinas PUPR
+                                    Kabupaten &bull; Dinas PUPR
                                 </span>
                             </div>
                         </a>
@@ -563,7 +563,7 @@
         @if(!request()->routeIs('login'))
         <footer class="border-t border-[#E2E8F0] bg-white py-6 px-6 text-center text-xs text-[#475569]">
             <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
-                <span>© 2026 Pemerintah Kabupaten Kolaka Utara • Dinas Pekerjaan Umum dan Penataan Ruang (PUPR)</span>
+                <span>© 2026 Pemerintah Kabupaten • Dinas Pekerjaan Umum dan Penataan Ruang (PUPR)</span>
                 <div class="flex items-center gap-4 text-xs font-semibold text-[#475569]">
                     <a href="#download-app" class="text-[#2563EB] hover:text-[#1D4ED8] flex items-center gap-1.5 transition font-bold">
                         <i data-lucide="smartphone" class="w-3.5 h-3.5 text-[#2563EB]"></i>
@@ -655,7 +655,7 @@
             return false;
         }
 
-        // Jam Realtime Berjalan Akurat Waktu Indonesia Tengah (WITA / Kolaka Utara, UTC+8)
+        // Jam Realtime Berjalan Akurat Waktu Indonesia Tengah (WITA / Kabupaten, UTC+8)
         function updateLiveWitaClock() {
             const clockElements = document.querySelectorAll('.live-wita-clock');
             if (!clockElements.length) return;

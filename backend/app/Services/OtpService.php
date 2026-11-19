@@ -53,14 +53,14 @@ class OtpService
                     'note'        => '<strong>Keamanan:</strong> Jangan bagikan kode ini kepada siapa pun, termasuk pihak yang mengaku petugas atau admin.',
                 ])->render();
 
-                $subject = "[KODE OTP: {$code}] Verifikasi Akun SI-APPIK Pemkab Kolaka Utara";
+                $subject = "[KODE OTP: {$code}] Verifikasi Akun SI-APPIK Pemerintah Kabupaten";
                 $plainBody = "KODE OTP ANDA: {$code}\n\n"
                     . "Kode verifikasi ini digunakan untuk {$purposeLabel}.\n"
                     . "Masa berlaku: {$validMinutes} Menit.\n\n"
                     . "PERHATIAN KEAMANAN:\n"
                     . "JANGAN PERNAH memberikan kode OTP ini kepada siapa pun, termasuk pihak yang mengaku sebagai admin, pekerja lapangan, atau operator dinas.\n\n"
                     . "Dinas Pekerjaan Umum & Penataan Ruang (PUPR)\n"
-                    . "Pemerintah Kabupaten Kolaka Utara";
+                    . "Pemerintah Kabupaten";
 
                 Mail::send([], [], function ($message) use ($normalizedEmail, $subject, $htmlBody, $plainBody) {
                     $message->to($normalizedEmail)

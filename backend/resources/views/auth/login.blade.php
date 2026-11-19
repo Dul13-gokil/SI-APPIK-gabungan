@@ -5,15 +5,13 @@
 @section('content')
 <div class="min-h-screen lg:h-screen lg:overflow-hidden grid grid-cols-1 lg:grid-cols-2 bg-[#FAFAFA]">
 
-    <!-- Sisi Kiri Desktop: Panel Visual Kolaka Utara (5 Gambar Slideshow Zoom-In/Zoom-Out) -->
+    <!-- Sisi Kiri Desktop: Panel Visual Kabupaten (5 Gambar Slideshow Zoom-In/Zoom-Out) -->
     <aside class="hidden lg:flex flex-col justify-between bg-[#0F172A] px-14 py-9 text-white h-full overflow-hidden relative">
-        <!-- Slideshow 5 Gambar Kolaka Utara dengan Animasi Zoom-In -> Zoom-Out -->
+        <!-- Slideshow 5 Gambar Kabupaten dengan Animasi Zoom-In -> Zoom-Out -->
         <div id="loginHeroSlideshow" class="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-            <img src="{{ asset('images/hero/hero-1.webp') }}" alt="Pemandangan Kolaka Utara 1" class="login-slide active-slide absolute inset-0 w-full h-full object-cover opacity-100 transition-opacity duration-1000">
-            <img src="{{ asset('images/hero/hero-2.webp') }}" alt="Pemandangan Kolaka Utara 2" class="login-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000">
-            <img src="{{ asset('images/hero/hero-3.webp') }}" alt="Pemandangan Kolaka Utara 3" class="login-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000">
-            <img src="{{ asset('images/hero/hero-4.webp') }}" alt="Pemandangan Kolaka Utara 4" class="login-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000">
-            <img src="{{ asset('images/hero/hero-5.webp') }}" alt="Pemandangan Kolaka Utara 5" class="login-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000">
+            <img src="{{ asset('images/hero/repair-jalan.jpg') }}" alt="Perbaikan Jalan Kabupaten" class="login-slide active-slide absolute inset-0 w-full h-full object-cover opacity-100 transition-opacity duration-1000">
+            <img src="{{ asset('images/hero/repair-pju.jpg') }}" alt="Pemeliharaan PJU Kabupaten" class="login-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000">
+            <img src="{{ asset('images/hero/repair-fasum.jpg') }}" alt="Perbaikan Fasilitas Umum Kabupaten" class="login-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000">
             <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/55 to-slate-950/75"></div>
         </div>
 
@@ -52,7 +50,7 @@
                     SI-APPIK
                 </span>
                 <span class="text-xs font-medium text-slate-200 mt-1 block drop-shadow-xs">
-                    Kabupaten Kolaka Utara &bull; Sulawesi Tenggara
+                    Pemerintah Kabupaten &bull; Dinas PUPR
                 </span>
             </div>
         </div>
@@ -60,7 +58,7 @@
         <!-- Sambutan Utama -->
         <div class="relative z-10 space-y-4 max-w-xl my-auto">
             <h1 class="font-outfit font-bold text-[28px] xl:text-[32px] leading-[1.24] tracking-tight text-white drop-shadow-sm">
-                Portal Terpadu Monitoring &amp; Penanganan Aduan Infrastruktur Kabupaten Kolaka Utara
+                Portal Terpadu Monitoring &amp; Penanganan Aduan Infrastruktur Kabupaten
             </h1>
 
             <p class="text-sm xl:text-[15px] leading-relaxed text-slate-100 drop-shadow-xs">
@@ -70,7 +68,7 @@
 
         <!-- Hak Cipta Tunggal (Desktop) -->
         <div class="relative z-10 text-xs font-medium text-slate-300">
-            &copy; 2026 Pemerintah Kabupaten Kolaka Utara &bull; Dinas Pekerjaan Umum dan Penataan Ruang
+            &copy; 2026 Pemerintah Kabupaten &bull; Dinas Pekerjaan Umum dan Penataan Ruang
         </div>
     </aside>
 
@@ -85,7 +83,7 @@
                 </div>
                 <div>
                     <span class="font-outfit font-bold text-xl text-[#0F172A] block leading-tight">SI-APPIK</span>
-                    <span class="text-xs font-medium text-[#475569] block leading-snug mt-0.5">Sistem Pengaduan Infrastruktur Kolaka Utara</span>
+                    <span class="text-xs font-medium text-[#475569] block leading-snug mt-0.5">Sistem Pengaduan Infrastruktur Kabupaten</span>
                 </div>
             </div>
 
@@ -197,7 +195,7 @@
                             </div>
                             <input id="email" name="email" type="text" autocomplete="username" required
                                 value="{{ old('email', app()->environment('local', 'development') ? 'operator@kabupaten.go.id' : '') }}"
-                                placeholder="contoh: operator@kolakautara.go.id"
+                                placeholder="contoh: operator@kabupaten.go.id"
                                 class="block w-full h-[48px] pl-11 pr-4 text-sm text-[#0F172A] placeholder:text-[#94A3B8] rounded-[14px] border border-[#E2E8F0] bg-white hover:border-[#CBD5E1] focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20 focus:border-[#2563EB] transition">
                         </div>
 
@@ -276,10 +274,10 @@
             <!-- Catatan Bawah (Hanya 1 Copyright di Mobile; di Desktop copyright sudah ada di panel kiri) -->
             <div class="text-center space-y-1">
                 <p class="text-[11.5px] font-medium text-[#475569]">
-                    Belum memiliki akses akun petugas? Hubungi Admin Dinas PUPR Kabupaten Kolaka Utara.
+                    Belum memiliki akses akun petugas? Hubungi Admin Dinas PUPR Kabupaten.
                 </p>
                 <p class="lg:hidden text-[11px] text-[#94A3B8]">
-                    &copy; 2026 Pemerintah Kabupaten Kolaka Utara &bull; Dinas PUPR
+                    &copy; 2026 Pemerintah Kabupaten &bull; Dinas PUPR
                 </p>
             </div>
 
@@ -399,7 +397,7 @@
                         Atur Ulang Kata Sandi
                     </h3>
                     <p class="text-[11px] text-[#64748B] mt-0.5 leading-snug truncate">
-                        Verifikasi Kode OTP Resmi SI-APPIK Kolaka Utara
+                        Verifikasi Kode OTP Resmi SI-APPIK Kabupaten
                     </p>
                 </div>
             </div>

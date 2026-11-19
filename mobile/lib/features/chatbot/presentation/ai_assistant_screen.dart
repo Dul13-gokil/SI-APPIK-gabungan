@@ -71,8 +71,8 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
       if (res.statusCode == 201 && res.data['data'] != null) {
         final data = res.data['data'];
         final initialText = _isPetugas
-            ? 'Halo, saya **Asisten Teknis SI-APPIK** Kabupaten Kolaka Utara.\n\nSaya siap membantu Anda seputar:\n• **Cara Mengambil Tugas** & mulai pengerjaan SPK\n• **Aturan Kuota 3 Tugas** & batas waktu penanganan (SLA)\n• **Tips Foto Bukti Validasi** hasil perbaikan lapangan\n• **Aktivasi Akun, OTP & Ganti Kata Sandi**\n• Lacak status tiket (ketik kode seperti `0003/ringan/2026`)\n\nAda yang bisa saya bantu hari ini?'
-            : 'Halo! Saya **Asisten SI-APPIK** Kabupaten Kolaka Utara.\n\nSaya siap membantu Anda seputar:\n• **Panduan Lapor** (Metode AI YOLOv8 atau Manual)\n• **Beda Tipe** laporan *Titik (Ringan)* vs *Ruas Jalan (Berat)*\n• **Verifikasi OTP & Ganti Kata Sandi**\n• **Wilayah & SLA** penanganan 15 kecamatan Kolaka Utara\n• Lacak status laporan (ketik kode seperti `0003/ringan/2026`)\n\nAda yang ingin Anda tanyakan?';
+            ? 'Halo, saya **Asisten Teknis SI-APPIK** Kabupaten.\n\nSaya siap membantu Anda seputar:\n• **Cara Mengambil Tugas** & mulai pengerjaan SPK\n• **Aturan Kuota 3 Tugas** & batas waktu penanganan (SLA)\n• **Tips Foto Bukti Validasi** hasil perbaikan lapangan\n• **Aktivasi Akun, OTP & Ganti Kata Sandi**\n• Lacak status tiket (ketik kode seperti `0003/ringan/2026`)\n\nAda yang bisa saya bantu hari ini?'
+            : 'Halo! Saya **Asisten SI-APPIK** Kabupaten.\n\nSaya siap membantu Anda seputar:\n• **Panduan Lapor** (Metode AI YOLOv8 atau Manual)\n• **Beda Tipe** laporan *Titik (Ringan)* vs *Ruas Jalan (Berat)*\n• **Verifikasi OTP & Ganti Kata Sandi**\n• **Wilayah & SLA** penanganan 15 kecamatan Kabupaten\n• Lacak status laporan (ketik kode seperti `0003/ringan/2026`)\n\nAda yang ingin Anda tanyakan?';
 
         setState(() {
           _sessionId = data['session_id'].toString();
@@ -90,8 +90,8 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
         _messages.add(
           ChatMessageModel(
             text: _isPetugas
-                ? 'Halo, saya **Asisten Teknis SI-APPIK** Kabupaten Kolaka Utara. Saya siap membantu panduan ambil tugas SPK, kuota 3 tugas aktif, foto bukti validasi, SLA dinas, atau lacak tiket (misal: `0003/ringan/2026`).'
-                : 'Halo! Saya **Asisten SI-APPIK** Kabupaten Kolaka Utara. Saya siap membantu panduan lapor (AI / Manual), beda tipe Titik vs Ruas Jalan, verifikasi OTP, ganti kata sandi, atau lacak tiket (misal: `0003/ringan/2026`).',
+                ? 'Halo, saya **Asisten Teknis SI-APPIK** Kabupaten. Saya siap membantu panduan ambil tugas SPK, kuota 3 tugas aktif, foto bukti validasi, SLA dinas, atau lacak tiket (misal: `0003/ringan/2026`).'
+                : 'Halo! Saya **Asisten SI-APPIK** Kabupaten. Saya siap membantu panduan lapor (AI / Manual), beda tipe Titik vs Ruas Jalan, verifikasi OTP, ganti kata sandi, atau lacak tiket (misal: `0003/ringan/2026`).',
             isUser: false,
             time: DateTime.now(),
           ),
@@ -171,7 +171,7 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
     if (_isPetugas) {
       if (lower.contains('apa itu petugas') || lower.contains('pekerja lapangan') || lower.contains('peran petugas') || lower.contains('tugas petugas') || lower.contains('siapa petugas')) {
         return '👷‍♂️ **Mengenal Peran Pekerja Lapangan (Dinas PUPR & PRKP):**\n\n'
-            'Pekerja Lapangan adalah **tim teknis operasional resmi** Pemerintah Kabupaten Kolaka Utara yang bertugas langsung di lokasi kejadian untuk menangani perbaikan fisik infrastruktur publik berdasarkan Surat Perintah Kerja (SPK) dari Operator Dinas.\n\n'
+            'Pekerja Lapangan adalah **tim teknis operasional resmi** Pemerintah Kabupaten yang bertugas langsung di lokasi kejadian untuk menangani perbaikan fisik infrastruktur publik berdasarkan Surat Perintah Kerja (SPK) dari Operator Dinas.\n\n'
             '🔑 **Wewenang & Fitur Khusus di Aplikasi Mobile:**\n'
             '1. **Menerima Disposisi Tugas:** Memantau SPK penugasan pada tab *Tugas Aktif* lengkap dengan data koordinat GPS satelit dan foto laporan warga.\n'
             '2. **Navigasi Rute Nyata GIS (OSRM):** Menghubungkan langsung ke rute jalan nyata menuju titik kerusakan.\n'
@@ -211,8 +211,8 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
       }
 
       if (lower.contains('tentang aplikasi') || lower.contains('apa itu aplikasi') || lower.contains('info aplikasi')) {
-        return '📱 **Tentang Aplikasi Pekerja Lapangan Kolaka Utara:**\n\n'
-            'Aplikasi ini adalah modul kerja terpadu untuk tim teknis lapangan Dinas PUPR & PRKP Kabupaten Kolaka Utara.\n\n'
+        return '📱 **Tentang Aplikasi Pekerja Lapangan Kabupaten:**\n\n'
+            'Aplikasi ini adalah modul kerja terpadu untuk tim teknis lapangan Dinas PUPR & PRKP Kabupaten.\n\n'
             '🌟 **Kemampuan Sistem:**\n'
             '• **Penerimaan SPK Real-Time:** Notifikasi penugasan langsung dari Operator Dinas.\n'
             '• **Navigasi GIS:** Peta digital interaktif dengan rute jalan nyata OSRM ke titik koordinat kerusakan.\n'
@@ -313,12 +313,12 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
 
     // Tanya Tentang Aplikasi
     if (lower.contains('tentang aplikasi') || lower.contains('apa itu aplikasi') || lower.contains('seputar aplikasi') || lower.contains('info aplikasi')) {
-      return '📱 **Tentang Aplikasi Pengaduan Infrastruktur Kolaka Utara:**\n\n'
-          'Aplikasi ini merupakan platform digital resmi Pemerintah Kabupaten Kolaka Utara (Dinas PUPR & PRKP) untuk partisipasi aktif warga dalam mempercepat penanganan fasilitas umum rusak.\n\n'
+      return '📱 **Tentang Aplikasi Pengaduan Infrastruktur Kabupaten:**\n\n'
+          'Aplikasi ini merupakan platform digital resmi Pemerintah Kabupaten (Dinas PUPR & PRKP) untuk partisipasi aktif warga dalam mempercepat penanganan fasilitas umum rusak.\n\n'
           '🌟 **Fitur-Fitur Utama:**\n'
           '• 🤖 **AI Computer Vision (YOLOv8):** Memeriksa foto kerusakan (lubang jalan, retakan, lampu PJU) dan mendeteksi kondisi jalan secara otomatis.\n'
           '• 🛣️ **2 Skema Laporan:** Kerusakan Ringan (< 500m, 1 titik GPS) dan Kerusakan Berat (≥ 500m, rute 2 titik GPS awal & akhir).\n'
-          '• 📍 **Geofencing Kabupaten:** Menolak otomatis lokasi di luar batas administratif 15 kecamatan Kolaka Utara.\n'
+          '• 📍 **Geofencing Kabupaten:** Menolak otomatis lokasi di luar batas administratif 15 kecamatan Kabupaten.\n'
           '• ⏱️ **Transparansi SLA:** Batas waktu penanganan terukur (Jembatan 24 jam, Jalan berlubang 48 jam, Lampu PJU 72 jam).\n'
           '• 🔒 **Privasi Terjaga:** Nomor HP pelapor disamarkan untuk sesama warga demi kenyamanan privasi.\n'
           '• 💬 **Asisten SI-APPIK:** Siap memandu pembuatan laporan dan melacak status tiket kapan saja.';
@@ -357,7 +357,7 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
     // Tanya Mengenai Pekerja Lapangan (Dari Sudut Pandang Warga)
     if (lower.contains('apa itu petugas') || lower.contains('pekerja lapangan') || lower.contains('siapa yang perbaiki') || lower.contains('siapa petugas')) {
       return '👷‍♂️ **Siapa Itu Pekerja Lapangan?**\n\n'
-          'Pekerja Lapangan adalah **tim teknis operasional resmi** dari Dinas PUPR & PRKP Kabupaten Kolaka Utara yang diterjunkan ke lokasi untuk melakukan perbaikan fisik infrastruktur.\n\n'
+          'Pekerja Lapangan adalah **tim teknis operasional resmi** dari Dinas PUPR & PRKP Kabupaten yang diterjunkan ke lokasi untuk melakukan perbaikan fisik infrastruktur.\n\n'
           '• **Menerima SPK:** Mendapat perintah kerja resmi setelah laporan Anda diverifikasi oleh Operator Dinas.\n'
           '• **Navigasi Langsung:** Datang ke lokasi titik kerusakan berpandukan koordinat GPS di aplikasi.\n'
           '• **Pengerjaan Fisik:** Melakukan penambalan jalan aspal, penggantian lampu PJU, atau perbaikan darurat jembatan.\n'
@@ -402,9 +402,9 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
     }
 
     if (lower.contains('wilayah') || lower.contains('kolaka') || lower.contains('kecamatan') || lower.contains('geofence')) {
-      return '📍 **Wilayah Layanan Kabupaten Kolaka Utara:**\n\n'
+      return '📍 **Wilayah Layanan Kabupaten:**\n\n'
           'Meliputi 15 kecamatan: Lasusua, Wawo, Ngapa, Kodeoha, Pakue, Pakue Tengah, Pakue Utara, Tiwu, Tolala, Ranteangin, Lambai, Katoi, Porehu, Watunohu, dan Batu Putih.\n'
-          'Dilengkapi Geofencing: Pelaporan di luar batas wilayah Kolaka Utara tidak dapat diproses.';
+          'Dilengkapi Geofencing: Pelaporan di luar batas wilayah Kabupaten tidak dapat diproses.';
     }
 
     if (lower.contains('profil') || lower.contains('akun') || lower.contains('username') || lower.contains('notifikasi')) {
@@ -417,7 +417,7 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
     }
 
     if (lower.contains('kontak') || lower.contains('darurat') || lower.contains('112') || lower.contains('telepon')) {
-      return '🚨 **Kontak Darurat Kabupaten Kolaka Utara:**\n\n'
+      return '🚨 **Kontak Darurat Kabupaten:**\n\n'
           '• **Call Center Darurat:** **112** (Siaga 24 Jam Bebas Pulsa)\n'
           '• **Dinas PUPR (Operator):** (0405) 2321100\n\n'
           'Gunakan nomor darurat di atas untuk kondisi genting yang memerlukan pengamanan kilat di jalan raya.';
@@ -431,7 +431,7 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
 
     return _isPetugas
         ? 'Halo Rekan Pekerja Lapangan Dinas PUPR! 👷‍♂️\n'
-            'Saya **Asisten Teknis SI-APPIK** Kabupaten Kolaka Utara. Anda dapat menanyakan seputar operasional aplikasi:\n\n'
+            'Saya **Asisten Teknis SI-APPIK** Kabupaten. Anda dapat menanyakan seputar operasional aplikasi:\n\n'
             '• 👷‍♂️ **Apa Itu Pekerja Lapangan** (peran, tugas & wewenang)\n'
             '• 📋 **Cara Mengambil Tugas** (panduan ambil & mulai tugas SPK)\n'
             '• 📱 **Tentang Aplikasi** (fitur aplikasi & navigasi GIS)\n'
@@ -441,14 +441,14 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
             '• ⚠️ **Batas Maksimal 3 Tugas** (aturan kuota pengerjaan)\n'
             '• ⏱️ **Batas Waktu (SLA)** (tenggat waktu standar dinas)\n'
             '• 🔍 **Lacak tiket aduan** (ketik nomor tiket, misal: **0005/ringan/2026**)'
-        : 'Halo! Saya **Asisten SI-APPIK** Kabupaten Kolaka Utara. Anda dapat menanyakan:\n\n'
+        : 'Halo! Saya **Asisten SI-APPIK** Kabupaten. Anda dapat menanyakan:\n\n'
             '• 📱 **Tentang Aplikasi** (fitur unggulan & sistem pengaduan)\n'
             '• ✉️ **Cara Verifikasi OTP** (kode OTP pendaftaran & akun)\n'
             '• 🔑 **Lupa / Ganti Password** (ubah & reset kata sandi)\n'
             '• 🛣️ **Beda Kerusakan Ringan vs Berat** (titik vs ruas jalan)\n'
             '• 🤖 **Tips Foto AI Computer Vision** (deteksi otomatis foto)\n'
             '• ⏱️ **Standar waktu pengerjaan dinas (SLA)**\n'
-            '• 📍 **Batas wilayah 15 Kecamatan Kolaka Utara**\n'
+            '• 📍 **Batas wilayah 15 Kecamatan Kabupaten**\n'
             '• 🔍 **Cek nomor tiket** (misal: **0005/ringan/2026**)\n'
             '• 🚨 **Kontak Darurat 112**';
   }
@@ -475,7 +475,7 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
           children: [
             V2FloatingHeader(
               title: _isPetugas ? 'Asisten Teknis SI-APPIK' : 'Asisten SI-APPIK',
-              subtitle: _isPetugas ? 'Operasional Petugas Dinas PUPR' : 'Dukungan Warga Kolaka Utara',
+              subtitle: _isPetugas ? 'Operasional Petugas Dinas PUPR' : 'Dukungan Warga Kabupaten',
               leading: Container(
                 width: 36,
                 height: 36,
@@ -522,7 +522,7 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
                         _buildQuickChip('Beda Kerusakan Ringan vs Berat'),
                         _buildQuickChip('Tips Foto AI Computer Vision'),
                         _buildQuickChip('Berapa lama penanganan (SLA)?'),
-                        _buildQuickChip('15 Kecamatan Kolaka Utara'),
+                        _buildQuickChip('15 Kecamatan Kabupaten'),
                         _buildQuickChip('Lacak tiket aduan'),
                         _buildQuickChip('Kontak Darurat 112'),
                       ],

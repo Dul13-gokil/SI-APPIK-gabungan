@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{ $title ?? 'SI-APPIK Kolaka Utara' }}</title>
+  <title>{{ $title ?? 'SI-APPIK Kabupaten' }}</title>
 </head>
 <body style="margin: 0; padding: 0; background-color: #F8FAFC; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; color: #0F172A; -webkit-font-smoothing: antialiased;">
   @php
@@ -46,7 +46,7 @@
                 <tr>
                   <td style="vertical-align: middle;">
                     <span style="font-size: 15px; font-weight: 800; color: #0F172A; letter-spacing: -0.2px;">SI-APPIK</span>
-                    <span style="font-size: 12px; font-weight: 500; color: #64748B;"> &bull; Kolaka Utara</span>
+                    <span style="font-size: 12px; font-weight: 500; color: #64748B;"> &bull; Kabupaten</span>
                   </td>
                   @if(!empty($badge))
                   <td align="right" style="vertical-align: middle;">
@@ -167,7 +167,7 @@
           <tr>
             <td style="background-color: #F8FAFC; border-top: 1px solid #F1F5F9; padding: 14px 24px; text-align: center;">
               <p style="margin: 0; font-size: 11px; color: #94A3B8; line-height: 1.5;">
-                Dinas PUPR Kabupaten Kolaka Utara &bull; Email otomatis, mohon tidak membalas.
+                Dinas PUPR Kabupaten &bull; Email otomatis, mohon tidak membalas.
               </p>
             </td>
           </tr>

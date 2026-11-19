@@ -43,7 +43,7 @@ class SecurityMailService
                 'Perangkat' => e($deviceInfo),
             ],
             'noteTone' => 'danger',
-            'note'     => '<strong>Bukan Anda?</strong> Segera atur ulang kata sandi melalui aplikasi dan hubungi Administrator IT Dinas PUPR Kolaka Utara.',
+            'note'     => '<strong>Bukan Anda?</strong> Segera atur ulang kata sandi melalui aplikasi dan hubungi Administrator IT Dinas PUPR Kabupaten.',
         ])->render();
 
         $plainText = "PEMBERITAHUAN PERUBAHAN KATA SANDI - SI-APPIK\n\n"
@@ -54,7 +54,7 @@ class SecurityMailService
             . "- Lokasi: {$deviceLocation}\n"
             . "- Perangkat: {$deviceInfo}\n\n"
             . "Jika BUKAN Anda yang melakukan perubahan ini, segera amankan akun Anda dengan melakukan reset kata sandi melalui aplikasi.\n\n"
-            . "Pemerintah Kabupaten Kolaka Utara - Dinas PUPR";
+            . "Pemerintah Kabupaten - Dinas PUPR";
 
         return $this->sendPriorityMail($normalizedEmail, $subject, $htmlBody, $plainText);
     }
@@ -148,7 +148,7 @@ class SecurityMailService
           <tr>
             <td style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; padding: 18px 24px; text-align: center;">
               <p style="margin: 0; color: #64748b; font-size: 11.5px;">
-                Dinas Pekerjaan Umum & Penataan Ruang (PUPR) - Kab. Kolaka Utara
+                Dinas Pekerjaan Umum & Penataan Ruang (PUPR) - Kabupaten
               </p>
               <p style="margin: 4px 0 0 0; color: #94a3b8; font-size: 11px;">
                 Email otomatis dari sistem keamanan &bull; Mohon tidak membalas email ini
@@ -170,7 +170,7 @@ HTML;
             . "- IP Address: {$ip}\n"
             . "- Perangkat: {$deviceInfo}\n\n"
             . "Jika bukan Anda, segera ubah kata sandi akun Anda melalui aplikasi.\n\n"
-            . "Pemerintah Kabupaten Kolaka Utara - Dinas PUPR";
+            . "Pemerintah Kabupaten - Dinas PUPR";
 
         return $this->sendPriorityMail($normalizedEmail, $subject, $htmlBody, $plainText);
     }
@@ -189,10 +189,10 @@ HTML;
         $isOperator = in_array(strtoupper($role), ['OPERATOR', 'DINAS']);
         $roleTitle = $isOperator ? 'Operator Verifikasi Sistem' : 'Pekerja Lapangan (Tim Teknis PUPR)';
         $portalDescription = $isOperator 
-            ? 'Portal Web Resmi SI-APPIK Kolaka Utara' 
+            ? 'Portal Web Resmi SI-APPIK Kabupaten' 
             : 'Aplikasi Mobile SI-APPIK & Web Portal Petugas';
 
-        $subject = "[AKUN BARU] Selamat Datang di SI-APPIK Kolaka Utara - Akun {$roleTitle}";
+        $subject = "[AKUN BARU] Selamat Datang di SI-APPIK Kabupaten - Akun {$roleTitle}";
 
         $safeName = e($user->name);
         $htmlBody = view('emails.v2_notification', [
@@ -201,8 +201,8 @@ HTML;
             'title'       => "Akun {$roleTitle} Aktif",
             'greeting'    => "Halo <strong>{$safeName}</strong>,",
             'intro'       => $isOperator
-                ? "Akun Anda sebagai <strong>{$roleTitle}</strong> Dinas PUPR Kolaka Utara telah dibuat untuk verifikasi laporan, disposisi regu, dan validasi pekerjaan."
-                : "Akun Anda sebagai <strong>{$roleTitle}</strong> Dinas PUPR Kolaka Utara telah dibuat untuk menerima penugasan perbaikan dan mengunggah dokumentasi lapangan.",
+                ? "Akun Anda sebagai <strong>{$roleTitle}</strong> Dinas PUPR Kabupaten telah dibuat untuk verifikasi laporan, disposisi regu, dan validasi pekerjaan."
+                : "Akun Anda sebagai <strong>{$roleTitle}</strong> Dinas PUPR Kabupaten telah dibuat untuk menerima penugasan perbaikan dan mengunggah dokumentasi lapangan.",
             'details'     => [
                 'Email'              => e($user->email),
                 'Kata Sandi Awal'    => '<span style="font-family: monospace;">' . e($defaultPassword) . '</span>',
@@ -215,15 +215,15 @@ HTML;
             'note'        => '<strong>Login Pertama:</strong> Periksa nama lengkap, lengkapi nomor WhatsApp aktif, dan ganti kata sandi awal Anda.',
         ])->render();
 
-        $plainText = "AKTIVASI AKUN {$roleTitle} - SI-APPIK KOLAKA UTARA\n\n"
+        $plainText = "AKTIVASI AKUN {$roleTitle} - SI-APPIK KABUPATEN\n\n"
             . "Halo {$user->name},\n\n"
-            . "Anda telah didaftarkan sebagai {$roleTitle} pada SI-APPIK Dinas PUPR Kabupaten Kolaka Utara.\n\n"
+            . "Anda telah didaftarkan sebagai {$roleTitle} pada SI-APPIK Dinas PUPR Kabupaten.\n\n"
             . "Informasi Akun:\n"
             . "- Email: {$user->email}\n"
             . "- Kata Sandi Default: {$defaultPassword}\n"
             . "- Tautan Masuk: {$loginUrl}\n\n"
             . "PENTING: Saat pertama kali masuk, Anda diwajibkan memeriksa nama, melengkapi nomor handphone/WA, dan mengganti kata sandi default menjadi kata sandi pribadi Anda.\n\n"
-            . "Pemerintah Kabupaten Kolaka Utara - Dinas PUPR";
+            . "Pemerintah Kabupaten - Dinas PUPR";
 
         return $this->sendPriorityMail($normalizedEmail, $subject, $htmlBody, $plainText);
     }
@@ -256,7 +256,7 @@ HTML;
             'intro'    => 'Data profil akun SI-APPIK Anda baru saja diperbarui oleh <strong>Super Administrator</strong>:',
             'details'  => $details,
             'noteTone' => 'warning',
-            'note'     => '<strong>Catatan Keamanan:</strong> Jika Anda tidak meminta perubahan ini, segera hubungi Helpdesk IT Dinas PUPR Kolaka Utara.',
+            'note'     => '<strong>Catatan Keamanan:</strong> Jika Anda tidak meminta perubahan ini, segera hubungi Helpdesk IT Dinas PUPR Kabupaten.',
         ])->render();
 
         $plainText = "PEMBERITAHUAN PEMBARUAN PROFIL AKUN - SI-APPIK\n\n"
@@ -265,8 +265,8 @@ HTML;
             . "Rincian Pembaruan:\n"
             . $changeRowsPlain
             . "- Waktu: {$timeString}\n\n"
-            . "Jika Anda merasa tidak mengajukan permohonan ini, hubungi Administrator IT Dinas PUPR Kolaka Utara.\n\n"
-            . "Pemerintah Kabupaten Kolaka Utara - Dinas PUPR";
+            . "Jika Anda merasa tidak mengajukan permohonan ini, hubungi Administrator IT Dinas PUPR Kabupaten.\n\n"
+            . "Pemerintah Kabupaten - Dinas PUPR";
 
         // 1. Kirim ke email baru (atau email saat ini)
         $sentNew = false;
@@ -277,11 +277,11 @@ HTML;
         // 2. Jika email diubah, kirim juga notifikasi ke email lama demi mencegah pengambilalihan akun diam-diam (Anti-Account Takeover)
         if ($oldEmail && strtolower(trim($oldEmail)) !== $newEmail && filter_var($oldEmail, FILTER_VALIDATE_EMAIL)) {
             $oldEmailSubject = "[PERINGATAN KEAMANAN] Alamat Email Akun SI-APPIK Anda Telah Dialihkan";
-            $oldPlain = "PERINGATAN KEAMANAN - SI-APPIK KOLAKA UTARA\n\n"
+            $oldPlain = "PERINGATAN KEAMANAN - SI-APPIK KABUPATEN\n\n"
                 . "Halo,\n"
                 . "Kami memberitahukan bahwa alamat email akun SI-APPIK yang terhubung dengan email ini ({$oldEmail}) telah dialihkan ke ({$newEmail}) oleh Administrator Sistem pada {$timeString}.\n\n"
-                . "Jika perubahan ini tanpa persetujuan Anda, segera laporkan ke Tim IT Dinas PUPR Kolaka Utara.\n\n"
-                . "Pemerintah Kabupaten Kolaka Utara - Dinas PUPR";
+                . "Jika perubahan ini tanpa persetujuan Anda, segera laporkan ke Tim IT Dinas PUPR Kabupaten.\n\n"
+                . "Pemerintah Kabupaten - Dinas PUPR";
             $this->sendPriorityMail(trim($oldEmail), $oldEmailSubject, $htmlBody, $oldPlain);
         }
 
@@ -329,7 +329,7 @@ HTML;
                 'Waktu'      => e($timeString),
             ],
             'noteTone' => $isActive ? 'success' : 'danger',
-            'note'     => 'Apabila memerlukan bantuan lebih lanjut, silakan hubungi Administrator Dinas PUPR Kabupaten Kolaka Utara.',
+            'note'     => 'Apabila memerlukan bantuan lebih lanjut, silakan hubungi Administrator Dinas PUPR Kabupaten.',
         ])->render();
 
         $plainText = "Yth. {$user->name},\n\n"
@@ -337,7 +337,7 @@ HTML;
                 ? "Akun SI-APPIK Anda telah diaktifkan kembali oleh Super Administrator pada {$timeString}.\n"
                 : "Akun SI-APPIK Anda telah dinonaktifkan oleh Super Administrator pada {$timeString}.\n")
             . "{$reasonLabel}: " . ($reason ?: 'Kebijakan tata kelola dan keamanan sistem.') . "\n\n"
-            . "Pemerintah Kabupaten Kolaka Utara - Dinas PUPR";
+            . "Pemerintah Kabupaten - Dinas PUPR";
 
         return $this->sendPriorityMail($targetEmail, $subject, $htmlBody, $plainText);
     }
@@ -381,7 +381,7 @@ HTML;
             'intro'    => 'Data profil akun SI-APPIK Anda baru saja diperbarui dengan rincian berikut:',
             'details'  => $details,
             'noteTone' => 'danger',
-            'note'     => '<strong>Bukan Anda?</strong> Segera atur ulang kata sandi melalui aplikasi dan hubungi Administrator IT Dinas PUPR Kolaka Utara.',
+            'note'     => '<strong>Bukan Anda?</strong> Segera atur ulang kata sandi melalui aplikasi dan hubungi Administrator IT Dinas PUPR Kabupaten.',
         ])->render();
 
         $plainText = "PEMBERITAHUAN PEMBARUAN DATA AKUN - SI-APPIK\n\n"
@@ -392,8 +392,8 @@ HTML;
             . "- Lokasi: {$deviceLocation}\n"
             . "- Perangkat: {$deviceInfo}\n"
             . "- Waktu: {$timeString}\n\n"
-            . "Jika BUKAN Anda yang melakukan perubahan ini, segera hubungi Helpdesk IT Dinas PUPR Kolaka Utara.\n\n"
-            . "Pemerintah Kabupaten Kolaka Utara - Dinas PUPR";
+            . "Jika BUKAN Anda yang melakukan perubahan ini, segera hubungi Helpdesk IT Dinas PUPR Kabupaten.\n\n"
+            . "Pemerintah Kabupaten - Dinas PUPR";
 
         // 1. Kirim ke email aktif saat ini
         $sentNew = false;
@@ -404,11 +404,11 @@ HTML;
         // 2. Jika email diubah, kirim juga notifikasi ke email lama (Anti-Account Takeover)
         if ($oldEmail && strtolower(trim($oldEmail)) !== $newEmail && filter_var($oldEmail, FILTER_VALIDATE_EMAIL)) {
             $oldEmailSubject = "[PERINGATAN KEAMANAN] Alamat Email Akun SI-APPIK Anda Telah Diubah";
-            $oldPlain = "PERINGATAN KEAMANAN - SI-APPIK KOLAKA UTARA\n\n"
+            $oldPlain = "PERINGATAN KEAMANAN - SI-APPIK KABUPATEN\n\n"
                 . "Halo,\n"
                 . "Alamat email akun SI-APPIK yang sebelumnya terhubung dengan email ini ({$oldEmail}) telah dialihkan ke ({$newEmail}) pada {$timeString} dari {$deviceLocation}.\n\n"
-                . "Jika perubahan ini bukan atas persetujuan Anda, segera hubungi Tim IT Dinas PUPR Kolaka Utara.\n\n"
-                . "Pemerintah Kabupaten Kolaka Utara - Dinas PUPR";
+                . "Jika perubahan ini bukan atas persetujuan Anda, segera hubungi Tim IT Dinas PUPR Kabupaten.\n\n"
+                . "Pemerintah Kabupaten - Dinas PUPR";
             $this->sendPriorityMail(trim($oldEmail), $oldEmailSubject, $htmlBody, $oldPlain);
         }
 
@@ -507,7 +507,7 @@ HTML;
                 try {
                     $response = \Illuminate\Support\Facades\Http::timeout(4)
                         ->withHeaders([
-                            'User-Agent' => 'SI-APPIK-KolakaUtara-Aplikasi/1.0 (admin@kolakautarakab.go.id)',
+                            'User-Agent' => 'SI-APPIK-KolakaUtara-Aplikasi/1.0 (admin@kabupaten.go.id)',
                             'Accept'     => 'application/json',
                         ])
                         ->get("https://nominatim.openstreetmap.org/reverse", [
@@ -604,7 +604,7 @@ HTML;
         // 4. Fallback Terakhir
         try {
             if ($user->region) {
-                return $user->region->name . ', Kolaka Utara, Sulawesi Tenggara';
+                return $user->region->name . ', Kabupaten, Sulawesi Tenggara';
             }
         } catch (\Throwable $e) {
             // ignore

@@ -1088,7 +1088,7 @@
         }
     }
 
-    // Inisialisasi Peta Spasial Kabupaten Kolaka Utara (Leaflet & GeoJSON Resmi)
+    // Inisialisasi Peta Spasial Kabupaten (Leaflet & GeoJSON Resmi)
     function initPetugasMap() {
         const mapEl = document.getElementById('petugasMap');
         if (!mapEl || petugasMapInstance) return;
@@ -1097,10 +1097,10 @@
             petugasMapInstance = L.map('petugasMap', { scrollWheelZoom: true }).setView([-3.5020, 120.8850], 13);
             L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 19,
-                attribution: '© OpenStreetMap | GIS Kolaka Utara'
+                attribution: '© OpenStreetMap | GIS Kabupaten'
             }).addTo(petugasMapInstance);
 
-            // Batas Administratif Resmi Wilayah Kabupaten Kolaka Utara (OpenStreetMap GeoJSON Polygon)
+            // Batas Administratif Resmi Wilayah Kabupaten (OpenStreetMap GeoJSON Polygon)
             fetch('{{ asset("geojson/kolaka_utara.geojson") }}')
                 .then(res => res.json())
                 .then(geoJsonData => {
@@ -1115,7 +1115,7 @@
                         }
                     }).addTo(petugasMapInstance);
                 })
-                .catch(err => console.log('Gagal memuat polygon batas Kolaka Utara:', err));
+                .catch(err => console.log('Gagal memuat polygon batas Kabupaten:', err));
 
             const points = @json($mapPoints ?? []);
             if (points && points.length > 0) {

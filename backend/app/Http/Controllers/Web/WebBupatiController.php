@@ -74,7 +74,7 @@ class WebBupatiController extends Controller
             ->latest()
             ->get();
 
-        // Agregasi Sebaran Pengaduan per Wilayah Kecamatan & Desa (Kabupaten Kolaka Utara)
+        // Agregasi Sebaran Pengaduan per Wilayah Kecamatan & Desa (Kabupaten)
         $regionsDb = \App\Models\Region::orderBy('district')->get();
         $allComplaintsForStats = Complaint::all();
 
@@ -141,7 +141,7 @@ class WebBupatiController extends Controller
                     'public_code'          => $c->public_code,
                     'title'                => $c->title,
                     'description'          => $c->description ?? '-',
-                    'address'              => $c->address ?? 'Wilayah Kabupaten Kolaka Utara',
+                    'address'              => $c->address ?? 'Wilayah Kabupaten',
                     'damage_type'          => $c->damage_type ?? 'minor',
                     'road_length'          => $c->road_length,
                     'road_condition'       => $c->road_condition,
@@ -199,7 +199,7 @@ class WebBupatiController extends Controller
                     'public_code'          => $c->public_code,
                     'title'                => $c->title,
                     'description'          => $c->description ?? '-',
-                    'address'              => $c->address ?? 'Wilayah Kabupaten Kolaka Utara',
+                    'address'              => $c->address ?? 'Wilayah Kabupaten',
                     'latitude'             => (float) ($c->latitude ?? -3.50601),
                     'longitude'            => (float) ($c->longitude ?? 120.88780),
                     'status'               => $c->status,

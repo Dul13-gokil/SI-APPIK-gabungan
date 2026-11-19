@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Log;
 class ImageWatermarkService
 {
     /**
-     * Tempelkan watermark resmi (SI-APPIK Kolaka Utara, Kode Aduan, Timestamp WITA, Koordinat GPS)
+     * Tempelkan watermark resmi (SI-APPIK Kabupaten, Kode Aduan, Timestamp WITA, Koordinat GPS)
      * pada foto bukti pengerjaan lapangan menggunakan ekstensi PHP GD.
      */
     public function applyFieldWatermark(
@@ -44,9 +44,9 @@ class ImageWatermarkService
             $timestamp = now('Asia/Makassar')->format('d/m/Y H:i') . ' WITA';
             $gpsText = ($latitude !== null && $longitude !== null)
                 ? sprintf('GPS: %.5f, %.5f', $latitude, $longitude)
-                : 'Kab. Kolaka Utara';
+                : 'Kabupaten';
 
-            $line1 = "SI-APPIK KOLAKA UTARA  |  {$code}  |  {$timestamp}";
+            $line1 = "SI-APPIK KABUPATEN  |  {$code}  |  {$timestamp}";
             $line2 = $officerName ? "{$gpsText}  |  Petugas: {$officerName}" : $gpsText;
 
             $barHeight = max(46, (int) round($height * 0.085));

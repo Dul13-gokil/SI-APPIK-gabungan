@@ -295,7 +295,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             V2FloatingHeader(
               title: 'SI-APPIK',
-              subtitle: 'Kolaka Utara',
+              subtitle: 'Kabupaten',
               leading: Container(
                 width: 36,
                 height: 36,

@@ -1,6 +1,6 @@
 import 'package:latlong2/latlong.dart';
 
-/// Koordinat batas wilayah administratif resmi Kabupaten Kolaka Utara (OpenStreetMap)
+/// Koordinat batas wilayah administratif resmi Kabupaten (OpenStreetMap)
 const List<LatLng> kolakaUtaraBoundary = [
   LatLng(-3.4353034, 120.8644661),
   LatLng(-3.4449366, 120.8660567),
@@ -1081,7 +1081,7 @@ const List<LatLng> kolakaUtaraBoundary = [
   LatLng(-3.4353034, 120.8644661),
 ];
 
-/// Validasi akurat apakah titik koordinat berada di dalam polygon administratif Kabupaten Kolaka Utara
+/// Validasi akurat apakah titik koordinat berada di dalam polygon administratif Kabupaten
 bool isPointInKolakaUtaraPolygon(double lat, double lon) {
   // Bounding box filter cepat
   if (lat < -3.76 || lat > -2.76 || lon < 120.85 || lon > 121.46) {

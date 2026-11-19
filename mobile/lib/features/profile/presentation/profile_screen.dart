@@ -958,7 +958,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                _user?.name ?? (isPetugas ? 'Pekerja Lapangan' : 'Warga Kolaka Utara'),
+                                _user?.name ?? (isPetugas ? 'Pekerja Lapangan' : 'Warga Kabupaten'),
                                 style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
                               ),
                               const SizedBox(height: 4),
@@ -996,7 +996,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               Text(isPetugas ? 'Instansi Dinas' : 'Wilayah Domisili', style: const TextStyle(color: Colors.white60, fontSize: 10)),
                               const SizedBox(height: 2),
                               Text(
-                                isPetugas ? 'Dinas PUPR' : 'Kabupaten Kolaka Utara',
+                                isPetugas ? 'Dinas PUPR' : 'Kabupaten',
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
@@ -1491,7 +1491,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
                         ),
                         Text(
-                          isPetugas ? 'Standar Operasional Penanganan & Validasi SPK' : 'Tata cara lapor fasilitas rusak di Kolaka Utara',
+                          isPetugas ? 'Standar Operasional Penanganan & Validasi SPK' : 'Tata cara lapor fasilitas rusak di Kabupaten',
                           style: const TextStyle(fontSize: 11, color: AppColors.textSecondary),
                         ),
                       ],
@@ -1522,7 +1522,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   color: AppColors.primary,
                   content:
                       '• Buka tab **Peta GIS** atau gunakan navigasi pada kartu tugas untuk melihat rute jalan nyata menuju lokasi perbaikan.\n'
-                      '• Koordinat GPS disinkronkan langsung dengan data Geofencing 15 kecamatan se-Kabupaten Kolaka Utara.',
+                      '• Koordinat GPS disinkronkan langsung dengan data Geofencing 15 kecamatan se-Kabupaten.',
                 ),
                 const SizedBox(height: 12),
                 _buildGuideCard(
@@ -1591,11 +1591,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 const SizedBox(height: 12),
                 _buildGuideCard(
                   step: '3',
-                  title: 'Pastikan di Wilayah Kabupaten Kolaka Utara',
+                  title: 'Pastikan di Wilayah Kabupaten',
                   icon: LucideIcons.mapPin,
                   color: AppColors.primary,
                   content:
-                      '• Layanan ini mencakup seluruh 15 kecamatan di Kabupaten Kolaka Utara (Lasusua, Wawo, Ngapa, Kodeoha, Pakue, Katoi, Ranteangin, dll).\n'
+                      '• Layanan ini mencakup seluruh 15 kecamatan di Kabupaten (Lasusua, Wawo, Ngapa, Kodeoha, Pakue, Katoi, Ranteangin, dll).\n'
                       '• Sistem Geofencing otomatis memvalidasi koordinat agar dinas teknis dapat langsung menindaklanjuti secara presisi.',
                 ),
                 const SizedBox(height: 12),
@@ -1839,7 +1839,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       activeThumbColor: AppColors.primary,
                       activeTrackColor: AppColors.primaryLight.withValues(alpha: 0.3),
                       title: const Text('Pengumuman Dinas & Sistem', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
-                      subtitle: const Text('Informasi resmi dinas teknis Kabupaten Kolaka Utara', style: TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+                      subtitle: const Text('Informasi resmi dinas teknis Kabupaten', style: TextStyle(fontSize: 11, color: AppColors.textSecondary)),
                       value: notifGov,
                       onChanged: (val) async {
                         setSheetState(() => notifGov = val);
@@ -1901,7 +1901,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  // 6. Kontak Darurat Kolaka Utara
+  // 6. Kontak Darurat Kabupaten
   void _showEmergencyContactsDialog() {
     showDialog(
       context: context,
@@ -1931,7 +1931,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Layanan Cepat Tanggap Darurat Kolaka Utara:',
+              'Layanan Cepat Tanggap Darurat Kabupaten:',
               style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
             ),
             const SizedBox(height: 12),
@@ -2015,13 +2015,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
               controller: controller,
               decoration: InputDecoration(
                 labelText: 'Base URL API',
-                hintText: 'http://100.86.30.42:8000/api/v1',
+                hintText: 'https://si-appik-production.up.railway.app/api/v1',
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
             ),
             const SizedBox(height: 8),
             const Text(
-              'Tailscale VPN: http://100.86.30.42:8000/api/v1\nUSB adb reverse: http://127.0.0.1:8000/api/v1\nWi-Fi Lokal: http://192.168.1.3:8000/api/v1',
+              'Production Railway: https://si-appik-production.up.railway.app/api/v1\nTailscale VPN: http://100.86.30.42:8000/api/v1\nUSB adb reverse: http://127.0.0.1:8000/api/v1',
               style: TextStyle(fontSize: 11, color: AppColors.primaryLight),
             ),
           ],
@@ -2147,7 +2147,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           children: [
             V2FloatingHeader(
               title: 'Profil & Akun',
-              subtitle: isPetugas ? 'Pekerja Lapangan Dinas PUPR' : 'Pengguna SI-APPIK Kolaka Utara',
+              subtitle: isPetugas ? 'Pekerja Lapangan Dinas PUPR' : 'Pengguna SI-APPIK Kabupaten',
               leading: Container(
                 width: 36,
                 height: 36,
@@ -2393,7 +2393,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         child: const Icon(LucideIcons.phoneCall, color: AppColors.primary, size: 18),
                       ),
-                      title: const Text('Kontak Darurat Kabupaten Kolaka Utara', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                      title: const Text('Kontak Darurat Kabupaten', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
                       subtitle: const Text('Call Center 112 & Dinas PUPR', style: TextStyle(fontSize: 11, color: AppColors.textSecondary)),
                       trailing: const Icon(LucideIcons.chevronRight, size: 18),
                       onTap: _showEmergencyContactsDialog,

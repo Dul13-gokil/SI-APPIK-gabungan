@@ -142,7 +142,7 @@ class _FieldPerformanceScreenState extends State<FieldPerformanceScreen> {
   @override
   Widget build(BuildContext context) {
     final officerName = _individual?['name']?.toString() ?? 'Pekerja Lapangan';
-    final teamName = _individual?['team_name']?.toString() ?? 'Dinas PUPR Kolaka Utara';
+    final teamName = _individual?['team_name']?.toString() ?? 'Dinas PUPR Kabupaten';
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -833,7 +833,7 @@ class _FieldPerformanceScreenState extends State<FieldPerformanceScreen> {
                                     ? [
                                         _buildDocInfoRow('Nama & Kode Regu', '${m['team_name'] ?? '-'} (${m['team_code'] ?? '-'})'),
                                         _buildDocInfoRow('Ketua Regu', '${m['leader_name'] ?? '-'} (${m['members_count'] ?? 0} Personel)'),
-                                        _buildDocInfoRow('Wilayah Tugas', '${m['district'] ?? 'Kab. Kolaka Utara'}', isLast: true),
+                                        _buildDocInfoRow('Wilayah Tugas', '${m['district'] ?? 'Kabupaten'}', isLast: true),
                                       ]
                                     : [
                                         _buildDocInfoRow('Nama Petugas', '${m['name'] ?? '-'}'),
@@ -1311,7 +1311,7 @@ class _FieldPerformanceScreenState extends State<FieldPerformanceScreen> {
     return Column(
       children: [
         Text(
-          'PEMERINTAH KABUPATEN KOLAKA UTARA',
+          'PEMERINTAH KABUPATEN',
           textAlign: TextAlign.center,
           style: GoogleFonts.inter(
             fontSize: 10,
@@ -1466,7 +1466,7 @@ class _FieldPerformanceScreenState extends State<FieldPerformanceScreen> {
               const SizedBox(height: 36),
               const Divider(color: AppColors.textSecondary),
               Text(
-                'Kab. Kolaka Utara',
+                'Kabupaten',
                 textAlign: TextAlign.center,
                 style: GoogleFonts.inter(fontSize: 10.5, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
               ),

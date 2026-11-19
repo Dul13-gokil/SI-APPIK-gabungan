@@ -333,7 +333,7 @@
                                                 <i data-lucide="user" class="w-3 h-3 text-slate-400 shrink-0"></i>
                                                 <span class="font-semibold text-slate-700 truncate">{{ $c->user?->name ?? $c->citizen?->name ?? 'Warga Terdaftar' }}</span>
                                                 <span class="text-slate-300 shrink-0">•</span>
-                                                <span class="truncate text-slate-400" title="{{ $c->address }}">{{ $c->address ?? 'Kolaka Utara' }}</span>
+                                                <span class="truncate text-slate-400" title="{{ $c->address }}">{{ $c->address ?? 'Kabupaten' }}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -706,7 +706,7 @@
                                         <!-- Baris 2: Lokasi Fisik (1 Baris Rapi) -->
                                         <div class="text-xs text-slate-600 flex items-center gap-1.5 min-w-0">
                                             <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#2563EB] shrink-0"></i>
-                                            <span class="truncate font-medium" title="{{ $ac->address }}">{{ $ac->address ?? 'Kolaka Utara' }}</span>
+                                            <span class="truncate font-medium" title="{{ $ac->address }}">{{ $ac->address ?? 'Kabupaten' }}</span>
                                         </div>
 
                                         <!-- Baris 3: Info Pelapor & No Telepon (1 Baris Rapi) -->
@@ -885,7 +885,7 @@
         }
     }
 
-    // Inisialisasi Peta Leaflet Eksekutif (Kabupaten Kolaka Utara)
+    // Inisialisasi Peta Leaflet Eksekutif (Kabupaten)
     function initBupatiMap() {
         const mapEl = document.getElementById('bupatiMap');
         if (!mapEl) return;
@@ -893,10 +893,10 @@
         bupatiMapInstance = L.map('bupatiMap', { scrollWheelZoom: true }).setView([-3.50601, 120.88780], 12);
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
-            attribution: '© OpenStreetMap | GIS Kolaka Utara'
+            attribution: '© OpenStreetMap | GIS Kabupaten'
         }).addTo(bupatiMapInstance);
 
-        // Batas Administratif Resmi Wilayah Kabupaten Kolaka Utara (OpenStreetMap GeoJSON Polygon)
+        // Batas Administratif Resmi Wilayah Kabupaten (OpenStreetMap GeoJSON Polygon)
         fetch('{{ asset("geojson/kolaka_utara.geojson") }}')
             .then(res => res.json())
             .then(geoJsonData => {
@@ -911,7 +911,7 @@
                     }
                 }).addTo(bupatiMapInstance);
             })
-            .catch(err => console.log('Gagal memuat polygon batas Kolaka Utara:', err));
+            .catch(err => console.log('Gagal memuat polygon batas Kabupaten:', err));
 
         if (bupatiPoints && bupatiPoints.length > 0) {
             const bounds = [];

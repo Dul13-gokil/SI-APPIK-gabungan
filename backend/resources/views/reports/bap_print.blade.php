@@ -25,9 +25,9 @@
     </div>
 
     <div class="bap-sheet max-w-3xl mx-auto bg-white rounded-2xl border border-slate-200 shadow-sm p-8 sm:p-10 space-y-6">
-        <!-- Kop Resmi Pemerintah Kabupaten Kolaka Utara -->
+        <!-- Kop Resmi Pemerintah Kabupaten -->
         <div class="border-b-2 border-slate-900 pb-4 text-center space-y-1">
-            <p class="text-xs font-bold uppercase tracking-widest text-slate-600">Pemerintah Kabupaten Kolaka Utara</p>
+            <p class="text-xs font-bold uppercase tracking-widest text-slate-600">Pemerintah Kabupaten</p>
             <h1 class="text-lg sm:text-xl font-extrabold uppercase tracking-wide text-slate-900">
                 Dinas Pekerjaan Umum dan Penataan Ruang (PUPR)
             </h1>
@@ -149,7 +149,7 @@
                     <p class="font-bold text-slate-900">Operator Verifikasi Dinas PUPR</p>
                 </div>
                 <div class="border-t border-slate-400 pt-1 mx-6">
-                    <p class="font-bold text-slate-800">Dinas PUPR Kab. Kolaka Utara</p>
+                    <p class="font-bold text-slate-800">Dinas PUPR Kabupaten</p>
                 </div>
             </div>
             <div class="space-y-14">

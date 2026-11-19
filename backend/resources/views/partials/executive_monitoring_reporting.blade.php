@@ -385,7 +385,7 @@
                         Pratinjau Dokumen Laporan Kinerja
                     </h4>
                     <p id="modalReportFormatSubtitle" class="text-[11px] text-[#64748B] truncate">
-                        Format Profesional Kedinasan &bull; Kabupaten Kolaka Utara
+                        Format Profesional Kedinasan &bull; Kabupaten
                     </p>
                 </div>
             </div>
@@ -419,14 +419,14 @@
                 <!-- FORMAT A: FORMAT PROFESIONAL (KEDINASAN RESMI PEMKAB)     -->
                 <!-- ========================================================= -->
                 <div id="reportFormatProfessional" class="space-y-5">
-                    <!-- KOP SURAT RESMI PEMERINTAH KABUPATEN KOLAKA UTARA -->
+                    <!-- KOP SURAT RESMI PEMERINTAH KABUPATEN -->
                     <div class="border-b-[3px] border-double border-black pb-3 text-center space-y-0.5">
-                        <p class="text-[11px] font-bold uppercase tracking-widest text-slate-700">Pemerintah Kabupaten Kolaka Utara</p>
+                        <p class="text-[11px] font-bold uppercase tracking-widest text-slate-700">Pemerintah Kabupaten</p>
                         <h2 class="font-outfit font-extrabold text-base sm:text-lg text-black uppercase tracking-tight">
                             Dinas Pekerjaan Umum dan Penataan Ruang (PUPR)
                         </h2>
                         <p class="text-[10.5px] text-slate-600">
-                            Kompleks Perkantoran Pemerintah Kabupaten Kolaka Utara, Lasusua, Sulawesi Tenggara
+                            Kompleks Perkantoran Pemerintah Kabupaten, Lasusua, Sulawesi Tenggara
                         </p>
                     </div>
 
@@ -629,7 +629,7 @@
                     <!-- VI. REKAPITULASI SEBARAN WILAYAH KECAMATAN -->
                     <div class="space-y-2">
                         <h4 class="font-outfit font-bold text-xs uppercase tracking-wider text-black border-b border-slate-300 pb-1">
-                            VI. Rekapitulasi Sebaran Wilayah Kecamatan (Kolaka Utara)
+                            VI. Rekapitulasi Sebaran Wilayah Kecamatan (Kabupaten)
                         </h4>
                         <table class="w-full text-left border-collapse border border-slate-400 text-[11px]">
                             <thead class="bg-slate-100 text-black font-bold uppercase text-[10px]">
@@ -675,7 +675,7 @@
                         <div class="space-y-12 text-center">
                             <div>
                                 <p class="text-slate-600">Mengetahui,</p>
-                                <p class="font-bold uppercase">Kepala Dinas PUPR Kab. Kolaka Utara</p>
+                                <p class="font-bold uppercase">Kepala Dinas PUPR Kabupaten</p>
                             </div>
                             <div class="pt-4">
                                 <p class="font-bold underline">....................................................</p>
@@ -689,7 +689,7 @@
                             </div>
                             <div class="pt-4">
                                 <p class="font-bold underline">{{ $printerUser?->name ?? 'Administrator Sistem' }}</p>
-                                <p class="text-[10px] text-slate-600">SI-APPIK Kab. Kolaka Utara</p>
+                                <p class="text-[10px] text-slate-600">SI-APPIK Kabupaten</p>
                             </div>
                         </div>
                     </div>
@@ -701,10 +701,10 @@
                 <div id="reportFormatAts" class="hidden space-y-4 font-sans text-black leading-relaxed">
                     <div class="border-b border-black pb-2">
                         <h2 class="text-base font-bold uppercase tracking-normal text-black">
-                            LAPORAN REKAPITULASI PENANGANAN PENGADUAN INFRASTRUKTUR KABUPATEN KOLAKA UTARA
+                            LAPORAN REKAPITULASI PENANGANAN PENGADUAN INFRASTRUKTUR KABUPATEN
                         </h2>
                         <p class="text-[11px] text-black mt-1">
-                            Instansi: Pemerintah Kabupaten Kolaka Utara - Dinas Pekerjaan Umum dan Penataan Ruang (PUPR)
+                            Instansi: Pemerintah Kabupaten - Dinas Pekerjaan Umum dan Penataan Ruang (PUPR)
                         </p>
                     </div>
 
@@ -880,7 +880,7 @@
 
                     <!-- 7. PENGESAHAN -->
                     <div class="pt-2 border-t border-black text-[11px]">
-                        <div>Diterbitkan secara otomatis oleh Sistem Informasi Pengaduan &amp; Penanganan Kerusakan Infrastruktur (SI-APPIK) Kabupaten Kolaka Utara.</div>
+                        <div>Diterbitkan secara otomatis oleh Sistem Informasi Pengaduan &amp; Penanganan Kerusakan Infrastruktur (SI-APPIK) Kabupaten.</div>
                         <div>Lokasi &amp; Tanggal: Lasusua, {{ now()->translatedFormat('d F Y') }} &bull; Penanggung Jawab: {{ $printerUser?->name ?? 'Administrator' }} ({{ $printerRoleLabel }}).</div>
                     </div>
                 </div>

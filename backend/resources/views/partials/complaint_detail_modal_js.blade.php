@@ -309,7 +309,7 @@
 
         const fullAddrEl = document.getElementById('sharedModalFullAddress');
         if (fullAddrEl) {
-            fullAddrEl.innerText = item.address || 'Wilayah Kabupaten Kolaka Utara';
+            fullAddrEl.innerText = item.address || 'Wilayah Kabupaten';
         }
 
         // Tombol Navigasi Google Maps (khusus Petugas)

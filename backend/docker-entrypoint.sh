@@ -33,14 +33,18 @@ if [ -n "$DB_TARGET" ] && [ -f "/var/www/html/database/si-appik.sql" ]; then
         sleep 2
     done
 
-    # Cek apakah tabel complaints sudah ada secara utuh
-    if ! psql "$DB_TARGET" -c "SELECT 1 FROM public.complaints LIMIT 1;" >/dev/null 2>&1; then
-        echo "Tabel utama belum lengkap. Mereset skema dan mengimpor database/si-appik.sql secara utuh..."
+    # Penanda versi dump database agar Railway mengimpor ulang si-appik.sql terbaru
+    DB_DUMP_VERSION="20261119_kabupaten_v1"
+    CURRENT_SYNC_VERSION=$(psql "$DB_TARGET" -t -A -c "SELECT version FROM public.app_db_sync_marker LIMIT 1;" 2>/dev/null || echo "")
+
+    if [ "$CURRENT_SYNC_VERSION" != "$DB_DUMP_VERSION" ] || ! psql "$DB_TARGET" -c "SELECT 1 FROM public.complaints LIMIT 1;" >/dev/null 2>&1; then
+        echo "Mendeteksi versi dump database baru ($DB_DUMP_VERSION). Mereset skema dan mengimpor database/si-appik.sql secara utuh..."
         psql "$DB_TARGET" -c "DROP SCHEMA IF EXISTS public CASCADE; CREATE SCHEMA public; GRANT ALL ON SCHEMA public TO public;" || true
         psql "$DB_TARGET" < /var/www/html/database/si-appik.sql || true
-        echo "Import database awal selesai dengan sukses!"
+        psql "$DB_TARGET" -c "CREATE TABLE IF NOT EXISTS public.app_db_sync_marker (version VARCHAR(64) PRIMARY KEY, synced_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP); TRUNCATE TABLE public.app_db_sync_marker; INSERT INTO public.app_db_sync_marker (version) VALUES ('$DB_DUMP_VERSION');" || true
+        echo "Import database versi $DB_DUMP_VERSION selesai dengan sukses!"
     else
-        echo "Database sudah memiliki tabel lengkap, melewati import awal."
+        echo "Database sudah sinkron dengan versi $DB_DUMP_VERSION, melewati import ulang."
     fi
 fi
 

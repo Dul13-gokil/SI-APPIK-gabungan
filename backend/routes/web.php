@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| Web Routes - Sistem Informasi Pengaduan Infrastruktur Kolaka Utara
+| Web Routes - Sistem Informasi Pengaduan Infrastruktur Kabupaten
 |--------------------------------------------------------------------------
 */
 

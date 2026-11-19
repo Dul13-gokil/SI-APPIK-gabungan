@@ -108,7 +108,7 @@ class WebPetugasController extends Controller
             'completion_rate' => $completionRate,
         ];
 
-        // Peta Spasial Seluruh Titik Kerusakan Kabupaten Kolaka Utara
+        // Peta Spasial Seluruh Titik Kerusakan Kabupaten
         $mapPoints = Complaint::with(['category', 'user', 'citizen', 'photos', 'latestDisposition.assignee'])
             ->whereNotNull('latitude')
             ->whereNotNull('longitude')
@@ -122,7 +122,7 @@ class WebPetugasController extends Controller
                     'public_code'       => $c->public_code,
                     'title'             => $c->title,
                     'description'       => $c->description ?? '-',
-                    'address'           => $c->address ?? 'Wilayah Kabupaten Kolaka Utara',
+                    'address'           => $c->address ?? 'Wilayah Kabupaten',
                     'damage_type'       => $c->damage_type ?? 'minor',
                     'road_length'       => $c->road_length,
                     'road_condition'    => $c->road_condition,
@@ -170,7 +170,7 @@ class WebPetugasController extends Controller
                     'public_code'          => $c->public_code,
                     'title'                => $c->title,
                     'description'          => $c->description ?? '-',
-                    'address'              => $c->address ?? 'Wilayah Kabupaten Kolaka Utara',
+                    'address'              => $c->address ?? 'Wilayah Kabupaten',
                     'latitude'             => (float) ($c->latitude ?? -3.50601),
                     'longitude'            => (float) ($c->longitude ?? 120.88780),
                     'status'               => $c->status,

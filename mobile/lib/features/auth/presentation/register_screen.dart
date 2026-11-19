@@ -231,7 +231,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       SizedBox(width: 6),
                       Expanded(
                         child: Text(
-                          'Data Anda aman & dilindungi sesuai standar privasi Pemkab Kolaka Utara.',
+                          'Data Anda aman & dilindungi sesuai standar privasi Pemerintah Kabupaten.',
                           style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
                         ),
                       ),

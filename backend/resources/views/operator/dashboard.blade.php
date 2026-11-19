@@ -2099,7 +2099,7 @@
             },
             'regions-gis': {
                 title: 'Peta Wilayah GIS & Sebaran 15 Kecamatan',
-                subtitle: 'Pantau sebaran spasial aduan infrastruktur di 15 kecamatan Kabupaten Kolaka Utara'
+                subtitle: 'Pantau sebaran spasial aduan infrastruktur di 15 kecamatan Kabupaten'
             },
             'monitoring': {
                 title: 'Laporan Kinerja & Evaluasi Penanganan',
@@ -2174,7 +2174,7 @@
         }
     }
 
-    // Inisialisasi Peta Spasial Kabupaten Kolaka Utara (Leaflet & GeoJSON Resmi)
+    // Inisialisasi Peta Spasial Kabupaten (Leaflet & GeoJSON Resmi)
     function initOperatorMap() {
         const mapEl = document.getElementById('operatorMap');
         if (!mapEl || window.opMap) return;
@@ -2183,10 +2183,10 @@
             window.opMap = L.map('operatorMap', { scrollWheelZoom: true }).setView([-3.50601, 120.88780], 12);
             L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 19,
-                attribution: '© OpenStreetMap | GIS Kolaka Utara'
+                attribution: '© OpenStreetMap | GIS Kabupaten'
             }).addTo(window.opMap);
 
-            // Batas Administratif Resmi Wilayah Kabupaten Kolaka Utara (OpenStreetMap GeoJSON Polygon)
+            // Batas Administratif Resmi Wilayah Kabupaten (OpenStreetMap GeoJSON Polygon)
             fetch('{{ asset("geojson/kolaka_utara.geojson") }}')
                 .then(res => res.json())
                 .then(geoJsonData => {
@@ -2201,7 +2201,7 @@
                         }
                     }).addTo(window.opMap);
                 })
-                .catch(err => console.log('Gagal memuat polygon batas Kolaka Utara:', err));
+                .catch(err => console.log('Gagal memuat polygon batas Kabupaten:', err));
 
             const points = @json($mapPoints ?? []);
             if (points && points.length > 0) {
@@ -2470,7 +2470,7 @@
             let road = 'Jalan / Area Kerusakan';
             let village = 'Desa Wilayah';
             let district = 'Kecamatan Terkait';
-            let regency = 'Kab. Kolaka Utara';
+            let regency = 'Kabupaten';
             if (!rawAddress) return { road, village, district, regency };
             const parts = rawAddress.split(',').map(s => s.trim());
             parts.forEach(p => {
@@ -2946,7 +2946,7 @@
             let road = 'Jalan / Area Kerusakan';
             let village = 'Desa Wilayah';
             let district = 'Kecamatan Terkait';
-            let regency = 'Kab. Kolaka Utara';
+            let regency = 'Kabupaten';
             if (!rawAddress) return { road, village, district, regency };
             const parts = rawAddress.split(',').map(s => s.trim());
             parts.forEach(p => {

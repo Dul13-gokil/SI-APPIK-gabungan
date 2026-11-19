@@ -171,7 +171,7 @@ class WebSuperAdminController extends Controller
                     'id'               => $c->id,
                     'public_code'      => $c->public_code,
                     'title'            => $c->title,
-                    'address'          => $c->address ?? 'Wilayah Kolaka Utara',
+                    'address'          => $c->address ?? 'Wilayah Kabupaten',
                     'damage_type'      => $c->damage_type ?? 'minor',
                     'road_length'      => $c->road_length,
                     'road_condition'   => $c->road_condition,
@@ -212,7 +212,7 @@ class WebSuperAdminController extends Controller
                 'public_code'          => $c->public_code,
                 'title'                => $c->title,
                 'description'          => $c->description ?? '-',
-                'address'              => $c->address ?? 'Wilayah Kabupaten Kolaka Utara',
+                'address'              => $c->address ?? 'Wilayah Kabupaten',
                 'latitude'             => (float) ($c->latitude ?? -3.50601),
                 'longitude'            => (float) ($c->longitude ?? 120.88780),
                 'status'               => $c->status,
@@ -263,7 +263,7 @@ class WebSuperAdminController extends Controller
         $availableOfficers = User::where('role', 'PETUGAS')->orderBy('name')->get();
         $unassignedOfficers = User::where('role', 'PETUGAS')->whereNotIn('id', $assignedOfficerIds)->orderBy('name')->get();
 
-        // Daftar 15 kecamatan resmi Kolaka Utara terdaftar
+        // Daftar 15 kecamatan resmi Kabupaten terdaftar
         $districts = $regions->pluck('district')->filter()->unique()->sort()->values();
 
         // Cek limit role sistem (Maksimal 1 Bupati, Maksimal 1 Super Admin)
@@ -323,7 +323,7 @@ class WebSuperAdminController extends Controller
 
         \App\Models\Region::create([
             'province'  => 'Sulawesi Tenggara',
-            'regency'   => 'Kabupaten Kolaka Utara',
+            'regency'   => 'Kabupaten',
             'district'  => $validated['district'],
             'village'   => $validated['village'],
             'latitude'  => $validated['latitude'],

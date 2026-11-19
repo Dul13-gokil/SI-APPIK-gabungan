@@ -370,7 +370,7 @@
                                     <span class="text-[11px] text-[#64748B]">{{ $ovItem->created_at?->timezone('Asia/Makassar')->format('d M Y, H:i') }} WITA</span>
                                 </div>
                                 <p class="text-xs font-bold text-[#0F172A] truncate">{{ $ovItem->title ?? ($ovItem->category->name ?? 'Laporan Infrastruktur') }}</p>
-                                <p class="text-[11px] text-[#64748B] truncate">{{ $ovItem->address_detail ?? 'Kabupaten Kolaka Utara' }}</p>
+                                <p class="text-[11px] text-[#64748B] truncate">{{ $ovItem->address_detail ?? 'Kabupaten' }}</p>
                             </div>
                             <button type="button" onclick="switchAdminTab('complaints-list')" title="Tinjau Laporan" aria-label="Tinjau Laporan" class="w-8 h-8 rounded-lg border border-[#E2E8F0] hover:border-[#2563EB] hover:bg-[#EFF6FF] text-[#475569] hover:text-[#2563EB] inline-flex items-center justify-center transition shrink-0">
                                 <i data-lucide="eye" class="w-4 h-4"></i>
@@ -970,7 +970,7 @@
                                         </div>
                                         <div class="text-[10.5px] text-slate-400 flex items-center gap-1 truncate max-w-full md:max-w-[240px]">
                                             <i data-lucide="map-pin" class="w-3 h-3 text-slate-400 shrink-0"></i>
-                                            <span class="truncate" title="{{ $c->address }}">{{ $c->address ?? 'Kolaka Utara' }}</span>
+                                            <span class="truncate" title="{{ $c->address }}">{{ $c->address ?? 'Kabupaten' }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -1127,7 +1127,7 @@
 
     </div>
 
-    <!-- Tab Panel 4: CMS Pemetaan Wilayah & Geofencing GIS (Kolaka Utara) -->
+    <!-- Tab Panel 4: CMS Pemetaan Wilayah & Geofencing GIS (Kabupaten) -->
     <div id="tabPanel-regions-gis" class="admin-tab-panel {{ $activeTab === 'regions-gis' ? '' : 'hidden' }} space-y-5">
         @php
             $lasusuaData = collect($districtStats)->first(function($d) {
@@ -1145,7 +1145,7 @@
                     Peta Wilayah GIS &amp; Sebaran 15 Kecamatan
                 </h2>
                 <p class="text-xs text-[#64748B] mt-0.5">
-                    Pantau sebaran aduan infrastruktur dan kelola titik koordinat pusat 15 kecamatan Kabupaten Kolaka Utara
+                    Pantau sebaran aduan infrastruktur dan kelola titik koordinat pusat 15 kecamatan Kabupaten
                 </p>
             </div>
             <button type="button" onclick="resetAdminRegionMapView()"
@@ -1161,7 +1161,7 @@
                 <div>
                     <span class="text-[10px] text-[#64748B] font-bold uppercase tracking-wider block">Total Kecamatan Terdaftar</span>
                     <span class="text-xl font-outfit font-bold text-[#0F172A] block mt-0.5">15 Kecamatan</span>
-                    <span class="text-[11px] text-[#64748B]">Kabupaten Kolaka Utara</span>
+                    <span class="text-[11px] text-[#64748B]">Kabupaten</span>
                 </div>
                 <div class="w-10 h-10 rounded-xl bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE] flex items-center justify-center shrink-0">
                     <i data-lucide="building-2" class="w-4 h-4"></i>
@@ -2595,7 +2595,7 @@
                             <label class="block text-xs font-bold text-[#334155] mb-1">Wilayah Cakupan Kerja / Kecamatan</label>
                             <select id="createTeamCoverageSelect" name="coverage_area" onchange="updateCreateTeamPreview('{{ $autoTeamNumStr }}')"
                                 class="w-full text-xs font-medium px-3 py-2.5 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] focus:bg-white focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/15 transition">
-                                <option value="Semua Wilayah">Semua Wilayah (Kabupaten Kolaka Utara)</option>
+                                <option value="Semua Wilayah">Semua Wilayah (Kabupaten)</option>
                                 @foreach($districts as $d)
                                     <option value="{{ $d }}">{{ $d }}</option>
                                 @endforeach
@@ -2683,7 +2683,7 @@
                             <label class="block text-xs font-bold text-[#334155] mb-1">Wilayah Cakupan Kerja / Kecamatan</label>
                             <select id="editTeamCoverageArea" name="coverage_area" onchange="updateEditTeamPreview()"
                                 class="w-full text-xs font-medium px-3 py-2.5 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] focus:bg-white focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/15 transition">
-                                <option value="Semua Wilayah">Semua Wilayah (Kabupaten Kolaka Utara)</option>
+                                <option value="Semua Wilayah">Semua Wilayah (Kabupaten)</option>
                                 @foreach($districts as $d)
                                     <option value="{{ $d }}">{{ $d }}</option>
                                 @endforeach
@@ -3450,7 +3450,7 @@
         }
     }
 
-    // Peta Spasial Administratif Kolaka Utara (Super Admin)
+    // Peta Spasial Administratif Kabupaten (Super Admin)
     let adminRegionMap = null;
     let districtMarkers = {};
     let currentPickingState = null;
@@ -3467,7 +3467,7 @@
             return;
         }
 
-        // Default Pusat Lasusua, Kab. Kolaka Utara (-3.5262, 120.8407)
+        // Default Pusat Lasusua, Kabupaten (-3.5262, 120.8407)
         adminRegionMap = L.map('adminRegionMap', {
             zoomControl: true,
             scrollWheelZoom: true,
@@ -3476,10 +3476,10 @@
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 18,
-            attribution: '© OpenStreetMap | GIS Kolaka Utara'
+            attribution: '© OpenStreetMap | GIS Kabupaten'
         }).addTo(adminRegionMap);
 
-        // Batas Administratif Resmi Kabupaten Kolaka Utara (OpenStreetMap GeoJSON Polygon)
+        // Batas Administratif Resmi Kabupaten (OpenStreetMap GeoJSON Polygon)
         fetch('{{ asset("geojson/kolaka_utara.geojson") }}')
             .then(res => res.json())
             .then(geoJsonData => {
@@ -3494,7 +3494,7 @@
                     }
                 }).addTo(adminRegionMap);
             })
-            .catch(err => console.log('Gagal memuat batas polygon Kolaka Utara:', err));
+            .catch(err => console.log('Gagal memuat batas polygon Kabupaten:', err));
 
         // Plot 15 Titik Koordinat Pusat Kecamatan Administratif
         districtDataList.forEach(ds => {
@@ -3819,7 +3819,7 @@
                                 <span style="width:8px; height:8px; border-radius:999px; background:#2563EB; display:inline-block;"></span>
                                 <span style="font-size:12px; font-weight:800; color:#0F172A;">${districtName}</span>
                             </div>
-                            <span style="font-size:11px; color:#64748B; display:block;">Pusat Wilayah Administratif Kolaka Utara</span>
+                            <span style="font-size:11px; color:#64748B; display:block;">Pusat Wilayah Administratif Kabupaten</span>
                         </div>
                     `)
                     .openOn(adminRegionMap);
@@ -4247,7 +4247,7 @@
         let road = 'Jalan / Area Kerusakan';
         let village = 'Desa Wilayah';
         let district = 'Kecamatan Terkait';
-        let regency = 'Kab. Kolaka Utara';
+        let regency = 'Kabupaten';
         if (!rawAddress) return { road, village, district, regency };
         const parts = rawAddress.split(',').map(s => s.trim());
         parts.forEach(p => {
@@ -4335,7 +4335,7 @@
                 let cleanPhone = citizenPhone.replace(/[^0-9]/g, '');
                 if (cleanPhone.startsWith('0')) cleanPhone = '62' + cleanPhone.slice(1);
                 else if (cleanPhone.startsWith('8')) cleanPhone = '62' + cleanPhone;
-                citizenPhoneEl.href = 'https://wa.me/' + cleanPhone + '?text=' + encodeURIComponent('Halo ' + citizenName + ', kami dari Dinas PUPR / Pemkab Kolaka Utara terkait laporan pengaduan #' + (item.tracking_code || item.id));
+                citizenPhoneEl.href = 'https://wa.me/' + cleanPhone + '?text=' + encodeURIComponent('Halo ' + citizenName + ', kami dari Dinas PUPR / Pemerintah Kabupaten terkait laporan pengaduan #' + (item.tracking_code || item.id));
                 citizenPhoneEl.target = '_blank';
                 citizenPhoneEl.title = 'Kirim Chat WhatsApp ke Warga';
             } else {

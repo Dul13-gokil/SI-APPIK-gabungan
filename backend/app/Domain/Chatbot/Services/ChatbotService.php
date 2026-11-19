@@ -72,7 +72,7 @@ class ChatbotService
             return [
                 'next_state' => self::STATE_START,
                 'reply' => "👷‍♂️ **Mengenal Peran Pekerja Lapangan (Dinas PUPR & PRKP):**\n\n"
-                    . "Pekerja Lapangan adalah **tim teknis operasional resmi** Pemerintah Kabupaten Kolaka Utara yang bertugas langsung di lokasi kejadian untuk menangani perbaikan fisik infrastruktur publik (jalan, jembatan, lampu penerangan jalan, drainase) berdasarkan Surat Perintah Kerja (SPK) dari Operator Dinas.\n\n"
+                    . "Pekerja Lapangan adalah **tim teknis operasional resmi** Pemerintah Kabupaten yang bertugas langsung di lokasi kejadian untuk menangani perbaikan fisik infrastruktur publik (jalan, jembatan, lampu penerangan jalan, drainase) berdasarkan Surat Perintah Kerja (SPK) dari Operator Dinas.\n\n"
                     . "🔑 **Wewenang & Fitur Khusus di Aplikasi Mobile:**\n"
                     . "1. **Menerima Disposisi Tugas:** Memantau SPK penugasan pada tab *Tugas Aktif* lengkap dengan data koordinat GPS satelit dan foto laporan warga.\n"
                     . "2. **Navigasi Rute Nyata GIS (OSRM):** Menghubungkan langsung ke rute jalan nyata menuju titik kerusakan.\n"
@@ -138,12 +138,12 @@ class ChatbotService
         if (str_contains($lower, 'tentang aplikasi') || str_contains($lower, 'apa itu aplikasi') || str_contains($lower, 'seputar aplikasi') || str_contains($lower, 'info aplikasi') || (str_contains($lower, 'aplikasi') && !str_contains($lower, 'pakai') && $role !== 'PETUGAS')) {
             return [
                 'next_state' => self::STATE_START,
-                'reply' => "📱 **Tentang Aplikasi Pengaduan Infrastruktur Kolaka Utara:**\n\n"
-                    . "Aplikasi ini merupakan platform digital terpadu milik Pemerintah Kabupaten Kolaka Utara (Dinas PUPR & PRKP) yang dirancang untuk mempercepat pelaporan dan penanganan kerusakan fasilitas publik secara transparan dan akuntabel.\n\n"
+                'reply' => "📱 **Tentang Aplikasi Pengaduan Infrastruktur Kabupaten:**\n\n"
+                    . "Aplikasi ini merupakan platform digital terpadu milik Pemerintah Kabupaten (Dinas PUPR & PRKP) yang dirancang untuk mempercepat pelaporan dan penanganan kerusakan fasilitas publik secara transparan dan akuntabel.\n\n"
                     . "🌟 **Fitur Unggulan Aplikasi:**\n"
                     . "• 🤖 **AI Computer Vision (YOLOv8):** Mendeteksi lubang jalan, retakan aspal, lampu PJU rusak, jalan mulus, serta memfilter foto yang tidak relevan secara otomatis.\n"
                     . "• 🛣️ **2 Tipe Pelaporan:** Kerusakan Ringan (< 500m, 1 titik GPS) dan Kerusakan Berat (≥ 500m, polyline rute jalan nyata 2 titik GPS).\n"
-                    . "• 📍 **Geofencing Kabupaten:** Menjamin seluruh aduan berada di dalam batas administratif 15 kecamatan Kolaka Utara.\n"
+                    . "• 📍 **Geofencing Kabupaten:** Menjamin seluruh aduan berada di dalam batas administratif 15 kecamatan Kabupaten.\n"
                     . "• ⏱️ **Transparansi SLA:** Batas waktu penanganan terbuka (Jembatan darurat 24 jam, Jalan berlubang 48 jam, Lampu PJU 72 jam).\n"
                     . "• 🔒 **Perlindungan Privasi:** Nomor HP pelapor disamarkan untuk sesama warga demi menjaga keamanan data pribadi.\n"
                     . "• 👷‍♂️ **Integrasi Pekerja Lapangan:** Petugas URC langsung menerima SPK disposisi dan menuju lokasi via navigasi GIS terintegrasi.",
@@ -157,7 +157,7 @@ class ChatbotService
             return [
                 'next_state' => self::STATE_START,
                 'reply' => "🔒 **Kebijakan Privasi Nomor Telepon Pelapor:**\n\n"
-                    . "Demi menjaga kenyamanan dan keamanan data pribadi masyarakat Kolaka Utara:\n"
+                    . "Demi menjaga kenyamanan dan keamanan data pribadi masyarakat Kabupaten:\n"
                     . "• **Untuk Warga Lain:** Nomor telepon pelapor disamarkan (contoh: *******890) dan dikunci dengan ikon gembok privasi.\n"
                     . "• **Untuk Pelapor Asli:** Anda dapat melihat nomor telepon Anda sendiri pada rincian laporan yang Anda buat.\n"
                     . "• **Untuk Pekerja Lapangan & Operator:** Nomor telepon pelapor dapat dilihat secara utuh agar petugas dapat menghubungi pelapor jika membutuhkan panduan titik lokasi kerusakan di lapangan.",
@@ -187,12 +187,12 @@ class ChatbotService
             ];
         }
 
-        // 8. Tanya Wilayah Layanan Kabupaten Kolaka Utara & Geofencing
-        if (str_contains($lower, 'wilayah') || str_contains($lower, 'kolaka utara') || str_contains($lower, 'kecamatan') || str_contains($lower, 'geofence') || str_contains($lower, 'cakupan') || str_contains($lower, 'luar daerah')) {
+        // 8. Tanya Wilayah Layanan Kabupaten & Geofencing
+        if (str_contains($lower, 'wilayah') || str_contains($lower, 'kabupaten') || str_contains($lower, 'kecamatan') || str_contains($lower, 'geofence') || str_contains($lower, 'cakupan') || str_contains($lower, 'luar daerah')) {
             return [
                 'next_state' => self::STATE_START,
-                'reply' => "📍 **Cakupan Wilayah Kabupaten Kolaka Utara & Geofencing:**\n\n"
-                    . "Sistem pengaduan ini beroperasi secara terpadu khusus untuk wilayah administratif **Kabupaten Kolaka Utara**, Sulawesi Tenggara, yang mencakup 15 kecamatan:\n"
+                'reply' => "📍 **Cakupan Wilayah Kabupaten & Geofencing:**\n\n"
+                    . "Sistem pengaduan ini beroperasi secara terpadu khusus untuk wilayah administratif **Kabupaten**, Sulawesi Tenggara, yang mencakup 15 kecamatan:\n"
                     . "1. Lasusua (Ibu Kota Kabupaten)\n"
                     . "2. Wawo\n"
                     . "3. Ngapa\n"
@@ -208,7 +208,7 @@ class ChatbotService
                     . "13. Porehu\n"
                     . "14. Watunohu\n"
                     . "15. Batu Putih\n\n"
-                    . "🛡️ **Sistem Geofencing:** Koordinat GPS di luar batas wilayah Kabupaten Kolaka Utara akan otomatis diberi peringatan/ditolak sistem agar tindak lanjut dinas teknis tepat sasaran.",
+                    . "🛡️ **Sistem Geofencing:** Koordinat GPS di luar batas wilayah Kabupaten akan otomatis diberi peringatan/ditolak sistem agar tindak lanjut dinas teknis tepat sasaran.",
                 'draft' => [],
                 'is_complete' => false,
             ];
@@ -257,12 +257,12 @@ class ChatbotService
         if (str_contains($lower, 'role') || str_contains($lower, 'peran') || str_contains($lower, 'warga terdaftar') || str_contains($lower, 'pelapor') || str_contains($lower, 'tamu') || str_contains($lower, 'operator') || str_contains($lower, 'bupati')) {
             return [
                 'next_state' => self::STATE_START,
-                'reply' => "👥 **Peran dalam Sistem Pengaduan Kolaka Utara:**\n\n"
+                'reply' => "👥 **Peran dalam Sistem Pengaduan Kabupaten:**\n\n"
                     . "• **Warga Terdaftar:** Warga yang login dengan akun terdaftar resmi. Memiliki akses penuh ke riwayat laporan terpusat, notifikasi real-time, preview identitas akun, foto profil, dan pemantauan tiket aduan.\n"
                     . "• **Mode Tamu / Anonim:** Pengguna yang melapor tanpa login. Identitas nama dan kontak tidak ditampilkan pada publik demi privasi.\n"
                     . "• **Pekerja Lapangan:** Tim teknis lapangan Dinas PUPR/Dishub yang menerima surat perintah tugas, datang ke lokasi via GPS, melakukan pengerjaan fisik, dan mengunggah foto bukti penyelesaian.\n"
                     . "• **Operator Dinas:** Memverifikasi laporan masuk, menentukan prioritas, meneruskan disposisi, dan memvalidasi hasil kerja lapangan.\n"
-                    . "• **Bupati / Pimpinan Daerah:** Memantau peta persebaran laporan GIS dan statistik kinerja penanganan se-Kabupaten Kolaka Utara secara real-time.",
+                    . "• **Bupati / Pimpinan Daerah:** Memantau peta persebaran laporan GIS dan statistik kinerja penanganan se-Kabupaten secara real-time.",
                 'draft' => [],
                 'is_complete' => false,
             ];
@@ -288,7 +288,7 @@ class ChatbotService
         if (str_contains($lower, 'kontak') || str_contains($lower, 'darurat') || str_contains($lower, 'telepon') || str_contains($lower, 'call center') || str_contains($lower, '112')) {
             return [
                 'next_state' => self::STATE_START,
-                'reply' => "🚨 **Kontak Darurat Kabupaten Kolaka Utara:**\n\n"
+                'reply' => "🚨 **Kontak Darurat Kabupaten:**\n\n"
                     . "• **Call Center Darurat:** **112** (Siaga 24 Jam Bebas Pulsa)\n"
                     . "• **Dinas PUPR (Operator):** (0405) 2321100\n\n"
                     . "Untuk laporan kerusakan infrastruktur jalan, jembatan, dan lampu jalan, Anda dapat langsung membuat laporan melalui aplikasi ini atau menghubungi Call Center & Dinas PUPR di atas.",
@@ -371,7 +371,7 @@ class ChatbotService
             }
             return [
                 'next_state' => self::STATE_START,
-                'reply' => "📖 **Panduan Penggunaan Aplikasi Pengaduan Kolaka Utara:**\n\n"
+                'reply' => "📖 **Panduan Penggunaan Aplikasi Pengaduan Kabupaten:**\n\n"
                     . "1. **Tombol (+) Lapor:** Tekan tombol di tengah bawah untuk membuat laporan baru.\n"
                     . "2. **Pilih Tipe Laporan:**\n"
                     . "   • *Kerusakan Ringan (< 500m)* untuk lubang/retak titik, lampu PJU, atau saluran drainase (1 titik GPS).\n"
@@ -454,7 +454,7 @@ class ChatbotService
                 if ($isPetugas) {
                     return [
                         'next_state' => self::STATE_START,
-                        'reply' => "Halo Rekan Pekerja Lapangan Dinas PUPR! 👷‍♂️\nSaya **Asisten Teknis SI-APPIK** Kabupaten Kolaka Utara. Siap memandu operasional aplikasi Anda:\n\n"
+                        'reply' => "Halo Rekan Pekerja Lapangan Dinas PUPR! 👷‍♂️\nSaya **Asisten Teknis SI-APPIK** Kabupaten. Siap memandu operasional aplikasi Anda:\n\n"
                             . "• 👷‍♂️ Ketik **'Apa Itu Pekerja Lapangan'** (peran, tugas, & wewenang)\n"
                             . "• 📋 Ketik **'Cara Mengambil Tugas'** (panduan ambil & mulai tugas SPK)\n"
                             . "• 📱 Ketik **'Tentang Aplikasi'** (cara kerja aplikasi & navigasi GIS)\n"
@@ -483,7 +483,7 @@ class ChatbotService
                 }
                 return [
                     'next_state' => self::STATE_START,
-                    'reply' => "Halo! Saya **Asisten SI-APPIK** Kabupaten Kolaka Utara. Saya siap membantu Anda sebagai **Warga Terdaftar**:\n\n"
+                    'reply' => "Halo! Saya **Asisten SI-APPIK** Kabupaten. Saya siap membantu Anda sebagai **Warga Terdaftar**:\n\n"
                         . "• 📱 Ketik **'Tentang Aplikasi'** untuk info menyeluruh & fitur unggulan sistem\n"
                         . "• ✉️ Ketik **'Cara Verifikasi OTP'** untuk panduan kode OTP pendaftaran & akun\n"
                         . "• 🔑 Ketik **'Ganti Password'** untuk panduan ubah & lupa kata sandi\n"
@@ -491,9 +491,9 @@ class ChatbotService
                         . "• 📝 Ketik **'Panduan Lapor'** untuk tata cara pengaduan masyarakat\n"
                         . "• 🤖 Ketik **'AI'** untuk info Computer Vision & tips foto bukti\n"
                         . "• ⏱️ Ketik **'SLA'** untuk standar waktu penanganan dinas teknis\n"
-                        . "• 📍 Ketik **'Wilayah'** untuk daftar 15 kecamatan Kolaka Utara\n"
+                        . "• 📍 Ketik **'Wilayah'** untuk daftar 15 kecamatan Kabupaten\n"
                         . "• 🔍 Ketik nomor tiket (misal: **0005/ringan/2026**) untuk mengecek status terkini\n\n"
-                        . "Ada yang ingin Anda tanyakan seputar aplikasi atau infrastruktur Kolaka Utara?",
+                        . "Ada yang ingin Anda tanyakan seputar aplikasi atau infrastruktur Kabupaten?",
                     'draft' => [],
                     'is_complete' => false,
                 ];
@@ -531,7 +531,7 @@ class ChatbotService
                 $draftData['description'] = $msg;
                 return [
                     'next_state' => self::STATE_COLLECT_LOCATION,
-                    'reply' => "Detail kerusakan dicatat! 📍 Di mana lokasi persisnya? Sebutkan nama jalan, desa/kelurahan, dan kecamatan di Kolaka Utara:",
+                    'reply' => "Detail kerusakan dicatat! 📍 Di mana lokasi persisnya? Sebutkan nama jalan, desa/kelurahan, dan kecamatan di Kabupaten:",
                     'draft' => $draftData,
                     'is_complete' => false,
                 ];
@@ -561,7 +561,7 @@ class ChatbotService
                 }
                 return [
                     'next_state' => self::STATE_START,
-                    'reply' => "Draf pembuatan aduan dibatalkan. Ada hal lain yang bisa saya bantu terkait infrastruktur Kabupaten Kolaka Utara?",
+                    'reply' => "Draf pembuatan aduan dibatalkan. Ada hal lain yang bisa saya bantu terkait infrastruktur Kabupaten?",
                     'draft' => [],
                     'is_complete' => false,
                 ];
@@ -569,7 +569,7 @@ class ChatbotService
             default:
                 return [
                     'next_state' => self::STATE_START,
-                    'reply' => "Ada yang bisa saya bantu terkait fasilitas infrastruktur Kabupaten Kolaka Utara?",
+                    'reply' => "Ada yang bisa saya bantu terkait fasilitas infrastruktur Kabupaten?",
                     'draft' => [],
                     'is_complete' => false,
                 ];

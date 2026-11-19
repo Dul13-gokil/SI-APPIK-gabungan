@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laporan Kinerja {{ $mode === 'team' ? 'Regu Lapangan' : 'Individu Petugas' }} — SI-APPIK Kolaka Utara</title>
+    <title>Laporan Kinerja {{ $mode === 'team' ? 'Regu Lapangan' : 'Individu Petugas' }} — SI-APPIK Kabupaten</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @media print {
@@ -29,7 +29,7 @@
     <div class="doc-sheet max-w-3xl mx-auto bg-white rounded-2xl border border-slate-200 shadow-sm p-8 sm:p-10 space-y-6">
         <!-- Kop Resmi -->
         <div class="border-b-2 border-slate-900 pb-4 text-center space-y-1">
-            <p class="text-xs font-bold uppercase tracking-widest text-slate-600">Pemerintah Kabupaten Kolaka Utara</p>
+            <p class="text-xs font-bold uppercase tracking-widest text-slate-600">Pemerintah Kabupaten</p>
             <h1 class="text-lg sm:text-xl font-extrabold uppercase tracking-wide text-slate-900">
                 Dinas Pekerjaan Umum dan Penataan Ruang (PUPR)
             </h1>
@@ -291,7 +291,7 @@
                     <p class="font-bold text-slate-900">Operator Verifikasi Dinas PUPR</p>
                 </div>
                 <div class="border-t border-slate-400 pt-1 mx-6">
-                    <p class="font-bold text-slate-800">Dinas PUPR Kab. Kolaka Utara</p>
+                    <p class="font-bold text-slate-800">Dinas PUPR Kabupaten</p>
                 </div>
             </div>
             <div class="space-y-14">
@@ -308,7 +308,7 @@
                 <div class="border-t border-slate-400 pt-1 mx-6">
                     <p class="font-bold text-slate-800">
                         @if(!empty($isAll))
-                            {{ auth()->user()?->name ?? 'Dinas PUPR Kab. Kolaka Utara' }}
+                            {{ auth()->user()?->name ?? 'Dinas PUPR Kabupaten' }}
                         @else
                             {{ $mode === 'team' ? ($teamMetric['leader_name'] ?? '-') : ($individualMetric['name'] ?? '-') }}
                         @endif
