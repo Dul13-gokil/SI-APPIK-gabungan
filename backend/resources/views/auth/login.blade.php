@@ -318,13 +318,18 @@
             </div>
 
             <!-- Tampilan Download di Smartphone -->
+            @php
+                $apkFile = public_path('downloads/SI-APPIK.APK');
+                $apkVer = file_exists($apkFile) ? filemtime($apkFile) : time();
+                $apkDownloadUrl = route('download.apk', ['v' => $apkVer]);
+            @endphp
             <div id="viewMobileContainer" class="space-y-3">
                 <p class="text-xs text-[#475569]">
                     Unduh aplikasi resmi SI-APPIK di ponsel Anda:
                 </p>
 
                 <div class="flex flex-col gap-2.5 w-full">
-                    <a href="{{ route('download.apk') }}" 
+                    <a href="{{ $apkDownloadUrl }}" download="SI-APPIK.APK"
                         class="w-full flex items-center justify-center gap-3 px-4 min-h-[48px] rounded-xl bg-[#0F172A] hover:bg-slate-800 text-white border border-slate-800 transition">
                         <svg class="w-5 h-5 shrink-0 fill-white" viewBox="0 0 24 24">
                             <path d="M4.059 2.046C3.714 2.39 3.5 2.915 3.5 3.612v16.776c0 .697.214 1.222.56 1.566l.08.077 9.4-9.399v-.223l-9.4-9.4-.08.037zM17.067 15.65l-3.427-3.428v-.444l3.427-3.428.077.045 4.062 2.308c1.16.658 1.16 1.737 0 2.396l-4.062 2.307-.077.244zM13.64 11.778L4.208 2.346c.386-.41.986-.445 1.71-.035l11.149 6.335-3.427 3.132zM13.64 12.222l3.427 3.132-11.149 6.335c-.724.41-1.324.375-1.71-.035L13.64 12.222z"/>
@@ -352,7 +357,7 @@
             <div id="viewDesktopContainer" class="hidden space-y-3">
                 <div class="flex flex-col sm:flex-row items-center gap-4 p-4 rounded-2xl bg-[#F8FAFC] border border-[#E2E8F0]">
                     <div class="w-24 h-24 p-1.5 bg-white rounded-xl border border-[#E2E8F0] shrink-0 flex items-center justify-center">
-                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ urlencode(route('download.apk')) }}" 
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ urlencode($apkDownloadUrl) }}" 
                              alt="QR Code Unduh Aplikasi" 
                              class="w-full h-full object-contain">
                     </div>
