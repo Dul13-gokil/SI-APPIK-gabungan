@@ -30,90 +30,21 @@ class SecurityMailService
         $deviceInfo     = $this->parseUserAgent($userAgent);
         $subject        = "Kata Sandi Akun SI-APPIK Anda Berhasil Diperbarui";
 
-        $htmlBody = <<<HTML
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pemberitahuan Kata Sandi Telah Diubah</title>
-</head>
-<body style="margin: 0; padding: 0; background-color: #f8fafc; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #1e293b;">
-  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #f8fafc; padding: 30px 15px;">
-    <tr>
-      <td align="center">
-        <table role="presentation" width="100%" style="max-width: 520px; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border: 1px solid #e2e8f0;">
-          
-          <!-- Header -->
-          <tr>
-            <td style="background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%); padding: 26px 24px; text-align: center;">
-              <h1 style="margin: 0; color: #ffffff; font-size: 18px; font-weight: 700; letter-spacing: 0.5px;">
-                PEMERINTAH KABUPATEN
-              </h1>
-              <p style="margin: 6px 0 0 0; color: #93c5fd; font-size: 13px; font-weight: 500;">
-                SI-APPIK - Sistem Informasi Pengaduan & Penanganan Infrastruktur
-              </p>
-            </td>
-          </tr>
-
-          <!-- Body -->
-          <tr>
-            <td style="padding: 30px 26px;">
-              <h2 style="margin: 0 0 10px 0; color: #0f172a; font-size: 17px; font-weight: 700;">
-                Kata Sandi Anda Berhasil Diperbarui
-              </h2>
-              <p style="margin: 0 0 18px 0; color: #475569; font-size: 13.5px; line-height: 1.6;">
-                Halo <strong>{$user->name}</strong>,<br>
-                Kami memberitahukan bahwa kata sandi untuk akun SI-APPIK Anda baru saja berhasil diubah dengan rincian sebagai berikut:
-              </p>
-
-              <!-- Activity Card -->
-              <table role="presentation" width="100%" style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px 16px; margin: 16px 0;">
-                <tr>
-                  <td style="padding: 6px 0; font-size: 12.5px; color: #64748b; width: 35%;">Waktu Perubahan</td>
-                  <td style="padding: 6px 0; font-size: 13px; color: #0f172a; font-weight: 600;">: {$timeString}</td>
-                </tr>
-                <tr>
-                  <td style="padding: 6px 0; font-size: 12.5px; color: #64748b;">Lokasi Perangkat</td>
-                  <td style="padding: 6px 0; font-size: 13px; color: #0f172a; font-weight: 600;">: {$deviceLocation}</td>
-                </tr>
-                <tr>
-                  <td style="padding: 6px 0; font-size: 12.5px; color: #64748b;">Perangkat / Klien</td>
-                  <td style="padding: 6px 0; font-size: 13px; color: #0f172a; font-weight: 600;">: {$deviceInfo}</td>
-                </tr>
-              </table>
-
-              <!-- Warning Box -->
-              <div style="background-color: #fff1f2; border-left: 4px solid #ef4444; padding: 14px 16px; border-radius: 8px; margin: 20px 0;">
-                <p style="margin: 0; font-size: 12.5px; color: #991b1b; line-height: 1.5;">
-                  <strong>PENTING:</strong> Jika Anda merasa <strong>BUKAN</strong> Anda yang melakukan perubahan ini, akun Anda mungkin dalam bahaya. Segera lakukan reset kata sandi melalui fitur 'Lupa Kata Sandi' di aplikasi dan hubungi Administrator IT Dinas PUPR Kolaka Utara.
-                </p>
-              </div>
-
-              <p style="margin: 0; color: #94a3b8; font-size: 12px; line-height: 1.5;">
-                Jika Anda memang yang melakukan perubahan ini, Anda dapat mengabaikan email ini dengan aman.
-              </p>
-            </td>
-          </tr>
-
-          <!-- Footer -->
-          <tr>
-            <td style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; padding: 18px 24px; text-align: center;">
-              <p style="margin: 0; color: #64748b; font-size: 11.5px;">
-                Dinas Pekerjaan Umum & Penataan Ruang (PUPR) - Kab. Kolaka Utara
-              </p>
-              <p style="margin: 4px 0 0 0; color: #94a3b8; font-size: 11px;">
-                Email otomatis dari sistem &bull; Mohon tidak membalas email ini
-              </p>
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
-</body>
-</html>
-HTML;
+        $safeName = e($user->name);
+        $htmlBody = view('emails.v2_notification', [
+            'tone'     => 'primary',
+            'badge'    => 'Keamanan Akun',
+            'title'    => 'Kata Sandi Berhasil Diperbarui',
+            'greeting' => "Halo <strong>{$safeName}</strong>,",
+            'intro'    => 'Kata sandi akun SI-APPIK Anda baru saja diubah dengan rincian berikut:',
+            'details'  => [
+                'Waktu'     => e($timeString),
+                'Lokasi'    => e($deviceLocation),
+                'Perangkat' => e($deviceInfo),
+            ],
+            'noteTone' => 'danger',
+            'note'     => '<strong>Bukan Anda?</strong> Segera atur ulang kata sandi melalui aplikasi dan hubungi Administrator IT Dinas PUPR Kolaka Utara.',
+        ])->render();
 
         $plainText = "PEMBERITAHUAN PERUBAHAN KATA SANDI - SI-APPIK\n\n"
             . "Halo {$user->name},\n"
@@ -245,7 +176,7 @@ HTML;
     }
 
     /**
-     * Kirim email aktivasi / undangan akun baru untuk Petugas Lapangan atau Operator.
+     * Kirim email aktivasi / undangan akun baru untuk Pekerja Lapangan atau Operator.
      */
     public function sendStaffInvitationEmail(User $user, string $role, string $defaultPassword = 'password'): bool
     {
@@ -256,126 +187,33 @@ HTML;
 
         $loginUrl = url('/login');
         $isOperator = in_array(strtoupper($role), ['OPERATOR', 'DINAS']);
-        $roleTitle = $isOperator ? 'Operator Verifikasi Sistem' : 'Petugas Lapangan (Tim Teknis PUPR)';
+        $roleTitle = $isOperator ? 'Operator Verifikasi Sistem' : 'Pekerja Lapangan (Tim Teknis PUPR)';
         $portalDescription = $isOperator 
             ? 'Portal Web Resmi SI-APPIK Kolaka Utara' 
             : 'Aplikasi Mobile SI-APPIK & Web Portal Petugas';
 
         $subject = "[AKUN BARU] Selamat Datang di SI-APPIK Kolaka Utara - Akun {$roleTitle}";
 
-        $accessNote = $isOperator
-            ? "<p style=\"margin: 0 0 16px 0; color: #475569; font-size: 13.5px; line-height: 1.6;\">
-                Anda telah resmi didaftarkan sebagai <strong>{$roleTitle}</strong> Dinas Pekerjaan Umum dan Penataan Ruang (PUPR) Kabupaten Kolaka Utara pada sistem SI-APPIK. Akun ini digunakan untuk memverifikasi laporan masyarakat, mendisposisi penugasan ke regu lapangan, dan memvalidasi pekerjaan fisik.
-               </p>"
-            : "<p style=\"margin: 0 0 16px 0; color: #475569; font-size: 13.5px; line-height: 1.6;\">
-                Anda telah resmi didaftarkan sebagai <strong>{$roleTitle}</strong> Dinas Pekerjaan Umum dan Penataan Ruang (PUPR) Kabupaten Kolaka Utara pada sistem SI-APPIK. Akun ini dapat Anda gunakan pada <strong>Aplikasi Mobile SI-APPIK</strong> maupun <strong>Web Portal Petugas</strong> untuk menerima surat tugas perbaikan jalan/jembatan dan mengunggah dokumentasi progres pengerjaan lapangan.
-               </p>";
-
-        $htmlBody = <<<HTML
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aktivasi Akun {$roleTitle}</title>
-</head>
-<body style="margin: 0; padding: 0; background-color: #f8fafc; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #1e293b;">
-  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #f8fafc; padding: 30px 15px;">
-    <tr>
-      <td align="center">
-        <table role="presentation" width="100%" style="max-width: 520px; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border: 1px solid #e2e8f0;">
-          
-          <!-- Header -->
-          <tr>
-            <td style="background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%); padding: 26px 24px; text-align: center;">
-              <h1 style="margin: 0; color: #ffffff; font-size: 18px; font-weight: 700; letter-spacing: 0.5px;">
-                PEMERINTAH KABUPATEN
-              </h1>
-              <p style="margin: 6px 0 0 0; color: #93c5fd; font-size: 13px; font-weight: 500;">
-                SI-APPIK - Sistem Informasi Pengaduan & Penanganan Infrastruktur
-              </p>
-            </td>
-          </tr>
-
-          <!-- Body -->
-          <tr>
-            <td style="padding: 30px 26px;">
-              <h2 style="margin: 0 0 10px 0; color: #0f172a; font-size: 17px; font-weight: 700;">
-                Akun {$roleTitle} Anda Telah Aktif
-              </h2>
-              <p style="margin: 0 0 14px 0; color: #475569; font-size: 13.5px; line-height: 1.6;">
-                Halo <strong>{$user->name}</strong>,
-              </p>
-              {$accessNote}
-
-              <!-- Credentials Card -->
-              <table role="presentation" width="100%" style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px 18px; margin: 18px 0;">
-                <tr>
-                  <td colspan="2" style="padding-bottom: 10px; font-size: 13px; font-weight: 700; color: #1e3a8a; border-bottom: 1px solid #e2e8f0;">
-                    Informasi Masuk Sistem:
-                  </td>
-                </tr>
-                <tr>
-                  <td style="padding: 8px 0 4px 0; font-size: 12.5px; color: #64748b; width: 38%;">Alamat Email</td>
-                  <td style="padding: 8px 0 4px 0; font-size: 13px; color: #0f172a; font-weight: 600;">: {$user->email}</td>
-                </tr>
-                <tr>
-                  <td style="padding: 4px 0; font-size: 12.5px; color: #64748b;">Kata Sandi Default</td>
-                  <td style="padding: 4px 0; font-size: 13px; color: #0f172a; font-weight: 700; font-family: monospace;">: {$defaultPassword}</td>
-                </tr>
-                <tr>
-                  <td style="padding: 4px 0; font-size: 12.5px; color: #64748b;">Peran Sistem</td>
-                  <td style="padding: 4px 0; font-size: 13px; color: #1e40af; font-weight: 600;">: {$roleTitle}</td>
-                </tr>
-                <tr>
-                  <td style="padding: 4px 0 6px 0; font-size: 12.5px; color: #64748b;">Akses Masuk</td>
-                  <td style="padding: 4px 0 6px 0; font-size: 12.5px; color: #0f172a; font-weight: 500;">: {$portalDescription}</td>
-                </tr>
-              </table>
-
-              <!-- Notice Box -->
-              <div style="background-color: #eff6ff; border-left: 4px solid #3b82f6; padding: 14px 16px; border-radius: 8px; margin: 20px 0;">
-                <p style="margin: 0; font-size: 12.5px; color: #1e40af; line-height: 1.6;">
-                  <strong>WAJIB DILAKUKAN SAAT LOGIN PERTAMA KALI:</strong><br>
-                  Demi keamanan dan akurasi data dinas, saat pertama kali masuk Anda akan diminta untuk <strong>memeriksa nama lengkap</strong>, <strong>memasukkan nomor handphone/WhatsApp aktif</strong>, dan <strong>mengubah kata sandi default</strong> menjadi kata sandi pribadi Anda.
-                </p>
-              </div>
-
-              <!-- Action Button -->
-              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin: 24px 0 10px 0;">
-                <tr>
-                  <td align="center">
-                    <a href="{$loginUrl}" style="display: inline-block; background-color: #1e3a8a; color: #ffffff; font-size: 13px; font-weight: 700; text-decoration: none; padding: 12px 28px; border-radius: 10px; box-shadow: 0 2px 8px rgba(30,58,138,0.25);">
-                      Masuk ke Sistem SI-APPIK
-                    </a>
-                  </td>
-                </tr>
-              </table>
-              <p style="margin: 10px 0 0 0; text-align: center; color: #94a3b8; font-size: 11px;">
-                Atau salin tautan berikut ke browser: <a href="{$loginUrl}" style="color: #3b82f6; text-decoration: none;">{$loginUrl}</a>
-              </p>
-
-            </td>
-          </tr>
-
-          <!-- Footer -->
-          <tr>
-            <td style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; padding: 18px 24px; text-align: center;">
-              <p style="margin: 0; color: #64748b; font-size: 11.5px;">
-                Dinas Pekerjaan Umum & Penataan Ruang (PUPR) - Kab. Kolaka Utara
-              </p>
-              <p style="margin: 4px 0 0 0; color: #94a3b8; font-size: 11px;">
-                Email otomatis dari sistem kepegawaian &bull; Mohon tidak membalas email ini
-              </p>
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
-</body>
-</html>
-HTML;
+        $safeName = e($user->name);
+        $htmlBody = view('emails.v2_notification', [
+            'tone'        => 'primary',
+            'badge'       => 'Aktivasi Staf',
+            'title'       => "Akun {$roleTitle} Aktif",
+            'greeting'    => "Halo <strong>{$safeName}</strong>,",
+            'intro'       => $isOperator
+                ? "Akun Anda sebagai <strong>{$roleTitle}</strong> Dinas PUPR Kolaka Utara telah dibuat untuk verifikasi laporan, disposisi regu, dan validasi pekerjaan."
+                : "Akun Anda sebagai <strong>{$roleTitle}</strong> Dinas PUPR Kolaka Utara telah dibuat untuk menerima penugasan perbaikan dan mengunggah dokumentasi lapangan.",
+            'details'     => [
+                'Email'              => e($user->email),
+                'Kata Sandi Awal'    => '<span style="font-family: monospace;">' . e($defaultPassword) . '</span>',
+                'Peran'              => e($roleTitle),
+                'Akses'              => e($portalDescription),
+            ],
+            'actionLabel' => 'Masuk ke SI-APPIK',
+            'actionUrl'   => $loginUrl,
+            'noteTone'    => 'info',
+            'note'        => '<strong>Login Pertama:</strong> Periksa nama lengkap, lengkapi nomor WhatsApp aktif, dan ganti kata sandi awal Anda.',
+        ])->render();
 
         $plainText = "AKTIVASI AKUN {$roleTitle} - SI-APPIK KOLAKA UTARA\n\n"
             . "Halo {$user->name},\n\n"
@@ -401,94 +239,25 @@ HTML;
         $timeString = now('Asia/Makassar')->translatedFormat('d F Y, H:i') . ' WITA';
         $subject = "[KEAMANAN] Data Akun SI-APPIK Anda Telah Diperbarui oleh Administrator";
 
-        $changeRowsHtml = '';
+        $details = [];
         $changeRowsPlain = '';
         foreach ($changes as $field => $desc) {
-            $changeRowsHtml .= "<tr>
-                <td style=\"padding: 8px 12px; font-size: 12.5px; color: #64748b; font-weight: 600; border-bottom: 1px solid #f1f5f9; width: 38%;\">{$field}</td>
-                <td style=\"padding: 8px 12px; font-size: 13px; color: #0f172a; font-weight: 500; border-bottom: 1px solid #f1f5f9;\">{$desc}</td>
-            </tr>";
+            $details[$field] = e($desc);
             $changeRowsPlain .= "- {$field}: {$desc}\n";
         }
+        $details['Waktu'] = e($timeString);
 
-        $htmlBody = <<<HTML
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pemberitahuan Pembaruan Akun oleh Administrator</title>
-</head>
-<body style="margin: 0; padding: 0; background-color: #f8fafc; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #1e293b;">
-  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #f8fafc; padding: 30px 15px;">
-    <tr>
-      <td align="center">
-        <table role="presentation" width="100%" style="max-width: 520px; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border: 1px solid #e2e8f0;">
-          
-          <!-- Header Resmi -->
-          <tr>
-            <td style="background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%); padding: 26px 24px; text-align: center;">
-              <h1 style="margin: 0; color: #ffffff; font-size: 18px; font-weight: 700; letter-spacing: 0.5px;">
-                PEMERINTAH KABUPATEN
-              </h1>
-              <p style="margin: 6px 0 0 0; color: #93c5fd; font-size: 13px; font-weight: 500;">
-                SI-APPIK - Sistem Informasi Pengaduan & Penanganan Infrastruktur
-              </p>
-            </td>
-          </tr>
-
-          <!-- Body -->
-          <tr>
-            <td style="padding: 30px 26px;">
-              <h2 style="margin: 0 0 10px 0; color: #0f172a; font-size: 17px; font-weight: 700;">
-                Data Akun Anda Telah Diperbarui
-              </h2>
-              <p style="margin: 0 0 16px 0; color: #475569; font-size: 13.5px; line-height: 1.6;">
-                Halo <strong>{$user->name}</strong>,<br>
-                Kami menginformasikan bahwa data profil akun Anda pada sistem SI-APPIK Kabupaten Kolaka Utara baru saja diperbarui oleh <strong>Super Administrator</strong> dengan rincian sebagai berikut:
-              </p>
-
-              <!-- Table Rincian Perubahan -->
-              <table role="presentation" width="100%" style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; border-collapse: collapse; margin: 16px 0; overflow: hidden;">
-                {$changeRowsHtml}
-                <tr>
-                  <td style="padding: 8px 12px; font-size: 12.5px; color: #64748b; font-weight: 600;">Waktu Pembaruan</td>
-                  <td style="padding: 8px 12px; font-size: 13px; color: #0f172a; font-weight: 500;">{$timeString}</td>
-                </tr>
-              </table>
-
-              <!-- Notice Box -->
-              <div style="background-color: #fffbeb; border-left: 4px solid #f59e0b; padding: 14px 16px; border-radius: 8px; margin: 20px 0;">
-                <p style="margin: 0; font-size: 12.5px; color: #92400e; line-height: 1.5;">
-                  <strong>Catatan Keamanan:</strong><br>
-                  Jika Anda tidak pernah meminta perubahan data ini atau merasa terjadi kekeliruan identitas, segera hubungi Helpdesk IT Dinas PUPR Kabupaten Kolaka Utara untuk verifikasi akun Anda.
-                </p>
-              </div>
-
-              <p style="margin: 0; color: #94a3b8; font-size: 12px; line-height: 1.5;">
-                Pemberitahuan otomatis ini dikirimkan untuk menjamin transparansi data dan mencegah penyalahgunaan akun kedinasan/masyarakat.
-              </p>
-            </td>
-          </tr>
-
-          <!-- Footer -->
-          <tr>
-            <td style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; padding: 18px 24px; text-align: center;">
-              <p style="margin: 0; color: #64748b; font-size: 11.5px;">
-                Dinas Pekerjaan Umum & Penataan Ruang (PUPR) - Kab. Kolaka Utara
-              </p>
-              <p style="margin: 4px 0 0 0; color: #94a3b8; font-size: 11px;">
-                Email otomatis dari sistem keamanan akun &bull; Mohon tidak membalas email ini
-              </p>
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
-</body>
-</html>
-HTML;
+        $safeName = e($user->name);
+        $htmlBody = view('emails.v2_notification', [
+            'tone'     => 'primary',
+            'badge'    => 'Pembaruan Admin',
+            'title'    => 'Data Akun Diperbarui',
+            'greeting' => "Halo <strong>{$safeName}</strong>,",
+            'intro'    => 'Data profil akun SI-APPIK Anda baru saja diperbarui oleh <strong>Super Administrator</strong>:',
+            'details'  => $details,
+            'noteTone' => 'warning',
+            'note'     => '<strong>Catatan Keamanan:</strong> Jika Anda tidak meminta perubahan ini, segera hubungi Helpdesk IT Dinas PUPR Kolaka Utara.',
+        ])->render();
 
         $plainText = "PEMBERITAHUAN PEMBARUAN PROFIL AKUN - SI-APPIK\n\n"
             . "Halo {$user->name},\n"
@@ -530,44 +299,38 @@ HTML;
         }
 
         $timeString = now('Asia/Makassar')->translatedFormat('d F Y, H:i') . ' WITA';
-        $safeName = htmlspecialchars($user->name, ENT_QUOTES, 'UTF-8');
-        $safeReason = htmlspecialchars($reason ?: 'Kebijakan tata kelola dan keamanan sistem.', ENT_QUOTES, 'UTF-8');
+        $safeName = e($user->name);
+        $safeReason = e($reason ?: 'Kebijakan tata kelola dan keamanan sistem.');
 
         if ($isActive) {
             $subject = 'Pemberitahuan Pengaktifan Kembali Akun SI-APPIK';
-            $badgeBg = '#ecfdf5';
-            $badgeBorder = '#a7f3d0';
-            $badgeColor = '#047857';
             $statusTitle = 'Akun Diaktifkan Kembali';
-            $leadText = 'Akun SI-APPIK Anda telah <strong>diaktifkan kembali</strong> oleh Super Administrator. Anda kini dapat masuk kembali ke sistem menggunakan kredensial resmi Anda.';
-            $reasonLabel = 'Catatan Pengaktifan';
+            $leadText = 'Akun SI-APPIK Anda telah <strong>diaktifkan kembali</strong> oleh Super Administrator. Anda kini dapat masuk menggunakan kredensial resmi Anda.';
+            $reasonLabel = 'Catatan';
+            $tone = 'success';
+            $badge = 'Akun Aktif';
         } else {
             $subject = 'Pemberitahuan Penonaktifan Akun SI-APPIK';
-            $badgeBg = '#fef2f2';
-            $badgeBorder = '#fecaca';
-            $badgeColor = '#b91c1c';
             $statusTitle = 'Akun Dinonaktifkan';
-            $leadText = 'Akun SI-APPIK Anda telah <strong>dinonaktifkan sementara</strong> oleh Super Administrator sehingga akses masuk ke aplikasi mobile maupun portal web dibatasi.';
-            $reasonLabel = 'Alasan Penonaktifan';
+            $leadText = 'Akun SI-APPIK Anda telah <strong>dinonaktifkan sementara</strong> oleh Super Administrator sehingga akses masuk dibatasi.';
+            $reasonLabel = 'Alasan';
+            $tone = 'danger';
+            $badge = 'Akun Nonaktif';
         }
 
-        $htmlBody = "
-        <div style=\"font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; max-width: 580px; margin: 0 auto; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; overflow: hidden;\">
-            <div style=\"background: #1e3a8a; padding: 20px 24px; color: #ffffff;\">
-                <div style=\"font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #bfdbfe; font-weight: 700;\">SI-APPIK &bull; Kabupaten Kolaka Utara</div>
-                <div style=\"font-size: 18px; font-weight: 800; margin-top: 4px;\">{$statusTitle}</div>
-            </div>
-            <div style=\"padding: 24px; color: #334155; font-size: 13.5px; line-height: 1.6;\">
-                <p style=\"margin: 0 0 12px;\">Yth. <strong>{$safeName}</strong>,</p>
-                <p style=\"margin: 0 0 16px;\">{$leadText}</p>
-                <div style=\"background: {$badgeBg}; border: 1px solid {$badgeBorder}; border-radius: 10px; padding: 14px 16px; margin-bottom: 16px;\">
-                    <div style=\"font-size: 11px; font-weight: 700; text-transform: uppercase; color: {$badgeColor}; margin-bottom: 4px;\">{$reasonLabel}</div>
-                    <div style=\"font-size: 13px; color: #0f172a; font-weight: 600;\">{$safeReason}</div>
-                    <div style=\"font-size: 11.5px; color: #64748b; margin-top: 6px;\">Waktu Perubahan: {$timeString}</div>
-                </div>
-                <p style=\"margin: 0; font-size: 12px; color: #64748b;\">Apabila Anda memerlukan informasi lebih lanjut, silakan menghubungi Administrator Dinas PUPR Kabupaten Kolaka Utara.</p>
-            </div>
-        </div>";
+        $htmlBody = view('emails.v2_notification', [
+            'tone'     => $tone,
+            'badge'    => $badge,
+            'title'    => $statusTitle,
+            'greeting' => "Halo <strong>{$safeName}</strong>,",
+            'intro'    => $leadText,
+            'details'  => [
+                $reasonLabel => $safeReason,
+                'Waktu'      => e($timeString),
+            ],
+            'noteTone' => $isActive ? 'success' : 'danger',
+            'note'     => 'Apabila memerlukan bantuan lebih lanjut, silakan hubungi Administrator Dinas PUPR Kabupaten Kolaka Utara.',
+        ])->render();
 
         $plainText = "Yth. {$user->name},\n\n"
             . ($isActive
@@ -599,101 +362,27 @@ HTML;
         $deviceInfo = $this->parseUserAgent($userAgent);
         $subject = "Pemberitahuan Pembaruan Data Akun SI-APPIK";
 
-        $changeRowsHtml = '';
+        $details = [];
         $changeRowsPlain = '';
         foreach ($changes as $field => $desc) {
-            $changeRowsHtml .= "<tr>
-                <td style=\"padding: 8px 12px; font-size: 12.5px; color: #64748b; font-weight: 600; border-bottom: 1px solid #f1f5f9; width: 38%;\">{$field}</td>
-                <td style=\"padding: 8px 12px; font-size: 13px; color: #0f172a; font-weight: 500; border-bottom: 1px solid #f1f5f9;\">{$desc}</td>
-            </tr>";
+            $details[$field] = e($desc);
             $changeRowsPlain .= "- {$field}: {$desc}\n";
         }
+        $details['Lokasi'] = e($deviceLocation);
+        $details['Perangkat'] = e($deviceInfo);
+        $details['Waktu'] = e($timeString);
 
-        $htmlBody = <<<HTML
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pemberitahuan Pembaruan Akun</title>
-</head>
-<body style="margin: 0; padding: 0; background-color: #f8fafc; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #1e293b;">
-  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #f8fafc; padding: 30px 15px;">
-    <tr>
-      <td align="center">
-        <table role="presentation" width="100%" style="max-width: 520px; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border: 1px solid #e2e8f0;">
-          
-          <!-- Header Resmi -->
-          <tr>
-            <td style="background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%); padding: 26px 24px; text-align: center;">
-              <h1 style="margin: 0; color: #ffffff; font-size: 18px; font-weight: 700; letter-spacing: 0.5px;">
-                PEMERINTAH KABUPATEN
-              </h1>
-              <p style="margin: 6px 0 0 0; color: #93c5fd; font-size: 13px; font-weight: 500;">
-                SI-APPIK - Sistem Informasi Pengaduan & Penanganan Infrastruktur
-              </p>
-            </td>
-          </tr>
-
-          <!-- Body -->
-          <tr>
-            <td style="padding: 30px 26px;">
-              <h2 style="margin: 0 0 10px 0; color: #0f172a; font-size: 17px; font-weight: 700;">
-                Data Akun Anda Berhasil Diperbarui
-              </h2>
-              <p style="margin: 0 0 16px 0; color: #475569; font-size: 13.5px; line-height: 1.6;">
-                Halo <strong>{$user->name}</strong>,<br>
-                Kami menginformasikan bahwa data profil akun Anda pada sistem SI-APPIK Kabupaten Kolaka Utara baru saja diperbarui melalui aplikasi dengan rincian sebagai berikut:
-              </p>
-
-              <!-- Table Rincian Perubahan -->
-              <table role="presentation" width="100%" style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; border-collapse: collapse; margin: 16px 0; overflow: hidden;">
-                {$changeRowsHtml}
-                <tr>
-                  <td style="padding: 8px 12px; font-size: 12.5px; color: #64748b; font-weight: 600; border-bottom: 1px solid #f1f5f9;">Lokasi Perangkat</td>
-                  <td style="padding: 8px 12px; font-size: 13px; color: #0f172a; font-weight: 500; border-bottom: 1px solid #f1f5f9;">{$deviceLocation}</td>
-                </tr>
-                <tr>
-                  <td style="padding: 8px 12px; font-size: 12.5px; color: #64748b; font-weight: 600; border-bottom: 1px solid #f1f5f9;">Perangkat / Klien</td>
-                  <td style="padding: 8px 12px; font-size: 13px; color: #0f172a; font-weight: 500; border-bottom: 1px solid #f1f5f9;">{$deviceInfo}</td>
-                </tr>
-                <tr>
-                  <td style="padding: 8px 12px; font-size: 12.5px; color: #64748b; font-weight: 600;">Waktu Pembaruan</td>
-                  <td style="padding: 8px 12px; font-size: 13px; color: #0f172a; font-weight: 500;">{$timeString}</td>
-                </tr>
-              </table>
-
-              <!-- Notice Box -->
-              <div style="background-color: #fff1f2; border-left: 4px solid #ef4444; padding: 14px 16px; border-radius: 8px; margin: 20px 0;">
-                <p style="margin: 0; font-size: 12.5px; color: #991b1b; line-height: 1.5;">
-                  <strong>PENTING:</strong> Jika Anda merasa <strong>BUKAN</strong> Anda yang melakukan perubahan data ini, segera lakukan pengamanan akun melalui fitur 'Lupa Kata Sandi' di aplikasi mobile atau hubungi Administrator Helpdesk IT Dinas PUPR Kolaka Utara.
-                </p>
-              </div>
-
-              <p style="margin: 0; color: #94a3b8; font-size: 12px; line-height: 1.5;">
-                Pemberitahuan otomatis ini dikirimkan untuk menjamin keamanan akun dan transparansi identitas pengguna.
-              </p>
-            </td>
-          </tr>
-
-          <!-- Footer -->
-          <tr>
-            <td style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; padding: 18px 24px; text-align: center;">
-              <p style="margin: 0; color: #64748b; font-size: 11.5px;">
-                Dinas Pekerjaan Umum & Penataan Ruang (PUPR) - Kab. Kolaka Utara
-              </p>
-              <p style="margin: 4px 0 0 0; color: #94a3b8; font-size: 11px;">
-                Email otomatis dari sistem keamanan akun &bull; Mohon tidak membalas email ini
-              </p>
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
-</body>
-</html>
-HTML;
+        $safeName = e($user->name);
+        $htmlBody = view('emails.v2_notification', [
+            'tone'     => 'primary',
+            'badge'    => 'Pembaruan Akun',
+            'title'    => 'Data Akun Diperbarui',
+            'greeting' => "Halo <strong>{$safeName}</strong>,",
+            'intro'    => 'Data profil akun SI-APPIK Anda baru saja diperbarui dengan rincian berikut:',
+            'details'  => $details,
+            'noteTone' => 'danger',
+            'note'     => '<strong>Bukan Anda?</strong> Segera atur ulang kata sandi melalui aplikasi dan hubungi Administrator IT Dinas PUPR Kolaka Utara.',
+        ])->render();
 
         $plainText = "PEMBERITAHUAN PEMBARUAN DATA AKUN - SI-APPIK\n\n"
             . "Halo {$user->name},\n"

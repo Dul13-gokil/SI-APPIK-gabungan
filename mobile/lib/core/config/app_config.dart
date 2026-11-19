@@ -1,12 +1,17 @@
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AppConfig {
   static const String appName = 'Aduan Jalan';
   static const String appVersion = '1.0.0';
-  
-  // Base URL server Laravel Cloud (Railway Production 24 Jam)
-  static String defaultBaseUrl = 'https://si-appik-production.up.railway.app';
-  static String activeOrigin = 'https://si-appik-production.up.railway.app';
+
+  // Dual Base URL otomatis sesuai platform:
+  // - Chrome / Web (kIsWeb): USB adb / local server http://127.0.0.1:8000
+  // - Mobile Android/iOS: Tailscale VPN http://100.86.30.42:8000
+  static String get defaultBaseUrl =>
+      kIsWeb ? 'http://127.0.0.1:8000' : 'http://100.86.30.42:8000';
+  static String activeOrigin =
+      kIsWeb ? 'http://127.0.0.1:8000' : 'http://100.86.30.42:8000';
   static String get baseUrl => normalizeUrl(defaultBaseUrl);
   
   static const int connectTimeout = 15000;
@@ -62,8 +67,12 @@ class AppConfig {
   static Future<String> getBaseUrl() async {
     final prefs = await SharedPreferences.getInstance();
     var custom = prefs.getString(_keyCustomBaseUrl);
-    // Bersihkan cache lama jika masih tersimpan IP lama atau URL sementara
-    if (custom != null && !custom.contains('si-appik-production.up.railway.app')) {
+    // Bersihkan cache lama jika masih menunjuk ke URL production Railway
+    // atau jika platform Web/Mobile masih menyimpan URL default platform lawannya
+    if (custom != null &&
+        (custom.contains('si-appik-production.up.railway.app') ||
+            (kIsWeb && custom.contains('100.86.30.42')) ||
+            (!kIsWeb && custom.contains('127.0.0.1')))) {
       await prefs.remove(_keyCustomBaseUrl);
       custom = null;
     }

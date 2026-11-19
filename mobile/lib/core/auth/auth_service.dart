@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import '../network/api_client.dart';
 import '../storage/secure_storage_service.dart';
@@ -418,6 +419,7 @@ class AuthService {
     String? currentPassword,
     String? password,
     String? avatar,
+    Uint8List? avatarBytes,
     String? phone,
     double? latitude,
     double? longitude,
@@ -434,7 +436,9 @@ class AuthService {
         body['password'] = password;
       }
       final shouldClearAvatar = avatar == '' || avatar == 'DELETE';
-      if (avatar != null) {
+      if (avatarBytes != null && avatarBytes.isNotEmpty) {
+        body['avatar'] = MultipartFile.fromBytes(avatarBytes, filename: 'avatar.jpg');
+      } else if (avatar != null) {
         body['avatar'] = shouldClearAvatar ? 'DELETE' : avatar;
       }
       if (phone != null) {
@@ -445,7 +449,11 @@ class AuthService {
         body['longitude'] = longitude;
       }
 
-      final response = await _apiClient.dio.post('/profile', data: body);
+      final dynamic requestData = (avatarBytes != null && avatarBytes.isNotEmpty)
+          ? FormData.fromMap(body)
+          : body;
+
+      final response = await _apiClient.dio.post('/profile', data: requestData);
       if (response.statusCode == 200 && response.data['data'] != null) {
         final userData = response.data['data'];
         final updatedUser = UserModel.fromJson(userData);

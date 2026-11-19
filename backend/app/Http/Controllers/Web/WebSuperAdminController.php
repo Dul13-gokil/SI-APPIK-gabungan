@@ -270,6 +270,12 @@ class WebSuperAdminController extends Controller
         $hasBupati = User::whereIn('role', ['KEPALA_DAERAH', 'BUPATI'])->exists();
         $hasSuperAdmin = User::whereIn('role', ['SUPERADMIN', 'ADMIN'])->exists();
 
+        // Arsip Aduan resmi (Selesai, Dibatalkan Warga, dan Ditolak oleh Operator — otomatis tidak termasuk penolakan Super Admin karena global scope excludeAdminRejected)
+        $archivedComplaints = Complaint::with(['category', 'user', 'citizen', 'photos', 'latestDisposition.team.leader', 'latestDisposition.assignee.teams.leader', 'latestDisposition.department', 'statusHistories', 'aiAssessments'])
+            ->whereIn('status', ['COMPLETED', 'CLOSED', 'REJECTED', 'CANCELLED'])
+            ->latest('updated_at')
+            ->get();
+
         // Arsip laporan yang ditolak khusus oleh Super Admin (hanya tampil untuk Super Admin)
         $adminRejectedComplaints = Complaint::withoutGlobalScope('excludeAdminRejected')
             ->where('rejected_by_superadmin', true)
@@ -282,7 +288,7 @@ class WebSuperAdminController extends Controller
             'activeTab', 'regions', 'districtStats', 'mapPoints', 'complaintsDetailMap',
             'teams', 'dispatchMode', 'availableOfficers', 'unassignedOfficers', 'districts',
             'avgPerformance', 'allComplaintsForReport', 'hasBupati', 'hasSuperAdmin',
-            'adminRejectedComplaints'
+            'archivedComplaints', 'adminRejectedComplaints'
         ));
     }
 

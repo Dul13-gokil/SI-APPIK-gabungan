@@ -1,15 +1,19 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/auth/auth_service.dart';
 import '../../../core/media/media_service.dart';
 import '../../../core/network/api_client.dart';
+import '../../../core/offline/offline_resolution_queue_service.dart';
 import '../../../shared/models/complaint_model.dart';
 import '../../../shared/theme/app_colors.dart';
 import '../../../shared/widgets/report_pagination_controls.dart';
 import '../../../shared/widgets/status_badge.dart';
+import '../../../shared/widgets/v2_components.dart';
+import '../../../shared/widgets/v2_toast.dart';
 import '../../../core/utils/phone_validator.dart';
 import '../../complaints/presentation/complaint_detail_screen.dart';
 import '../../notifications/presentation/notifications_screen.dart';
@@ -25,6 +29,9 @@ class _FieldTasksScreenState extends State<FieldTasksScreen> {
   final _apiClient = ApiClient();
   final _mediaService = MediaService();
   final _authService = AuthService();
+  final _offlineQueueService = OfflineResolutionQueueService();
+  List<OfflineResolutionItem> _pendingOfflineItems = [];
+  bool _isSyncingOffline = false;
 
   UserModel? _currentUser;
   Map<String, dynamic>? _myTeam;
@@ -37,7 +44,7 @@ class _FieldTasksScreenState extends State<FieldTasksScreen> {
   String _taskScope = 'ALL'; // 'ALL' = Semua Tugas, 'MY' = Tugas Regu Saya
   String _searchQuery = '';
 
-  // Status KPI Petugas Lapangan
+  // Status KPI Pekerja Lapangan
   int _totalTasks = 0;
   int _dispatchedCount = 0;
   int _inProgressCount = 0;
@@ -56,6 +63,38 @@ class _FieldTasksScreenState extends State<FieldTasksScreen> {
   void initState() {
     super.initState();
     _loadUserAndData();
+    _loadAndSyncOfflineQueue(silent: true);
+  }
+
+  Future<void> _loadAndSyncOfflineQueue({bool silent = false}) async {
+    final queued = await _offlineQueueService.getQueue();
+    if (mounted) {
+      setState(() => _pendingOfflineItems = queued);
+    }
+    if (queued.isEmpty) return;
+
+    if (mounted) setState(() => _isSyncingOffline = true);
+    final synced = await _offlineQueueService.syncAll(_apiClient);
+    final remaining = await _offlineQueueService.getQueue();
+    if (!mounted) return;
+    setState(() {
+      _pendingOfflineItems = remaining;
+      _isSyncingOffline = false;
+    });
+    if (synced > 0) {
+      showV2Toast(
+        context,
+        message: '$synced bukti perbaikan offline berhasil disinkronkan!',
+        type: V2ToastType.success,
+      );
+      _fetchTasks();
+    } else if (!silent) {
+      showV2Toast(
+        context,
+        message: 'Masih menunggu koneksi internet stabil untuk sinkronisasi.',
+        type: V2ToastType.warning,
+      );
+    }
   }
 
   Future<void> _loadUserAndData() async {
@@ -497,7 +536,6 @@ class _FieldTasksScreenState extends State<FieldTasksScreen> {
                               passwordError = null;
                             });
 
-                            final messenger = ScaffoldMessenger.of(context);
                             final nav = Navigator.of(context);
 
                             final checkRes = await _authService.checkPhone(validation.normalized, userId: user.id);
@@ -528,13 +566,12 @@ class _FieldTasksScreenState extends State<FieldTasksScreen> {
                                 setState(() {
                                   _currentUser = updatedUser;
                                 });
+                                showV2Toast(
+                                  this.context,
+                                  message: 'Profil dan kata sandi baru Anda berhasil disimpan!',
+                                  type: V2ToastType.success,
+                                );
                               }
-                              messenger.showSnackBar(
-                                const SnackBar(
-                                  content: Text('Profil dan kata sandi baru Anda berhasil disimpan!'),
-                                  backgroundColor: Color(0xFF10B981),
-                                ),
-                              );
                             } else {
                               setSheetState(() {
                                 isSaving = false;
@@ -567,11 +604,10 @@ class _FieldTasksScreenState extends State<FieldTasksScreen> {
 
   Future<void> _startWork(ComplaintModel task) async {
     if (_needsProfileCompletion) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Silakan lengkapi profil resmi dan ubah kata sandi awal terlebih dahulu sebelum memulai tugas.'),
-          backgroundColor: Color(0xFFDC2626),
-        ),
+      showV2Toast(
+        context,
+        message: 'Silakan lengkapi profil resmi dan ubah kata sandi awal terlebih dahulu sebelum memulai tugas.',
+        type: V2ToastType.error,
       );
       _showPetugasQuickSetupSheet();
       return;
@@ -585,21 +621,19 @@ class _FieldTasksScreenState extends State<FieldTasksScreen> {
 
     if (isAssignedToOtherTeam) {
       final teamName = task.teamName ?? 'Regu Lain';
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Tugas ini telah ditugaskan khusus untuk $teamName. Regu Anda tidak dapat mengambil alih tugas ini.'),
-          backgroundColor: AppColors.statusRejected,
-        ),
+      showV2Toast(
+        context,
+        message: 'Tugas ini telah ditugaskan khusus untuk $teamName. Regu Anda tidak dapat mengambil alih tugas ini.',
+        type: V2ToastType.error,
       );
       return;
     }
 
     if (_dispatchMode == 'OPERATOR_ONLY' && !isAssignedToMeOrMyTeam) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Mode Operator Saja aktif. Tugas ini menunggu penunjukan regu secara resmi oleh Operator Dinas.'),
-          backgroundColor: AppColors.statusRejected,
-        ),
+      showV2Toast(
+        context,
+        message: 'Mode Operator Saja aktif. Tugas ini menunggu penunjukan regu secara resmi oleh Operator Dinas.',
+        type: V2ToastType.error,
       );
       return;
     }
@@ -636,11 +670,10 @@ class _FieldTasksScreenState extends State<FieldTasksScreen> {
       final res = await _apiClient.dio.post('/complaints/${task.id}/start-work');
       if (res.statusCode == 200) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Pekerjaan resmi dimulai! Menuju rute peta GIS ke lokasi penanganan...'),
-              backgroundColor: AppColors.statusCompleted,
-            ),
+          showV2Toast(
+            context,
+            message: 'Pekerjaan resmi dimulai! Menuju rute peta GIS ke lokasi penanganan...',
+            type: V2ToastType.success,
           );
           Navigator.push(
             context,
@@ -653,8 +686,10 @@ class _FieldTasksScreenState extends State<FieldTasksScreen> {
     } on DioException catch (e) {
       final msg = e.response?.data?['message'] ?? 'Gagal memulai pekerjaan';
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(msg), backgroundColor: AppColors.statusRejected),
+        showV2Toast(
+          context,
+          message: msg,
+          type: V2ToastType.error,
         );
       }
     }
@@ -662,11 +697,10 @@ class _FieldTasksScreenState extends State<FieldTasksScreen> {
 
   Future<void> _submitResolutionWithPhoto(ComplaintModel task) async {
     if (_needsProfileCompletion) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Silakan lengkapi profil resmi dan ubah kata sandi awal terlebih dahulu.'),
-          backgroundColor: Color(0xFFDC2626),
-        ),
+      showV2Toast(
+        context,
+        message: 'Silakan lengkapi profil resmi dan ubah kata sandi awal terlebih dahulu.',
+        type: V2ToastType.error,
       );
       _showPetugasQuickSetupSheet();
       return;
@@ -679,11 +713,10 @@ class _FieldTasksScreenState extends State<FieldTasksScreen> {
 
     if (!isAssignedToMeOrMyTeam) {
       final teamName = task.teamName ?? 'regu lain';
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Anda tidak dapat mengunggah bukti untuk tugas yang dikerjakan oleh $teamName.'),
-          backgroundColor: AppColors.statusRejected,
-        ),
+      showV2Toast(
+        context,
+        message: 'Anda tidak dapat mengunggah bukti untuk tugas yang dikerjakan oleh $teamName.',
+        type: V2ToastType.error,
       );
       return;
     }
@@ -753,19 +786,50 @@ class _FieldTasksScreenState extends State<FieldTasksScreen> {
 
       final res = await _apiClient.dio.post('/complaints/${task.id}/finish-work', data: formData);
       if (res.statusCode == 200 && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Bukti penyelesaian berhasil dikirim! Menunggu validasi akhir dari Operator.'),
-            backgroundColor: AppColors.statusCompleted,
-          ),
+        showV2Toast(
+          context,
+          message: 'Bukti penyelesaian berhasil dikirim! Menunggu validasi akhir dari Operator.',
+          type: V2ToastType.success,
         );
         _fetchTasks();
       }
     } on DioException catch (e) {
+      final isNetworkErr = e.response == null ||
+          e.type == DioExceptionType.connectionError ||
+          e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.receiveTimeout;
+      if (isNetworkErr) {
+        final finalNote = noteController.text.isNotEmpty
+            ? noteController.text
+            : 'Pekerjaan perbaikan fisik telah diselesaikan di lapangan';
+        await _offlineQueueService.enqueue(
+          OfflineResolutionItem(
+            complaintId: task.id,
+            publicCode: task.publicCode,
+            title: task.title,
+            note: finalNote,
+            photoPath: File(photo.path).path,
+            queuedAt: DateTime.now().toIso8601String(),
+          ),
+        );
+        final updatedQueue = await _offlineQueueService.getQueue();
+        if (mounted) {
+          setState(() => _pendingOfflineItems = updatedQueue);
+          showV2Toast(
+            context,
+            message: 'Sinyal lemah/offline. Bukti disimpan di antrean sinkronisasi otomatis.',
+            type: V2ToastType.warning,
+            duration: const Duration(seconds: 4),
+          );
+        }
+        return;
+      }
       final msg = e.response?.data?['message'] ?? 'Gagal mengirim bukti';
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(msg), backgroundColor: AppColors.statusRejected),
+        showV2Toast(
+          context,
+          message: msg,
+          type: V2ToastType.error,
         );
       }
     }
@@ -775,133 +839,162 @@ class _FieldTasksScreenState extends State<FieldTasksScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: Row(
+      body: SafeArea(
+        bottom: false,
+        child: Column(
           children: [
-            Container(
-              width: 36,
-              height: 36,
-              padding: const EdgeInsets.all(3),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: AppColors.border),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.04),
-                    blurRadius: 4,
-                    offset: const Offset(0, 1),
+            V2FloatingHeader(
+              title: 'SI-APPIK',
+              subtitle: 'Kolaka Utara',
+              leading: Container(
+                width: 36,
+                height: 36,
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: AppColors.primaryContainer,
+                  borderRadius: BorderRadius.circular(11),
+                  border: Border.all(color: AppColors.primaryBorder),
+                ),
+                child: Image.asset(
+                  'assets/images/logo_pin.png',
+                  fit: BoxFit.contain,
+                ),
+              ),
+              actions: [
+                Container(
+                  margin: const EdgeInsets.only(right: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryContainer,
+                    borderRadius: BorderRadius.circular(99),
+                    border: Border.all(color: AppColors.primaryBorder),
                   ),
-                ],
-              ),
-              child: Image.asset(
-                'assets/images/logo_pin.png',
-                fit: BoxFit.contain,
-              ),
-            ),
-            const SizedBox(width: 10),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      _currentUser?.name ?? 'Petugas Lapangan',
-                      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                  child: Text(
+                    'Kuota ${_dispatchedCount + _inProgressCount}/3 Aktif',
+                    style: GoogleFonts.inter(
+                      fontSize: 10.5,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.primary,
                     ),
-                    if (_myTeam != null && (_myTeam!['code'] != null || _myTeam!['team_code'] != null)) ...[
-                      const SizedBox(width: 6),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: AppColors.primary,
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Text(
-                          _myTeam!['code'] ?? _myTeam!['team_code'] ?? 'REGU',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
+                  ),
+                ),
+                InkWell(
+                  borderRadius: BorderRadius.circular(11),
+                  onTap: () async {
+                    await Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const NotificationsScreen()),
+                    );
+                    _fetchUnreadNotifications();
+                  },
+                  child: Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      color: AppColors.cardSurface,
+                      borderRadius: BorderRadius.circular(11),
+                      border: Border.all(color: AppColors.border),
+                    ),
+                    child: Stack(
+                      alignment: Alignment.center,
+                      clipBehavior: Clip.none,
+                      children: [
+                        const Icon(LucideIcons.bell, color: AppColors.textPrimary, size: 18),
+                        if (_unreadNotifications > 0)
+                          Positioned(
+                            top: 4,
+                            right: 4,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                              decoration: const BoxDecoration(
+                                color: AppColors.statusRejected,
+                                shape: BoxShape.circle,
+                              ),
+                              constraints: const BoxConstraints(minWidth: 14, minHeight: 14),
+                              child: Text(
+                                '$_unreadNotifications',
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(color: Colors.white, fontSize: 8.5, fontWeight: FontWeight.bold),
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-                Row(
-                  children: [
-                    Container(
-                      width: 6,
-                      height: 6,
-                      decoration: const BoxDecoration(
-                        color: AppColors.statusCompleted,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    const Text(
-                      'Petugas Lapangan Terdaftar',
-                      style: TextStyle(fontSize: 11, color: AppColors.primary, fontWeight: FontWeight.w600),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ],
-        ),
-        actions: [
-          IconButton(
-            icon: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                const Icon(LucideIcons.bell, color: AppColors.textPrimary, size: 22),
-                if (_unreadNotifications > 0)
-                  Positioned(
-                    top: -4,
-                    right: -4,
-                    child: Container(
-                      padding: const EdgeInsets.all(3),
-                      decoration: const BoxDecoration(
-                        color: AppColors.statusRejected,
-                        shape: BoxShape.circle,
-                      ),
-                      constraints: const BoxConstraints(minWidth: 14, minHeight: 14),
-                      child: Text(
-                        '$_unreadNotifications',
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold),
-                      ),
+                      ],
                     ),
                   ),
+                ),
               ],
             ),
-            onPressed: () async {
-              await Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const NotificationsScreen()),
-              );
-              _fetchUnreadNotifications();
-            },
-          ),
-          const SizedBox(width: 8),
-        ],
-      ),
-      body: RefreshIndicator(
-        onRefresh: () async {
-          await Future.wait([_fetchTasks(), _fetchUnreadNotifications()]);
-        },
-        child: ListView(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            Expanded(
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  await Future.wait([
+                    _fetchTasks(),
+                    _fetchUnreadNotifications(),
+                    _loadAndSyncOfflineQueue(silent: true),
+                  ]);
+                },
+                child: ListView(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           children: [
-            // 4 Top KPI Cards for Petugas Lapangan
-            _buildKpiSection(),
+            if (_pendingOfflineItems.isNotEmpty) ...[
+              Container(
+                margin: const EdgeInsets.only(bottom: 12),
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFFFBEB),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: const Color(0xFFFDE68A)),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(LucideIcons.cloudOff, size: 18, color: AppColors.statusInProgress),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '${_pendingOfflineItems.length} Bukti Menunggu Sinkronisasi',
+                            style: GoogleFonts.outfit(
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                              color: const Color(0xFF92400E),
+                            ),
+                          ),
+                          Text(
+                            'Akan otomatis diunggah saat sinyal kembali stabil.',
+                            style: GoogleFonts.inter(fontSize: 11, color: const Color(0xFF78350F)),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    ElevatedButton(
+                      onPressed: _isSyncingOffline ? null : () => _loadAndSyncOfflineQueue(silent: false),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.statusInProgress,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      ),
+                      child: _isSyncingOffline
+                          ? const SizedBox(
+                              width: 14,
+                              height: 14,
+                              child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                            )
+                          : const Text('Sinkronkan', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+
+            // Hero Banner Sambutan Pekerja Lapangan
+            _buildWelcomeCard(),
             const SizedBox(height: 14),
 
-            // SOP Banner (Dominant Blue)
-            _buildSopBanner(),
+            // 4 Top KPI Cards for Pekerja Lapangan
+            _buildKpiSection(),
             const SizedBox(height: 14),
 
             // Segmented Switch: Semua Tugas / Tugas Regu Saya
@@ -987,10 +1080,12 @@ class _FieldTasksScreenState extends State<FieldTasksScreen> {
             ),
             const SizedBox(height: 14),
 
-            // Search Bar
+            // Search Bar (Seragam dengan Halaman Warga)
             TextField(
+              style: GoogleFonts.inter(fontSize: 13, color: AppColors.textPrimary),
               decoration: InputDecoration(
-                hintText: 'Cari tugas atau lokasi perbaikan...',
+                hintText: 'Cari tugas, kode (#0003/ringan/2026), atau lokasi...',
+                hintStyle: GoogleFonts.inter(fontSize: 12.5, color: AppColors.textSecondary),
                 prefixIcon: const Icon(LucideIcons.search, size: 18, color: AppColors.textSecondary),
                 filled: true,
                 fillColor: Colors.white,
@@ -1100,6 +1195,45 @@ class _FieldTasksScreenState extends State<FieldTasksScreen> {
             const SizedBox(height: 80),
           ],
         ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWelcomeCard() {
+    final fullName = (_currentUser?.name ?? '').trim();
+    final userName = fullName.isNotEmpty ? fullName : 'Pekerja Lapangan';
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: AppColors.primary,
+        borderRadius: BorderRadius.circular(22),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Selamat Datang, $userName',
+            style: GoogleFonts.inter(
+              color: const Color(0xFFDBEAFE),
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'Lakukan pengerjaan dan selesaikan tugas perbaikan tepat waktu',
+            style: GoogleFonts.outfit(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+              height: 1.3,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -1107,85 +1241,57 @@ class _FieldTasksScreenState extends State<FieldTasksScreen> {
   Widget _buildKpiSection() {
     return Column(
       children: [
-        // Baris 1: Total Laporan (Biru) & Ditugaskan (Biru)
         Row(
           children: [
-            _buildKpiCard('Total Laporan', '$_totalTasks', AppColors.primary, LucideIcons.clipboardList),
-            const SizedBox(width: 8),
-            _buildKpiCard('Ditugaskan', '$_dispatchedCount', AppColors.primary, LucideIcons.userCheck),
+            _buildKpiCard('Total Laporan', '$_totalTasks', AppColors.textPrimary),
+            const SizedBox(width: 10),
+            _buildKpiCard('Ditugaskan', '$_dispatchedCount', AppColors.primary),
           ],
         ),
-        const SizedBox(height: 8),
-        // Baris 2: Diproses (Kuning = Dikerjakan + Validasi) & Selesai (Hijau)
+        const SizedBox(height: 10),
         Row(
           children: [
-            _buildKpiCard(
-              'Diproses',
-              '$_diprosesCount',
-              const Color(0xFFD97706),
-              LucideIcons.wrench,
-              subtitle: 'Dikerjakan & Validasi',
-            ),
-            const SizedBox(width: 8),
-            _buildKpiCard('Selesai', '$_completedCount', AppColors.statusCompleted, LucideIcons.checkCircle2),
+            _buildKpiCard('Diproses', '$_diprosesCount', AppColors.statusInProgress),
+            const SizedBox(width: 10),
+            _buildKpiCard('Selesai', '$_completedCount', AppColors.statusCompleted),
           ],
         ),
       ],
     );
   }
 
-  Widget _buildKpiCard(String label, String value, Color color, IconData icon, {String? subtitle}) {
+  Widget _buildKpiCard(String label, String value, Color valueColor) {
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 9, horizontal: 8),
+        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: color.withValues(alpha: 0.25)),
-          boxShadow: [
-            BoxShadow(
-              color: color.withValues(alpha: 0.04),
-              blurRadius: 6,
-              offset: const Offset(0, 2),
-            ),
-          ],
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppColors.border),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: Text(
-                    label,
-                    style: const TextStyle(
-                      fontSize: 9.5,
-                      color: AppColors.textSecondary,
-                      fontWeight: FontWeight.w600,
-                      height: 1.1,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                const SizedBox(width: 2),
-                Icon(icon, size: 13, color: color),
-              ],
+            Text(
+              value,
+              style: GoogleFonts.outfit(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: valueColor,
+                height: 1.1,
+              ),
             ),
             const SizedBox(height: 4),
             Text(
-              value,
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: color),
-            ),
-            if (subtitle != null)
-              Text(
-                subtitle,
-                style: const TextStyle(fontSize: 8.5, color: AppColors.textSecondary, height: 1.2),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+              label,
+              style: GoogleFonts.inter(
+                fontSize: 11,
+                color: AppColors.textSecondary,
+                fontWeight: FontWeight.w500,
               ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
           ],
         ),
       ),
@@ -1222,62 +1328,14 @@ class _FieldTasksScreenState extends State<FieldTasksScreen> {
         await launchUrl(webMapsUri, mode: LaunchMode.platformDefault);
       } catch (err) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Tidak dapat membuka aplikasi Google Maps')),
+          showV2Toast(
+            context,
+            message: 'Tidak dapat membuka aplikasi Google Maps',
+            type: V2ToastType.error,
           );
         }
       }
     }
-  }
-
-  Widget _buildSopBanner() {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [AppColors.primary, AppColors.primaryLight],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(14),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.2),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: const Icon(LucideIcons.info, color: Colors.white, size: 20),
-          ),
-          const SizedBox(width: 12),
-          const Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'SOP Teknis Petugas Lapangan',
-                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.white),
-                ),
-                SizedBox(height: 2),
-                Text(
-                  'Lakukan penanganan fisik sesuai SLA. Ambil foto bukti tuntas & kirim ke Operator untuk validasi penutupan tugas.',
-                  style: TextStyle(fontSize: 11, color: Colors.white, height: 1.3),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
   }
 
   Widget _buildFilterChips() {
@@ -1317,14 +1375,15 @@ class _FieldTasksScreenState extends State<FieldTasksScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // 1. Filter Status Pengerjaan (Baris 1: Horizontal Chips Ringkas)
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: statusChips.map((f) {
-              final isSelected = _selectedFilter == f['value'];
-              return Padding(
-                padding: const EdgeInsets.only(right: 6),
+        // 1. Filter Status Pengerjaan (Baris 1: Penuh simetris rapat kiri-kanan tanpa gap)
+        Row(
+          children: statusChips.asMap().entries.map((entry) {
+            final idx = entry.key;
+            final f = entry.value;
+            final isSelected = _selectedFilter == f['value'];
+            return Expanded(
+              child: Padding(
+                padding: EdgeInsets.only(right: idx == statusChips.length - 1 ? 0 : 6),
                 child: InkWell(
                   onTap: () {
                     setState(() => _selectedFilter = f['value']!);
@@ -1332,7 +1391,8 @@ class _FieldTasksScreenState extends State<FieldTasksScreen> {
                   },
                   borderRadius: BorderRadius.circular(10),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 9),
+                    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                    alignment: Alignment.center,
                     decoration: BoxDecoration(
                       color: isSelected ? AppColors.primary.withValues(alpha: 0.12) : Colors.white,
                       borderRadius: BorderRadius.circular(10),
@@ -1341,19 +1401,23 @@ class _FieldTasksScreenState extends State<FieldTasksScreen> {
                         width: isSelected ? 1.4 : 1.0,
                       ),
                     ),
-                    child: Text(
-                      f['label']!,
-                      style: TextStyle(
-                        fontSize: 11.5,
-                        color: isSelected ? AppColors.primary : AppColors.textSecondary,
-                        fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        f['label']!,
+                        maxLines: 1,
+                        style: GoogleFonts.inter(
+                          fontSize: 11.5,
+                          color: isSelected ? AppColors.primary : AppColors.textSecondary,
+                          fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              );
-            }).toList(),
-          ),
+              ),
+            );
+          }).toList(),
         ),
         const SizedBox(height: 8),
 
@@ -1362,16 +1426,17 @@ class _FieldTasksScreenState extends State<FieldTasksScreen> {
           children: [
             // Dropdown Filter Kategori
             Expanded(
-              child: PopupMenuButton<int?>(
+              child: PopupMenuButton<int>(
                 tooltip: 'Pilih Kategori',
-                initialValue: _selectedCategoryFilter,
-                onSelected: (int? catId) {
-                  setState(() => _selectedCategoryFilter = catId);
+                initialValue: _selectedCategoryFilter ?? -1,
+                onSelected: (int catId) {
+                  setState(() => _selectedCategoryFilter = catId == -1 ? null : catId);
                 },
                 itemBuilder: (context) => categoryFilters.map((c) {
-                  final isCatSelected = _selectedCategoryFilter == c['id'];
-                  return PopupMenuItem<int?>(
-                    value: c['id'] as int?,
+                  final catId = c['id'] as int?;
+                  final isCatSelected = _selectedCategoryFilter == catId;
+                  return PopupMenuItem<int>(
+                    value: catId ?? -1,
                     child: Row(
                       children: [
                         Icon(
@@ -1564,13 +1629,13 @@ class _FieldTasksScreenState extends State<FieldTasksScreen> {
                     children: [
                       Flexible(
                         child: Text(
-                          task.publicCode,
+                          task.publicCode.startsWith('#') ? task.publicCode : '#${task.publicCode}',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
+                          style: GoogleFonts.inter(
                             fontWeight: FontWeight.bold,
                             fontSize: 10.5,
-                            color: AppColors.primary,
+                            color: AppColors.textPrimary,
                           ),
                         ),
                       ),
@@ -1578,13 +1643,13 @@ class _FieldTasksScreenState extends State<FieldTasksScreen> {
                       StatusBadge(status: task.status),
                     ],
                   ),
-                  const SizedBox(height: 7),
+                  const SizedBox(height: 8),
                   Text(
                     task.title,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 12.5,
+                    style: GoogleFonts.outfit(
+                      fontSize: 13.5,
                       fontWeight: FontWeight.bold,
                       color: AppColors.textPrimary,
                       height: 1.25,
@@ -1595,8 +1660,8 @@ class _FieldTasksScreenState extends State<FieldTasksScreen> {
                     task.address,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 10.5,
+                    style: GoogleFonts.inter(
+                      fontSize: 11,
                       color: AppColors.textSecondary,
                       height: 1.3,
                     ),
@@ -1604,38 +1669,21 @@ class _FieldTasksScreenState extends State<FieldTasksScreen> {
                 ],
               ),
               const SizedBox(height: 8),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              Row(
                 children: [
-                  if (task.teamName != null)
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: AppColors.background,
-                        borderRadius: BorderRadius.circular(5),
-                        border: Border.all(color: AppColors.border),
-                      ),
-                      child: Text(
-                        task.teamName!,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(fontSize: 9.5, fontWeight: FontWeight.w600, color: AppColors.textSecondary),
+                  const Icon(LucideIcons.user, size: 11, color: AppColors.textSecondary),
+                  const SizedBox(width: 4),
+                  Expanded(
+                    child: Text(
+                      'Pelapor: ${task.isAnonymous ? 'Anonim' : task.reporterName}',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.inter(
+                        fontSize: 10.5,
+                        color: AppColors.textSecondary,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
-                  const SizedBox(height: 6),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        task.damageType == 'major' ? 'Berat' : 'Ringan',
-                        style: TextStyle(
-                          fontSize: 9.5,
-                          fontWeight: FontWeight.w700,
-                          color: task.damageType == 'major' ? AppColors.damageTypeMajor : AppColors.textSecondary,
-                        ),
-                      ),
-                      const Icon(LucideIcons.chevronRight, size: 13, color: AppColors.primary),
-                    ],
                   ),
                 ],
               ),
@@ -1682,170 +1730,73 @@ class _FieldTasksScreenState extends State<FieldTasksScreen> {
     }
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 14),
+      margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: AppColors.border),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Content Card (Bisa diklik untuk buka Detail Laporan)
+          // Content Card (Seragam dengan Kartu Laporan Halaman Warga)
           InkWell(
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => ComplaintDetailScreen(complaintId: task.id)),
             ).then((_) => _fetchTasks()),
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
             child: Padding(
               padding: const EdgeInsets.all(14),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Baris Atas: Kode Aduan, Tipe Kerusakan, Regu, dan Status
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Expanded(
-                        child: Wrap(
-                          spacing: 6,
-                          runSpacing: 4,
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          children: [
-                            Text(
-                              task.publicCode,
-                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 11.5, color: AppColors.primary),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                              decoration: BoxDecoration(
-                                color: task.damageType == 'major' ? const Color(0xFFEFF6FF) : const Color(0xFFF1F5F9),
-                                borderRadius: BorderRadius.circular(6),
-                                border: Border.all(
-                                  color: task.damageType == 'major' ? const Color(0xFFBFDBFE) : const Color(0xFFE2E8F0),
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    task.damageType == 'major' ? LucideIcons.route : LucideIcons.circleDot,
-                                    size: 10,
-                                    color: task.damageType == 'major' ? const Color(0xFF1E40AF) : const Color(0xFF475569),
-                                  ),
-                                  const SizedBox(width: 3),
-                                  Text(
-                                    task.damageType == 'major' ? 'Kerusakan Berat' : 'Kerusakan Ringan',
-                                    style: TextStyle(
-                                      fontSize: 9.5,
-                                      fontWeight: FontWeight.bold,
-                                      color: task.damageType == 'major' ? const Color(0xFF1E40AF) : const Color(0xFF475569),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            if (task.damageType == 'major' && task.roadLength != null)
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                decoration: BoxDecoration(
-                                  color: Colors.grey.shade50,
-                                  borderRadius: BorderRadius.circular(6),
-                                  border: Border.all(color: AppColors.border),
-                                ),
-                                child: Text(
-                                  '${task.roadLength}m',
-                                  style: const TextStyle(fontSize: 9.5, fontWeight: FontWeight.bold, color: AppColors.textSecondary),
-                                ),
-                              ),
-                            if (task.teamName != null)
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFF1F5F9),
-                                  borderRadius: BorderRadius.circular(6),
-                                  border: Border.all(color: const Color(0xFFE2E8F0)),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const Icon(LucideIcons.hardHat, size: 10, color: Color(0xFF475569)),
-                                    const SizedBox(width: 3),
-                                    Text(
-                                      task.teamName!,
-                                      style: const TextStyle(fontSize: 9.5, fontWeight: FontWeight.bold, color: Color(0xFF334155)),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                          ],
+                      Text(
+                        task.publicCode.startsWith('#') ? task.publicCode : '#${task.publicCode}',
+                        style: GoogleFonts.inter(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 11.5,
+                          color: AppColors.textPrimary,
                         ),
                       ),
-                      const SizedBox(width: 6),
                       StatusBadge(status: task.status),
                     ],
                   ),
                   const SizedBox(height: 8),
-
-                  // Judul Tugas
                   Text(
                     task.title,
-                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                    style: GoogleFonts.outfit(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                    ),
                   ),
                   const SizedBox(height: 4),
-
-                  // Alamat Lokasi
+                  Text(
+                    task.address,
+                    style: GoogleFonts.inter(fontSize: 12, color: AppColors.textSecondary),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 6),
                   Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(LucideIcons.mapPin, size: 12, color: AppColors.textSecondary),
+                      const Icon(LucideIcons.user, size: 12, color: AppColors.primary),
                       const SizedBox(width: 4),
                       Expanded(
                         child: Text(
-                          task.address,
-                          style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                          'Pelapor: ${task.isAnonymous ? 'Anonim' : task.reporterName}${task.teamName != null ? ' • ${task.teamName}' : ''}',
+                          style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],
                   ),
-
-                  // Tombol Rute Navigasi Google Maps (Saat sedang dikerjakan regu sendiri)
-                  if (isWorking && isAssignedToMeOrMyTeam) ...[
-                    const SizedBox(height: 8),
-                    InkWell(
-                      onTap: () => _openNavigation(task.latitude, task.longitude),
-                      borderRadius: BorderRadius.circular(8),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFEFF6FF),
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: const Color(0xFFBFDBFE)),
-                        ),
-                        child: const Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(LucideIcons.navigation, size: 13, color: Color(0xFF1E40AF)),
-                            SizedBox(width: 6),
-                            Text(
-                              'Buka Rute Google Maps',
-                              style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF1E40AF)),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
 
                   // Catatan Revisi Ringkas (Jika status REVISION_REQUIRED)
                   if (isRevision && task.revisionNotes != null && task.revisionNotes!.trim().isNotEmpty) ...[
@@ -1915,9 +1866,9 @@ class _FieldTasksScreenState extends State<FieldTasksScreen> {
           ),
 
           // Action buttons berdasarkan status
-          const Divider(height: 1),
+          const Divider(height: 1, color: AppColors.border),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             child: Row(
               children: [
                 if (isRevision) ...[
@@ -2006,21 +1957,46 @@ class _FieldTasksScreenState extends State<FieldTasksScreen> {
                     ),
                 ],
                 if (isWorking) ...[
-                  if (canUploadFinish)
+                  if (canUploadFinish) ...[
                     Expanded(
-                      child: ElevatedButton.icon(
-                        onPressed: () => _submitResolutionWithPhoto(task),
-                        icon: const Icon(LucideIcons.camera, size: 16),
-                        label: const Text('Selesai + Kirim Bukti', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.statusCompleted,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                          padding: const EdgeInsets.symmetric(vertical: 12),
+                      flex: 2,
+                      child: OutlinedButton.icon(
+                        onPressed: () => _openNavigation(task.latitude, task.longitude),
+                        icon: const Icon(LucideIcons.navigation, size: 15),
+                        label: Text(
+                          'Rute',
+                          style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.bold),
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: AppColors.primary,
+                          backgroundColor: AppColors.primaryContainer,
+                          side: const BorderSide(color: AppColors.primaryBorder),
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          padding: const EdgeInsets.symmetric(vertical: 11, horizontal: 10),
                         ),
                       ),
-                    )
-                  else
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      flex: 3,
+                      child: ElevatedButton.icon(
+                        onPressed: () => _submitResolutionWithPhoto(task),
+                        icon: const Icon(LucideIcons.camera, size: 15),
+                        label: Text(
+                          'Kirim Bukti',
+                          style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.bold),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          padding: const EdgeInsets.symmetric(vertical: 11, horizontal: 12),
+                        ),
+                      ),
+                    ),
+                  ] else
                     Expanded(
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 11, horizontal: 12),
@@ -2073,22 +2049,25 @@ class _FieldTasksScreenState extends State<FieldTasksScreen> {
                 if (isCompleted)
                   Expanded(
                     child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                      padding: const EdgeInsets.symmetric(vertical: 9, horizontal: 12),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF0FDF4),
+                        color: AppColors.statusCompleted.withValues(alpha: 0.08),
                         borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: const Color(0xFFA7F3D0)),
                       ),
-                      child: const Row(
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(LucideIcons.checkCheck, size: 15, color: AppColors.statusCompleted),
-                          SizedBox(width: 6),
+                          const Icon(LucideIcons.checkCheck, size: 15, color: AppColors.statusCompleted),
+                          const SizedBox(width: 6),
                           Flexible(
                             child: Text(
-                              'Telah divalidasi & dinyatakan tuntas oleh operator',
-                              style: TextStyle(fontSize: 11.5, color: Color(0xFF166534), fontWeight: FontWeight.bold),
+                              'Tuntas & Divalidasi Operator',
+                              style: GoogleFonts.inter(
+                                fontSize: 11.5,
+                                color: AppColors.statusCompleted,
+                                fontWeight: FontWeight.w600,
+                              ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),

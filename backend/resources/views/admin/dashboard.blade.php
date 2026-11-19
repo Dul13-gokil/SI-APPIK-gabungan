@@ -35,6 +35,10 @@
             'title' => 'Laporan Kinerja & Rekapitulasi Eksekutif',
             'subtitle' => 'Ringkasan capaian penanganan aduan, sebaran kategori kerusakan, dan cetak laporan resmi.',
         ],
+        'archive' => [
+            'title' => 'Arsip Resmi Pengaduan & Rekam Jejak Pelayanan',
+            'subtitle' => 'Daftar laporan berstatus Selesai, Dibatalkan Warga, dan Ditolak oleh Operator.',
+        ],
         'admin-rejected' => [
             'title' => 'Arsip Pengaduan Ditolak (Khusus Super Admin)',
             'subtitle' => 'Daftar laporan yang ditolak langsung oleh Super Admin beserta alasan resmi penolakan.',
@@ -494,7 +498,7 @@
                                 class="w-full text-xs rounded-xl border border-[#E2E8F0] px-3 py-2 bg-[#F8FAFC] focus:bg-white focus:ring-2 focus:ring-[#2563EB]/15 focus:border-[#2563EB] transition">
                             <select name="role" required class="w-full text-xs rounded-xl border border-[#E2E8F0] px-3 py-2 bg-[#F8FAFC] focus:bg-white focus:ring-2 focus:ring-[#2563EB]/15 focus:border-[#2563EB] transition">
                                 <option value="OPERATOR">Operator Verifikasi (Disposisi Web)</option>
-                                <option value="PETUGAS" selected>Pekerja Lapangan (Petugas Teknis PUPR)</option>
+                                <option value="PETUGAS" selected>Pekerja Lapangan (Dinas PUPR)</option>
                                 <option value="KEPALA_DAERAH" {{ $hasBupati ? 'disabled class=text-slate-400' : '' }}>
                                     Kepala Daerah Kabupaten {{ $hasBupati ? '(Terkunci)' : '' }}
                                 </option>
@@ -855,6 +859,7 @@
                         <option value="IN_PROGRESS">Dikerjakan</option>
                         <option value="WAITING_VERIFICATION">Validasi</option>
                         <option value="COMPLETED">Selesai</option>
+                        <option value="CANCELLED">Dibatalkan</option>
                         <option value="REJECTED">Ditolak</option>
                     </select>
 
@@ -908,6 +913,9 @@
                             if ($status === 'REJECTED') {
                                 $statusLabel = 'DITOLAK';
                                 $statusBadgeClass = 'bg-red-50 text-red-700 border-red-200';
+                            } elseif ($status === 'CANCELLED') {
+                                $statusLabel = 'DIBATALKAN';
+                                $statusBadgeClass = 'bg-slate-100 text-slate-600 border-slate-200';
                             } elseif (in_array($status, ['COMPLETED', 'CLOSED'])) {
                                 $statusLabel = 'SELESAI';
                                 $statusBadgeClass = 'bg-emerald-50 text-emerald-700 border-emerald-200';
@@ -998,12 +1006,16 @@
                             </td>
                             <td onclick="event.stopPropagation();" class="block md:table-cell p-0 md:py-2.5 md:px-3 text-right md:text-center whitespace-nowrap shrink-0 md:w-auto cursor-default">
                                 <div class="flex items-center justify-end md:justify-center gap-1.5">
+                                    @if(!in_array($c->status, ['REJECTED', 'CANCELLED', 'CLOSED']))
                                     <button type="button" 
                                         onclick="openRejectComplaintAdminModal('{{ route('admin.complaints.reject', $c->id) }}', '{{ $c->public_code }}', '{{ addslashes($c->title) }}')"
                                         title="Tolak Laporan"
                                         class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-red-50 hover:bg-red-600 text-red-600 hover:text-white border border-red-200 transition inline-flex items-center justify-center shadow-2xs cursor-pointer">
                                         <i data-lucide="x-circle" class="w-3.5 h-3.5"></i>
                                     </button>
+                                    @else
+                                    <span class="text-[11px] text-slate-300 font-semibold">—</span>
+                                    @endif
                                 </div>
                             </td>
                         </tr>
@@ -1030,6 +1042,7 @@
                             'IN_PROGRESS' => 'DIKERJAKAN',
                             'DISPATCHED' => 'DITUGASKAN',
                             'REJECTED' => 'DITOLAK',
+                            'CANCELLED' => 'DIBATALKAN',
                             'REVISION_REQUIRED' => 'PERLU REVISI',
                             default => 'VERIFIKASI',
                         };
@@ -1038,6 +1051,7 @@
                             'WAITING_VERIFICATION' => 'bg-amber-50 text-amber-700 border-amber-300',
                             'IN_PROGRESS', 'REVISION_REQUIRED' => 'bg-amber-50 text-amber-800 border-amber-300',
                             'DISPATCHED' => 'bg-blue-50 text-[#2563EB] border-blue-200',
+                            'CANCELLED' => 'bg-slate-100 text-slate-600 border-slate-200',
                             default => 'bg-red-50 text-red-700 border-red-200',
                         };
                         $cSearch = strtolower($c->public_code . ' ' . $c->title . ' ' . $c->address . ' ' . ($c->citizen?->name ?? ''));
@@ -1072,6 +1086,7 @@
                                         <span>Lihat Rincian Lengkap & Foto</span>
                                         <i data-lucide="arrow-right" class="w-3 h-3"></i>
                                     </button>
+                                    @if(!in_array($c->status, ['REJECTED', 'CANCELLED', 'CLOSED']))
                                     <button type="button"
                                         onclick="event.stopPropagation(); openRejectComplaintAdminModal('{{ route('admin.complaints.reject', $c->id) }}', '{{ $c->public_code }}', '{{ addslashes($c->title) }}')"
                                         title="Tolak Laporan"
@@ -1079,6 +1094,7 @@
                                         <i data-lucide="x-circle" class="w-3 h-3"></i>
                                         <span>Tolak</span>
                                     </button>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -1698,7 +1714,7 @@
                                     @if($unassignedOfficers->isEmpty())
                                         <option value="" disabled selected>Semua Petugas Sudah Masuk Regu</option>
                                     @else
-                                        <option value="" disabled selected>Pilih Petugas Lapangan (Belum Ada Regu)...</option>
+                                        <option value="" disabled selected>Pilih Pekerja Lapangan (Belum Ada Regu)...</option>
                                         @foreach($unassignedOfficers as $officer)
                                             <option value="{{ $officer->id }}">{{ $officer->name }} ({{ $officer->phone ?? 'Tanpa No. HP' }})</option>
                                         @endforeach
@@ -1785,6 +1801,198 @@
     <div id="tabPanel-reporting" class="admin-tab-panel {{ $activeTab === 'reporting' ? '' : 'hidden' }} space-y-6">
         @include('partials.executive_monitoring_reporting')
     </div>
+
+    <!-- Tab Panel 6B: Arsip Aduan Resmi (Selesai, Dibatalkan Warga, Ditolak Operator — Bukan Admin) -->
+    <div id="tabPanel-archive" class="admin-tab-panel {{ $activeTab === 'archive' ? '' : 'hidden' }}">
+        <div class="card-white rounded-2xl p-5 sm:p-6 bg-white border border-[#E2E8F0] shadow-xs space-y-4">
+            <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-3">
+                <div class="flex items-center gap-2.5 shrink-0">
+                    <div class="w-9 h-9 rounded-xl bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE] flex items-center justify-center shrink-0">
+                        <i data-lucide="archive" class="w-4 h-4"></i>
+                    </div>
+                    <h3 class="font-outfit font-bold text-sm sm:text-base text-[#0F172A]">Arsip Aduan</h3>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-2 flex-1 xl:justify-end">
+                    <div class="relative flex-1 min-w-[160px] sm:max-w-xs">
+                        <i data-lucide="search" class="w-4 h-4 text-[#64748B] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                        <input type="text" id="adminArchiveSearchInput" oninput="filterAdminArchive()"
+                            placeholder="Cari kode, pelapor, atau lokasi..."
+                            class="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] focus:bg-white focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/15 transition">
+                    </div>
+
+                    <select id="adminArchiveCategorySelect" onchange="filterAdminArchive()"
+                        class="text-xs font-semibold rounded-xl border border-[#E2E8F0] py-2 px-3 bg-[#F8FAFC] text-[#334155] focus:outline-none focus:border-[#2563EB] focus:bg-white transition shrink-0">
+                        <option value="ALL">Kategori: Semua</option>
+                        @foreach($categories as $cat)
+                            <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                        @endforeach
+                    </select>
+
+                    <select id="adminArchiveTypeSelect" onchange="filterAdminArchive()"
+                        class="text-xs font-semibold rounded-xl border border-[#E2E8F0] py-2 px-3 bg-[#F8FAFC] text-[#334155] focus:outline-none focus:border-[#2563EB] focus:bg-white transition shrink-0">
+                        <option value="ALL">Tipe: Semua</option>
+                        <option value="minor">Ringan</option>
+                        <option value="major">Berat</option>
+                    </select>
+
+                    <select id="adminArchiveStatusSelect" onchange="filterAdminArchive()"
+                        class="text-xs font-semibold rounded-xl border border-[#E2E8F0] py-2 px-3 bg-[#F8FAFC] text-[#334155] focus:outline-none focus:border-[#2563EB] focus:bg-white transition shrink-0">
+                        <option value="ALL">Status: Semua</option>
+                        <option value="COMPLETED">Selesai</option>
+                        <option value="CANCELLED">Dibatalkan</option>
+                        <option value="REJECTED">Ditolak</option>
+                    </select>
+
+                    <button type="button" id="adminArchiveResetBtn" onclick="resetAdminArchiveFilters()"
+                        class="hidden px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition flex items-center gap-1 shrink-0 cursor-pointer">
+                        <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                        <span>Reset</span>
+                    </button>
+
+                    <div class="inline-flex items-center p-0.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] shrink-0" role="group" aria-label="Tata letak arsip">
+                        <button type="button" id="adminArchiveLayoutBtn-list" onclick="setAdminArchiveLayout('list')"
+                            class="px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer bg-[#2563EB] text-white">
+                            <i data-lucide="list" class="w-3.5 h-3.5"></i>
+                            <span>Daftar</span>
+                        </button>
+                        <button type="button" id="adminArchiveLayoutBtn-grid" onclick="setAdminArchiveLayout('grid')"
+                            class="px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer text-[#475569] hover:text-[#0F172A]">
+                            <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
+                            <span>Petak</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            @if($archivedComplaints->isEmpty())
+                <div class="rounded-2xl p-10 text-center border border-[#E2E8F0] bg-[#F8FAFC] space-y-2">
+                    <div class="w-10 h-10 rounded-full bg-blue-50 text-[#2563EB] flex items-center justify-center mx-auto">
+                        <i data-lucide="archive" class="w-5 h-5"></i>
+                    </div>
+                    <h4 class="font-bold text-sm text-[#0F172A]">Belum Ada Arsip Aduan</h4>
+                    <p class="text-xs text-[#64748B]">Laporan berstatus Selesai, Dibatalkan Warga, dan Ditolak oleh Operator akan tercatat di sini.</p>
+                </div>
+            @else
+                @include('partials.role_complaints_table', [
+                    'wrapId' => 'adminTableWrap-archive',
+                    'rowClass' => 'admin-archive-row',
+                    'items' => $archivedComplaints,
+                    'mode' => 'admin-archive',
+                    'detailFn' => 'openAdminDetailModal',
+                    'hidden' => false
+                ])
+
+                <div id="adminArchiveGridWrap" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4">
+                    @foreach($archivedComplaints as $ac)
+                        @php
+                            $acSt = $ac->status?->value ?? $ac->status;
+                            $acLabel = match($acSt) {
+                                'COMPLETED', 'CLOSED' => 'SELESAI',
+                                'CANCELLED' => 'DIBATALKAN',
+                                'REJECTED' => 'DITOLAK',
+                                default => $acSt,
+                            };
+                            $acBadge = match($acSt) {
+                                'COMPLETED', 'CLOSED' => 'bg-emerald-50 text-emerald-800 border-emerald-200',
+                                'CANCELLED' => 'bg-slate-100 text-slate-600 border-slate-200',
+                                default => 'bg-red-50 text-red-700 border-red-200',
+                            };
+                            $acSearch = strtolower(($ac->public_code ?? '') . ' ' . ($ac->title ?? '') . ' ' . ($ac->address ?? '') . ' ' . ($ac->citizen?->name ?? $ac->user?->name ?? ''));
+                        @endphp
+                        <div onclick="openAdminDetailModal({{ $ac->id }})"
+                            class="admin-archive-grid-card rounded-2xl p-4 bg-white border border-[#E2E8F0] hover:border-[#2563EB] transition cursor-pointer space-y-2.5"
+                            data-category="{{ $ac->category_id ?? '' }}"
+                            data-damage-type="{{ $ac->damage_type ?? 'minor' }}"
+                            data-search="{{ $acSearch }}"
+                            data-status="{{ $acSt }}">
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="font-mono font-bold text-xs text-[#0F172A]">#{{ $ac->public_code }}</span>
+                                <span class="px-2 py-0.5 rounded-md text-[10px] font-bold border {{ $acBadge }}">{{ $acLabel }}</span>
+                            </div>
+                            <h4 class="font-outfit font-bold text-sm text-[#0F172A] line-clamp-1">{{ $ac->title }}</h4>
+                            <p class="text-xs text-[#475569] line-clamp-1">{{ $ac->address }}</p>
+                            <div class="flex items-center justify-between gap-2 pt-2 border-t border-[#F1F5F9] text-[11px] text-[#64748B]">
+                                <span class="truncate">{{ $ac->category?->name ?? 'Umum' }}</span>
+                                <span class="shrink-0">{{ $ac->created_at?->diffForHumans() }}</span>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+
+                <div id="adminArchiveEmptyNotice" class="hidden rounded-2xl p-8 text-center text-[#64748B] text-xs bg-[#F8FAFC] border border-[#E2E8F0]">
+                    Tidak ada arsip aduan yang cocok dengan filter pencarian.
+                </div>
+            @endif
+        </div>
+    </div>
+
+    <script>
+        function filterAdminArchive() {
+            const q = (document.getElementById('adminArchiveSearchInput')?.value || '').trim().toLowerCase();
+            const cat = document.getElementById('adminArchiveCategorySelect')?.value || 'ALL';
+            const type = document.getElementById('adminArchiveTypeSelect')?.value || 'ALL';
+            const st = document.getElementById('adminArchiveStatusSelect')?.value || 'ALL';
+            const resetBtn = document.getElementById('adminArchiveResetBtn');
+            if (resetBtn) {
+                resetBtn.classList.toggle('hidden', q === '' && cat === 'ALL' && type === 'ALL' && st === 'ALL');
+            }
+            let visibleCount = 0;
+            const matchEl = (el) => {
+                const elSearch = (el.dataset.search || '').toLowerCase();
+                const elCat = el.dataset.category || '';
+                const elType = el.dataset.damageType || 'minor';
+                const elStatus = el.dataset.status || '';
+                const okSearch = !q || elSearch.includes(q);
+                const okCat = cat === 'ALL' || elCat === cat;
+                const okType = type === 'ALL' || elType === type;
+                const okStatus = st === 'ALL'
+                    || (st === 'COMPLETED' && (elStatus === 'COMPLETED' || elStatus === 'CLOSED'))
+                    || elStatus === st;
+                return okSearch && okCat && okType && okStatus;
+            };
+            document.querySelectorAll('.admin-archive-row').forEach(row => {
+                const show = matchEl(row);
+                row.classList.toggle('hidden', !show);
+                if (show) visibleCount++;
+            });
+            document.querySelectorAll('.admin-archive-grid-card').forEach(card => {
+                card.classList.toggle('hidden', !matchEl(card));
+            });
+            const emptyEl = document.getElementById('adminArchiveEmptyNotice');
+            const tableWrap = document.getElementById('adminTableWrap-archive');
+            const gridWrap = document.getElementById('adminArchiveGridWrap');
+            const isGrid = document.getElementById('adminArchiveLayoutBtn-grid')?.classList.contains('bg-[#2563EB]');
+            if (emptyEl) emptyEl.classList.toggle('hidden', visibleCount > 0);
+            if (tableWrap) tableWrap.classList.toggle('hidden', visibleCount === 0 || isGrid);
+            if (gridWrap) gridWrap.classList.toggle('hidden', visibleCount === 0 || !isGrid);
+        }
+
+        function resetAdminArchiveFilters() {
+            const s = document.getElementById('adminArchiveSearchInput'); if (s) s.value = '';
+            const c = document.getElementById('adminArchiveCategorySelect'); if (c) c.value = 'ALL';
+            const t = document.getElementById('adminArchiveTypeSelect'); if (t) t.value = 'ALL';
+            const st = document.getElementById('adminArchiveStatusSelect'); if (st) st.value = 'ALL';
+            filterAdminArchive();
+        }
+
+        function setAdminArchiveLayout(mode) {
+            const tableWrap = document.getElementById('adminTableWrap-archive');
+            const gridWrap = document.getElementById('adminArchiveGridWrap');
+            const btnList = document.getElementById('adminArchiveLayoutBtn-list');
+            const btnGrid = document.getElementById('adminArchiveLayoutBtn-grid');
+            if (tableWrap) tableWrap.classList.toggle('hidden', mode === 'grid');
+            if (gridWrap) gridWrap.classList.toggle('hidden', mode !== 'grid');
+            if (btnList && btnGrid) {
+                btnList.className = mode === 'list'
+                    ? 'px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer bg-[#2563EB] text-white'
+                    : 'px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer text-[#475569] hover:text-[#0F172A]';
+                btnGrid.className = mode === 'grid'
+                    ? 'px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer bg-[#2563EB] text-white'
+                    : 'px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer text-[#475569] hover:text-[#0F172A]';
+            }
+        }
+    </script>
 
     <!-- Tab Panel 7: Arsip Pengaduan Ditolak oleh Super Admin (Seragam Daftar Aduan & Daftar Pengguna) -->
     <div id="tabPanel-admin-rejected" class="admin-tab-panel {{ $activeTab === 'admin-rejected' ? '' : 'hidden' }}">
@@ -2682,7 +2890,7 @@
                 <div class="p-3.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] text-[#475569] text-xs flex items-start gap-2.5">
                     <i data-lucide="info" class="w-4 h-4 text-[#2563EB] shrink-0 mt-0.5"></i>
                     <span class="leading-relaxed">
-                        Perubahan mode tugas ini akan <strong class="text-[#0F172A]">langsung disinkronkan</strong> ke Pusat Kendali Operator serta aplikasi mobile Petugas Lapangan.
+                        Perubahan mode tugas ini akan <strong class="text-[#0F172A]">langsung disinkronkan</strong> ke Pusat Kendali Operator serta aplikasi mobile Pekerja Lapangan.
                     </span>
                 </div>
 
@@ -2734,6 +2942,10 @@
         'reporting': {
             title: 'Laporan Kinerja & Rekapitulasi Eksekutif',
             subtitle: 'Ringkasan capaian penanganan aduan, sebaran kategori kerusakan, dan cetak laporan resmi.'
+        },
+        'archive': {
+            title: 'Arsip Resmi Pengaduan & Rekam Jejak Pelayanan',
+            subtitle: 'Daftar laporan berstatus Selesai, Dibatalkan Warga, dan Ditolak oleh Operator.'
         },
         'admin-rejected': {
             title: 'Arsip Pengaduan Ditolak (Khusus Super Admin)',
@@ -4066,6 +4278,9 @@
         if (item.status === 'REJECTED') {
             statusLabel = 'DITOLAK';
             statusClass = 'bg-red-50 text-red-700 border-red-200';
+        } else if (item.status === 'CANCELLED') {
+            statusLabel = 'DIBATALKAN';
+            statusClass = 'bg-slate-100 text-slate-600 border-slate-200';
         } else if (item.status === 'COMPLETED' || item.status === 'CLOSED') {
             statusLabel = 'SELESAI';
             statusClass = 'bg-emerald-50 text-emerald-800 border-emerald-200';
@@ -4152,7 +4367,7 @@
 
                 // Ketua Regu & Nomor Telepon
                 const showOfficerIdentity = ['IN_PROGRESS', 'WAITING_VERIFICATION', 'COMPLETED', 'CLOSED'].includes(item.status);
-                const leaderName = item.team_leader || item.officer_name || 'Petugas Lapangan';
+                const leaderName = item.team_leader || item.officer_name || 'Pekerja Lapangan';
                 const leaderPhone = item.team_leader_phone || item.officer_phone || '-';
 
                 if (teamLeaderEl) {
@@ -4264,7 +4479,7 @@
             }
         }
 
-        // 2. Foto Bukti Penanganan Petugas Lapangan & Galeri Foto (Selalu tampil berdampingan)
+        // 2. Foto Bukti Penanganan Pekerja Lapangan & Galeri Foto (Selalu tampil berdampingan)
         const compContainer = document.getElementById('admModalCompletionPhotoContainer');
         const compImg = document.getElementById('admModalCompletionPhoto');
         const compPlaceholder = document.getElementById('admModalCompletionPlaceholder');
@@ -4275,17 +4490,58 @@
             ? item.officer_photos
             : (item.completion_photo_url ? [item.completion_photo_url] : (item.photo_after_url ? [item.photo_after_url] : []));
 
+        const admBox = document.getElementById('admModalCompletionBox');
+        const admPill = document.getElementById('admModalCompletionPill');
+
         if (compContainer) compContainer.classList.remove('hidden');
         if (officerPhotos.length > 0) {
             compImg.src = officerPhotos[0];
             compImg.classList.remove('hidden');
             if (compPlaceholder) compPlaceholder.classList.add('hidden');
-            if (compLabel) compLabel.innerText = 'Foto Hasil Pengerjaan';
+            if (admBox) admBox.className = 'aspect-[16/10] rounded-xl sm:rounded-2xl overflow-hidden border border-[#A7F3D0] bg-[#ECFDF5] relative flex items-center justify-center';
+            if (admPill) {
+                admPill.className = 'absolute bottom-2 left-2 sm:bottom-3 sm:left-3 bg-[#047857]/90 text-white text-[10px] sm:text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5 pointer-events-none';
+                admPill.innerHTML = '<i data-lucide="badge-check" class="w-3 h-3 shrink-0 hidden sm:inline"></i><span id="admModalCompletionPhotoLabel">Foto Hasil Pengerjaan</span>';
+            }
         } else {
             compImg.classList.add('hidden');
             if (compPlaceholder) compPlaceholder.classList.remove('hidden');
-            if (compLabel) compLabel.innerText = 'Foto Hasil Pengerjaan';
+
+            const statusUpper = String(item.status || '').toUpperCase();
+
+            if (statusUpper === 'CANCELLED') {
+                if (admBox) admBox.className = 'aspect-[16/10] rounded-xl sm:rounded-2xl overflow-hidden border border-slate-200 bg-slate-50 relative flex items-center justify-center';
+                if (compPlaceholder) {
+                    compPlaceholder.className = 'inset-0 absolute flex flex-col items-center justify-center text-center p-3 text-slate-600 bg-slate-50';
+                    compPlaceholder.innerHTML = '<i data-lucide="x-circle" class="w-6 h-6 mb-1 text-slate-400"></i><span id="admModalCompletionPlaceholderText" class="text-[11px] sm:text-xs font-semibold leading-tight">Laporan Dibatalkan</span>';
+                }
+                if (admPill) {
+                    admPill.className = 'absolute bottom-2 left-2 sm:bottom-3 sm:left-3 bg-slate-600/90 text-white text-[10px] sm:text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5 pointer-events-none';
+                    admPill.innerHTML = '<i data-lucide="x-circle" class="w-3 h-3 shrink-0 hidden sm:inline"></i><span id="admModalCompletionPhotoLabel">Laporan Dibatalkan</span>';
+                }
+            } else if (statusUpper === 'REJECTED') {
+                if (admBox) admBox.className = 'aspect-[16/10] rounded-xl sm:rounded-2xl overflow-hidden border border-red-200 bg-red-50 relative flex items-center justify-center';
+                if (compPlaceholder) {
+                    compPlaceholder.className = 'inset-0 absolute flex flex-col items-center justify-center text-center p-3 text-red-700 bg-red-50';
+                    compPlaceholder.innerHTML = '<i data-lucide="x-circle" class="w-6 h-6 mb-1 text-red-500"></i><span id="admModalCompletionPlaceholderText" class="text-[11px] sm:text-xs font-semibold leading-tight">Laporan Ditolak</span>';
+                }
+                if (admPill) {
+                    admPill.className = 'absolute bottom-2 left-2 sm:bottom-3 sm:left-3 bg-red-600/90 text-white text-[10px] sm:text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5 pointer-events-none';
+                    admPill.innerHTML = '<i data-lucide="x-circle" class="w-3 h-3 shrink-0 hidden sm:inline"></i><span id="admModalCompletionPhotoLabel">Laporan Ditolak</span>';
+                }
+            } else {
+                if (admBox) admBox.className = 'aspect-[16/10] rounded-xl sm:rounded-2xl overflow-hidden border border-[#A7F3D0] bg-[#ECFDF5] relative flex items-center justify-center';
+                if (compPlaceholder) {
+                    compPlaceholder.className = 'inset-0 absolute flex flex-col items-center justify-center text-center p-3 text-[#047857] bg-[#ECFDF5]';
+                    compPlaceholder.innerHTML = '<i data-lucide="clock" class="w-5 h-5 mb-1 text-[#10B981]"></i><span id="admModalCompletionPlaceholderText" class="text-[11px] sm:text-xs font-semibold leading-tight">Menunggu Foto Hasil Pengerjaan</span>';
+                }
+                if (admPill) {
+                    admPill.className = 'absolute bottom-2 left-2 sm:bottom-3 sm:left-3 bg-[#047857]/90 text-white text-[10px] sm:text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5 pointer-events-none';
+                    admPill.innerHTML = '<i data-lucide="badge-check" class="w-3 h-3 shrink-0 hidden sm:inline"></i><span id="admModalCompletionPhotoLabel">Foto Hasil Pengerjaan</span>';
+                }
+            }
         }
+        if (window.lucide) window.lucide.createIcons();
 
         if (compGallery) {
             compGallery.innerHTML = '';
@@ -4297,7 +4553,8 @@
                     thumb.className = `w-14 h-14 rounded-xl object-cover cursor-pointer border-2 transition ${idx === 0 ? 'border-emerald-600 ring-2 ring-emerald-200' : 'border-slate-200 opacity-70 hover:opacity-100'}`;
                     thumb.onclick = () => {
                         compImg.src = url;
-                        if (compLabel) compLabel.innerText = `Foto Hasil Petugas ${idx + 1} dari ${officerPhotos.length}`;
+                        const lbl = document.getElementById('admModalCompletionPhotoLabel');
+                        if (lbl) lbl.innerText = `Foto Hasil Petugas ${idx + 1} dari ${officerPhotos.length}`;
                         compGallery.querySelectorAll('img').forEach(img => {
                             img.className = 'w-14 h-14 rounded-xl object-cover cursor-pointer border-2 border-slate-200 opacity-70 hover:opacity-100 transition';
                         });

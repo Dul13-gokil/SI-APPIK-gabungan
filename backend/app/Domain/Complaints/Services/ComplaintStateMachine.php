@@ -14,7 +14,7 @@ class ComplaintStateMachine
      */
     protected static array $allowedTransitions = [
         'DRAFT' => ['SUBMITTED'],
-        'SUBMITTED' => ['VERIFICATION', 'VERIFIED', 'DISPATCHED', 'REJECTED'],
+        'SUBMITTED' => ['VERIFICATION', 'VERIFIED', 'DISPATCHED', 'REJECTED', 'CANCELLED'],
         'VERIFICATION' => ['VERIFIED', 'DISPATCHED', 'REJECTED'],
         'VERIFIED' => ['DISPATCHED', 'IN_PROGRESS', 'REJECTED'],
         'DISPATCHED' => ['IN_PROGRESS', 'WAITING_VERIFICATION'],
@@ -23,6 +23,7 @@ class ComplaintStateMachine
         'REVISION_REQUIRED' => ['IN_PROGRESS', 'WAITING_VERIFICATION'],
         'COMPLETED' => ['CLOSED'],
         'REJECTED' => ['SUBMITTED'],
+        'CANCELLED' => [],
         'CLOSED' => [],
     ];
 
@@ -63,6 +64,10 @@ class ComplaintStateMachine
 
         if ($fromKey === ComplaintStatus::REJECTED->value) {
             throw new InvalidArgumentException('Laporan sudah berada pada status ditolak.');
+        }
+
+        if ($fromKey === ComplaintStatus::CANCELLED->value) {
+            throw new InvalidArgumentException('Laporan yang sudah dibatalkan oleh pelapor tidak dapat ditolak.');
         }
 
         if ($fromKey === ComplaintStatus::CLOSED->value) {

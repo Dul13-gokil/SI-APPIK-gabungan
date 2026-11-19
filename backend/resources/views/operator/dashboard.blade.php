@@ -292,6 +292,7 @@
                     class="text-xs font-semibold rounded-xl border border-[#E2E8F0] py-2 px-3 bg-[#F8FAFC] text-[#334155] focus:outline-none focus:border-[#2563EB] focus:bg-white transition shrink-0">
                     <option value="ALL">Status: Semua</option>
                     <option value="COMPLETED">Selesai</option>
+                    <option value="CANCELLED">Dibatalkan</option>
                     <option value="REJECTED">Ditolak</option>
                 </select>
             </div>
@@ -445,7 +446,7 @@
             @endif
     </div>
 
-    <!-- TAB 2: LAPORAN DITUGASKAN (MENUNGGU PETUGAS LAPANGAN MULAI BEKERJA) -->
+    <!-- TAB 2: LAPORAN DITUGASKAN (MENUNGGU PEKERJA LAPANGAN MULAI BEKERJA) -->
     <div id="tabPanel-dispatched" class="tab-panel {{ $activeTab === 'dispatched' ? '' : 'hidden' }} space-y-4">
         <div class="space-y-4">
             @if($dispatched->isEmpty())
@@ -892,6 +893,10 @@
                                         <span class="px-2 py-0.5 rounded-full bg-red-50 text-red-700 border border-red-200 text-[10px] font-bold whitespace-nowrap shrink-0">
                                             DITOLAK
                                         </span>
+                                    @elseif($c->status === 'CANCELLED')
+                                        <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200 text-[10px] font-bold whitespace-nowrap shrink-0">
+                                            DIBATALKAN
+                                        </span>
                                     @endif
                                     <span class="inline-flex px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-slate-100 text-slate-600 border border-slate-200/80 whitespace-nowrap truncate shrink-0 max-w-[170px]" title="{{ $c->category?->name ?? 'Infrastruktur' }}">
                                         {{ $c->category?->name ?? 'Infrastruktur' }}
@@ -1050,17 +1055,17 @@
         <!-- Sticky Modal Top Header (3 Badge 1 Baris + Tanggal & Kode Aduan + Tombol X di Tengah Kanan) -->
         <div class="px-4 sm:px-7 pt-2.5 pb-3.5 sm:py-5 border-b border-[#E2E8F0] bg-white flex items-center justify-between gap-2.5 shrink-0">
             <div class="min-w-0 flex-1 space-y-2">
-                <!-- Baris 1: Selalu 1 Baris di Mobile & Desktop -->
+                <!-- Baris 1: Selalu 1 Baris di Mobile & Desktop (Status di Kiri) -->
                 <div class="flex items-center gap-1 sm:gap-2 flex-nowrap overflow-x-auto no-scrollbar">
+                    <span id="opModalStatusBadge" class="shrink-0 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10.5px] sm:text-xs font-bold whitespace-nowrap border bg-[#EFF6FF] text-[#2563EB] border-[#BFDBFE]">
+                        STATUS
+                    </span>
                     <span id="opModalTypeBadge" class="shrink-0 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10.5px] sm:text-xs font-bold bg-[#FEF2F2] text-[#DC2626] border border-[#FECACA] inline-flex items-center gap-1 whitespace-nowrap">
                         <span class="w-1.5 h-1.5 rounded-full bg-[#DC2626] shrink-0"></span>
                         <span>Kerusakan Ringan</span>
                     </span>
                     <span id="opModalCategoryBadge" class="shrink min-w-0 truncate px-2 sm:px-3 py-0.5 sm:py-1 rounded-full bg-[#F1F5F9] text-[#475569] font-semibold text-[10.5px] sm:text-xs border border-[#E2E8F0]">
                         Kategori
-                    </span>
-                    <span id="opModalStatusBadge" class="shrink-0 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10.5px] sm:text-xs font-bold whitespace-nowrap border bg-[#EFF6FF] text-[#2563EB] border-[#BFDBFE]">
-                        STATUS
                     </span>
                 </div>
 
@@ -1104,13 +1109,13 @@
 
                 <!-- Kanan: Foto Hasil Pengerjaan (Selalu tampil berdampingan, placeholder bila belum ada) -->
                 <div id="opModalOfficerPhotoSection" class="space-y-1.5">
-                    <div class="aspect-[16/10] rounded-xl sm:rounded-2xl overflow-hidden border border-[#A7F3D0] bg-[#ECFDF5] relative flex items-center justify-center">
+                    <div id="opModalOfficerBox" class="aspect-[16/10] rounded-xl sm:rounded-2xl overflow-hidden border border-[#A7F3D0] bg-[#ECFDF5] relative flex items-center justify-center">
                         <img id="opModalOfficerPhoto" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Foto Hasil Pengerjaan" class="w-full h-full object-cover">
                         <div id="opModalOfficerPlaceholder" class="hidden inset-0 absolute flex flex-col items-center justify-center text-center p-3 text-[#047857] bg-[#ECFDF5]">
-                            <i data-lucide="clock" class="w-5 h-5 mb-1 text-[#10B981]"></i>
-                            <span class="text-[11px] sm:text-xs font-semibold leading-tight">Menunggu Foto Hasil Pengerjaan</span>
+                            <i id="opModalOfficerIcon" data-lucide="clock" class="w-5 h-5 mb-1 text-[#10B981]"></i>
+                            <span id="opModalOfficerPlaceholderText" class="text-[11px] sm:text-xs font-semibold leading-tight">Menunggu Foto Hasil Pengerjaan</span>
                         </div>
-                        <div class="absolute bottom-2 left-2 sm:bottom-3 sm:left-3 bg-[#047857]/90 text-white text-[10px] sm:text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5 pointer-events-none">
+                        <div id="opModalOfficerPill" class="absolute bottom-2 left-2 sm:bottom-3 sm:left-3 bg-[#047857]/90 text-white text-[10px] sm:text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5 pointer-events-none">
                             <i data-lucide="badge-check" class="w-3 h-3 shrink-0 hidden sm:inline"></i>
                             <span id="opModalOfficerPhotoLabel">Foto Hasil Pengerjaan</span>
                         </div>
@@ -1898,7 +1903,7 @@
                     Instruksi Revisi Lapangan
                 </h3>
                 <p class="text-xs text-slate-500 leading-relaxed">
-                    Kirimkan instruksi perbaikan kepada petugas lapangan untuk menyempurnakan hasil pekerjaan fisik.
+                    Kirimkan instruksi perbaikan kepada pekerja lapangan untuk menyempurnakan hasil pekerjaan fisik.
                 </p>
             </div>
         </div>
@@ -2429,6 +2434,9 @@
         if (item.status === 'REJECTED') {
             statusLabel = 'DITOLAK';
             statusClass = 'bg-red-50 text-red-700 border-red-200';
+        } else if (item.status === 'CANCELLED') {
+            statusLabel = 'DIBATALKAN';
+            statusClass = 'bg-slate-100 text-slate-600 border-slate-200';
         } else if (item.status === 'COMPLETED' || item.status === 'CLOSED') {
             statusLabel = 'SELESAI';
             statusClass = 'bg-emerald-50 text-emerald-800 border-emerald-200';
@@ -2529,7 +2537,7 @@
 
                 // Ketua Regu & Nomor Telepon (hanya tampil setelah diambil/dikerjakan)
                 const showOfficerIdentity = ['IN_PROGRESS', 'WAITING_VERIFICATION', 'COMPLETED', 'CLOSED'].includes(item.status);
-                const leaderName = item.team_leader_name || item.officer_name || 'Petugas Lapangan';
+                const leaderName = item.team_leader_name || item.officer_name || 'Pekerja Lapangan';
                 const leaderPhone = item.team_leader_phone || item.officer_phone || '-';
 
                 if (teamLeaderEl) {
@@ -2621,7 +2629,7 @@
             citizenPhotoSection.classList.add('hidden');
         }
 
-        // 2. Foto Bukti Penanganan Petugas Lapangan (Selalu tampil berdampingan)
+        // 2. Foto Bukti Penanganan Pekerja Lapangan (Selalu tampil berdampingan)
         const officerPhotoSection = document.getElementById('opModalOfficerPhotoSection');
         const officerPhotoImg = document.getElementById('opModalOfficerPhoto');
         const officerPlaceholder = document.getElementById('opModalOfficerPlaceholder');
@@ -2632,12 +2640,19 @@
             ? item.officer_photos 
             : (item.completion_photo_url ? [item.completion_photo_url] : []);
 
+        const opBox = document.getElementById('opModalOfficerBox');
+        const opPill = document.getElementById('opModalOfficerPill');
+
         if (officerPhotoSection) officerPhotoSection.classList.remove('hidden');
         if (officerPhotos.length > 0) {
             officerPhotoImg.src = officerPhotos[0];
             officerPhotoImg.classList.remove('hidden');
             if (officerPlaceholder) officerPlaceholder.classList.add('hidden');
-            if (officerLabel) officerLabel.innerText = `Foto Hasil Pengerjaan`;
+            if (opBox) opBox.className = 'aspect-[16/10] rounded-xl sm:rounded-2xl overflow-hidden border border-[#A7F3D0] bg-[#ECFDF5] relative flex items-center justify-center';
+            if (opPill) {
+                opPill.className = 'absolute bottom-2 left-2 sm:bottom-3 sm:left-3 bg-[#047857]/90 text-white text-[10px] sm:text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5 pointer-events-none';
+                opPill.innerHTML = '<i data-lucide="badge-check" class="w-3 h-3 shrink-0 hidden sm:inline"></i><span id="opModalOfficerPhotoLabel">Foto Hasil Pengerjaan</span>';
+            }
             if (officerGallery) {
                 officerGallery.innerHTML = '';
                 if (officerPhotos.length > 1) {
@@ -2648,7 +2663,8 @@
                         thumb.className = `w-14 h-14 rounded-xl object-cover cursor-pointer border-2 transition ${idx === 0 ? 'border-emerald-600 ring-2 ring-emerald-200' : 'border-slate-200 opacity-70 hover:opacity-100'}`;
                         thumb.onclick = () => {
                             officerPhotoImg.src = url;
-                            if (officerLabel) officerLabel.innerText = `Foto Hasil Petugas ${idx + 1} dari ${officerPhotos.length}`;
+                            const lbl = document.getElementById('opModalOfficerPhotoLabel');
+                            if (lbl) lbl.innerText = `Foto Hasil Petugas ${idx + 1} dari ${officerPhotos.length}`;
                             officerGallery.querySelectorAll('img').forEach(img => {
                                 img.className = 'w-14 h-14 rounded-xl object-cover cursor-pointer border-2 border-slate-200 opacity-70 hover:opacity-100 transition';
                             });
@@ -2660,11 +2676,46 @@
                     officerGallery.classList.add('hidden');
                 }
             }
+            if (window.lucide) window.lucide.createIcons();
         } else {
             officerPhotoImg.classList.add('hidden');
             if (officerPlaceholder) officerPlaceholder.classList.remove('hidden');
             if (officerGallery) officerGallery.classList.add('hidden');
-            if (officerLabel) officerLabel.innerText = 'Foto Hasil Pengerjaan';
+
+            const statusUpper = String(item.status || '').toUpperCase();
+
+            if (statusUpper === 'CANCELLED') {
+                if (opBox) opBox.className = 'aspect-[16/10] rounded-xl sm:rounded-2xl overflow-hidden border border-slate-200 bg-slate-50 relative flex items-center justify-center';
+                if (officerPlaceholder) {
+                    officerPlaceholder.className = 'inset-0 absolute flex flex-col items-center justify-center text-center p-3 text-slate-600 bg-slate-50';
+                    officerPlaceholder.innerHTML = '<i data-lucide="x-circle" class="w-6 h-6 mb-1 text-slate-400"></i><span id="opModalOfficerPlaceholderText" class="text-[11px] sm:text-xs font-semibold leading-tight">Laporan Dibatalkan</span>';
+                }
+                if (opPill) {
+                    opPill.className = 'absolute bottom-2 left-2 sm:bottom-3 sm:left-3 bg-slate-600/90 text-white text-[10px] sm:text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5 pointer-events-none';
+                    opPill.innerHTML = '<i data-lucide="x-circle" class="w-3 h-3 shrink-0 hidden sm:inline"></i><span id="opModalOfficerPhotoLabel">Laporan Dibatalkan</span>';
+                }
+            } else if (statusUpper === 'REJECTED') {
+                if (opBox) opBox.className = 'aspect-[16/10] rounded-xl sm:rounded-2xl overflow-hidden border border-red-200 bg-red-50 relative flex items-center justify-center';
+                if (officerPlaceholder) {
+                    officerPlaceholder.className = 'inset-0 absolute flex flex-col items-center justify-center text-center p-3 text-red-700 bg-red-50';
+                    officerPlaceholder.innerHTML = '<i data-lucide="x-circle" class="w-6 h-6 mb-1 text-red-500"></i><span id="opModalOfficerPlaceholderText" class="text-[11px] sm:text-xs font-semibold leading-tight">Laporan Ditolak</span>';
+                }
+                if (opPill) {
+                    opPill.className = 'absolute bottom-2 left-2 sm:bottom-3 sm:left-3 bg-red-600/90 text-white text-[10px] sm:text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5 pointer-events-none';
+                    opPill.innerHTML = '<i data-lucide="x-circle" class="w-3 h-3 shrink-0 hidden sm:inline"></i><span id="opModalOfficerPhotoLabel">Laporan Ditolak</span>';
+                }
+            } else {
+                if (opBox) opBox.className = 'aspect-[16/10] rounded-xl sm:rounded-2xl overflow-hidden border border-[#A7F3D0] bg-[#ECFDF5] relative flex items-center justify-center';
+                if (officerPlaceholder) {
+                    officerPlaceholder.className = 'inset-0 absolute flex flex-col items-center justify-center text-center p-3 text-[#047857] bg-[#ECFDF5]';
+                    officerPlaceholder.innerHTML = '<i data-lucide="clock" class="w-5 h-5 mb-1 text-[#10B981]"></i><span id="opModalOfficerPlaceholderText" class="text-[11px] sm:text-xs font-semibold leading-tight">Menunggu Foto Hasil Pengerjaan</span>';
+                }
+                if (opPill) {
+                    opPill.className = 'absolute bottom-2 left-2 sm:bottom-3 sm:left-3 bg-[#047857]/90 text-white text-[10px] sm:text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5 pointer-events-none';
+                    opPill.innerHTML = '<i data-lucide="badge-check" class="w-3 h-3 shrink-0 hidden sm:inline"></i><span id="opModalOfficerPhotoLabel">Foto Hasil Pengerjaan</span>';
+                }
+            }
+            if (window.lucide) window.lucide.createIcons();
         }
 
         // Ruas Panjang Box
@@ -2790,7 +2841,7 @@
             citizenPhotoSection.classList.add('hidden');
         }
 
-        // 2. Foto Bukti Penanganan Petugas Lapangan (Bawah)
+        // 2. Foto Bukti Penanganan Pekerja Lapangan (Bawah)
         const officerPhotoSection = document.getElementById('valModalOfficerPhotoSection');
         const officerPhotoImg = document.getElementById('valModalOfficerPhoto');
         const officerGallery = document.getElementById('valModalOfficerGallery');
@@ -2857,7 +2908,7 @@
         if (valTeamNameEl) valTeamNameEl.innerText = teamDisplayName;
         if (valOfficerDeptEl) valOfficerDeptEl.innerText = item.department_name || 'Dinas Terkait (PUPR / PRKP)';
 
-        const leaderName = item.team_leader_name || item.officer_name || 'Petugas Lapangan';
+        const leaderName = item.team_leader_name || item.officer_name || 'Pekerja Lapangan';
         const leaderPhone = item.team_leader_phone || item.officer_phone || '-';
 
         if (valTeamLeaderEl) valTeamLeaderEl.innerText = leaderName;
@@ -3361,8 +3412,8 @@
             if (currentTab === 'archive' && archiveStatusVal !== 'ALL') {
                 if (archiveStatusVal === 'COMPLETED') {
                     matchStatus = (itemStatus === 'COMPLETED' || itemStatus === 'CLOSED');
-                } else if (archiveStatusVal === 'REJECTED') {
-                    matchStatus = (itemStatus === 'REJECTED');
+                } else {
+                    matchStatus = (itemStatus === archiveStatusVal);
                 }
             }
             return matchCat && matchDamageType && matchQuery && matchStatus;
@@ -3471,7 +3522,7 @@
         }
     }
 
-    // Modal Konfirmasi Minta Revisi Petugas Lapangan
+    // Modal Konfirmasi Minta Revisi Pekerja Lapangan
     let currentRevisionForm = null;
 
     function openRevisionModal(formElement, code) {

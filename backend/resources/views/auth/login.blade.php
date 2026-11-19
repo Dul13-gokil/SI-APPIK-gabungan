@@ -156,11 +156,11 @@
                                 <span class="text-[10px] text-[#475569]">Monitoring Eksekutif</span>
                             </button>
 
-                            <button type="button" onclick="selectRole('petugas@kabupaten.go.id', 'password', 'Petugas Lap.')" 
+                            <button type="button" onclick="selectRole('petugas@kabupaten.go.id', 'password', 'Pekerja Lap.')" 
                                 class="role-btn p-2.5 rounded-xl border border-[#E2E8F0] bg-white hover:border-[#2563EB] hover:bg-[#EFF6FF]/60 text-left transition duration-150 flex flex-col gap-0.5 cursor-pointer">
                                 <div class="flex items-center gap-1.5 text-[#0F172A] font-bold text-xs">
                                     <i data-lucide="wrench" class="w-3.5 h-3.5 text-[#2563EB]"></i>
-                                    <span>Petugas Lap.</span>
+                                    <span>Pekerja Lap.</span>
                                 </div>
                                 <span class="text-[10px] text-[#475569]">Pengerjaan Fisik</span>
                             </button>
@@ -181,9 +181,9 @@
                     @endif
 
                     @if($errors->any())
-                        <div class="p-3 rounded-xl bg-red-50 border border-red-200 text-[#DC2626] text-xs flex items-center gap-2">
-                            <i data-lucide="alert-circle" class="w-4 h-4 shrink-0 text-[#EF4444]"></i>
-                            <span>{{ $errors->first() }}</span>
+                        <div role="alert" class="flex items-start gap-2.5 pl-3 py-1 border-l-2 border-[#DC2626] text-[#DC2626]">
+                            <i data-lucide="alert-circle" class="w-4 h-4 shrink-0 mt-0.5 text-[#DC2626]"></i>
+                            <p class="text-[13px] font-medium leading-snug">{{ $errors->first() }}</p>
                         </div>
                     @endif
 
@@ -200,9 +200,6 @@
                                 placeholder="contoh: operator@kolakautara.go.id"
                                 class="block w-full h-[48px] pl-11 pr-4 text-sm text-[#0F172A] placeholder:text-[#94A3B8] rounded-[14px] border border-[#E2E8F0] bg-white hover:border-[#CBD5E1] focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20 focus:border-[#2563EB] transition">
                         </div>
-                        @error('email')
-                            <p class="text-xs text-[#DC2626] font-medium">{{ $message }}</p>
-                        @enderror
 
                         <!-- Banner Pemberitahuan jika Akun Warga Terdeteksi -->
                         <div id="wargaInlineNotice" class="hidden mt-2 px-3.5 py-2.5 rounded-xl bg-amber-50/80 border border-amber-200 text-[#0F172A] text-xs flex items-center justify-between gap-3">
@@ -715,7 +712,7 @@
                 switchForgotStep(2);
                 showForgotAlert(data.message, true);
             } else if (data.is_warga) {
-                showForgotAlert(data.message || 'Portal website ini khusus untuk Operator, Petugas Lapangan, dan Kepala Daerah. Akun Warga Masyarakat silakan gunakan Aplikasi Mobile SI-APPIK.');
+                showForgotAlert(data.message || 'Portal website ini khusus untuk Operator, Pekerja Lapangan, dan Kepala Daerah. Akun Warga Masyarakat silakan gunakan Aplikasi Mobile SI-APPIK.');
                 setTimeout(() => {
                     closeForgotPasswordModal();
                     openWargaModal(data.name || 'Warga');

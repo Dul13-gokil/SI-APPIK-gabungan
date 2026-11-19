@@ -6,6 +6,7 @@ import '../../../core/auth/auth_service.dart';
 import '../../../core/network/api_client.dart';
 import '../../../shared/data/kolaka_utara_boundary.dart';
 import '../../../shared/theme/app_colors.dart';
+import '../../../shared/widgets/v2_components.dart';
 import '../../complaints/presentation/complaint_detail_screen.dart';
 
 class MapScreen extends StatefulWidget {
@@ -69,7 +70,7 @@ class _MapScreenState extends State<MapScreen> {
       case 'VERIFICATION':
         return const Color(0xFFEF4444); // Verifikasi (Merah)
       case 'DISPATCHED':
-        return const Color(0xFF1E40AF); // Ditugaskan (Biru Tua / Navy)
+        return AppColors.statusDispatched; // Ditugaskan (Biru Terang V2)
       case 'IN_PROGRESS':
       case 'REVISION_REQUIRED':
       case 'WAITING_VERIFICATION':
@@ -179,7 +180,7 @@ class _MapScreenState extends State<MapScreen> {
   List<dynamic> get _filteredMarkers {
     List<dynamic> baseList;
     if (_isPetugas) {
-      // Petugas Lapangan: Sembunyikan laporan yang berstatus verifikasi (SUBMITTED/PENDING/VERIFICATION/VERIFIED) dan REJECTED.
+      // Pekerja Lapangan: Sembunyikan laporan yang berstatus verifikasi (SUBMITTED/PENDING/VERIFICATION/VERIFIED) dan REJECTED.
       // Hanya laporan berstatus Ditugaskan, Dikerjakan, Validasi, dan Selesai yang muncul pada peta GIS.
       const allowedOfficerStatuses = [
         'DISPATCHED',
@@ -239,32 +240,43 @@ class _MapScreenState extends State<MapScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: const Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      body: SafeArea(
+        bottom: false,
+        child: Column(
           children: [
-            Text(
-              'Peta Sebaran Laporan',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            V2FloatingHeader(
+              title: 'Peta GIS Sebaran',
+              subtitle: 'Wilayah Kabupaten Kolaka Utara',
+              leading: Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: AppColors.primaryContainer,
+                  borderRadius: BorderRadius.circular(11),
+                  border: Border.all(color: AppColors.primaryBorder),
+                ),
+                child: const Icon(LucideIcons.mapPin, size: 18, color: AppColors.primary),
+              ),
+              actions: [
+                InkWell(
+                  borderRadius: BorderRadius.circular(11),
+                  onTap: _fetchMapMarkers,
+                  child: Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      color: AppColors.cardSurface,
+                      borderRadius: BorderRadius.circular(11),
+                      border: Border.all(color: AppColors.border),
+                    ),
+                    child: const Icon(LucideIcons.refreshCw, size: 17, color: AppColors.textPrimary),
+                  ),
+                ),
+              ],
             ),
-            Text(
-              'Wilayah Kabupaten Kolaka Utara',
-              style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
-            ),
-          ],
-        ),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        foregroundColor: AppColors.textPrimary,
-        actions: [
-          IconButton(
-            icon: const Icon(LucideIcons.refreshCw, size: 20),
-            onPressed: _fetchMapMarkers,
-          ),
-        ],
-      ),
-      body: Stack(
-        children: [
+            Expanded(
+              child: Stack(
+                children: [
           // FlutterMap OpenStreetMap Layer
           FlutterMap(
             mapController: _mapController,
@@ -284,7 +296,7 @@ class _MapScreenState extends State<MapScreen> {
                 polygons: [
                   Polygon(
                     points: kolakaUtaraBoundary,
-                    borderColor: const Color(0xFF1E3A8A),
+                    borderColor: AppColors.primary,
                     borderStrokeWidth: 2.5,
                     color: const Color(0xFF3B82F6).withValues(alpha: 0.08),
                   ),
@@ -420,7 +432,7 @@ class _MapScreenState extends State<MapScreen> {
                     ? [
                         _buildMapFilterChip('Semua ($_allEligibleCount)', 'ALL', AppColors.primary, LucideIcons.layers),
                         _buildMapFilterChip('Diproses ($_diprosesCount)', 'PROCESSING', const Color(0xFFF59E0B), LucideIcons.clock),
-                        _buildMapFilterChip('Ditugaskan ($_dispatchedCount)', 'DISPATCHED', const Color(0xFF1E40AF), LucideIcons.send),
+                        _buildMapFilterChip('Ditugaskan ($_dispatchedCount)', 'DISPATCHED', AppColors.statusDispatched, LucideIcons.send),
                         _buildMapFilterChip('Dikerjakan ($_inProgressCount)', 'IN_PROGRESS', const Color(0xFFD97706), LucideIcons.wrench),
                         _buildMapFilterChip('Validasi ($_waitingVerifCount)', 'WAITING_VERIFICATION', const Color(0xFFF59E0B), LucideIcons.clipboardCheck),
                         _buildMapFilterChip('Selesai ($_completedCount)', 'COMPLETED', const Color(0xFF10B981), LucideIcons.check),
@@ -429,7 +441,7 @@ class _MapScreenState extends State<MapScreen> {
                         _buildMapFilterChip('Semua ($_allEligibleCount)', 'ALL', AppColors.primary, LucideIcons.layers),
                         _buildMapFilterChip('Diproses ($_diprosesCount)', 'PROCESSING', const Color(0xFFF59E0B), LucideIcons.clock),
                         _buildMapFilterChip('Verifikasi ($_verifCount)', 'VERIFICATION', const Color(0xFFEF4444), LucideIcons.alertCircle),
-                        _buildMapFilterChip('Ditugaskan ($_dispatchedCount)', 'DISPATCHED', const Color(0xFF1E40AF), LucideIcons.send),
+                        _buildMapFilterChip('Ditugaskan ($_dispatchedCount)', 'DISPATCHED', AppColors.statusDispatched, LucideIcons.send),
                         _buildMapFilterChip('Dikerjakan ($_inProgressCount)', 'IN_PROGRESS', const Color(0xFFD97706), LucideIcons.wrench),
                         _buildMapFilterChip('Validasi ($_waitingVerifCount)', 'WAITING_VERIFICATION', const Color(0xFFF59E0B), LucideIcons.clipboardCheck),
                         _buildMapFilterChip('Selesai ($_completedCount)', 'COMPLETED', const Color(0xFF10B981), LucideIcons.check),
@@ -440,7 +452,7 @@ class _MapScreenState extends State<MapScreen> {
 
           // Floating Recenter Button
           Positioned(
-            bottom: _selectedComplaintPreview != null ? 185 : 30,
+            bottom: _selectedComplaintPreview != null ? 265 : 104,
             right: 16,
             child: FloatingActionButton.small(
               backgroundColor: Colors.white,
@@ -455,7 +467,7 @@ class _MapScreenState extends State<MapScreen> {
 
           // Floating Map Legend Pasif di Pojok Kiri Bawah (Standar Google Maps / GIS Modern persis Landing Page)
           Positioned(
-            bottom: _selectedComplaintPreview != null ? 185 : 30,
+            bottom: _selectedComplaintPreview != null ? 265 : 104,
             left: 16,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
@@ -478,7 +490,7 @@ class _MapScreenState extends State<MapScreen> {
                     _buildLegendDot(const Color(0xFFEF4444), LucideIcons.alertCircle, 'Verifikasi'),
                     const SizedBox(width: 8),
                   ],
-                  _buildLegendDot(const Color(0xFF1E40AF), LucideIcons.send, 'Ditugaskan'),
+                  _buildLegendDot(AppColors.statusDispatched, LucideIcons.send, 'Ditugaskan'),
                   const SizedBox(width: 8),
                   _buildLegendDot(const Color(0xFFF59E0B), LucideIcons.clock, 'Diproses'),
                   const SizedBox(width: 8),
@@ -491,7 +503,7 @@ class _MapScreenState extends State<MapScreen> {
           // Bottom Preview Card
           if (_selectedComplaintPreview != null)
             Positioned(
-              bottom: 20,
+              bottom: 100,
               left: 16,
               right: 16,
               child: Container(
@@ -520,55 +532,42 @@ class _MapScreenState extends State<MapScreen> {
                             runSpacing: 4,
                             crossAxisAlignment: WrapCrossAlignment.center,
                             children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                                decoration: BoxDecoration(
-                                  color: AppColors.primary.withValues(alpha: 0.1),
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                child: Text(
-                                  _selectedComplaintPreview!['public_code'] ?? 'ADUAN',
-                                  style: const TextStyle(
-                                    color: AppColors.primary,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 11,
-                                  ),
+                              Text(
+                                () {
+                                  final raw = (_selectedComplaintPreview!['public_code'] ?? 'ADUAN').toString();
+                                  return raw.startsWith('#') ? raw : '#$raw';
+                                }(),
+                                style: const TextStyle(
+                                  color: AppColors.textPrimary,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
                                 ),
                               ),
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                                 decoration: BoxDecoration(
-                                  color: _selectedComplaintPreview!['damage_type'] == 'major'
-                                      ? AppColors.damageTypeMajorBg
-                                      : AppColors.damageTypeMinorBg,
-                                  borderRadius: BorderRadius.circular(6),
+                                  color: _getStatusColor(_selectedComplaintPreview!['status']).withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(99),
                                   border: Border.all(
-                                    color: _selectedComplaintPreview!['damage_type'] == 'major'
-                                        ? AppColors.damageTypeMajorBorder
-                                        : AppColors.damageTypeMinorBorder,
+                                    color: _getStatusColor(_selectedComplaintPreview!['status']).withValues(alpha: 0.35),
                                   ),
                                 ),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Icon(
-                                      _selectedComplaintPreview!['damage_type'] == 'major'
-                                          ? LucideIcons.gitCommit
-                                          : LucideIcons.mapPin,
-                                      size: 11,
-                                      color: _selectedComplaintPreview!['damage_type'] == 'major'
-                                          ? AppColors.damageTypeMajor
-                                          : AppColors.damageTypeMinor,
+                                    Container(
+                                      width: 6,
+                                      height: 6,
+                                      decoration: BoxDecoration(
+                                        color: _getStatusColor(_selectedComplaintPreview!['status']),
+                                        shape: BoxShape.circle,
+                                      ),
                                     ),
-                                    const SizedBox(width: 3),
+                                    const SizedBox(width: 4),
                                     Text(
-                                      _selectedComplaintPreview!['damage_type'] == 'major'
-                                          ? 'Kerusakan Berat'
-                                          : 'Kerusakan Ringan',
+                                      _getStatusText(_selectedComplaintPreview!['status']),
                                       style: TextStyle(
-                                        color: _selectedComplaintPreview!['damage_type'] == 'major'
-                                            ? AppColors.damageTypeMajor
-                                            : AppColors.damageTypeMinor,
+                                        color: _getStatusColor(_selectedComplaintPreview!['status']),
                                         fontWeight: FontWeight.bold,
                                         fontSize: 10,
                                       ),
@@ -576,41 +575,9 @@ class _MapScreenState extends State<MapScreen> {
                                   ],
                                 ),
                               ),
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
-                                  decoration: BoxDecoration(
-                                    color: _getStatusColor(_selectedComplaintPreview!['status']).withValues(alpha: 0.12),
-                                    borderRadius: BorderRadius.circular(6),
-                                    border: Border.all(
-                                      color: _getStatusColor(_selectedComplaintPreview!['status']).withValues(alpha: 0.35),
-                                    ),
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Container(
-                                        width: 6,
-                                        height: 6,
-                                        decoration: BoxDecoration(
-                                          color: _getStatusColor(_selectedComplaintPreview!['status']),
-                                          shape: BoxShape.circle,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 4),
-                                      Text(
-                                        _getStatusText(_selectedComplaintPreview!['status']),
-                                        style: TextStyle(
-                                          color: _getStatusColor(_selectedComplaintPreview!['status']),
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 10,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
+                            ],
                           ),
+                        ),
                           IconButton(
                             padding: EdgeInsets.zero,
                             constraints: const BoxConstraints(),
@@ -668,6 +635,10 @@ class _MapScreenState extends State<MapScreen> {
             ),
         ],
       ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -678,24 +649,15 @@ class _MapScreenState extends State<MapScreen> {
       child: GestureDetector(
         onTap: () => setState(() => _selectedFilter = value),
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+          duration: const Duration(milliseconds: 180),
+          padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 7),
           decoration: BoxDecoration(
-            color: isSelected ? activeColor : Colors.white,
-            borderRadius: BorderRadius.circular(20),
+            color: isSelected ? activeColor : AppColors.surface,
+            borderRadius: BorderRadius.circular(10),
             border: Border.all(
               color: isSelected ? activeColor : AppColors.border,
-              width: 1.2,
+              width: isSelected ? 1.4 : 1.0,
             ),
-            boxShadow: [
-              BoxShadow(
-                color: isSelected
-                    ? activeColor.withValues(alpha: 0.3)
-                    : Colors.black.withValues(alpha: 0.06),
-                blurRadius: isSelected ? 8 : 4,
-                offset: const Offset(0, 2),
-              ),
-            ],
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,

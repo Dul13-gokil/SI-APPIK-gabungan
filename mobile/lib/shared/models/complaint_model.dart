@@ -37,6 +37,8 @@ class ComplaintModel {
   final double? endLatitude;
   final double? endLongitude;
   final List<List<double>>? routeCoordinates;
+  final int? ratingScore;
+  final String? ratingComment;
   final DateTime createdAt;
 
   ComplaintModel({
@@ -78,6 +80,8 @@ class ComplaintModel {
     this.endLatitude,
     this.endLongitude,
     this.routeCoordinates,
+    this.ratingScore,
+    this.ratingComment,
     required this.createdAt,
   });
 
@@ -127,6 +131,8 @@ class ComplaintModel {
     double? endLatitude,
     double? endLongitude,
     List<List<double>>? routeCoordinates,
+    int? ratingScore,
+    String? ratingComment,
     DateTime? createdAt,
   }) {
     return ComplaintModel(
@@ -168,6 +174,8 @@ class ComplaintModel {
       endLatitude: endLatitude ?? this.endLatitude,
       endLongitude: endLongitude ?? this.endLongitude,
       routeCoordinates: routeCoordinates ?? this.routeCoordinates,
+      ratingScore: ratingScore ?? this.ratingScore,
+      ratingComment: ratingComment ?? this.ratingComment,
       createdAt: createdAt ?? this.createdAt,
     );
   }
@@ -243,6 +251,8 @@ class ComplaintModel {
       endLatitude: (json['end_latitude'] as num?)?.toDouble(),
       endLongitude: (json['end_longitude'] as num?)?.toDouble(),
       routeCoordinates: parsedRoute,
+      ratingScore: json['rating'] is Map ? (json['rating']['rating'] as num?)?.toInt() : null,
+      ratingComment: json['rating'] is Map ? json['rating']['comment']?.toString() : null,
       createdAt: DateTime.tryParse(json['created_at'] ?? '') ?? DateTime.now(),
     );
   }

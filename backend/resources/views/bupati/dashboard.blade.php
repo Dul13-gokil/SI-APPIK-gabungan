@@ -366,7 +366,7 @@
                                         <div class="font-semibold text-slate-800 text-xs leading-snug truncate max-w-[160px]">{{ $c->latestDisposition?->department?->name ?? 'Dinas Teknis' }}</div>
                                         <div class="text-[10.5px] text-slate-500 mt-0.5 flex items-center gap-1">
                                             <i data-lucide="hard-hat" class="w-3 h-3 text-slate-400 shrink-0"></i>
-                                            <span class="truncate max-w-[140px]">{{ $c->latestDisposition?->assignee?->name ?? 'Petugas Lapangan' }}</span>
+                                            <span class="truncate max-w-[140px]">{{ $c->latestDisposition?->assignee?->name ?? 'Pekerja Lapangan' }}</span>
                                         </div>
                                     @else
                                         <span class="text-[11px] text-slate-400 font-medium italic">Belum diambil</span>
@@ -515,6 +515,7 @@
                         class="text-xs font-semibold rounded-xl border border-[#E2E8F0] py-2 px-3 bg-[#F8FAFC] text-[#334155] focus:outline-none focus:border-[#2563EB] focus:bg-white transition">
                         <option value="ALL">Status: Semua</option>
                         <option value="COMPLETED">Selesai</option>
+                        <option value="CANCELLED">Dibatalkan</option>
                         <option value="REJECTED">Ditolak</option>
                     </select>
 
@@ -564,6 +565,7 @@
                                     $acPhoto = $ac->photos->first() ? ($ac->photos->first()->url ?? asset('storage/' . $ac->photos->first()->storage_key)) : null;
                                     $acSt = $ac->status?->value ?? $ac->status;
                                     $acIsRejected = ($acSt === 'REJECTED');
+                                    $acIsCancelled = ($acSt === 'CANCELLED');
                                 @endphp
                                 <tr onclick="openBupatiDetailModal({{ $ac->id }})" class="bupati-archive-row flex flex-col md:table-row gap-2 px-3.5 py-3 md:p-0 w-full hover:bg-slate-50/80 transition cursor-pointer"
                                     data-code="{{ strtolower($ac->public_code) }}"
@@ -591,6 +593,8 @@
                                                     <span class="font-mono font-bold text-[#0F172A] text-[10px]">#{{ $ac->public_code }}</span>
                                                     @if($acIsRejected)
                                                         <span class="px-1.5 py-0.5 rounded text-[9.5px] font-bold bg-red-50 text-red-700 border border-red-200">DITOLAK</span>
+                                                    @elseif($acIsCancelled)
+                                                        <span class="px-1.5 py-0.5 rounded text-[9.5px] font-bold bg-slate-100 text-slate-600 border border-slate-200">DIBATALKAN</span>
                                                     @else
                                                         <span class="px-1.5 py-0.5 rounded text-[9.5px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">SELESAI</span>
                                                     @endif
@@ -610,6 +614,8 @@
                                     <td class="hidden md:table-cell py-3 px-3 align-middle text-center whitespace-nowrap">
                                         @if($acIsRejected)
                                             <span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-red-50 text-red-700 border border-red-200">DITOLAK</span>
+                                        @elseif($acIsCancelled)
+                                            <span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-slate-100 text-slate-600 border border-slate-200">DIBATALKAN</span>
                                         @else
                                             <span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">SELESAI</span>
                                         @endif
@@ -654,6 +660,10 @@
                                         @if($isRejected)
                                             <span class="px-2 py-0.5 rounded-full bg-red-50 text-red-700 border border-red-200 text-[10px] font-bold whitespace-nowrap shrink-0">
                                                 DITOLAK
+                                            </span>
+                                        @elseif($ac->status === 'CANCELLED')
+                                            <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200 text-[10px] font-bold whitespace-nowrap shrink-0">
+                                                DIBATALKAN
                                             </span>
                                         @endif
                                         <span class="inline-flex px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-slate-100 text-slate-600 border border-slate-200/80 whitespace-nowrap truncate shrink-0 max-w-[170px]" title="{{ $ac->category?->name ?? 'Infrastruktur' }}">
@@ -1315,7 +1325,11 @@
             
             let matchStatus = true;
             if (selectedStatus !== 'ALL') {
-                matchStatus = (status === selectedStatus);
+                if (selectedStatus === 'COMPLETED') {
+                    matchStatus = (status === 'COMPLETED' || status === 'CLOSED');
+                } else {
+                    matchStatus = (status === selectedStatus);
+                }
             }
 
             if (matchQuery && matchCategory && matchDamageType && matchStatus) {
@@ -1484,7 +1498,7 @@
 
                 // Ketua Regu & Nomor Telepon
                 const showOfficerIdentity = ['IN_PROGRESS', 'WAITING_VERIFICATION', 'COMPLETED', 'CLOSED'].includes(item.status);
-                const leaderName = item.team_leader || item.officer_name || item.assignee_name || 'Petugas Lapangan';
+                const leaderName = item.team_leader || item.officer_name || item.assignee_name || 'Pekerja Lapangan';
                 const leaderPhone = item.team_leader_phone || item.officer_phone || item.assignee_phone || '-';
 
                 if (teamLeaderEl) {
@@ -1579,7 +1593,7 @@
             }
         }
 
-        // 8b. Foto Bukti Penanganan Petugas Lapangan & Galeri
+        // 8b. Foto Bukti Penanganan Pekerja Lapangan & Galeri
         const photoAfter = document.getElementById('bmPhotoAfter');
         const photoAfterContainer = document.getElementById('bmPhotoAfterContainer');
         const officerGallery = document.getElementById('bmPhotoOfficerGallery');

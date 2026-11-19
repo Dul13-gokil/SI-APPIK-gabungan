@@ -32,6 +32,7 @@ Route::prefix('v1')->group(function () {
 
     // Public feeds & GIS analytics (Data telepon disensor di ComplaintResource demi privasi UU PDP)
     Route::get('/complaints',                           [ComplaintController::class, 'index']);
+    Route::get('/complaints/nearby-duplicates',         [ComplaintController::class, 'nearbyDuplicates']);
     Route::post('/complaints',                          [ComplaintController::class, 'store']); // Mendukung Warga Login & Anonim
     Route::get('/complaints/{id}',                      [ComplaintController::class, 'show']);
     Route::get('/complaints/{id}/timeline',             [ComplaintController::class, 'timeline']);
@@ -64,7 +65,9 @@ Route::prefix('v1')->group(function () {
         Route::post('/auth/change-password', [AuthController::class, 'changePassword']);
 
         // B. Laporan Khusus Warga Login (BOLA/IDOR Protected)
-        Route::delete('/complaints/{id}',          [ComplaintController::class, 'destroy']);
+        Route::post('/complaints/{id}/cancel',       [ComplaintController::class, 'cancel']);
+    Route::post('/complaints/{id}/rating',       [ComplaintController::class, 'storeRating']);
+    Route::delete('/complaints/{id}',            [ComplaintController::class, 'destroy']);
         Route::post('/complaints/{id}/supports',   [ComplaintController::class, 'toggleSupport']);
         Route::delete('/complaints/{id}/supports', [ComplaintController::class, 'toggleSupport']);
         Route::get('/my-complaints',               [ComplaintController::class, 'myComplaints']);
@@ -77,8 +80,9 @@ Route::prefix('v1')->group(function () {
         Route::delete('/notifications',         [NotificationController::class, 'clearAll']);
         Route::post('/notifications/clear-all', [NotificationController::class, 'clearAll']);
 
-        // D. Tugas Khusus Petugas Lapangan
+        // D. Tugas & Laporan Kinerja Khusus Petugas Lapangan
         Route::get('/field-tasks', [ComplaintController::class, 'fieldTasks'])->middleware('role:PETUGAS,SUPERADMIN,ADMIN');
+        Route::get('/field/performance', [\App\Http\Controllers\Api\v1\FieldPerformanceController::class, 'show'])->middleware('role:PETUGAS,SUPERADMIN,ADMIN');
 
         // E. Alur Kerja Lapangan (Khusus Petugas Teknis Lapangan)
         Route::middleware('role:PETUGAS,SUPERADMIN,ADMIN')->group(function () {

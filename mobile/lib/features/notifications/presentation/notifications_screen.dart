@@ -4,6 +4,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../core/auth/auth_service.dart';
 import '../../../core/network/api_client.dart';
 import '../../../shared/theme/app_colors.dart';
+import '../../../shared/widgets/v2_toast.dart';
 import '../../complaints/presentation/complaint_detail_screen.dart';
 
 class NotificationsScreen extends StatefulWidget {
@@ -104,11 +105,11 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     } catch (_) {}
 
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Notifikasi berhasil dihapus'),
-          duration: Duration(seconds: 2),
-        ),
+      showV2Toast(
+        context,
+        message: 'Notifikasi berhasil dihapus',
+        type: V2ToastType.success,
+        duration: const Duration(seconds: 2),
       );
     }
   }
@@ -159,11 +160,11 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     } catch (_) {}
 
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Semua notifikasi berhasil dibersihkan'),
-          duration: Duration(seconds: 2),
-        ),
+      showV2Toast(
+        context,
+        message: 'Semua notifikasi berhasil dibersihkan',
+        type: V2ToastType.success,
+        duration: const Duration(seconds: 2),
       );
     }
   }
@@ -204,7 +205,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             ),
           if (_notifications.isNotEmpty)
             IconButton(
-              icon: const Icon(LucideIcons.trash2, size: 19, color: AppColors.textSecondary),
+              icon: const Icon(LucideIcons.trash2, size: 19, color: AppColors.statusRejected),
               tooltip: 'Hapus Semua Notifikasi',
               onPressed: _clearAllNotifications,
             ),
@@ -345,7 +346,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                 child: Icon(
                                                   LucideIcons.trash2,
                                                   size: 14,
-                                                  color: AppColors.textSecondary,
+                                                  color: AppColors.statusRejected,
                                                 ),
                                               ),
                                             ),

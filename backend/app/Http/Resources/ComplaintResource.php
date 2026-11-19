@@ -105,6 +105,11 @@ class ComplaintResource extends JsonResource
             'reporter_phone' => $displayPhone,
             'is_anonymous' => (bool) $this->is_anonymous,
             'supports_count' => $this->supports()->count(),
+            'rating' => $this->rating ? [
+                'rating'     => (int) $this->rating->rating,
+                'comment'    => $this->rating->comment,
+                'created_at' => $this->rating->created_at?->toIso8601String(),
+            ] : null,
             'photos' => $this->photos->where('type', 'evidence_before')->values()->map(function ($p) use ($host) {
                 $url = $p->storage_key ? "{$host}/storage/" . ltrim($p->storage_key, '/') : $p->url;
                 return [
@@ -129,7 +134,7 @@ class ComplaintResource extends JsonResource
                 'team_id'        => $latestDisp->team_id,
                 'team_name'      => $latestDisp->team?->name,
                 'assigned_to'    => $latestDisp->assigned_to,
-                'assignee_name'  => $latestDisp->assignee?->name ?? ($latestDisp->team ? $latestDisp->team->name : 'Petugas Lapangan'),
+                'assignee_name'  => $latestDisp->assignee?->name ?? ($latestDisp->team ? $latestDisp->team->name : 'Pekerja Lapangan'),
                 'assignee_phone' => $latestDisp->assignee?->phone,
                 'instruction'    => $latestDisp->instruction,
                 'deadline'       => $deadlineStr,

@@ -212,11 +212,11 @@ function initExecutiveMonitoringCharts() {
         stakeholderPerformanceChartInstance = new Chart(ctxStakeholder, {
             type: 'doughnut',
             data: {
-                labels: ['Petugas Lapangan', 'Operator', 'Dinas PUPR'],
+                labels: ['Pekerja Lapangan', 'Operator', 'Dinas PUPR'],
                 datasets: [{
                     data: [{{ $fieldPercent }}, {{ $operatorPercent }}, {{ $deptPercent }}],
                     backgroundColor: [
-                        '#3B82F6', // Petugas Lapangan
+                        '#3B82F6', // Pekerja Lapangan
                         '#2563EB', // Operator Verifikasi
                         '#10B981'  // Dinas PUPR
                     ],

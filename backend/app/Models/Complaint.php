@@ -73,6 +73,11 @@ class Complaint extends Model
         return $this->belongsTo(User::class, 'admin_rejected_by');
     }
 
+    public function rating(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(ComplaintRating::class);
+    }
+
     public function getSeverityLevelAttribute(): int
     {
         // 1. Cek dari assessment AI terbaru jika relation sudah dimuat

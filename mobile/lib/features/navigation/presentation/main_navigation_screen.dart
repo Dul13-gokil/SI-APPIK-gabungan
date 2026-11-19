@@ -1,12 +1,14 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../core/auth/auth_service.dart';
 import '../../../shared/theme/app_colors.dart';
+import '../../../shared/widgets/v2_toast.dart';
 import '../../auth/presentation/login_screen.dart';
 import '../../chatbot/presentation/ai_assistant_screen.dart';
 import '../../complaints/presentation/create_complaint_screen.dart';
-import '../../field/presentation/field_completed_tasks_screen.dart';
+import '../../field/presentation/field_performance_screen.dart';
 import '../../field/presentation/field_tasks_screen.dart';
 import '../../home/presentation/home_screen.dart';
 import '../../map/presentation/map_screen.dart';
@@ -284,20 +286,23 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                             final name = nameCtrl.text.trim();
                             final phone = phoneCtrl.text.trim();
                             if (name.isEmpty) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Nama lengkap sesuai KTP wajib diisi')),
+                              showV2Toast(
+                                context,
+                                message: 'Nama lengkap sesuai KTP wajib diisi',
+                                type: V2ToastType.warning,
                               );
                               return;
                             }
                             final validation = PhoneValidator.validate(phone, isRequired: true);
                             if (!validation.isValid) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text(validation.message ?? 'Nomor handphone tidak valid')),
+                              showV2Toast(
+                                context,
+                                message: validation.message ?? 'Nomor handphone tidak valid',
+                                type: V2ToastType.warning,
                               );
                               return;
                             }
 
-                            final messenger = ScaffoldMessenger.of(context);
                             final nav = Navigator.of(ctx);
                             setSheetState(() => isSaving = true);
 
@@ -309,12 +314,13 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                                 phoneFeedback = checkRes['message'] ?? 'Nomor ini sudah terdaftar oleh pengguna lain.';
                                 isPhoneValid = false;
                               });
-                              messenger.showSnackBar(
-                                SnackBar(
-                                  content: Text(checkRes['message'] ?? 'Nomor handphone sudah terdaftar.'),
-                                  backgroundColor: const Color(0xFFEF4444),
-                                ),
-                              );
+                              if (mounted) {
+                                showV2Toast(
+                                  this.context,
+                                  message: checkRes['message'] ?? 'Nomor handphone sudah terdaftar.',
+                                  type: V2ToastType.error,
+                                );
+                              }
                               return;
                             }
 
@@ -331,17 +337,18 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                                 setState(() {
                                   _refreshKey++;
                                 });
+                                showV2Toast(
+                                  this.context,
+                                  message: 'Identitas profil berhasil disimpan!',
+                                  type: V2ToastType.success,
+                                );
                               }
-                              messenger.showSnackBar(
-                                const SnackBar(
-                                  content: Text('Identitas profil berhasil disimpan!'),
-                                  backgroundColor: Color(0xFF10B981),
-                                ),
-                              );
                             } else {
                               setSheetState(() => isSaving = false);
-                              messenger.showSnackBar(
-                                SnackBar(content: Text(res['message'] ?? 'Gagal menyimpan profil')),
+                              showV2Toast(
+                                this.context,
+                                message: res['message'] ?? 'Gagal menyimpan profil',
+                                type: V2ToastType.error,
                               );
                             }
                           },
@@ -376,25 +383,48 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
       builder: (ctx) => PopScope(
         canPop: false,
         child: AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          titlePadding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          actionsPadding: const EdgeInsets.fromLTRB(20, 10, 20, 16),
+          backgroundColor: AppColors.surface,
+          surfaceTintColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+            side: const BorderSide(color: AppColors.border),
+          ),
+          titlePadding: const EdgeInsets.fromLTRB(22, 22, 22, 10),
+          contentPadding: const EdgeInsets.fromLTRB(22, 6, 22, 12),
+          actionsPadding: const EdgeInsets.fromLTRB(22, 6, 22, 20),
           title: Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                width: 42,
+                height: 42,
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(10),
+                  color: AppColors.primaryContainer,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: AppColors.primaryBorder),
                 ),
                 child: const Icon(LucideIcons.hardHat, color: AppColors.primary, size: 20),
               ),
-              const SizedBox(width: 10),
-              const Expanded(
-                child: Text(
-                  'Aktivasi Akun Petugas',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Aktivasi Akun Petugas',
+                      style: GoogleFonts.outfit(
+                        fontSize: 17,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    Text(
+                      'Verifikasi Identitas Dinas PUPR',
+                      style: GoogleFonts.inter(
+                        fontSize: 11.5,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -403,86 +433,115 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Akun Anda terdaftar sebagai Petugas Lapangan. Silakan verifikasi identitas resmi dan perbarui kata sandi awal akun Anda sebelum menjalankan tugas:',
-                style: TextStyle(fontSize: 13, color: AppColors.textSecondary, height: 1.4),
+              Text(
+                'Silakan verifikasi identitas resmi dan perbarui kata sandi awal akun Anda sebelum menjalankan tugas lapangan:',
+                style: GoogleFonts.inter(
+                  fontSize: 12.5,
+                  color: AppColors.textSecondary,
+                  height: 1.45,
+                ),
               ),
               const SizedBox(height: 14),
               Container(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF8FAFC),
-                  borderRadius: BorderRadius.circular(12),
+                  color: AppColors.cardSurface,
+                  borderRadius: BorderRadius.circular(16),
                   border: Border.all(color: AppColors.border),
                 ),
-                child: const Column(
+                child: Column(
                   children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Icon(LucideIcons.user, size: 16, color: AppColors.primary),
-                        SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                            'Nama lengkap sesuai penugasan dinas',
-                            style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 10),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Icon(LucideIcons.phone, size: 16, color: AppColors.primary),
-                        SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                            'Nomor WhatsApp aktif (10-13 digit)',
-                            style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 10),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Icon(LucideIcons.lock, size: 16, color: AppColors.primary),
-                        SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                            'Kata sandi baru (min. 8 karakter, A-Z, a-z, 0-9)',
-                            style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
-                          ),
-                        ),
-                      ],
-                    ),
+                    _buildActivationCheckRow(LucideIcons.user, 'Nama lengkap sesuai penugasan dinas'),
+                    const SizedBox(height: 10),
+                    _buildActivationCheckRow(LucideIcons.phone, 'Nomor WhatsApp aktif (10-13 digit)'),
+                    const SizedBox(height: 10),
+                    _buildActivationCheckRow(LucideIcons.lock, 'Kata sandi baru (min. 8 karakter, A-Z, a-z, 0-9)'),
                   ],
                 ),
               ),
             ],
           ),
           actions: [
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                SizedBox(
+                  height: 48,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                    ),
+                    onPressed: () {
+                      Navigator.pop(ctx);
+                      _showPetugasQuickSetupSheet(user);
+                    },
+                    child: Text(
+                      'Aktivasi Sekarang',
+                      style: GoogleFonts.outfit(fontSize: 14.5, fontWeight: FontWeight.bold),
+                    ),
+                  ),
                 ),
-                onPressed: () {
-                  Navigator.pop(ctx);
-                  _showPetugasQuickSetupSheet(user);
-                },
-                child: const Text('Aktivasi Sekarang', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
-              ),
+                const SizedBox(height: 8),
+                SizedBox(
+                  height: 44,
+                  child: OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      backgroundColor: AppColors.surface,
+                      foregroundColor: AppColors.textSecondary,
+                      side: const BorderSide(color: AppColors.border),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                    ),
+                    onPressed: () async {
+                      final nav = Navigator.of(context);
+                      await _authService.logout();
+                      if (!mounted) return;
+                      nav.pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (_) => const LoginScreen()),
+                        (route) => false,
+                      );
+                    },
+                    child: Text(
+                      'Nanti Saja',
+                      style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildActivationCheckRow(IconData icon, String text) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Container(
+          width: 28,
+          height: 28,
+          decoration: BoxDecoration(
+            color: AppColors.primaryContainer,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(icon, size: 14, color: AppColors.primary),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Text(
+            text,
+            style: GoogleFonts.inter(
+              fontSize: 12.5,
+              fontWeight: FontWeight.w600,
+              color: AppColors.textPrimary,
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -547,7 +606,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Aktivasi Akun Petugas Lapangan',
+                              'Aktivasi Akun Pekerja Lapangan',
                               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
                             ),
                             Text(
@@ -560,23 +619,30 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                     ],
                   ),
                   const Divider(height: 24),
-                  const Text('1. Nama Lengkap Petugas *', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+                  Text('1. Nama Lengkap Petugas *', style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
                   const SizedBox(height: 6),
                   TextField(
                     controller: nameCtrl,
+                    style: GoogleFonts.inter(fontSize: 13.5, color: AppColors.textPrimary),
                     decoration: InputDecoration(
-                      hintText: 'Nama lengkap petugas lapangan',
-                      prefixIcon: const Icon(LucideIcons.user, size: 18),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                      hintText: 'Nama lengkap pekerja lapangan',
+                      hintStyle: GoogleFonts.inter(fontSize: 13.5, color: AppColors.textSecondary.withValues(alpha: 0.7)),
+                      prefixIcon: const Icon(LucideIcons.user, size: 18, color: AppColors.textSecondary),
+                      filled: true,
+                      fillColor: AppColors.cardSurface,
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: AppColors.border)),
+                      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: AppColors.border)),
+                      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: AppColors.primary, width: 1.5)),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
                     ),
                   ),
                   const SizedBox(height: 14),
-                  const Text('2. Nomor WhatsApp / HP Aktif *', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+                  Text('2. Nomor WhatsApp / HP Aktif *', style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
                   const SizedBox(height: 6),
                   TextField(
                     controller: phoneCtrl,
                     keyboardType: TextInputType.phone,
+                    style: GoogleFonts.inter(fontSize: 13.5, color: AppColors.textPrimary),
                     onChanged: (val) {
                       if (val.trim().isEmpty) {
                         setSheetState(() {
@@ -593,9 +659,14 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                     },
                     decoration: InputDecoration(
                       hintText: '08xxxxxxxxxx',
-                      prefixIcon: const Icon(LucideIcons.phone, size: 18),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                      hintStyle: GoogleFonts.inter(fontSize: 13.5, color: AppColors.textSecondary.withValues(alpha: 0.7)),
+                      prefixIcon: const Icon(LucideIcons.phone, size: 18, color: AppColors.textSecondary),
+                      filled: true,
+                      fillColor: AppColors.cardSurface,
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: AppColors.border)),
+                      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: AppColors.border)),
+                      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: AppColors.primary, width: 1.5)),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
                     ),
                   ),
                   if (phoneFeedback != null)
@@ -603,41 +674,53 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                       padding: const EdgeInsets.only(top: 6, left: 4),
                       child: Text(
                         phoneFeedback!,
-                        style: TextStyle(
+                        style: GoogleFonts.inter(
                           fontSize: 11.5,
                           fontWeight: FontWeight.w500,
                           color: isPhoneValid == true
-                              ? const Color(0xFF10B981)
-                              : (isPhoneValid == false ? const Color(0xFFEF4444) : AppColors.textSecondary),
+                              ? AppColors.statusCompleted
+                              : (isPhoneValid == false ? AppColors.statusRejected : AppColors.textSecondary),
                         ),
                       ),
                     ),
                   const SizedBox(height: 14),
-                  const Text('3. Kata Sandi Baru (Min. 8 Karakter, Huruf Besar, Kecil, Angka) *', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+                  Text('3. Kata Sandi Baru (Min. 8 Karakter, Huruf Besar, Kecil, Angka) *', style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
                   const SizedBox(height: 6),
                   TextField(
                     controller: newPasswordCtrl,
                     obscureText: obscurePassword,
+                    style: GoogleFonts.inter(fontSize: 13.5, color: AppColors.textPrimary),
                     decoration: InputDecoration(
                       hintText: 'Min. 8 karakter (huruf besar, kecil, angka)',
-                      prefixIcon: const Icon(LucideIcons.lock, size: 18),
+                      hintStyle: GoogleFonts.inter(fontSize: 13.5, color: AppColors.textSecondary.withValues(alpha: 0.7)),
+                      prefixIcon: const Icon(LucideIcons.lock, size: 18, color: AppColors.textSecondary),
                       suffixIcon: IconButton(
-                        icon: Icon(obscurePassword ? LucideIcons.eyeOff : LucideIcons.eye, size: 18),
+                        icon: Icon(obscurePassword ? LucideIcons.eyeOff : LucideIcons.eye, size: 18, color: AppColors.textSecondary),
                         onPressed: () => setSheetState(() => obscurePassword = !obscurePassword),
                       ),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                      filled: true,
+                      fillColor: AppColors.cardSurface,
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: AppColors.border)),
+                      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: AppColors.border)),
+                      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: AppColors.primary, width: 1.5)),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
                     ),
                   ),
                   const SizedBox(height: 10),
                   TextField(
                     controller: confirmPasswordCtrl,
                     obscureText: obscurePassword,
+                    style: GoogleFonts.inter(fontSize: 13.5, color: AppColors.textPrimary),
                     decoration: InputDecoration(
                       hintText: 'Konfirmasi kata sandi baru...',
-                      prefixIcon: const Icon(LucideIcons.checkCheck, size: 18),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                      hintStyle: GoogleFonts.inter(fontSize: 13.5, color: AppColors.textSecondary.withValues(alpha: 0.7)),
+                      prefixIcon: const Icon(LucideIcons.checkCheck, size: 18, color: AppColors.textSecondary),
+                      filled: true,
+                      fillColor: AppColors.cardSurface,
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: AppColors.border)),
+                      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: AppColors.border)),
+                      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: AppColors.primary, width: 1.5)),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
                     ),
                   ),
                   if (passwordError != null)
@@ -706,7 +789,6 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
                               setSheetState(() => passwordError = null);
 
-                              final messenger = ScaffoldMessenger.of(context);
                               final nav = Navigator.of(ctx);
                               setSheetState(() => isSaving = true);
 
@@ -737,13 +819,12 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                                   setState(() {
                                     _refreshKey++;
                                   });
+                                  showV2Toast(
+                                    this.context,
+                                    message: 'Akun Pekerja Lapangan berhasil diaktifkan dengan sandi baru!',
+                                    type: V2ToastType.success,
+                                  );
                                 }
-                                messenger.showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Akun Petugas Lapangan berhasil diaktifkan dengan sandi baru!'),
-                                    backgroundColor: Color(0xFF10B981),
-                                  ),
-                                );
                               } else {
                                 setSheetState(() {
                                   isSaving = false;
@@ -766,6 +847,39 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                           : const Text('Aktifkan Akun & Mulai Bertugas', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
                     ),
                   ),
+                  const SizedBox(height: 8),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 44,
+                    child: OutlinedButton(
+                      onPressed: isSaving
+                          ? null
+                          : () async {
+                              final rootNav = Navigator.of(context, rootNavigator: true);
+                              Navigator.pop(ctx);
+                              await _authService.logout();
+                              if (!mounted) return;
+                              rootNav.pushAndRemoveUntil(
+                                MaterialPageRoute(builder: (_) => const LoginScreen()),
+                                (route) => false,
+                              );
+                            },
+                      style: OutlinedButton.styleFrom(
+                        backgroundColor: AppColors.surface,
+                        foregroundColor: AppColors.textSecondary,
+                        side: const BorderSide(color: AppColors.border),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                      ),
+                      child: Text(
+                        'Nanti Saja',
+                        style: GoogleFonts.inter(
+                          fontSize: 13.5,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -782,7 +896,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
       setState(() => _userRole = role);
 
       // Verifikasi status aktif akun ke server secara langsung agar akun yang dinonaktifkan
-      // (baik Warga maupun Petugas Lapangan) tidak dapat tetap menggunakan sesi lama
+      // (baik Warga maupun Pekerja Lapangan) tidak dapat tetap menggunakan sesi lama
       if (user != null && role != 'TAMU') {
         final session = await _authService.verifyActiveSession();
         if (!mounted) return;
@@ -855,11 +969,10 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     final u = await _authService.getCurrentUser();
     if (!mounted) return;
     if (u?.role == 'TAMU') {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Silakan daftar akun terlebih dahulu untuk membuat laporan'),
-          backgroundColor: AppColors.accent,
-        ),
+      showV2Toast(
+        context,
+        message: 'Silakan daftar akun terlebih dahulu untuk membuat laporan',
+        type: V2ToastType.warning,
       );
       return;
     }
@@ -917,7 +1030,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
-                      colors: [Color(0xFF1E3A8A), Color(0xFF2563EB)],
+                      colors: [AppColors.primary, AppColors.primaryLight],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
@@ -1040,85 +1153,144 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   // ─── Layout PETUGAS (5 tab) ──────────────────────────────────────────────
 
   Widget _buildPetugasLayout() {
+    final isKeyboardOpen = MediaQuery.viewInsetsOf(context).bottom > 0;
+
     final screens = [
       const FieldTasksScreen(),
       const MapScreen(isPetugas: true),
-      const FieldCompletedTasksScreen(),
-      const AIAssistantScreen(),
+      const FieldPerformanceScreen(),
+      AIAssistantScreen(isKeyboardOpen: isKeyboardOpen),
       ProfileScreen(key: ValueKey('profile_petugas_$_refreshKey')),
     ];
 
     final navItems = [
-      {'icon': LucideIcons.clipboardList, 'label': 'Tugas Aktif'},
+      {'icon': LucideIcons.clipboardList, 'label': 'Tugas'},
       {'icon': LucideIcons.map, 'label': 'Peta GIS'},
-      {'icon': LucideIcons.checkCircle2, 'label': 'Riwayat Selesai'},
-      {'icon': LucideIcons.bot, 'label': 'Asisten SI-APPIK'},
+      {'icon': LucideIcons.barChart3, 'label': 'Laporan'},
+      {'icon': LucideIcons.bot, 'label': 'Asisten'},
       {'icon': LucideIcons.user, 'label': 'Profil'},
     ];
 
     return Scaffold(
+      backgroundColor: AppColors.background,
+      extendBody: true,
       body: IndexedStack(index: _currentIndex, children: screens),
-      bottomNavigationBar: Container(
+      bottomNavigationBar: isKeyboardOpen
+          ? null
+          : _buildV2BottomNav(
+              items: navItems,
+              centerActionIndex: 2,
+            ),
+    );
+  }
+
+  /// Footer Navigasi Floating Pill V2 (kotak luar melayang, item ikon+teks transparan tanpa kotak ganda).
+  Widget _buildV2BottomNav({
+    required List<Map<String, dynamic>> items,
+    int? centerActionIndex,
+  }) {
+    return SafeArea(
+      top: false,
+      child: Container(
+        margin: const EdgeInsets.fromLTRB(16, 4, 16, 12),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: AppColors.border),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.06),
-              blurRadius: 16,
-              offset: const Offset(0, -4),
+              color: AppColors.textPrimary.withValues(alpha: 0.08),
+              blurRadius: 24,
+              offset: const Offset(0, 8),
             ),
           ],
         ),
-        child: SafeArea(
-          top: false,
-          child: SizedBox(
-            height: 60,
-            child: Row(
-              children: List.generate(navItems.length, (index) {
-                final isSelected = _currentIndex == index;
-                final item = navItems[index];
-                final color = isSelected ? AppColors.primary : AppColors.textSecondary;
+        child: Row(
+            children: List.generate(items.length, (index) {
+              final item = items[index];
+              final isSelected = _currentIndex == index;
+              final isCenterAction = centerActionIndex == index;
 
+              if (isCenterAction) {
+                final isGuest = _isWarga && _userRole == 'TAMU';
                 return Expanded(
-                  child: InkWell(
+                  child: GestureDetector(
                     onTap: () => _onTabTapped(index),
-                    splashColor: Colors.transparent,
-                    highlightColor: Colors.transparent,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 2),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            item['icon'] as IconData,
-                            size: 22,
-                            color: color,
+                    behavior: HitTestBehavior.opaque,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 44,
+                          height: 34,
+                          decoration: BoxDecoration(
+                            color: isGuest ? AppColors.textSecondary : AppColors.primary,
+                            borderRadius: BorderRadius.circular(14),
+                            boxShadow: isGuest
+                                ? null
+                                : [
+                                    BoxShadow(
+                                      color: AppColors.primary.withValues(alpha: 0.35),
+                                      blurRadius: 12,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
                           ),
-                          const SizedBox(height: 3),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 2),
-                            child: FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: Text(
-                                item['label'] as String,
-                                maxLines: 1,
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                                  color: color,
-                                  letterSpacing: -0.2,
-                                ),
-                              ),
-                            ),
+                          child: Icon(item['icon'] as IconData, color: Colors.white, size: 20),
+                        ),
+                        const SizedBox(height: 3),
+                        Text(
+                          item['label'] as String,
+                          maxLines: 1,
+                          style: GoogleFonts.outfit(
+                            fontSize: 10.5,
+                            fontWeight: FontWeight.bold,
+                            color: isGuest ? AppColors.textSecondary : AppColors.primary,
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 );
-              }),
-            ),
-          ),
+              }
+
+              final color = isSelected ? AppColors.primary : AppColors.textSecondary;
+              return Expanded(
+                child: InkWell(
+                  onTap: () => _onTabTapped(index),
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          item['icon'] as IconData,
+                          size: 21,
+                          color: color,
+                        ),
+                        const SizedBox(height: 3),
+                        FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            item['label'] as String,
+                            maxLines: 1,
+                            style: GoogleFonts.inter(
+                              fontSize: 10.5,
+                              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                              color: color,
+                              letterSpacing: -0.2,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            }),
         ),
       ),
     );
@@ -1127,74 +1299,39 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   // ─── Layout WARGA / ADMIN / BUPATI (5 tab) ──────────────────────────────
 
   Widget _buildWargaLayout() {
+    final isKeyboardOpen = MediaQuery.viewInsetsOf(context).bottom > 0;
+
     final screens = [
       HomeScreen(
         key: ValueKey('home_$_refreshKey'),
         onNavigateToMap: () => setState(() => _currentIndex = 1),
         onNavigateToAi: () => setState(() => _currentIndex = 3),
+        onCreateComplaintTap: () => _onTabTapped(2),
       ),
       const MapScreen(),
       const SizedBox.shrink(), // Placeholder tombol lapor (tengah)
-      const AIAssistantScreen(),
+      AIAssistantScreen(isKeyboardOpen: isKeyboardOpen),
       ProfileScreen(key: ValueKey('profile_$_refreshKey')),
     ];
 
+    final navItems = [
+      {'icon': LucideIcons.home, 'label': 'Beranda'},
+      {'icon': LucideIcons.map, 'label': 'Peta'},
+      {'icon': LucideIcons.plus, 'label': 'Lapor'},
+      {'icon': LucideIcons.bot, 'label': 'Asisten'},
+      {'icon': LucideIcons.user, 'label': 'Profil'},
+    ];
+
     return Scaffold(
+      backgroundColor: AppColors.background,
+      extendBody: true,
       body: IndexedStack(index: _currentIndex, children: screens),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.06),
-              blurRadius: 16,
-              offset: const Offset(0, -4),
+      bottomNavigationBar: isKeyboardOpen
+          ? null
+          : _buildV2BottomNav(
+              items: navItems,
+              centerActionIndex: 2,
             ),
-          ],
-        ),
-        child: BottomNavigationBar(
-          currentIndex: _currentIndex,
-          onTap: _onTabTapped,
-          type: BottomNavigationBarType.fixed,
-          backgroundColor: Colors.white,
-          selectedItemColor: AppColors.primary,
-          unselectedItemColor: AppColors.textSecondary,
-          selectedFontSize: 11,
-          unselectedFontSize: 11,
-          elevation: 0,
-          items: [
-            const BottomNavigationBarItem(
-              icon: Icon(LucideIcons.home, size: 22),
-              label: 'Beranda',
-            ),
-            const BottomNavigationBarItem(
-              icon: Icon(LucideIcons.map, size: 22),
-              label: 'Peta GIS',
-            ),
-            BottomNavigationBarItem(
-              icon: Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: _isWarga && _userRole == 'TAMU'
-                      ? AppColors.textSecondary
-                      : AppColors.primary,
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(LucideIcons.plus, color: Colors.white, size: 20),
-              ),
-              label: 'Lapor',
-            ),
-            const BottomNavigationBarItem(
-              icon: Icon(LucideIcons.bot, size: 22),
-              label: 'Asisten SI-APPIK',
-            ),
-            const BottomNavigationBarItem(
-              icon: Icon(LucideIcons.user, size: 22),
-              label: 'Profil',
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

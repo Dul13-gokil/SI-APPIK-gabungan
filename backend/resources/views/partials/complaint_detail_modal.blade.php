@@ -12,15 +12,15 @@
             <div class="min-w-0 flex-1 space-y-2">
                 <!-- Baris 1: Selalu 1 Baris di Mobile & Desktop -->
                 <div class="flex items-center gap-1 sm:gap-2 flex-nowrap overflow-x-auto no-scrollbar">
+                    <span id="sharedModalStatusBadge" class="shrink-0 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10.5px] sm:text-xs font-bold whitespace-nowrap border bg-[#ECFDF5] text-[#047857] border-[#A7F3D0]">
+                        STATUS
+                    </span>
                     <span id="sharedModalTypeBadge" class="shrink-0 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10.5px] sm:text-xs font-bold bg-[#FEF2F2] text-[#DC2626] border border-[#FECACA] inline-flex items-center gap-1 whitespace-nowrap">
                         <span class="w-1.5 h-1.5 rounded-full bg-[#DC2626] shrink-0"></span>
                         <span>Kerusakan Ringan</span>
                     </span>
                     <span id="sharedModalCategoryBadge" class="shrink min-w-0 truncate px-2 sm:px-3 py-0.5 sm:py-1 rounded-full bg-[#F1F5F9] text-[#475569] font-semibold text-[10.5px] sm:text-xs border border-[#E2E8F0]">
                         Infrastruktur
-                    </span>
-                    <span id="sharedModalStatusBadge" class="shrink-0 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10.5px] sm:text-xs font-bold whitespace-nowrap border bg-[#ECFDF5] text-[#047857] border-[#A7F3D0]">
-                        STATUS
                     </span>
                 </div>
 
@@ -64,13 +64,13 @@
 
                 <!-- Kanan: Foto Hasil Pengerjaan Fisik (Selalu tampil berdampingan, placeholder bila belum ada) -->
                 <div id="sharedModalCompletionPhotoContainer" class="space-y-1.5">
-                    <div class="aspect-[16/10] rounded-xl sm:rounded-2xl overflow-hidden border border-[#A7F3D0] bg-[#ECFDF5] relative flex items-center justify-center">
+                    <div id="sharedModalCompletionBox" class="aspect-[16/10] rounded-xl sm:rounded-2xl overflow-hidden border border-[#A7F3D0] bg-[#ECFDF5] relative flex items-center justify-center">
                         <img id="sharedModalCompletionPhoto" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Foto Hasil Pengerjaan" class="w-full h-full object-cover">
                         <div id="sharedModalCompletionPlaceholder" class="hidden inset-0 absolute flex flex-col items-center justify-center text-center p-3 text-[#047857] bg-[#ECFDF5]">
-                            <i data-lucide="clock" class="w-5 h-5 mb-1 text-[#10B981]"></i>
-                            <span class="text-[11px] sm:text-xs font-semibold leading-tight">Menunggu Foto Hasil Pengerjaan</span>
+                            <i id="sharedModalCompletionIcon" data-lucide="clock" class="w-5 h-5 mb-1 text-[#10B981]"></i>
+                            <span id="sharedModalCompletionText" class="text-[11px] sm:text-xs font-semibold leading-tight">Menunggu Foto Hasil Pengerjaan</span>
                         </div>
-                        <div class="absolute bottom-2 left-2 sm:bottom-3 sm:left-3 bg-[#047857]/90 text-white text-[10px] sm:text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5 pointer-events-none">
+                        <div id="sharedModalCompletionPill" class="absolute bottom-2 left-2 sm:bottom-3 sm:left-3 bg-[#047857]/90 text-white text-[10px] sm:text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5 pointer-events-none">
                             <i data-lucide="badge-check" class="w-3 h-3 shrink-0 hidden sm:inline"></i>
                             <span id="sharedModalCompletionPhotoLabel">Foto Hasil Pengerjaan</span>
                         </div>
@@ -94,9 +94,6 @@
                         <span id="sharedModalAnonymousBadge" class="hidden text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-200 text-slate-700">Anonim</span>
                     </div>
                     <div id="sharedModalReporterPhoneWrap" class="pt-0.5">
-                        <span id="sharedModalPrivacyBadge" class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-slate-200/70 text-slate-600 text-[10.5px] font-semibold shrink-0">
-                            <span>Privasi Dilindungi</span>
-                        </span>
                         <a id="sharedModalReporterPhoneLink" href="#" class="hidden items-center gap-1.5 text-xs text-[#047857] font-bold font-mono hover:underline shrink-0">
                             <i data-lucide="shield-check" class="w-3.5 h-3.5 text-[#10B981]"></i>
                             <span id="sharedModalReporterPhoneText">-</span>
@@ -158,7 +155,7 @@
                         </div>
                         <div class="min-w-0">
                             <span class="text-[10px] text-[#64748B] font-bold block leading-none">Ketua Regu:</span>
-                            <span id="sharedModalTeamLeader" class="font-bold text-[#0F172A] break-words block mt-0.5 text-xs">Petugas Lapangan</span>
+                            <span id="sharedModalTeamLeader" class="font-bold text-[#0F172A] break-words block mt-0.5 text-xs">Pekerja Lapangan</span>
                         </div>
                     </div>
                     <a id="sharedModalOfficerPhone" href="#" class="px-2.5 py-1 rounded-lg bg-[#EFF6FF] hover:bg-[#DBEAFE] text-[#2563EB] font-bold font-mono text-xs flex items-center gap-1.5 transition shrink-0">
@@ -208,7 +205,14 @@
         </div>
 
         <!-- Modal Footer Actions -->
-        <div class="px-5 py-3.5 sm:px-7 border-t border-[#E2E8F0] bg-white flex items-center justify-end gap-2 shrink-0">
+        <div class="px-5 py-3.5 sm:px-7 border-t border-[#E2E8F0] bg-white flex items-center justify-end gap-2 flex-wrap shrink-0">
+            @auth
+                <a id="sharedModalBapBtn" href="#" target="_blank" class="hidden px-4 py-2.5 rounded-xl border border-[#BFDBFE] bg-[#EFF6FF] hover:bg-[#DBEAFE] text-[#2563EB] font-bold text-xs transition items-center gap-1.5">
+                    <i data-lucide="file-check-2" class="w-3.5 h-3.5"></i>
+                    <span>Cetak BAP</span>
+                </a>
+            @endauth
+
             @if(($role ?? 'public') === 'petugas')
                 <a id="sharedModalNavBtn" href="#" target="_blank" class="px-4 py-2.5 rounded-xl border border-[#E2E8F0] bg-white hover:bg-[#F8FAFC] text-[#334155] font-bold text-xs transition flex items-center gap-1.5">
                     <i data-lucide="navigation" class="w-3.5 h-3.5 text-[#2563EB]"></i>

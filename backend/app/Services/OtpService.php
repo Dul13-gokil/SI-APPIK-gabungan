@@ -41,98 +41,24 @@ class OtpService
         $mailSent = false;
         if (filter_var($normalizedEmail, FILTER_VALIDATE_EMAIL)) {
             try {
-                $htmlBody = <<<HTML
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kode Verifikasi OTP</title>
-</head>
-<body style="margin: 0; padding: 0; background-color: #f8fafc; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #1e293b;">
-  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #f8fafc; padding: 30px 15px;">
-    <tr>
-      <td align="center">
-        <table role="presentation" width="100%" style="max-width: 520px; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border: 1px solid #e2e8f0;">
-          
-          <!-- Header -->
-          <tr>
-            <td style="background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%); padding: 28px 24px; text-align: center;">
-              <h1 style="margin: 0; color: #ffffff; font-size: 18px; font-weight: 700; letter-spacing: 0.5px;">
-                PEMERINTAH KABUPATEN
-              </h1>
-              <p style="margin: 6px 0 0 0; color: #93c5fd; font-size: 13px; font-weight: 500;">
-                SI-APPIK - Sistem Informasi Pengaduan & Penanganan Infrastruktur
-              </p>
-            </td>
-          </tr>
-
-          <!-- Body Content -->
-          <tr>
-            <td style="padding: 32px 28px;">
-              <h2 style="margin: 0 0 10px 0; color: #0f172a; font-size: 17px; font-weight: 700;">
-                {$purposeLabel}
-              </h2>
-              <p style="margin: 0 0 20px 0; color: #475569; font-size: 14px; line-height: 1.6;">
-                Halo,<br>
-                Berikut adalah 6-digit kode verifikasi (OTP) Anda untuk melanjutkan proses autentikasi pada aplikasi:
-              </p>
-
-              <!-- OTP Box Card -->
-              <div style="background-color: #f1f5f9; border: 2px dashed #3b82f6; border-radius: 14px; padding: 24px 16px; text-align: center; margin: 20px 0;">
-                <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px;">
-                  SALIN KODE OTP ANDA
-                </div>
-                <div style="font-size: 40px; font-weight: 800; letter-spacing: 10px; color: #1e3a8a; font-family: 'Courier New', Courier, monospace; margin: 4px 0;">
-                  {$code}
-                </div>
-                <div style="margin-top: 12px;">
-                  <span style="display: inline-block; background-color: #dbeafe; color: #1e40af; font-size: 12px; font-weight: 600; padding: 5px 14px; border-radius: 20px;">
-                    ⏱ Berlaku selama {$validMinutes} Menit
-                  </span>
-                </div>
-              </div>
-
-              <!-- Peringatan Keamanan -->
-              <div style="background-color: #fffbeb; border-left: 4px solid #f59e0b; padding: 12px 14px; border-radius: 6px; margin: 20px 0 22px 0;">
-                <p style="margin: 0; font-size: 12.5px; color: #92400e; line-height: 1.5;">
-                  <strong>Penting:</strong> Salin kode 6-digit di atas dan masukkan secara manual pada kolom verifikasi aplikasi. <strong>JANGAN</strong> berikan kode ini kepada siapa pun termasuk petugas atau admin.
-                </p>
-              </div>
-
-              <p style="margin: 0; color: #94a3b8; font-size: 12px; line-height: 1.5;">
-                Jika Anda tidak merasa meminta kode verifikasi ini, abaikan pesan ini. Akun Anda tetap aman.
-              </p>
-            </td>
-          </tr>
-
-          <!-- Footer -->
-          <tr>
-            <td style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; padding: 20px 24px; text-align: center;">
-              <p style="margin: 0; color: #64748b; font-size: 11.5px; line-height: 1.4;">
-                Dinas Pekerjaan Umum & Penataan Ruang (PUPR)<br>
-                Pemerintah Kabupaten
-              </p>
-              <p style="margin: 6px 0 0 0; color: #94a3b8; font-size: 11px;">
-                Email otomatis dari sistem &bull; Mohon tidak membalas email ini
-              </p>
-            </td>
-          </tr>
-
-        </table>
-      </td>
-    </tr>
-  </table>
-</body>
-</html>
-HTML;
+                $htmlBody = view('emails.v2_notification', [
+                    'tone'        => 'primary',
+                    'badge'       => 'Verifikasi OTP',
+                    'title'       => $purposeLabel,
+                    'greeting'    => 'Halo,',
+                    'intro'       => 'Masukkan 6-digit kode verifikasi berikut pada aplikasi SI-APPIK untuk melanjutkan proses Anda.',
+                    'otpCode'     => $code,
+                    'otpValidity' => "{$validMinutes} menit",
+                    'noteTone'    => 'warning',
+                    'note'        => '<strong>Keamanan:</strong> Jangan bagikan kode ini kepada siapa pun, termasuk pihak yang mengaku petugas atau admin.',
+                ])->render();
 
                 $subject = "[KODE OTP: {$code}] Verifikasi Akun SI-APPIK Pemkab Kolaka Utara";
                 $plainBody = "KODE OTP ANDA: {$code}\n\n"
                     . "Kode verifikasi ini digunakan untuk {$purposeLabel}.\n"
                     . "Masa berlaku: {$validMinutes} Menit.\n\n"
                     . "PERHATIAN KEAMANAN:\n"
-                    . "JANGAN PERNAH memberikan kode OTP ini kepada siapa pun, termasuk pihak yang mengaku sebagai admin, petugas teknis, atau operator dinas.\n\n"
+                    . "JANGAN PERNAH memberikan kode OTP ini kepada siapa pun, termasuk pihak yang mengaku sebagai admin, pekerja lapangan, atau operator dinas.\n\n"
                     . "Dinas Pekerjaan Umum & Penataan Ruang (PUPR)\n"
                     . "Pemerintah Kabupaten Kolaka Utara";
 

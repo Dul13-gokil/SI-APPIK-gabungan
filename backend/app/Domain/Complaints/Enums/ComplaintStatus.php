@@ -8,6 +8,7 @@ enum ComplaintStatus: string
     case SUBMITTED = 'SUBMITTED';
     case VERIFICATION = 'VERIFICATION';
     case REJECTED = 'REJECTED';
+    case CANCELLED = 'CANCELLED';
     case VERIFIED = 'VERIFIED';
     case DISPATCHED = 'DISPATCHED';
     case IN_PROGRESS = 'IN_PROGRESS';
@@ -23,6 +24,7 @@ enum ComplaintStatus: string
             self::SUBMITTED => 'Menunggu',
             self::VERIFICATION => 'Dalam Verifikasi',
             self::REJECTED => 'Ditolak',
+            self::CANCELLED => 'Dibatalkan',
             self::VERIFIED => 'Terverifikasi',
             self::DISPATCHED => 'Ditugaskan',
             self::IN_PROGRESS => 'Dikerjakan',

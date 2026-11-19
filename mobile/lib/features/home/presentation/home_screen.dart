@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../core/auth/auth_service.dart';
 import '../../../core/network/api_client.dart';
@@ -6,6 +7,7 @@ import '../../../shared/models/complaint_model.dart';
 import '../../../shared/theme/app_colors.dart';
 import '../../../shared/widgets/report_pagination_controls.dart';
 import '../../../shared/widgets/status_badge.dart';
+import '../../../shared/widgets/v2_components.dart';
 import '../../complaints/presentation/complaint_detail_screen.dart';
 import '../../complaints/presentation/create_complaint_screen.dart';
 import '../../notifications/presentation/notifications_screen.dart';
@@ -13,11 +15,13 @@ import '../../notifications/presentation/notifications_screen.dart';
 class HomeScreen extends StatefulWidget {
   final VoidCallback? onNavigateToMap;
   final VoidCallback? onNavigateToAi;
+  final VoidCallback? onCreateComplaintTap;
 
   const HomeScreen({
     super.key,
     this.onNavigateToMap,
     this.onNavigateToAi,
+    this.onCreateComplaintTap,
   });
 
   @override
@@ -222,13 +226,19 @@ class _HomeScreenState extends State<HomeScreen> {
         }
       }
 
-      // 3. Filter Pencarian Teks
+      // 3. Filter Pencarian Teks (Judul, Lokasi, Kode, Pelapor, Kategori)
       if (_searchQuery.isNotEmpty) {
         final title = c.title.toLowerCase();
         final address = c.address.toLowerCase();
         final code = c.publicCode.toLowerCase();
+        final reporter = c.reporterName.toLowerCase();
+        final category = (c.categoryName ?? '').toLowerCase();
         final q = _searchQuery.toLowerCase();
-        if (!title.contains(q) && !address.contains(q) && !code.contains(q)) {
+        if (!title.contains(q) &&
+            !address.contains(q) &&
+            !code.contains(q) &&
+            !reporter.contains(q) &&
+            !category.contains(q)) {
           return false;
         }
       }
@@ -279,121 +289,113 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: Row(
+      body: SafeArea(
+        bottom: false,
+        child: Column(
           children: [
-            Container(
-              width: 36,
-              height: 36,
-              padding: const EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: AppColors.border),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.04),
-                    blurRadius: 4,
-                    offset: const Offset(0, 1),
-                  ),
-                ],
-              ),
-              child: Image.asset(
-                'assets/images/logo_pin.png',
-                fit: BoxFit.contain,
-              ),
-            ),
-            const SizedBox(width: 10),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  _currentUser?.name ?? 'Warga Kabupaten',
-                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+            V2FloatingHeader(
+              title: 'SI-APPIK',
+              subtitle: 'Kolaka Utara',
+              leading: Container(
+                width: 36,
+                height: 36,
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: AppColors.primaryContainer,
+                  borderRadius: BorderRadius.circular(11),
+                  border: Border.all(color: AppColors.primaryBorder),
                 ),
-                Text(
-                  _currentUser?.isAnonymous == true ? 'Mode Anonim' : 'Warga Terdaftar',
-                  style: const TextStyle(fontSize: 11, color: AppColors.textSecondary),
+                child: Image.asset(
+                  'assets/images/logo_pin.png',
+                  fit: BoxFit.contain,
                 ),
-              ],
-            ),
-          ],
-        ),
-        actions: [
-          IconButton(
-            icon: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                const Icon(LucideIcons.bell, color: AppColors.textPrimary, size: 22),
-                if (_unreadNotifications > 0)
-                  Positioned(
-                    top: -4,
-                    right: -4,
-                    child: Container(
-                      padding: const EdgeInsets.all(3),
-                      decoration: const BoxDecoration(
-                        color: AppColors.statusRejected,
-                        shape: BoxShape.circle,
-                      ),
-                      constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
-                      child: Text(
-                        '$_unreadNotifications',
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 9,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+              ),
+              actions: [
+                InkWell(
+                  borderRadius: BorderRadius.circular(11),
+                  onTap: () async {
+                    await Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const NotificationsScreen()),
+                    );
+                    _fetchUnreadNotifications();
+                  },
+                  child: Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      color: AppColors.cardSurface,
+                      borderRadius: BorderRadius.circular(11),
+                      border: Border.all(color: AppColors.border),
+                    ),
+                    child: Stack(
+                      alignment: Alignment.center,
+                      clipBehavior: Clip.none,
+                      children: [
+                        const Icon(LucideIcons.bell, color: AppColors.textPrimary, size: 18),
+                        if (_unreadNotifications > 0)
+                          Positioned(
+                            top: 4,
+                            right: 4,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                              decoration: const BoxDecoration(
+                                color: AppColors.statusRejected,
+                                shape: BoxShape.circle,
+                              ),
+                              constraints: const BoxConstraints(minWidth: 14, minHeight: 14),
+                              child: Text(
+                                '$_unreadNotifications',
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 8.5,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
                   ),
+                ),
               ],
             ),
-            onPressed: () async {
-              await Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const NotificationsScreen()),
-              );
-              _fetchUnreadNotifications();
-            },
-          ),
-          const SizedBox(width: 8),
-        ],
-      ),
-      body: RefreshIndicator(
-        onRefresh: _loadData,
-        child: ListView(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          children: [
-            // Quick KPI Banner
-            _buildKpiBanner(),
-            const SizedBox(height: 16),
+            Expanded(
+              child: RefreshIndicator(
+                onRefresh: _loadData,
+                child: ListView(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  children: [
+                    // Hero Banner Sambutan & CTA Metode Pelaporan
+                    _buildActionCard(),
+                    const SizedBox(height: 14),
 
-            // Action Card Banner
-            _buildActionCard(),
-            const SizedBox(height: 20),
+                    // Quick KPI Bento 3 Kolom
+                    _buildKpiBanner(),
+                    const SizedBox(height: 16),
 
-            // Search Bar
-            TextField(
-              decoration: InputDecoration(
-                hintText: 'Cari aduan atau kode (ADU-...)...',
-                prefixIcon: const Icon(LucideIcons.search, size: 18),
-                filled: true,
-                fillColor: Colors.white,
-                contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  borderSide: const BorderSide(color: AppColors.border),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  borderSide: const BorderSide(color: AppColors.border),
-                ),
-              ),
-              onChanged: (v) => setState(() => _searchQuery = v),
-            ),
-            const SizedBox(height: 14),
+                    // Search Bar
+                    TextField(
+                      style: GoogleFonts.inter(fontSize: 13, color: AppColors.textPrimary),
+                      decoration: InputDecoration(
+                        hintText: 'Cari judul, kode (#0003/ringan/2026), pelapor, atau lokasi...',
+                        hintStyle: GoogleFonts.inter(fontSize: 12.5, color: AppColors.textSecondary),
+                        prefixIcon: const Icon(LucideIcons.search, size: 18, color: AppColors.textSecondary),
+                        filled: true,
+                        fillColor: Colors.white,
+                        contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(14),
+                          borderSide: const BorderSide(color: AppColors.border),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(14),
+                          borderSide: const BorderSide(color: AppColors.border),
+                        ),
+                      ),
+                      onChanged: (v) => setState(() => _searchQuery = v),
+                    ),
+                    const SizedBox(height: 14),
 
             // Segmented Switch: Semua Laporan / Laporan Saya (Arsip dihapus)
             Container(
@@ -412,7 +414,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         if (_feedTab != 'ALL') {
                           setState(() {
                             _feedTab = 'ALL';
-                            if (_selectedStatusFilter == 'REJECTED' || _selectedStatusFilter == 'WAITING_VERIFICATION') {
+                            if (_selectedStatusFilter == 'REJECTED' || _selectedStatusFilter == 'CANCELLED' || _selectedStatusFilter == 'WAITING_VERIFICATION') {
                               _selectedStatusFilter = 'ALL';
                             }
                           });
@@ -575,6 +577,10 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 80),
           ],
         ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -591,75 +597,46 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Column(
       children: [
-        // Baris 1: Semua Laporan (Full Width)
         Row(
           children: [
-            _buildKpiCard('Total Aduan', '$total', AppColors.primary, LucideIcons.layers, 'Total aduan masuk'),
-          ],
-        ),
-        const SizedBox(height: 8),
-        // Baris 2: Diproses + Selesai
-        Row(
-          children: [
-            _buildKpiCard('Diproses', '$processingTotal', AppColors.statusInProgress, LucideIcons.clock, 'Sedang ditangani'),
-            const SizedBox(width: 8),
-            _buildKpiCard('Selesai', '$completed', AppColors.statusCompleted, LucideIcons.checkCircle2, 'Tuntas 100%'),
+            _buildKpiCard('Total Aduan', '$total', AppColors.textPrimary),
+            const SizedBox(width: 10),
+            _buildKpiCard('Diproses', '$processingTotal', AppColors.statusInProgress),
+            const SizedBox(width: 10),
+            _buildKpiCard('Selesai', '$completed', AppColors.statusCompleted),
           ],
         ),
       ],
     );
   }
 
-
-  Widget _buildKpiCard(String label, String value, Color color, IconData icon, String subtitle) {
+  Widget _buildKpiCard(String label, String value, Color valueColor) {
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: color.withValues(alpha: 0.25)),
-          boxShadow: [
-            BoxShadow(
-              color: color.withValues(alpha: 0.04),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppColors.border),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: Text(
-                    label,
-                    style: const TextStyle(
-                      fontSize: 10.5,
-                      color: AppColors.textSecondary,
-                      fontWeight: FontWeight.w700,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                Icon(icon, size: 13, color: color),
-              ],
-            ),
-            const SizedBox(height: 5),
             Text(
               value,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: color),
+              style: GoogleFonts.outfit(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: valueColor,
+                height: 1.1,
+              ),
             ),
-            const SizedBox(height: 2),
+            const SizedBox(height: 4),
             Text(
-              subtitle,
-              style: TextStyle(
-                fontSize: 9,
-                color: AppColors.textSecondary.withValues(alpha: 0.8),
+              label,
+              style: GoogleFonts.inter(
+                fontSize: 11,
+                color: AppColors.textSecondary,
                 fontWeight: FontWeight.w500,
               ),
               maxLines: 1,
@@ -672,64 +649,62 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildActionCard() {
+    final fullName = (_currentUser?.name ?? '').trim();
+    final userName = fullName.isNotEmpty ? fullName : 'Warga Kabupaten';
     return Container(
-      padding: const EdgeInsets.all(18),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [AppColors.primary, AppColors.primaryLight],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.25),
-            blurRadius: 14,
-            offset: const Offset(0, 6),
-          ),
-        ],
+        color: AppColors.primary,
+        borderRadius: BorderRadius.circular(22),
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Laporkan Kerusakan',
-                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
-                ),
-                const SizedBox(height: 4),
-                const Text(
-                  'Foto jalan rusak, jembatan, atau lampu jalan. AI kami bantu triase cepat.',
-                  style: TextStyle(color: Colors.white70, fontSize: 12),
-                ),
-                const SizedBox(height: 12),
-                ElevatedButton.icon(
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const CreateComplaintScreen()),
-                    ).then((_) => _loadData());
-                  },
-                  icon: const Icon(LucideIcons.camera, size: 16, color: AppColors.primary),
-                  label: const Text('Buat Laporan', style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold, fontSize: 13)),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                  ),
-                ),
-              ],
+          Text(
+            'Selamat Datang, $userName',
+            style: GoogleFonts.inter(
+              color: const Color(0xFFDBEAFE),
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(width: 12),
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.15),
-              shape: BoxShape.circle,
+          const SizedBox(height: 6),
+          Text(
+            'Laporkan kerusakan jalan & fasilitas umum di sekitar Anda',
+            style: GoogleFonts.outfit(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+              height: 1.3,
             ),
-            child: const Icon(LucideIcons.sparkles, color: Colors.white, size: 36),
+          ),
+          const SizedBox(height: 14),
+          ElevatedButton.icon(
+            onPressed: () {
+              if (widget.onCreateComplaintTap != null) {
+                widget.onCreateComplaintTap!();
+              } else {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const CreateComplaintScreen()),
+                ).then((_) => _loadData());
+              }
+            },
+            icon: const Icon(LucideIcons.plus, size: 16, color: AppColors.primary),
+            label: Text(
+              'Buat Aduan Baru',
+              style: GoogleFonts.outfit(
+                color: AppColors.primary,
+                fontWeight: FontWeight.bold,
+                fontSize: 13,
+              ),
+            ),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white,
+              foregroundColor: AppColors.primary,
+              elevation: 0,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            ),
           ),
         ],
       ),
@@ -737,11 +712,13 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildFilterSection() {
-    // Filter Sederhana Warga: Semua, Diproses, Selesai, dan Ditolak (Khusus Laporan Saya)
+    // Filter Sederhana Warga: Semua, Diproses, Selesai, serta Dibatalkan & Ditolak (Khusus Aduan Saya)
     final statusFilters = [
       {'label': 'Semua', 'value': 'ALL', 'icon': LucideIcons.layers},
       {'label': 'Diproses', 'value': 'PROCESSING', 'icon': LucideIcons.clock},
       {'label': 'Selesai', 'value': 'COMPLETED', 'icon': LucideIcons.checkCircle2},
+      if (_feedTab == 'MY')
+        {'label': 'Dibatalkan', 'value': 'CANCELLED', 'icon': LucideIcons.ban},
       if (_feedTab == 'MY')
         {'label': 'Ditolak', 'value': 'REJECTED', 'icon': LucideIcons.xCircle},
     ];
@@ -770,68 +747,137 @@ class _HomeScreenState extends State<HomeScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // 1. Status Filters: Simetris Rata Penuh (Full-Width Distributed, Tanpa Whitespace di Kanan)
-        Row(
-          children: statusFilters.asMap().entries.map((entry) {
-            final idx = entry.key;
-            final f = entry.value;
-            final isSelected = _selectedStatusFilter == f['value'];
-            final icon = f['icon'] as IconData;
-            
-            Color chipColor;
-            if (f['value'] == 'PROCESSING') {
-              chipColor = AppColors.statusInProgress;
-            } else if (f['value'] == 'COMPLETED') {
-              chipColor = AppColors.statusCompleted;
-            } else if (f['value'] == 'REJECTED') {
-              chipColor = AppColors.statusRejected;
-            } else {
-              chipColor = AppColors.primary;
-            }
+        // 1. Status Filters: Penuh simetris saat <= 3 item (Daftar Aduan), scrollable tanpa terpotong saat > 3 item (Aduan Saya)
+        if (statusFilters.length <= 3)
+          Row(
+            children: statusFilters.asMap().entries.map((entry) {
+              final idx = entry.key;
+              final f = entry.value;
+              final isSelected = _selectedStatusFilter == f['value'];
+              final icon = f['icon'] as IconData;
 
-            return Expanded(
-              child: Padding(
-                padding: EdgeInsets.only(right: idx == statusFilters.length - 1 ? 0 : 6),
-                child: InkWell(
-                  onTap: () {
-                    setState(() => _selectedStatusFilter = f['value'] as String);
-                  },
-                  borderRadius: BorderRadius.circular(10),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-                    decoration: BoxDecoration(
-                      color: isSelected ? chipColor.withValues(alpha: 0.12) : Colors.white,
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(
-                        color: isSelected ? chipColor : AppColors.border,
-                        width: isSelected ? 1.4 : 1.0,
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(icon, size: 12, color: isSelected ? chipColor : AppColors.textSecondary),
-                        const SizedBox(width: 4),
-                        Flexible(
-                          child: Text(
-                            f['label'] as String,
-                            style: TextStyle(
-                              color: isSelected ? chipColor : AppColors.textSecondary,
-                              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                              fontSize: 11,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
+              Color chipColor;
+              if (f['value'] == 'PROCESSING') {
+                chipColor = AppColors.statusInProgress;
+              } else if (f['value'] == 'COMPLETED') {
+                chipColor = AppColors.statusCompleted;
+              } else if (f['value'] == 'REJECTED') {
+                chipColor = AppColors.statusRejected;
+              } else if (f['value'] == 'CANCELLED') {
+                chipColor = AppColors.textSecondary;
+              } else {
+                chipColor = AppColors.primary;
+              }
+
+              return Expanded(
+                child: Padding(
+                  padding: EdgeInsets.only(right: idx == statusFilters.length - 1 ? 0 : 8),
+                  child: InkWell(
+                    onTap: () {
+                      setState(() => _selectedStatusFilter = f['value'] as String);
+                    },
+                    borderRadius: BorderRadius.circular(10),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
+                      decoration: BoxDecoration(
+                        color: isSelected ? chipColor.withValues(alpha: 0.12) : Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: isSelected ? chipColor : AppColors.border,
+                          width: isSelected ? 1.4 : 1.0,
                         ),
-                      ],
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(icon, size: 13, color: isSelected ? chipColor : AppColors.textSecondary),
+                          const SizedBox(width: 5),
+                          Flexible(
+                            child: Text(
+                              f['label'] as String,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.inter(
+                                color: isSelected ? chipColor : AppColors.textSecondary,
+                                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                                fontSize: 11.5,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            );
-          }).toList(),
-        ),
+              );
+            }).toList(),
+          )
+        else
+          Row(
+            children: statusFilters.asMap().entries.map((entry) {
+              final idx = entry.key;
+              final f = entry.value;
+              final isSelected = _selectedStatusFilter == f['value'];
+              final icon = f['icon'] as IconData;
+
+              Color chipColor;
+              if (f['value'] == 'PROCESSING') {
+                chipColor = AppColors.statusInProgress;
+              } else if (f['value'] == 'COMPLETED') {
+                chipColor = AppColors.statusCompleted;
+              } else if (f['value'] == 'REJECTED') {
+                chipColor = AppColors.statusRejected;
+              } else if (f['value'] == 'CANCELLED') {
+                chipColor = AppColors.textSecondary;
+              } else {
+                chipColor = AppColors.primary;
+              }
+
+              return Expanded(
+                child: Padding(
+                  padding: EdgeInsets.only(right: idx == statusFilters.length - 1 ? 0 : 5),
+                  child: InkWell(
+                    onTap: () {
+                      setState(() => _selectedStatusFilter = f['value'] as String);
+                    },
+                    borderRadius: BorderRadius.circular(10),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: isSelected ? chipColor.withValues(alpha: 0.12) : Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: isSelected ? chipColor : AppColors.border,
+                          width: isSelected ? 1.4 : 1.0,
+                        ),
+                      ),
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(icon, size: 12, color: isSelected ? chipColor : AppColors.textSecondary),
+                            const SizedBox(width: 3),
+                            Text(
+                              f['label'] as String,
+                              maxLines: 1,
+                              style: GoogleFonts.inter(
+                                color: isSelected ? chipColor : AppColors.textSecondary,
+                                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                                fontSize: 11,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
         const SizedBox(height: 8),
 
         // 2. Baris Dropdown Filter (Kategori & Tipe Laporan) - Satu Baris Rapi & Elegan
@@ -839,16 +885,17 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             // Dropdown Filter Kategori
             Expanded(
-              child: PopupMenuButton<int?>(
+              child: PopupMenuButton<int>(
                 tooltip: 'Pilih Kategori',
-                initialValue: _selectedCategoryFilter,
-                onSelected: (int? catId) {
-                  setState(() => _selectedCategoryFilter = catId);
+                initialValue: _selectedCategoryFilter ?? -1,
+                onSelected: (int catId) {
+                  setState(() => _selectedCategoryFilter = catId == -1 ? null : catId);
                 },
                 itemBuilder: (context) => categoryFilters.map((c) {
-                  final isCatSelected = _selectedCategoryFilter == c['id'];
-                  return PopupMenuItem<int?>(
-                    value: c['id'] as int?,
+                  final catId = c['id'] as int?;
+                  final isCatSelected = _selectedCategoryFilter == catId;
+                  return PopupMenuItem<int>(
+                    value: catId ?? -1,
                     child: Row(
                       children: [
                         Icon(
@@ -1048,13 +1095,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       Flexible(
                         child: Text(
-                          c.publicCode,
+                          c.publicCode.startsWith('#') ? c.publicCode : '#${c.publicCode}',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
+                          style: GoogleFonts.inter(
                             fontWeight: FontWeight.bold,
                             fontSize: 10.5,
-                            color: AppColors.primary,
+                            color: AppColors.textPrimary,
                           ),
                         ),
                       ),
@@ -1062,13 +1109,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       StatusBadge(status: c.status),
                     ],
                   ),
-                  const SizedBox(height: 7),
+                  const SizedBox(height: 8),
                   Text(
                     c.title,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 12.5,
+                    style: GoogleFonts.outfit(
+                      fontSize: 13.5,
                       fontWeight: FontWeight.bold,
                       color: AppColors.textPrimary,
                       height: 1.25,
@@ -1079,8 +1126,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     c.address,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 10.5,
+                    style: GoogleFonts.inter(
+                      fontSize: 11,
                       color: AppColors.textSecondary,
                       height: 1.3,
                     ),
@@ -1088,52 +1135,21 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
               const SizedBox(height: 8),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              Row(
                 children: [
-                  if (c.categoryName != null)
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: AppColors.background,
-                        borderRadius: BorderRadius.circular(5),
-                        border: Border.all(color: AppColors.border),
-                      ),
-                      child: Text(
-                        c.categoryName!,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(fontSize: 9.5, color: AppColors.textSecondary),
+                  const Icon(LucideIcons.user, size: 11, color: AppColors.textSecondary),
+                  const SizedBox(width: 4),
+                  Expanded(
+                    child: Text(
+                      'Pelapor: ${c.isAnonymous ? 'Anonim' : c.reporterName}',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.inter(
+                        fontSize: 10.5,
+                        color: AppColors.textSecondary,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
-                  const SizedBox(height: 6),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        c.damageType == 'major' ? 'Berat' : 'Ringan',
-                        style: TextStyle(
-                          fontSize: 9.5,
-                          fontWeight: FontWeight.w700,
-                          color: c.damageType == 'major' ? AppColors.damageTypeMajor : AppColors.textSecondary,
-                        ),
-                      ),
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(LucideIcons.thumbsUp, size: 11, color: AppColors.primaryLight),
-                          const SizedBox(width: 3),
-                          Text(
-                            '${c.supportsCount}',
-                            style: const TextStyle(
-                              fontSize: 10,
-                              color: AppColors.textSecondary,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
                   ),
                 ],
               ),
@@ -1168,62 +1184,32 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded(
-                    child: Wrap(
-                      spacing: 6,
-                      runSpacing: 4,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      children: [
-                        Text(
-                          c.publicCode,
-                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 11.5, color: AppColors.primary),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: c.damageType == 'major' ? AppColors.damageTypeMajorBg : AppColors.cardSurface,
-                            borderRadius: BorderRadius.circular(6),
-                            border: Border.all(
-                              color: c.damageType == 'major' ? AppColors.damageTypeMajorBorder : AppColors.border,
-                            ),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                c.damageType == 'major' ? LucideIcons.route : LucideIcons.circleDot,
-                                size: 10,
-                                color: c.damageType == 'major' ? AppColors.damageTypeMajor : AppColors.textSecondary,
-                              ),
-                              const SizedBox(width: 3),
-                              Text(
-                                c.damageType == 'major' ? 'Kerusakan Berat' : 'Kerusakan Ringan',
-                                style: TextStyle(
-                                  fontSize: 9.5,
-                                  fontWeight: FontWeight.bold,
-                                  color: c.damageType == 'major' ? AppColors.damageTypeMajor : AppColors.textSecondary,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+                  Text(
+                    c.publicCode.startsWith('#') ? c.publicCode : '#${c.publicCode}',
+                    style: GoogleFonts.inter(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 11.5,
+                      color: AppColors.textPrimary,
                     ),
                   ),
-                  const SizedBox(width: 6),
                   StatusBadge(status: c.status),
                 ],
               ),
               const SizedBox(height: 8),
               Text(
                 c.title,
-                style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                style: GoogleFonts.outfit(
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
+                ),
               ),
               const SizedBox(height: 4),
               Text(
                 c.address,
-                style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                style: GoogleFonts.inter(fontSize: 12, color: AppColors.textSecondary),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),

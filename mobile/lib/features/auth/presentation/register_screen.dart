@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../core/auth/auth_service.dart';
 import '../../../core/utils/phone_validator.dart';
 import '../../../shared/theme/app_colors.dart';
+import '../../../shared/widgets/v2_toast.dart';
 import '../../navigation/presentation/main_navigation_screen.dart';
+import 'widgets/auth_ui_helpers.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -337,11 +340,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
     });
 
     if (result['success'] == true) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Akun warga berhasil didaftarkan! Selamat datang.'),
-          backgroundColor: AppColors.statusCompleted,
-        ),
+      showV2Toast(
+        context,
+        message: 'Akun warga berhasil didaftarkan! Selamat datang.',
+        type: V2ToastType.success,
       );
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (_) => const MainNavigationScreen()),
@@ -445,17 +447,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return RichText(
       text: TextSpan(
         text: label,
-        style: const TextStyle(
-          fontSize: 13,
+        style: GoogleFonts.inter(
+          fontSize: 12.5,
           fontWeight: FontWeight.w600,
           color: AppColors.textPrimary,
-          fontFamily: 'Outfit',
         ),
         children: const [
           TextSpan(
             text: ' *',
             style: TextStyle(
-              color: Color(0xFFEF4444),
+              color: AppColors.statusSubmitted,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -468,321 +469,355 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: const Text('Daftar Akun Warga', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        foregroundColor: AppColors.textPrimary,
-      ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                if (_errorMessage != null)
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 20),
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: AppColors.statusRejected.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: AppColors.statusRejected.withValues(alpha: 0.3),
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(LucideIcons.alertCircle, color: AppColors.statusRejected, size: 20),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                            _errorMessage!,
-                            style: const TextStyle(color: AppColors.statusRejected, fontSize: 13),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                if (_successMessage != null)
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 20),
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: AppColors.statusCompleted.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: AppColors.statusCompleted.withValues(alpha: 0.3),
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(LucideIcons.checkCircle, color: AppColors.statusCompleted, size: 20),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                            _successMessage!,
-                            style: const TextStyle(color: AppColors.statusCompleted, fontSize: 13),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                // Name
-                _buildFieldLabel('Nama Lengkap'),
-                const SizedBox(height: 6),
-                TextFormField(
-                  controller: _nameController,
-                  decoration: InputDecoration(
-                    hintText: 'Nama sesuai KTP',
-                    prefixIcon: const Icon(LucideIcons.user, size: 20),
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
-                  ),
-                  validator: (v) => (v == null || v.isEmpty) ? 'Nama wajib diisi' : null,
-                ),
-                const SizedBox(height: 16),
-
-                // Email & Minta OTP
+                // Top Bar Ringkas (Back button + Judul)
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _buildFieldLabel('Email'),
                     InkWell(
-                      onTap: _isSendingOtp ? null : _handleSendOtp,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
-                        child: Row(
-                          children: [
-                            if (_isSendingOtp)
-                              const SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 2))
-                            else
-                              const Icon(LucideIcons.send, size: 13, color: AppColors.primary),
-                            const SizedBox(width: 4),
-                            Text(
-                              _otpSent ? 'Kirim Ulang OTP' : 'Minta Kode OTP',
-                              style: const TextStyle(color: AppColors.primary, fontSize: 12, fontWeight: FontWeight.bold),
-                            ),
-                          ],
+                      onTap: () => Navigator.of(context).pop(),
+                      borderRadius: BorderRadius.circular(12),
+                      child: Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: AppColors.surface,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: AppColors.border),
+                        ),
+                        child: const Icon(LucideIcons.arrowLeft, size: 18, color: AppColors.textPrimary),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      'Daftar Akun Baru',
+                      style: GoogleFonts.outfit(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+
+                // Kartu Form Utama (rounded 24px + border #E2E8F0)
+                Container(
+                  padding: const EdgeInsets.all(22),
+                  decoration: BoxDecoration(
+                    color: AppColors.surface,
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(color: AppColors.border),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.textPrimary.withValues(alpha: 0.04),
+                        blurRadius: 24,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(
+                        'Lengkapi data diri Anda untuk mulai melaporkan kerusakan infrastruktur.',
+                        style: GoogleFonts.inter(
+                          fontSize: 12.5,
+                          color: AppColors.textSecondary,
+                          height: 1.45,
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 6),
-                TextFormField(
-                  controller: _emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                    hintText: 'nama@email.com',
-                    prefixIcon: const Icon(LucideIcons.mail, size: 20),
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
-                  ),
-                  validator: (v) {
-                    if (v == null || v.isEmpty) return 'Email wajib diisi';
-                    if (!v.contains('@')) return 'Format email tidak valid';
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
+                      const SizedBox(height: 16),
 
+                      if (_errorMessage != null)
+                        AuthStatusBanner(
+                          message: _errorMessage!,
+                          icon: LucideIcons.alertCircle,
+                          color: AppColors.statusRejected,
+                        ),
 
-                _buildFieldLabel('Kode OTP Verifikasi Email (6 Digit)'),
-                const SizedBox(height: 6),
-                TextFormField(
-                  controller: _otpController,
-                  keyboardType: TextInputType.number,
-                  maxLength: 6,
-                  decoration: InputDecoration(
-                    hintText: '',
-                    prefixIcon: const Icon(LucideIcons.shieldCheck, size: 20),
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
-                    counterText: '',
-                  ),
-                  validator: (v) => (v == null || v.trim().length != 6) ? 'Kode OTP 6 digit wajib diisi' : null,
-                ),
-                const SizedBox(height: 16),
+                      if (_successMessage != null)
+                        AuthStatusBanner(
+                          message: _successMessage!,
+                          icon: LucideIcons.checkCircle,
+                          color: AppColors.statusCompleted,
+                        ),
 
-                // Phone
-                _buildFieldLabel('No. HP / WhatsApp (10 - 13 digit)'),
-                const SizedBox(height: 6),
-                TextFormField(
-                  controller: _phoneController,
-                  keyboardType: TextInputType.phone,
-                  onChanged: (val) {
-                    if (val.trim().isEmpty) {
-                      setState(() {
-                        _phoneFeedback = 'Nomor HP / WhatsApp wajib diisi (10 - 13 digit).';
-                        _isPhoneValid = false;
-                      });
-                      return;
-                    }
-                    final res = PhoneValidator.validate(val, isRequired: true);
-                    setState(() {
-                      _phoneFeedback = res.message;
-                      _isPhoneValid = res.isValid;
-                    });
-                  },
-                  decoration: InputDecoration(
-                    hintText: '08xxxxxxxxxx',
-                    prefixIcon: const Icon(LucideIcons.phone, size: 20),
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
-                  ),
-                  validator: (v) {
-                    if (v == null || v.trim().isEmpty) {
-                      return 'Nomor HP / WhatsApp wajib diisi';
-                    }
-                    final res = PhoneValidator.validate(v, isRequired: true);
-                    if (!res.isValid) {
-                      return res.message;
-                    }
-                    return null;
-                  },
-                ),
-                if (_phoneFeedback != null)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 6, left: 4),
-                    child: Text(
-                      _phoneFeedback!,
-                      style: TextStyle(
-                        fontSize: 11.5,
-                        fontWeight: FontWeight.w500,
-                        color: _isPhoneValid == true
-                            ? const Color(0xFF10B981)
-                            : (_isPhoneValid == false ? const Color(0xFFEF4444) : AppColors.textSecondary),
+                      // Nama Lengkap
+                      _buildFieldLabel('Nama Lengkap'),
+                      const SizedBox(height: 6),
+                      TextFormField(
+                        controller: _nameController,
+                        style: GoogleFonts.inter(fontSize: 13.5, color: AppColors.textPrimary),
+                        decoration: buildAuthInputDecoration(
+                          hintText: 'Contoh: Ahmad Fauzi',
+                          prefixIcon: LucideIcons.user,
+                        ),
+                        validator: (v) => (v == null || v.isEmpty) ? 'Nama wajib diisi' : null,
                       ),
-                    ),
-                  ),
-                const SizedBox(height: 16),
+                      const SizedBox(height: 14),
 
-                // Password
-                _buildFieldLabel('Password'),
-                const SizedBox(height: 6),
-                TextFormField(
-                  controller: _passwordController,
-                  obscureText: _obscurePassword,
-                  decoration: InputDecoration(
-                    hintText: 'Minimal 8 karakter',
-                    prefixIcon: const Icon(LucideIcons.lock, size: 20),
-                    suffixIcon: IconButton(
-                      icon: Icon(_obscurePassword ? LucideIcons.eyeOff : LucideIcons.eye, size: 20),
-                      onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
-                    ),
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
-                  ),
-                  validator: (v) {
-                    if (v == null || v.length < 8) return 'Password minimal 8 karakter';
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-
-                // Confirm Password
-                _buildFieldLabel('Konfirmasi Password'),
-                const SizedBox(height: 6),
-                TextFormField(
-                  controller: _confirmPasswordController,
-                  obscureText: _obscurePassword,
-                  decoration: InputDecoration(
-                    hintText: 'Ulangi password di atas',
-                    prefixIcon: const Icon(LucideIcons.lock, size: 20),
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
-                  ),
-                  validator: (v) => (v == null || v.isEmpty) ? 'Konfirmasi password wajib diisi' : null,
-                ),
-                const SizedBox(height: 24),
-
-                // Submit Button
-                ElevatedButton(
-                  onPressed: _isLoading ? null : _handleRegister,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 15),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    elevation: 2,
-                  ),
-                  child: _isLoading
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-                        )
-                      : const Text('Daftar Sekarang', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-                ),
-                const SizedBox(height: 18),
-
-                // Divider
-                Row(
-                  children: [
-                    const Expanded(child: Divider(color: AppColors.border)),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      child: Text(
-                        'atau daftar dengan',
-                        style: TextStyle(color: Colors.grey.shade500, fontSize: 12),
+                      // Nomor HP / WhatsApp
+                      _buildFieldLabel('Nomor HP / WhatsApp'),
+                      const SizedBox(height: 6),
+                      TextFormField(
+                        controller: _phoneController,
+                        keyboardType: TextInputType.phone,
+                        style: GoogleFonts.inter(fontSize: 13.5, color: AppColors.textPrimary),
+                        onChanged: (val) {
+                          if (val.trim().isEmpty) {
+                            setState(() {
+                              _phoneFeedback = 'Nomor HP / WhatsApp wajib diisi (10 - 13 digit).';
+                              _isPhoneValid = false;
+                            });
+                            return;
+                          }
+                          final res = PhoneValidator.validate(val, isRequired: true);
+                          setState(() {
+                            _phoneFeedback = res.message;
+                            _isPhoneValid = res.isValid;
+                          });
+                        },
+                        decoration: buildAuthInputDecoration(
+                          hintText: '0812xxxxxxxx',
+                          prefixIcon: LucideIcons.phone,
+                        ),
+                        validator: (v) {
+                          if (v == null || v.trim().isEmpty) {
+                            return 'Nomor HP / WhatsApp wajib diisi';
+                          }
+                          final res = PhoneValidator.validate(v, isRequired: true);
+                          if (!res.isValid) {
+                            return res.message;
+                          }
+                          return null;
+                        },
                       ),
-                    ),
-                    const Expanded(child: Divider(color: AppColors.border)),
-                  ],
-                ),
-                const SizedBox(height: 16),
+                      if (_phoneFeedback != null)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 6, left: 4),
+                          child: Text(
+                            _phoneFeedback!,
+                            style: GoogleFonts.inter(
+                              fontSize: 11.5,
+                              fontWeight: FontWeight.w500,
+                              color: _isPhoneValid == true
+                                  ? AppColors.statusCompleted
+                                  : (_isPhoneValid == false ? AppColors.statusSubmitted : AppColors.textSecondary),
+                            ),
+                          ),
+                        ),
+                      const SizedBox(height: 14),
 
-                // Google Sign-In Button
-                OutlinedButton(
-                  onPressed: _isLoading ? null : _handleGoogleSignIn,
-                  style: OutlinedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: AppColors.textPrimary,
-                    side: const BorderSide(color: AppColors.border),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        'assets/images/google_logo.png',
-                        width: 20,
-                        height: 20,
+                      // Email + Tombol Kirim OTP sejajar (sesuai FigCraft)
+                      _buildFieldLabel('Alamat Email'),
+                      const SizedBox(height: 6),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              controller: _emailController,
+                              keyboardType: TextInputType.emailAddress,
+                              style: GoogleFonts.inter(fontSize: 13.5, color: AppColors.textPrimary),
+                              decoration: buildAuthInputDecoration(
+                                hintText: 'nama@email.com',
+                                prefixIcon: LucideIcons.mail,
+                              ),
+                              validator: (v) {
+                                if (v == null || v.isEmpty) return 'Email wajib diisi';
+                                if (!v.contains('@')) return 'Format email tidak valid';
+                                return null;
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          SizedBox(
+                            height: 48,
+                            child: OutlinedButton(
+                              onPressed: _isSendingOtp ? null : _handleSendOtp,
+                              style: OutlinedButton.styleFrom(
+                                backgroundColor: AppColors.primaryContainer,
+                                foregroundColor: AppColors.primary,
+                                side: const BorderSide(color: AppColors.primaryBorder),
+                                padding: const EdgeInsets.symmetric(horizontal: 14),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                              ),
+                              child: _isSendingOtp
+                                  ? const SizedBox(
+                                      width: 16,
+                                      height: 16,
+                                      child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.primary),
+                                    )
+                                  : Text(
+                                      _otpSent ? 'Kirim Ulang' : 'Kirim OTP',
+                                      style: GoogleFonts.inter(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(width: 10),
-                      const Text(
-                        'Daftar Cepat dengan Akun Google',
-                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                      const SizedBox(height: 14),
+
+                      // Kode OTP
+                      _buildFieldLabel('Kode Verifikasi OTP (6 Digit)'),
+                      const SizedBox(height: 6),
+                      TextFormField(
+                        controller: _otpController,
+                        keyboardType: TextInputType.number,
+                        maxLength: 6,
+                        style: GoogleFonts.inter(fontSize: 13.5, color: AppColors.textPrimary),
+                        decoration: buildAuthInputDecoration(
+                          hintText: 'Masukkan 6 digit kode OTP',
+                          prefixIcon: LucideIcons.shieldCheck,
+                        ).copyWith(counterText: ''),
+                        validator: (v) => (v == null || v.trim().length != 6) ? 'Kode OTP 6 digit wajib diisi' : null,
+                      ),
+                      const SizedBox(height: 14),
+
+                      // Password
+                      _buildFieldLabel('Kata Sandi'),
+                      const SizedBox(height: 6),
+                      TextFormField(
+                        controller: _passwordController,
+                        obscureText: _obscurePassword,
+                        style: GoogleFonts.inter(fontSize: 13.5, color: AppColors.textPrimary),
+                        decoration: buildAuthInputDecoration(
+                          hintText: 'Minimal 8 karakter',
+                          prefixIcon: LucideIcons.lock,
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _obscurePassword ? LucideIcons.eyeOff : LucideIcons.eye,
+                              size: 18,
+                              color: AppColors.textSecondary,
+                            ),
+                            onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                          ),
+                        ),
+                        validator: (v) {
+                          if (v == null || v.length < 8) return 'Password minimal 8 karakter';
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 14),
+
+                      // Konfirmasi Password
+                      _buildFieldLabel('Konfirmasi Kata Sandi'),
+                      const SizedBox(height: 6),
+                      TextFormField(
+                        controller: _confirmPasswordController,
+                        obscureText: _obscurePassword,
+                        style: GoogleFonts.inter(fontSize: 13.5, color: AppColors.textPrimary),
+                        decoration: buildAuthInputDecoration(
+                          hintText: 'Ulangi kata sandi',
+                          prefixIcon: LucideIcons.lock,
+                        ),
+                        validator: (v) => (v == null || v.isEmpty) ? 'Konfirmasi kata sandi wajib diisi' : null,
+                      ),
+                      const SizedBox(height: 20),
+
+                      // Tombol Daftar Akun
+                      SizedBox(
+                        height: 50,
+                        child: ElevatedButton(
+                          onPressed: _isLoading ? null : _handleRegister,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primary,
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                          ),
+                          child: _isLoading
+                              ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                                )
+                              : Text(
+                                  'Daftar Akun',
+                                  style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.bold),
+                                ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Divider
+                      Row(
+                        children: [
+                          const Expanded(child: Divider(color: AppColors.border)),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            child: Text(
+                              'atau daftar dengan',
+                              style: GoogleFonts.inter(color: AppColors.textSecondary, fontSize: 11.5),
+                            ),
+                          ),
+                          const Expanded(child: Divider(color: AppColors.border)),
+                        ],
+                      ),
+                      const SizedBox(height: 14),
+
+                      // Google Sign-In Button
+                      SizedBox(
+                        height: 48,
+                        child: OutlinedButton(
+                          onPressed: _isLoading ? null : _handleGoogleSignIn,
+                          style: OutlinedButton.styleFrom(
+                            backgroundColor: AppColors.surface,
+                            foregroundColor: AppColors.textPrimary,
+                            side: const BorderSide(color: AppColors.border),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.asset(
+                                'assets/images/google_logo.png',
+                                width: 18,
+                                height: 18,
+                              ),
+                              const SizedBox(width: 10),
+                              Text(
+                                'Daftar dengan Akun Google',
+                                style: GoogleFonts.inter(fontSize: 13.5, fontWeight: FontWeight.w600),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 18),
 
-                // Link to Login
+                // Link ke Login
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text('Sudah punya akun? ', style: TextStyle(color: AppColors.textSecondary, fontSize: 13)),
+                    Text(
+                      'Sudah punya akun? ',
+                      style: GoogleFonts.inter(color: AppColors.textSecondary, fontSize: 13),
+                    ),
                     GestureDetector(
                       onTap: () => Navigator.pop(context),
-                      child: const Text(
-                        'Masuk Sekarang',
-                        style: TextStyle(color: AppColors.primaryLight, fontWeight: FontWeight.bold, fontSize: 13),
+                      child: Text(
+                        'Masuk di sini',
+                        style: GoogleFonts.inter(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
+                        ),
                       ),
                     ),
                   ],

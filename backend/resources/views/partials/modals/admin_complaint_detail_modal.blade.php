@@ -10,17 +10,17 @@
         <!-- Sticky Modal Top Header (3 Badge 1 Baris + Tanggal & Kode Aduan + Tombol X di Tengah Kanan) -->
         <div class="px-4 sm:px-7 pt-2.5 pb-3.5 sm:py-5 border-b border-[#E2E8F0] bg-white flex items-center justify-between gap-2.5 shrink-0">
             <div class="min-w-0 flex-1 space-y-2">
-                <!-- Baris 1: Selalu 1 Baris di Mobile & Desktop -->
+                <!-- Baris 1: Selalu 1 Baris di Mobile & Desktop (Status Paling Kiri) -->
                 <div class="flex items-center gap-1 sm:gap-2 flex-nowrap overflow-x-auto no-scrollbar">
+                    <span id="admModalStatusBadge" class="shrink-0 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10.5px] sm:text-xs font-bold whitespace-nowrap border bg-[#EFF6FF] text-[#2563EB] border-[#BFDBFE]">
+                        STATUS
+                    </span>
                     <span id="admModalTypeBadge" class="shrink-0 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10.5px] sm:text-xs font-bold bg-[#FEF2F2] text-[#DC2626] border border-[#FECACA] inline-flex items-center gap-1 whitespace-nowrap">
                         <span class="w-1.5 h-1.5 rounded-full bg-[#DC2626] shrink-0"></span>
                         <span>Kerusakan Ringan</span>
                     </span>
                     <span id="admModalCategoryBadge" class="shrink min-w-0 truncate px-2 sm:px-3 py-0.5 sm:py-1 rounded-full bg-[#F1F5F9] text-[#475569] font-semibold text-[10.5px] sm:text-xs border border-[#E2E8F0]">
                         Kategori
-                    </span>
-                    <span id="admModalStatusBadge" class="shrink-0 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10.5px] sm:text-xs font-bold whitespace-nowrap border bg-[#EFF6FF] text-[#2563EB] border-[#BFDBFE]">
-                        STATUS
                     </span>
                 </div>
 
@@ -64,13 +64,13 @@
 
                 <!-- Kanan: Foto Hasil Pengerjaan (Selalu tampil berdampingan, placeholder bila belum ada) -->
                 <div id="admModalCompletionPhotoContainer" class="space-y-1.5">
-                    <div class="aspect-[16/10] rounded-xl sm:rounded-2xl overflow-hidden border border-[#A7F3D0] bg-[#ECFDF5] relative flex items-center justify-center">
+                    <div id="admModalCompletionBox" class="aspect-[16/10] rounded-xl sm:rounded-2xl overflow-hidden border border-[#A7F3D0] bg-[#ECFDF5] relative flex items-center justify-center">
                         <img id="admModalCompletionPhoto" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Foto Hasil Pengerjaan" class="w-full h-full object-cover">
                         <div id="admModalCompletionPlaceholder" class="hidden inset-0 absolute flex flex-col items-center justify-center text-center p-3 text-[#047857] bg-[#ECFDF5]">
-                            <i data-lucide="clock" class="w-5 h-5 mb-1 text-[#10B981]"></i>
-                            <span class="text-[11px] sm:text-xs font-semibold leading-tight">Menunggu Foto Hasil Pengerjaan</span>
+                            <i id="admModalCompletionIcon" data-lucide="clock" class="w-5 h-5 mb-1 text-[#10B981]"></i>
+                            <span id="admModalCompletionPlaceholderText" class="text-[11px] sm:text-xs font-semibold leading-tight">Menunggu Foto Hasil Pengerjaan</span>
                         </div>
-                        <div class="absolute bottom-2 left-2 sm:bottom-3 sm:left-3 bg-[#047857]/90 text-white text-[10px] sm:text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5 pointer-events-none">
+                        <div id="admModalCompletionPill" class="absolute bottom-2 left-2 sm:bottom-3 sm:left-3 bg-[#047857]/90 text-white text-[10px] sm:text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5 pointer-events-none">
                             <i data-lucide="badge-check" class="w-3 h-3 shrink-0 hidden sm:inline"></i>
                             <span id="admModalCompletionPhotoLabel">Foto Hasil Pengerjaan</span>
                         </div>

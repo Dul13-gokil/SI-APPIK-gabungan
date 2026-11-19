@@ -48,7 +48,7 @@ class WebOperatorController extends Controller
 
         // 5. Riwayat Arsip (Selesai & Ditolak)
         $completed = Complaint::with(['category', 'user', 'citizen', 'photos', 'latestDisposition.team.leader', 'latestDisposition.assignee.teams.leader', 'latestDisposition.department', 'statusHistories', 'aiAssessments'])
-            ->whereIn('status', ['COMPLETED', 'CLOSED', 'REJECTED'])
+            ->whereIn('status', ['COMPLETED', 'CLOSED', 'REJECTED', 'CANCELLED'])
             ->latest()
             ->take(100)
             ->get();
@@ -136,7 +136,7 @@ class WebOperatorController extends Controller
                     'photo_url'        => $photo ? ($photo->url ?? asset('storage/' . $photo->storage_key)) : null,
                     'photo_after_url'  => $afterPhoto && $afterPhoto->id !== ($photo?->id) ? ($afterPhoto->url ?? asset('storage/' . $afterPhoto->storage_key)) : null,
                     'department_name'  => $c->latestDisposition?->department?->name ?? 'Dinas Terkait',
-                    'assignee_name'    => $c->latestDisposition?->assignee?->name ?? 'Petugas Lapangan',
+                    'assignee_name'    => $c->latestDisposition?->assignee?->name ?? 'Pekerja Lapangan',
                     'instruction'      => $c->latestDisposition?->instruction ?? '-',
                 ];
             });
@@ -304,7 +304,7 @@ class WebOperatorController extends Controller
                     ]);
                 }
             } elseif (!empty($assignedTo)) {
-                // Notifikasi ke Petugas Lapangan individual
+                // Notifikasi ke Pekerja Lapangan individual
                 Notification::create([
                     'user_id'   => $assignedTo,
                     'type'      => 'FIELD_TASK_ASSIGNED',
@@ -317,7 +317,7 @@ class WebOperatorController extends Controller
                     ],
                 ]);
             } else {
-                // Open claim: notifikasi ke semua petugas lapangan
+                // Open claim: notifikasi ke semua pekerja lapangan
                 $allPetugas = User::where('role', 'PETUGAS')->get();
                 foreach ($allPetugas as $p) {
                     Notification::create([
@@ -393,7 +393,7 @@ class WebOperatorController extends Controller
     }
 
     /**
-     * Operator melakukan validasi akhir setelah petugas lapangan menyelesaikan pekerjaan.
+     * Operator melakukan validasi akhir setelah pekerja lapangan menyelesaikan pekerjaan.
      */
     public function validateCompletion(Request $request, int $id): RedirectResponse
     {
@@ -442,7 +442,7 @@ class WebOperatorController extends Controller
                 }
             }
 
-            // Notifikasi ke Petugas Lapangan jika butuh revisi
+            // Notifikasi ke Pekerja Lapangan jika butuh revisi
             if ($newStatus === 'REVISION_REQUIRED' && $complaint->latestDisposition?->assigned_to) {
                 Notification::create([
                     'user_id'   => $complaint->latestDisposition->assigned_to,
@@ -456,7 +456,7 @@ class WebOperatorController extends Controller
 
         $msg = $newStatus === 'COMPLETED'
             ? "Laporan #{$complaint->public_code} berhasil divalidasi dan dinyatakan SELESAI!"
-            : "Laporan #{$complaint->public_code} dikembalikan ke Petugas Lapangan untuk REVISI.";
+            : "Laporan #{$complaint->public_code} dikembalikan ke Pekerja Lapangan untuk REVISI.";
 
         return back()->with('success', $msg);
     }

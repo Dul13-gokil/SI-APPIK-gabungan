@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../core/network/api_client.dart';
 import '../../../shared/models/complaint_model.dart';
 import '../../../shared/theme/app_colors.dart';
 import '../../../shared/widgets/status_badge.dart';
+import '../../../shared/widgets/v2_components.dart';
 import '../../complaints/presentation/complaint_detail_screen.dart';
 
 class FieldCompletedTasksScreen extends StatefulWidget {
@@ -57,58 +59,63 @@ class _FieldCompletedTasksScreenState extends State<FieldCompletedTasksScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: const Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      body: SafeArea(
+        bottom: false,
+        child: Column(
           children: [
-            Text(
-              'Tugas Selesai',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: AppColors.textPrimary),
-            ),
-            Text(
-              'Pekerjaan lapangan yang telah tuntas & divalidasi Operator',
-              style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
-            ),
-          ],
-        ),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        foregroundColor: AppColors.textPrimary,
-        toolbarHeight: 64,
-        actions: [
-          IconButton(
-            icon: const Icon(LucideIcons.refreshCw, size: 20, color: AppColors.primary),
-            tooltip: 'Segarkan Riwayat',
-            onPressed: _fetchCompletedTasks,
-          ),
-          const SizedBox(width: 8),
-        ],
-      ),
-      body: Column(
-        children: [
-          // Search Bar
-          Container(
-            color: Colors.white,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: TextField(
-              decoration: InputDecoration(
-                hintText: 'Cari riwayat kode, judul, atau jalan...',
-                prefixIcon: const Icon(LucideIcons.search, size: 18, color: AppColors.textSecondary),
-                filled: true,
-                fillColor: AppColors.background,
-                contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: AppColors.border),
+            V2FloatingHeader(
+              title: 'Tugas Selesai',
+              subtitle: 'Pekerjaan lapangan yang telah tuntas & divalidasi Operator',
+              leading: Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: AppColors.primaryContainer,
+                  borderRadius: BorderRadius.circular(11),
+                  border: Border.all(color: AppColors.primaryBorder),
                 ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: AppColors.border),
-                ),
+                child: const Icon(LucideIcons.checkCircle2, size: 18, color: AppColors.primary),
               ),
-              onChanged: (v) => setState(() => _searchQuery = v),
+              actions: [
+                GestureDetector(
+                  onTap: _fetchCompletedTasks,
+                  child: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: AppColors.background,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: AppColors.border),
+                    ),
+                    child: const Icon(LucideIcons.refreshCw, size: 18, color: AppColors.primary),
+                  ),
+                ),
+              ],
             ),
-          ),
+            // Search Bar (Seragam dengan Halaman Warga)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
+              child: TextField(
+                style: GoogleFonts.inter(fontSize: 13, color: AppColors.textPrimary),
+                decoration: InputDecoration(
+                  hintText: 'Cari riwayat kode (#0002/ringan/2026), judul, atau lokasi...',
+                  hintStyle: GoogleFonts.inter(fontSize: 12.5, color: AppColors.textSecondary),
+                  prefixIcon: const Icon(LucideIcons.search, size: 18, color: AppColors.textSecondary),
+                  filled: true,
+                  fillColor: Colors.white,
+                  contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: const BorderSide(color: AppColors.border),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: const BorderSide(color: AppColors.border),
+                  ),
+                ),
+                onChanged: (v) => setState(() => _searchQuery = v),
+              ),
+            ),
 
           // Total Count Banner
           Container(
@@ -169,23 +176,17 @@ class _FieldCompletedTasksScreenState extends State<FieldCompletedTasksScreen> {
           ),
         ],
       ),
+      ),
     );
   }
 
   Widget _buildCompletedCard(ComplaintModel task) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 14),
+      margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: AppColors.border),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -201,117 +202,53 @@ class _FieldCompletedTasksScreenState extends State<FieldCompletedTasksScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Baris Atas: Kode Aduan, Tipe Kerusakan, Regu, dan Status
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Expanded(
-                        child: Wrap(
-                          spacing: 6,
-                          runSpacing: 4,
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          children: [
-                            Text(
-                              task.publicCode,
-                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 11.5, color: AppColors.primary),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                              decoration: BoxDecoration(
-                                color: task.damageType == 'major' ? const Color(0xFFEFF6FF) : const Color(0xFFF1F5F9),
-                                borderRadius: BorderRadius.circular(6),
-                                border: Border.all(
-                                  color: task.damageType == 'major' ? const Color(0xFFBFDBFE) : const Color(0xFFE2E8F0),
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    task.damageType == 'major' ? LucideIcons.route : LucideIcons.circleDot,
-                                    size: 10,
-                                    color: task.damageType == 'major' ? const Color(0xFF1E40AF) : const Color(0xFF475569),
-                                  ),
-                                  const SizedBox(width: 3),
-                                  Text(
-                                    task.damageType == 'major' ? 'Kerusakan Berat' : 'Kerusakan Ringan',
-                                    style: TextStyle(
-                                      fontSize: 9.5,
-                                      fontWeight: FontWeight.bold,
-                                      color: task.damageType == 'major' ? const Color(0xFF1E40AF) : const Color(0xFF475569),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            if (task.damageType == 'major' && task.roadLength != null)
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                decoration: BoxDecoration(
-                                  color: Colors.grey.shade50,
-                                  borderRadius: BorderRadius.circular(6),
-                                  border: Border.all(color: AppColors.border),
-                                ),
-                                child: Text(
-                                  '${task.roadLength}m',
-                                  style: const TextStyle(fontSize: 9.5, fontWeight: FontWeight.bold, color: AppColors.textSecondary),
-                                ),
-                              ),
-                            if (task.teamName != null)
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFF1F5F9),
-                                  borderRadius: BorderRadius.circular(6),
-                                  border: Border.all(color: const Color(0xFFE2E8F0)),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const Icon(LucideIcons.hardHat, size: 10, color: Color(0xFF475569)),
-                                    const SizedBox(width: 3),
-                                    Text(
-                                      task.teamName!,
-                                      style: const TextStyle(fontSize: 9.5, fontWeight: FontWeight.bold, color: Color(0xFF334155)),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                          ],
+                      Text(
+                        task.publicCode.startsWith('#') ? task.publicCode : '#${task.publicCode}',
+                        style: GoogleFonts.inter(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 11.5,
+                          color: AppColors.textPrimary,
                         ),
                       ),
-                      const SizedBox(width: 6),
                       const StatusBadge(status: 'COMPLETED'),
                     ],
                   ),
                   const SizedBox(height: 8),
-
-                  // Judul Tugas
                   Text(
                     task.title,
-                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                    style: GoogleFonts.outfit(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                    ),
                   ),
                   const SizedBox(height: 4),
-
-                  // Alamat Lokasi
+                  Text(
+                    task.address,
+                    style: GoogleFonts.inter(fontSize: 12, color: AppColors.textSecondary),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 6),
                   Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(LucideIcons.mapPin, size: 12, color: AppColors.textSecondary),
+                      const Icon(LucideIcons.user, size: 12, color: AppColors.primary),
                       const SizedBox(width: 4),
                       Expanded(
                         child: Text(
-                          task.address,
-                          style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                          'Pelapor: ${task.isAnonymous ? 'Anonim' : task.reporterName}${task.teamName != null ? ' • ${task.teamName}' : ''}',
+                          style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],
                   ),
-
                   const SizedBox(height: 8),
-                  // Kategori & Label Tuntas
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -348,30 +285,33 @@ class _FieldCompletedTasksScreenState extends State<FieldCompletedTasksScreen> {
             ),
           ),
 
-          // Divider & Banner Validasi Resmi
-          const Divider(height: 1),
+          // Divider & Banner Validasi Resmi (Clean & Modern)
+          const Divider(height: 1, color: AppColors.border),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             child: Row(
               children: [
                 Expanded(
                   child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                    padding: const EdgeInsets.symmetric(vertical: 9, horizontal: 12),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF0FDF4),
+                      color: AppColors.statusCompleted.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: const Color(0xFFA7F3D0)),
                     ),
-                    child: const Row(
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(LucideIcons.checkCheck, size: 15, color: AppColors.statusCompleted),
-                        SizedBox(width: 6),
+                        const Icon(LucideIcons.checkCheck, size: 15, color: AppColors.statusCompleted),
+                        const SizedBox(width: 6),
                         Flexible(
                           child: Text(
-                            'Telah divalidasi & dinyatakan tuntas oleh operator',
-                            style: TextStyle(fontSize: 11.5, color: Color(0xFF166534), fontWeight: FontWeight.bold),
+                            'Tuntas & Divalidasi Operator',
+                            style: GoogleFonts.inter(
+                              fontSize: 11.5,
+                              color: AppColors.statusCompleted,
+                              fontWeight: FontWeight.w600,
+                            ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),

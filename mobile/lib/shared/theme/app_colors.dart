@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  // Brand / Primary
-  static const Color primary = Color(0xFF1E3A8A); // Deep Slate Blue
+  // Brand / Primary (SI-APPIK V2 Bright Blue Palette)
+  static const Color primary = Color(0xFF2563EB); // Bright Royal Blue
   static const Color primaryLight = Color(0xFF3B82F6);
-  static const Color primaryDark = Color(0xFF172554);
+  static const Color primaryDark = Color(0xFF1D4ED8);
 
   // Secondary / Accent
   static const Color secondary = Color(0xFF0D9488); // Teal
@@ -13,19 +13,19 @@ class AppColors {
   // Status Colors (WCAG compliant contrast - Selaras dengan Web & Peta)
   static const Color statusSubmitted = Color(0xFFEF4444); // Merah - Belum Ditangani / Menunggu
   static const Color statusVerification = Color(0xFFEF4444);
-  static const Color statusDispatched = Color(0xFF1E40AF); // Biru Indigo - Ditugaskan
+  static const Color statusDispatched = Color(0xFF2563EB); // Biru Terang V2 - Ditugaskan
   static const Color statusInProgress = Color(0xFFF59E0B); // Kuning - Sedang Dikerjakan
   static const Color statusWaitingVerification = Color(0xFFF59E0B); // Kuning - Menunggu Validasi Operator (Selaras Dikerjakan)
   static const Color statusCompleted = Color(0xFF10B981); // Hijau - Selesai
   static const Color statusVerified = Color(0xFF10B981); // Hijau - Warga Terdaftar / Terverifikasi
   static const Color statusRejected = Color(0xFFDC2626); // Merah Tua - Ditolak
 
-  // Damage Type Colors (Konsisten di semua platform: Unified Blue Palette)
-  static const Color damageTypeMinor = Color(0xFF1E40AF);
+  // Damage Type Colors (Konsisten di semua platform: Unified V2 Bright Blue Palette)
+  static const Color damageTypeMinor = Color(0xFF2563EB);
   static const Color damageTypeMinorBg = Color(0xFFEFF6FF);
   static const Color damageTypeMinorBorder = Color(0xFFBFDBFE);
 
-  static const Color damageTypeMajor = Color(0xFF1E3A8A); // Deep Royal Blue (Konsisten dengan Gambar 2)
+  static const Color damageTypeMajor = Color(0xFF1D4ED8); // Royal Blue V2
   static const Color damageTypeMajorBg = Color(0xFFEFF6FF);
   static const Color damageTypeMajorBorder = Color(0xFF93C5FD);
 

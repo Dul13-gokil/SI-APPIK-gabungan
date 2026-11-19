@@ -47,9 +47,9 @@ class ComplaintController extends Controller
         $userId = $user?->id;
 
         // Laporan publik (Semua Laporan): Tampilkan seluruh laporan aktif dan tuntas se-kabupaten
-        // (Verifikasi, Ditugaskan, Dikerjakan, Validasi Mutu, hingga Selesai). Hanya sembunyikan REJECTED dan DRAFT.
+        // (Verifikasi, Ditugaskan, Dikerjakan, Validasi Mutu, hingga Selesai). Sembunyikan REJECTED, DRAFT, dan CANCELLED.
         $query = Complaint::with(['category', 'user', 'photos'])
-            ->whereNotIn('status', ['REJECTED', 'DRAFT']);
+            ->whereNotIn('status', ['REJECTED', 'DRAFT', 'CANCELLED']);
 
         if ($request->filled('status')) {
             if ($request->status === 'ARCHIVED' || $request->status === 'COMPLETED') {
@@ -238,7 +238,7 @@ class ComplaintController extends Controller
                     'members'           => $currentTeam->members()->with('user')->get()->map(function ($m) {
                         return [
                             'user_id'   => $m->user_id,
-                            'name'      => $m->user?->name ?? 'Petugas Lapangan',
+                            'name'      => $m->user?->name ?? 'Pekerja Lapangan',
                             'phone'     => $m->user?->phone ?? '-',
                             'role'      => $m->role === 'LEADER' ? 'Ketua Regu' : 'Anggota Regu',
                             'is_leader' => $m->role === 'LEADER',
@@ -477,51 +477,175 @@ class ComplaintController extends Controller
     }
 
     /**
-     * Hapus laporan pengaduan (khusus warga pemilik laporan atau Admin/SuperAdmin).
+     * Batalkan laporan pengaduan oleh warga pemilik laporan (hanya saat status SUBMITTED / Verifikasi).
+     * Laporan tidak dihapus permanen melainkan diubah statusnya ke CANCELLED untuk jejak arsip.
      */
-    public function destroy(Request $request, int $id): JsonResponse
+    public function cancel(Request $request, int $id): JsonResponse
     {
         $user = $this->getAuthenticatedUser($request);
         $complaint = Complaint::with('photos')->findOrFail($id);
 
         $isOwner = $user && $complaint->user_id === $user->id;
-        $isAdmin = $user && in_array($user->role, ['ADMIN', 'SUPERADMIN'], true);
-
-        if (!$isOwner && !$isAdmin) {
-            return ApiResponse::error('Anda tidak memiliki izin untuk membatalkan laporan ini.', 403);
+        if (!$isOwner) {
+            return ApiResponse::error('Anda tidak memiliki izin untuk membatalkan laporan ini.', [], 403);
         }
 
-        // Laporan HANYA boleh dibatalkan jika masih berstatus SUBMITTED (belum diverifikasi oleh operator).
-        // Begitu diverifikasi (DISPATCHED, IN_PROGRESS, WAITING_VERIFICATION, COMPLETED, CLOSED),
-        // laporan TIDAK BISA DIHAPUS dan masuk ke sistem arsip permanen!
         if ($complaint->status !== 'SUBMITTED') {
             return ApiResponse::error(
-                'Laporan yang sudah diverifikasi/selesai tidak dapat dihapus dan tersimpan dalam arsip permanen daerah.',
+                'Laporan hanya dapat dibatalkan saat masih berstatus Menunggu Verifikasi.',
+                [],
                 403
             );
         }
 
-        DB::transaction(function () use ($complaint) {
-            foreach ($complaint->photos as $photo) {
-                if ($photo->storage_key) {
-                    \Illuminate\Support\Facades\Storage::disk('public')->delete($photo->storage_key);
-                }
-                $photo->delete();
-            }
+        $reason = trim((string) $request->input('reason', ''));
+        $note = $reason !== ''
+            ? "Dibatalkan oleh pelapor: {$reason}"
+            : 'Laporan dibatalkan oleh pelapor sebelum diverifikasi.';
 
-            $complaint->statusHistories()->delete();
-            $complaint->dispositions()->delete();
-            $complaint->supports()->delete();
-            $complaint->delete();
+        \App\Domain\Complaints\Services\ComplaintStateMachine::validateTransition($complaint->status, 'CANCELLED');
+
+        $fromStatus = $complaint->status;
+
+        DB::transaction(function () use ($complaint, $user, $fromStatus, $note, $reason, $request) {
+            $complaint->update([
+                'status' => 'CANCELLED',
+            ]);
+
+            \App\Models\ComplaintStatusHistory::create([
+                'complaint_id' => $complaint->id,
+                'from_status'  => $fromStatus,
+                'to_status'    => 'CANCELLED',
+                'changed_by'   => $user->id,
+                'note'         => $note,
+            ]);
+
+            \App\Models\AuditLog::create([
+                'actor_user_id' => $user->id,
+                'action'        => 'complaint.cancelled',
+                'entity_type'   => 'complaint',
+                'entity_id'     => $complaint->id,
+                'before_json'   => ['status' => $fromStatus],
+                'after_json'    => ['status' => 'CANCELLED', 'reason' => $reason !== '' ? $reason : null],
+                'ip_address'    => $request->ip(),
+            ]);
         });
 
-        return ApiResponse::success(null, 'Laporan pengaduan berhasil dihapus.');
+        return ApiResponse::success(
+            new ComplaintResource($complaint->fresh(['category', 'user', 'photos', 'statusHistories.user', 'latestDisposition'])),
+            'Laporan pengaduan berhasil dibatalkan.'
+        );
+    }
+
+    /**
+     * Endpoint DELETE dialihkan ke pembatalan (CANCELLED) agar arsip & rekam jejak tetap terjaga.
+     */
+    public function destroy(Request $request, int $id): JsonResponse
+    {
+        return $this->cancel($request, $id);
     }
 
     public function show(int $id): JsonResponse
     {
-        $complaint = Complaint::with(['category', 'user', 'photos', 'statusHistories.user', 'latestDisposition'])->findOrFail($id);
+        $complaint = Complaint::with(['category', 'user', 'photos', 'statusHistories.user', 'latestDisposition', 'rating'])->findOrFail($id);
         return ApiResponse::success(new ComplaintResource($complaint));
+    }
+
+    /**
+     * Deteksi laporan duplikat dalam radius 100 meter (Geo-Clustering Haversine) dengan kategori sama.
+     */
+    public function nearbyDuplicates(Request $request): JsonResponse
+    {
+        $lat = (float) $request->query('lat', 0);
+        $lng = (float) $request->query('lng', 0);
+        $categoryId = $request->query('category_id');
+        $radiusMeters = max(50, min(500, (int) $request->query('radius', 100)));
+
+        if ($lat === 0.0 && $lng === 0.0) {
+            return ApiResponse::success([]);
+        }
+
+        $candidates = Complaint::with(['category', 'photos'])
+            ->whereNotIn('status', ['COMPLETED', 'CLOSED', 'REJECTED', 'CANCELLED', 'DRAFT'])
+            ->when($categoryId, fn ($q) => $q->where('category_id', (int) $categoryId))
+            ->whereNotNull('latitude')
+            ->whereNotNull('longitude')
+            ->latest()
+            ->limit(150)
+            ->get();
+
+        $matches = [];
+        foreach ($candidates as $c) {
+            $dist = $this->haversineMeters($lat, $lng, (float) $c->latitude, (float) $c->longitude);
+            if ($dist <= $radiusMeters) {
+                $matches[] = [
+                    'id'              => $c->id,
+                    'public_code'     => $c->public_code,
+                    'title'           => $c->title,
+                    'address'         => $c->address,
+                    'status'          => $c->status,
+                    'category_name'   => $c->category?->name,
+                    'supports_count'  => $c->supports()->count(),
+                    'distance_meters' => (int) round($dist),
+                ];
+            }
+        }
+
+        usort($matches, fn ($a, $b) => $a['distance_meters'] <=> $b['distance_meters']);
+
+        return ApiResponse::success(array_slice($matches, 0, 3));
+    }
+
+    /**
+     * Survei Kepuasan Warga Pasca-Perbaikan (Rating 1-5 Bintang + ulasan singkat).
+     */
+    public function storeRating(Request $request, int $id): JsonResponse
+    {
+        $user = $this->getAuthenticatedUser($request);
+        if (!$user) {
+            return ApiResponse::error('Silakan masuk terlebih dahulu untuk memberikan penilaian.', [], 401);
+        }
+
+        $complaint = Complaint::findOrFail($id);
+        if ($complaint->user_id !== $user->id) {
+            return ApiResponse::error('Hanya pelapor asli yang dapat memberikan penilaian hasil perbaikan.', [], 403);
+        }
+
+        if (!in_array($complaint->status, ['COMPLETED', 'CLOSED'], true)) {
+            return ApiResponse::error('Penilaian hanya dapat diberikan setelah laporan berstatus Selesai.', [], 422);
+        }
+
+        $validated = $request->validate([
+            'rating'  => 'required|integer|min:1|max:5',
+            'comment' => 'nullable|string|max:500',
+        ]);
+
+        $rating = \App\Models\ComplaintRating::updateOrCreate(
+            ['complaint_id' => $complaint->id],
+            [
+                'user_id' => $user->id,
+                'rating'  => $validated['rating'],
+                'comment' => $validated['comment'] ?? null,
+            ]
+        );
+
+        return ApiResponse::success([
+            'rating'     => $rating->rating,
+            'comment'    => $rating->comment,
+            'created_at' => $rating->created_at?->toIso8601String(),
+        ], 'Terima kasih! Penilaian Anda terhadap hasil perbaikan telah disimpan.');
+    }
+
+    protected function haversineMeters(float $lat1, float $lon1, float $lat2, float $lon2): float
+    {
+        $earthRadius = 6371000.0;
+        $dLat = deg2rad($lat2 - $lat1);
+        $dLon = deg2rad($lon2 - $lon1);
+        $a = sin($dLat / 2) * sin($dLat / 2)
+            + cos(deg2rad($lat1)) * cos(deg2rad($lat2))
+            * sin($dLon / 2) * sin($dLon / 2);
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+        return $earthRadius * $c;
     }
 
     public function toggleSupport(Request $request, int $id): JsonResponse
@@ -530,8 +654,15 @@ class ComplaintController extends Controller
         if (!$user) {
             return ApiResponse::error('Silakan masuk terlebih dahulu untuk memberikan dukungan terhadap pengaduan ini.', [], 401);
         }
+        if (!in_array(strtoupper((string) $user->role), ['CITIZEN', 'WARGA', 'USER'], true)) {
+            return ApiResponse::error('Hanya akun Warga yang dapat memberikan dukungan pada pengaduan.', [], 403);
+        }
         $userId    = $user->id;
         $complaint = Complaint::findOrFail($id);
+
+        if (in_array(strtoupper((string) $complaint->status), ['COMPLETED', 'CLOSED', 'CANCELLED', 'REJECTED'], true)) {
+            return ApiResponse::error('Dukungan tidak dapat diberikan pada pengaduan yang sudah selesai, dibatalkan, atau ditolak.', [], 422);
+        }
 
         $existing = Support::where('complaint_id', $id)->where('user_id', $userId)->first();
         if ($existing) {

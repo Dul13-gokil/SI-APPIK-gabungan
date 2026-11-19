@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -14,6 +15,9 @@ import '../../../core/media/media_service.dart';
 import '../../../core/network/api_client.dart';
 import '../../../shared/data/kolaka_utara_boundary.dart';
 import '../../../shared/theme/app_colors.dart';
+import '../../../shared/widgets/v2_components.dart';
+import '../../../shared/widgets/v2_toast.dart';
+import 'complaint_detail_screen.dart';
 
 class CreateComplaintScreen extends StatefulWidget {
   final bool initialUseAi;
@@ -54,6 +58,7 @@ class _CreateComplaintScreenState extends State<CreateComplaintScreen> {
 
   List<LatLng> _routePoints = [];
   bool _isRouting = false;
+  List<Map<String, dynamic>> _nearbyDuplicates = [];
 
   Future<void> _updateRoadRoute() async {
     if (_damageType != 'major' || _endLatitude == null || _endLongitude == null) {
@@ -72,23 +77,11 @@ class _CreateComplaintScreenState extends State<CreateComplaintScreen> {
         });
 
         if (result.distanceMeters < 500) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Row(
-                children: [
-                  const Icon(LucideIcons.alertCircle, color: Colors.white, size: 20),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Text(
-                      'Pemberitahuan: Panjang jalan ini di bawah 500 meter (${result.formattedDistance}). Kerusakan berat dikhususkan untuk kerusakan panjang (≥ 500 meter). Pertimbangkan beralih ke tipe "Kerusakan Ringan".',
-                      style: const TextStyle(fontSize: 12.5),
-                    ),
-                  ),
-                ],
-              ),
-              backgroundColor: const Color(0xFFD97706),
-              duration: const Duration(seconds: 5),
-            ),
+          showV2Toast(
+            context,
+            message: 'Panjang jalan di bawah 500 meter (${result.formattedDistance}). Pertimbangkan tipe "Kerusakan Ringan".',
+            type: V2ToastType.warning,
+            duration: const Duration(seconds: 5),
           );
         }
       }
@@ -214,7 +207,7 @@ class _CreateComplaintScreenState extends State<CreateComplaintScreen> {
             width: double.infinity,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF1E3A8A),
+                backgroundColor: AppColors.primary,
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 padding: const EdgeInsets.symmetric(vertical: 12),
@@ -245,7 +238,7 @@ class _CreateComplaintScreenState extends State<CreateComplaintScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: const Row(
           children: [
-            Icon(LucideIcons.mapPin, color: Color(0xFF1E3A8A), size: 22),
+            Icon(LucideIcons.mapPin, color: AppColors.primary, size: 22),
             SizedBox(width: 10),
             Text('Panduan GPS & Lokasi', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
           ],
@@ -282,11 +275,11 @@ class _CreateComplaintScreenState extends State<CreateComplaintScreen> {
               } catch (_) {}
               _reverseGeocode(-3.50601, 120.88780);
             },
-            child: const Text('Pusatkan ke Lasusua', style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF1E3A8A))),
+            child: const Text('Pusatkan ke Lasusua', style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.primary)),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF1E3A8A),
+              backgroundColor: AppColors.primary,
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             ),
@@ -405,13 +398,13 @@ class _CreateComplaintScreenState extends State<CreateComplaintScreen> {
             _mapController.move(LatLng(_latitude, _longitude), 16);
           } catch (_) {}
           await _reverseGeocode(_latitude, _longitude);
+          _checkNearbyDuplicates();
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Lokasi GPS berhasil diperbarui sesuai posisi Anda.'),
-                backgroundColor: Color(0xFF16A34A),
-                duration: Duration(seconds: 2),
-              ),
+            showV2Toast(
+              context,
+              message: 'Lokasi GPS berhasil diperbarui sesuai posisi Anda.',
+              type: V2ToastType.success,
+              duration: const Duration(seconds: 2),
             );
           }
         } else {
@@ -428,13 +421,100 @@ class _CreateComplaintScreenState extends State<CreateComplaintScreen> {
     }
   }
 
+  Future<void> _checkNearbyDuplicates() async {
+    try {
+      final res = await _apiClient.dio.get(
+        '/complaints/nearby-duplicates',
+        queryParameters: {
+          'lat': _latitude,
+          'lng': _longitude,
+          'category_id': _selectedCategoryId,
+          'radius': 100,
+        },
+      );
+      if (res.statusCode == 200 && res.data['data'] is List && mounted) {
+        setState(() {
+          _nearbyDuplicates = List<Map<String, dynamic>>.from(
+            (res.data['data'] as List).map((e) => Map<String, dynamic>.from(e as Map)),
+          );
+        });
+      }
+    } catch (_) {}
+  }
+
+  Widget _buildNearbyDuplicateBanner() {
+    final first = _nearbyDuplicates.first;
+    final dist = first['distance_meters'] ?? 0;
+    final title = first['title'] ?? 'Laporan Infrastruktur';
+    final code = first['public_code'] ?? '';
+    final id = first['id'];
+
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFFBEB),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFFFDE68A)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(LucideIcons.mapPin, size: 16, color: AppColors.statusInProgress),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  'Laporan serupa ditemukan (${dist}m dari titik ini)',
+                  style: GoogleFonts.outfit(
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xFF92400E),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            '#$code — $title. Dukung laporan ini agar lebih cepat diprioritaskan oleh Dinas PUPR.',
+            style: GoogleFonts.inter(fontSize: 11.5, color: const Color(0xFF78350F), height: 1.4),
+          ),
+          const SizedBox(height: 8),
+          Align(
+            alignment: Alignment.centerRight,
+            child: OutlinedButton.icon(
+              onPressed: id == null
+                  ? null
+                  : () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => ComplaintDetailScreen(complaintId: id as int),
+                        ),
+                      );
+                    },
+              icon: const Icon(LucideIcons.thumbsUp, size: 13),
+              label: const Text('Lihat & Dukung', style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold)),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: const Color(0xFF92400E),
+                side: const BorderSide(color: Color(0xFFF59E0B)),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> _takePhoto() async {
     if (_selectedPhotos.length >= _maxPhotos) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Maksimal $_maxPhotos foto bukti kerusakan untuk tipe ini.'),
-          backgroundColor: AppColors.statusRejected,
-        ),
+      showV2Toast(
+        context,
+        message: 'Maksimal $_maxPhotos foto bukti kerusakan untuk tipe ini.',
+        type: V2ToastType.error,
       );
       return;
     }
@@ -452,11 +532,10 @@ class _CreateComplaintScreenState extends State<CreateComplaintScreen> {
 
   Future<void> _pickGallery() async {
     if (_selectedPhotos.length >= _maxPhotos) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Maksimal $_maxPhotos foto bukti kerusakan untuk tipe ini.'),
-          backgroundColor: AppColors.statusRejected,
-        ),
+      showV2Toast(
+        context,
+        message: 'Maksimal $_maxPhotos foto bukti kerusakan untuk tipe ini.',
+        type: V2ToastType.error,
       );
       return;
     }
@@ -493,8 +572,10 @@ class _CreateComplaintScreenState extends State<CreateComplaintScreen> {
 
   void _showAddPhotoSheet() {
     if (_selectedPhotos.length >= _maxPhotos) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Maksimal $_maxPhotos foto bukti kerusakan.')),
+      showV2Toast(
+        context,
+        message: 'Maksimal $_maxPhotos foto bukti kerusakan.',
+        type: V2ToastType.warning,
       );
       return;
     }
@@ -592,15 +673,12 @@ class _CreateComplaintScreenState extends State<CreateComplaintScreen> {
           }
 
           if (!isValid) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  data['damage_detail'] as String? ??
-                      'Peringatan AI: Foto tidak terdeteksi sebagai objek infrastruktur fisik (jalan, jembatan, lampu penerangan, atau fasilitas umum). Silakan pastikan foto menampilkan objek yang jelas.',
-                ),
-                backgroundColor: Colors.red,
-                duration: const Duration(seconds: 4),
-              ),
+            showV2Toast(
+              context,
+              message: data['damage_detail'] as String? ??
+                  'Peringatan AI: Foto tidak terdeteksi sebagai objek infrastruktur fisik (jalan, jembatan, lampu penerangan, atau fasilitas umum). Silakan pastikan foto menampilkan objek yang jelas.',
+              type: V2ToastType.error,
+              duration: const Duration(seconds: 4),
             );
           } else if (!isDamaged) {
             _titleController.text = suggestedTitle.isNotEmpty ? suggestedTitle : 'Kondisi Jalan Mulus / Normal';
@@ -645,11 +723,10 @@ class _CreateComplaintScreenState extends State<CreateComplaintScreen> {
     }
 
     if (_useAi && _aiDiagnostic?['is_valid_infrastructure'] == false) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Foto belum terverifikasi sebagai kerusakan jalan. Unggah foto jalan yang jelas terlebih dahulu.'),
-          backgroundColor: AppColors.statusRejected,
-        ),
+      showV2Toast(
+        context,
+        message: 'Foto belum terverifikasi sebagai kerusakan jalan. Unggah foto jalan yang jelas terlebih dahulu.',
+        type: V2ToastType.error,
       );
       return;
     }
@@ -684,13 +761,10 @@ class _CreateComplaintScreenState extends State<CreateComplaintScreen> {
       if (_damageType == 'major') {
         if (_selectedPhotos.length < _minPhotos) {
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  'Kerusakan Berat wajib melampirkan minimal $_minPhotos foto bukti (saat ini ${_selectedPhotos.length}/$_minPhotos).',
-                ),
-                backgroundColor: AppColors.statusRejected,
-              ),
+            showV2Toast(
+              context,
+              message: 'Kerusakan Berat wajib melampirkan minimal $_minPhotos foto bukti (saat ini ${_selectedPhotos.length}/$_minPhotos).',
+              type: V2ToastType.error,
             );
             setState(() => _isSubmitting = false);
           }
@@ -699,11 +773,10 @@ class _CreateComplaintScreenState extends State<CreateComplaintScreen> {
 
         if (_roadLengthController.text.trim().isEmpty) {
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Mohon cantumkan estimasi panjang ruas jalan (misal: 10 km atau 500 meter).'),
-                backgroundColor: AppColors.statusRejected,
-              ),
+            showV2Toast(
+              context,
+              message: 'Mohon cantumkan estimasi panjang ruas jalan (misal: 10 km atau 500 meter).',
+              type: V2ToastType.error,
             );
             setState(() => _isSubmitting = false);
           }
@@ -712,11 +785,10 @@ class _CreateComplaintScreenState extends State<CreateComplaintScreen> {
 
         if (_isRoadLengthUnder500()) {
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Panjang kerusakan di bawah 500 meter. Gunakan tipe Kerusakan Ringan.'),
-                backgroundColor: Color(0xFFD97706),
-              ),
+            showV2Toast(
+              context,
+              message: 'Panjang kerusakan di bawah 500 meter. Gunakan tipe Kerusakan Ringan.',
+              type: V2ToastType.warning,
             );
             setState(() => _isSubmitting = false);
           }
@@ -748,11 +820,10 @@ class _CreateComplaintScreenState extends State<CreateComplaintScreen> {
       } else {
         if (_selectedPhotos.isEmpty) {
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Wajib melampirkan minimal 1 foto bukti kerusakan.'),
-                backgroundColor: AppColors.statusRejected,
-              ),
+            showV2Toast(
+              context,
+              message: 'Wajib melampirkan minimal 1 foto bukti kerusakan.',
+              type: V2ToastType.error,
             );
             setState(() => _isSubmitting = false);
           }
@@ -773,26 +844,29 @@ class _CreateComplaintScreenState extends State<CreateComplaintScreen> {
       if (!mounted) return;
 
       if (response.statusCode == 201 || response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Pengaduan baru berhasil dibuat'),
-            backgroundColor: AppColors.statusCompleted,
-            duration: Duration(seconds: 3),
-          ),
+        showV2Toast(
+          context,
+          message: 'Pengaduan baru berhasil dibuat',
+          type: V2ToastType.success,
+          duration: const Duration(seconds: 3),
         );
         Navigator.pop(context, true);
       }
     } on DioException catch (e) {
       final msg = e.response?.data?['message'] ?? 'Gagal mengirim pengaduan. Periksa koneksi backend.';
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(msg), backgroundColor: AppColors.statusRejected),
+        showV2Toast(
+          context,
+          message: msg,
+          type: V2ToastType.error,
         );
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e'), backgroundColor: AppColors.statusRejected),
+        showV2Toast(
+          context,
+          message: 'Error: $e',
+          type: V2ToastType.error,
         );
       }
     } finally {
@@ -804,16 +878,20 @@ class _CreateComplaintScreenState extends State<CreateComplaintScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: const Text('Buat Laporan Kerusakan', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        foregroundColor: AppColors.textPrimary,
-      ),
-      body: Form(
-        key: _formKey,
-        child: ListView(
-          padding: const EdgeInsets.all(16.0),
+      body: SafeArea(
+        bottom: false,
+        child: Column(
+          children: [
+            V2FloatingHeader(
+              title: 'Buat Laporan Baru',
+              subtitle: 'Kabupaten Kolaka Utara',
+              onBack: () => Navigator.of(context).pop(),
+            ),
+            Expanded(
+              child: Form(
+                key: _formKey,
+                child: ListView(
+                  padding: const EdgeInsets.all(16.0),
           children: [
             // 1. Tipe Pelaporan Kerusakan (Kerusakan Ringan vs Kerusakan Berat)
             _buildDamageTypeSelector(),
@@ -848,6 +926,12 @@ class _CreateComplaintScreenState extends State<CreateComplaintScreen> {
               )
             else if (_aiDiagnostic != null) ...[
               _buildAiDiagnosticCard(),
+              const SizedBox(height: 14),
+            ],
+
+            // 3B. Peringatan Duplikat Berbasis Radius GPS (Geo-Clustering <= 100m)
+            if (_nearbyDuplicates.isNotEmpty) ...[
+              _buildNearbyDuplicateBanner(),
               const SizedBox(height: 14),
             ],
 
@@ -897,24 +981,30 @@ class _CreateComplaintScreenState extends State<CreateComplaintScreen> {
             const SizedBox(height: 24),
 
             // 9. Submit Button
-            ElevatedButton(
-              onPressed: _isSubmitting ? null : _submitComplaint,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 15),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                elevation: 2,
+            SizedBox(
+              height: 50,
+              child: ElevatedButton(
+                onPressed: _isSubmitting ? null : _submitComplaint,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                ),
+                child: _isSubmitting
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                      )
+                    : Text('Kirim Laporan Aduan', style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.bold)),
               ),
-              child: _isSubmitting
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-                    )
-                  : const Text('Kirim Pengaduan Sekarang', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
             ),
             const SizedBox(height: 40),
+          ],
+        ),
+              ),
+            ),
           ],
         ),
       ),
@@ -1066,7 +1156,7 @@ class _CreateComplaintScreenState extends State<CreateComplaintScreen> {
                             ),
                             child: Text(
                               '$multiCount Sudut Foto',
-                              style: const TextStyle(fontSize: 9.5, fontWeight: FontWeight.bold, color: Color(0xFF1E40AF)),
+                              style: const TextStyle(fontSize: 9.5, fontWeight: FontWeight.bold, color: AppColors.primary),
                             ),
                           ),
                         ],
@@ -1199,16 +1289,24 @@ class _CreateComplaintScreenState extends State<CreateComplaintScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Tipe Pelaporan Kerusakan *',
-          style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+          style: GoogleFonts.inter(
+            fontSize: 12.5,
+            fontWeight: FontWeight.w600,
+            color: AppColors.textPrimary,
+          ),
         ),
         const SizedBox(height: 8),
-        IntrinsicHeight(
+        Container(
+          padding: const EdgeInsets.all(4),
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: AppColors.border),
+          ),
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Option 1: Kerusakan Ringan
               Expanded(
                 child: GestureDetector(
                   onTap: () {
@@ -1216,57 +1314,27 @@ class _CreateComplaintScreenState extends State<CreateComplaintScreen> {
                       _resetFormForDamageType('minor');
                     }
                   },
-                  child: Container(
-                    padding: const EdgeInsets.all(12),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 160),
+                    height: 42,
                     decoration: BoxDecoration(
-                      color: _damageType == 'minor' ? const Color(0xFFEFF6FF) : Colors.white,
-                      borderRadius: BorderRadius.circular(14),
-                      border: Border.all(
-                        color: _damageType == 'minor' ? const Color(0xFF1E3A8A) : AppColors.border,
-                        width: _damageType == 'minor' ? 2 : 1,
-                      ),
+                      color: _damageType == 'minor' ? AppColors.primary : AppColors.cardSurface,
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(6),
-                              decoration: BoxDecoration(
-                                color: _damageType == 'minor' ? const Color(0xFF1E3A8A) : const Color(0xFFF1F5F9),
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                LucideIcons.circle,
-                                size: 14,
-                                color: _damageType == 'minor' ? Colors.white : const Color(0xFF64748B),
-                              ),
-                            ),
-                          ],
+                    child: Center(
+                      child: Text(
+                        'Titik (Ringan)',
+                        style: GoogleFonts.inter(
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.bold,
+                          color: _damageType == 'minor' ? Colors.white : AppColors.textSecondary,
                         ),
-                        const SizedBox(height: 10),
-                        const Text(
-                          'Kerusakan Ringan',
-                          style: TextStyle(
-                            fontSize: 12.5,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF0F172A),
-                          ),
-                        ),
-                        const SizedBox(height: 3),
-                        const Text(
-                          'Lubang, amblas, retak (< 500m)',
-                          style: TextStyle(fontSize: 10.5, color: Color(0xFF64748B), height: 1.25),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
                 ),
               ),
-              const SizedBox(width: 10),
-              // Option 2: Kerusakan Berat (KONSISTEN BIRU DENGAN GAMBAR 2)
+              const SizedBox(width: 6),
               Expanded(
                 child: GestureDetector(
                   onTap: () {
@@ -1274,51 +1342,22 @@ class _CreateComplaintScreenState extends State<CreateComplaintScreen> {
                       _resetFormForDamageType('major');
                     }
                   },
-                  child: Container(
-                    padding: const EdgeInsets.all(12),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 160),
+                    height: 42,
                     decoration: BoxDecoration(
-                      color: _damageType == 'major' ? const Color(0xFFEFF6FF) : Colors.white,
-                      borderRadius: BorderRadius.circular(14),
-                      border: Border.all(
-                        color: _damageType == 'major' ? const Color(0xFF1E3A8A) : AppColors.border,
-                        width: _damageType == 'major' ? 2 : 1,
-                      ),
+                      color: _damageType == 'major' ? AppColors.primary : AppColors.cardSurface,
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(6),
-                              decoration: BoxDecoration(
-                                color: _damageType == 'major' ? const Color(0xFF1E3A8A) : const Color(0xFFF1F5F9),
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                LucideIcons.route,
-                                size: 14,
-                                color: _damageType == 'major' ? Colors.white : const Color(0xFF64748B),
-                              ),
-                            ),
-                          ],
+                    child: Center(
+                      child: Text(
+                        'Ruas Jalan (Berat)',
+                        style: GoogleFonts.inter(
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w600,
+                          color: _damageType == 'major' ? Colors.white : AppColors.textSecondary,
                         ),
-                        const SizedBox(height: 10),
-                        const Text(
-                          'Kerusakan Berat',
-                          style: TextStyle(
-                            fontSize: 12.5,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF0F172A),
-                          ),
-                        ),
-                        const SizedBox(height: 3),
-                        const Text(
-                          'Khusus jalan tanah/hancur (≥ 500m)',
-                          style: TextStyle(fontSize: 10.5, color: Color(0xFF64748B), height: 1.25),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
                 ),
@@ -1611,7 +1650,7 @@ class _CreateComplaintScreenState extends State<CreateComplaintScreen> {
                     polygons: [
                       Polygon(
                         points: kolakaUtaraBoundary,
-                        borderColor: const Color(0xFF1E3A8A),
+                        borderColor: AppColors.primary,
                         borderStrokeWidth: 2.5,
                         color: const Color(0xFF3B82F6).withValues(alpha: 0.08),
                       ),
@@ -1627,7 +1666,7 @@ class _CreateComplaintScreenState extends State<CreateComplaintScreen> {
                                   LatLng(_latitude, _longitude),
                                   LatLng(_endLatitude!, _endLongitude!),
                                 ],
-                          borderColor: const Color(0xFF1E3A8A),
+                          borderColor: AppColors.primary,
                           borderStrokeWidth: 1.5,
                           color: const Color(0xFF2563EB),
                           strokeWidth: 5.0,

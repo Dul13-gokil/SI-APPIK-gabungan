@@ -33,6 +33,7 @@
                         'IN_PROGRESS' => 'DIKERJAKAN',
                         'DISPATCHED' => 'DITUGASKAN',
                         'REJECTED' => 'DITOLAK',
+                        'CANCELLED' => 'DIBATALKAN',
                         'REVISION_REQUIRED' => 'PERLU REVISI',
                         default => 'VERIFIKASI',
                     };
@@ -41,6 +42,7 @@
                         'WAITING_VERIFICATION' => 'bg-amber-50 text-amber-700 border-amber-300',
                         'IN_PROGRESS', 'REVISION_REQUIRED' => 'bg-amber-50 text-amber-800 border-amber-300',
                         'DISPATCHED' => 'bg-blue-50 text-[#2563EB] border-blue-200',
+                        'CANCELLED' => 'bg-slate-100 text-slate-600 border-slate-200',
                         default => 'bg-red-50 text-red-700 border-red-200',
                     };
                     $officerName = $item->latestDisposition?->team?->name

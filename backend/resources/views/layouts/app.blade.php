@@ -192,6 +192,7 @@
                                         ['tab' => 'overview', 'label' => 'Dashboard Admin', 'icon' => 'layout-dashboard'],
                                         ['tab' => 'users-management', 'label' => 'Kelola Akun & Pengguna', 'icon' => 'users'],
                                         ['tab' => 'complaints-list', 'label' => 'Daftar Aduan', 'icon' => 'layers'],
+                                        ['tab' => 'archive', 'label' => 'Arsip Aduan', 'icon' => 'archive'],
                                         ['tab' => 'admin-rejected', 'label' => 'Aduan Ditolak', 'icon' => 'archive-x'],
                                         ['tab' => 'teams-management', 'label' => 'Regu & Tugas', 'icon' => 'hard-hat'],
                                         ['tab' => 'regions-gis', 'label' => 'Peta Wilayah GIS', 'icon' => 'map-pin'],
@@ -304,6 +305,7 @@
                                         ['tab' => 'validation', 'label' => 'Validasi', 'icon' => 'shield-check'],
                                         ['tab' => 'history', 'label' => 'Tugas Selesai', 'icon' => 'check-circle'],
                                         ['tab' => 'spatial', 'label' => 'Peta Wilayah GIS', 'icon' => 'map-pin'],
+                                        ['tab' => 'performance', 'label' => 'Laporan Kinerja', 'icon' => 'bar-chart-3'],
                                     ];
                                 @endphp
                                 @foreach($petugasMenuItems as $item)

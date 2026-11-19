@@ -5,6 +5,7 @@ import '../../../core/auth/auth_service.dart';
 import '../../../core/network/api_client.dart';
 import '../../../shared/theme/app_colors.dart';
 import '../../../shared/widgets/formatted_markdown_text.dart';
+import '../../../shared/widgets/v2_components.dart';
 
 class ChatMessageModel {
   final String text;
@@ -19,7 +20,9 @@ class ChatMessageModel {
 }
 
 class AIAssistantScreen extends StatefulWidget {
-  const AIAssistantScreen({super.key});
+  final bool isKeyboardOpen;
+
+  const AIAssistantScreen({super.key, this.isKeyboardOpen = false});
 
   @override
   State<AIAssistantScreen> createState() => _AIAssistantScreenState();
@@ -67,16 +70,9 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
       });
       if (res.statusCode == 201 && res.data['data'] != null) {
         final data = res.data['data'];
-        final backendMsg = data['initial_message'] as String?;
-        // Deteksi jika role Petugas tapi pesan backend masih template lama Warga
-        final isWrongRoleMsg = _isPetugas && (backendMsg == null || backendMsg.contains('Warga Terdaftar') || backendMsg.contains('Beda Tipe'));
-
-        final initialText = isWrongRoleMsg
-            ? "Halo Rekan Petugas Lapangan Dinas PUPR! 👷‍♂️\nSaya **Asisten Teknis SI-APPIK** Kabupaten Kolaka Utara. Siap memandu operasional aplikasi Anda:\n\n• 👷‍♂️ Ketik **'Apa Itu Petugas Lapangan'** (peran, tugas, & wewenang)\n• 📋 Ketik **'Cara Mengambil Tugas'** (panduan ambil & mulai tugas SPK)\n• 📱 Ketik **'Tentang Aplikasi'** (cara kerja aplikasi & navigasi GIS)\n• ✉️ Ketik **'Verifikasi OTP'** (panduan kode OTP & keamanan)\n• 🔑 Ketik **'Ganti Password'** (ubah & reset kata sandi akun)\n• 📸 Ketik **'Tips Foto Bukti Validasi'** (ketentuan foto hasil perbaikan)\n• ⚠️ Ketik **'Batas Maksimal 3 Tugas'** (aturan kuota pengerjaan)\n• ⏱️ Ketik **'Batas Waktu Penanganan (SLA)'** (tenggat waktu standar dinas)\n• 🔍 Masukkan nomor tiket (misal: **0005/ringan/2026**) untuk lacak status\n\nAda yang perlu saya bantu untuk kelancaran tugas Anda hari ini?"
-            : (backendMsg ??
-                (_isPetugas
-                    ? "Halo Rekan Petugas Lapangan Dinas PUPR! 👷‍♂️\nSaya **Asisten Teknis SI-APPIK** Kabupaten Kolaka Utara. Siap memandu Anda seputar peran petugas lapangan, ambil tugas, panduan aplikasi, verifikasi OTP, ganti password, foto validasi, kuota 3 tugas, hingga SLA."
-                    : "Halo! Saya **Asisten SI-APPIK** Kabupaten Kolaka Utara. Siap membantu Anda sebagai **Warga Terdaftar** terkait informasi aplikasi, verifikasi OTP pendaftaran, ganti password, panduan lapor Kerusakan Ringan vs Berat, verifikasi AI foto, pelacakan tiket aduan, hingga standar SLA dinas."));
+        final initialText = _isPetugas
+            ? 'Halo, saya **Asisten Teknis SI-APPIK** Kabupaten Kolaka Utara.\n\nSaya siap membantu Anda seputar:\n• **Cara Mengambil Tugas** & mulai pengerjaan SPK\n• **Aturan Kuota 3 Tugas** & batas waktu penanganan (SLA)\n• **Tips Foto Bukti Validasi** hasil perbaikan lapangan\n• **Aktivasi Akun, OTP & Ganti Kata Sandi**\n• Lacak status tiket (ketik kode seperti `0003/ringan/2026`)\n\nAda yang bisa saya bantu hari ini?'
+            : 'Halo! Saya **Asisten SI-APPIK** Kabupaten Kolaka Utara.\n\nSaya siap membantu Anda seputar:\n• **Panduan Lapor** (Metode AI YOLOv8 atau Manual)\n• **Beda Tipe** laporan *Titik (Ringan)* vs *Ruas Jalan (Berat)*\n• **Verifikasi OTP & Ganti Kata Sandi**\n• **Wilayah & SLA** penanganan 15 kecamatan Kolaka Utara\n• Lacak status laporan (ketik kode seperti `0003/ringan/2026`)\n\nAda yang ingin Anda tanyakan?';
 
         setState(() {
           _sessionId = data['session_id'].toString();
@@ -94,8 +90,8 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
         _messages.add(
           ChatMessageModel(
             text: _isPetugas
-                ? "Halo Rekan Petugas Lapangan Dinas PUPR! 👷‍♂️\nSaya **Asisten Teknis SI-APPIK** Kabupaten Kolaka Utara. Siap memandu Anda seputar peran petugas lapangan, ambil tugas, panduan aplikasi, verifikasi OTP, ganti password, foto validasi operator, batas 3 tugas aktif, atau cek tiket (misal: 0005/ringan/2026)."
-                : "Halo! Saya **Asisten SI-APPIK** Kabupaten Kolaka Utara. Siap membantu Anda sebagai **Warga Terdaftar** terkait informasi aplikasi, verifikasi OTP pendaftaran, ganti password, panduan lapor Kerusakan Ringan vs Berat, tips foto AI, wilayah 15 kecamatan, atau masukkan nomor tiket (misal: 0005/ringan/2026).",
+                ? 'Halo, saya **Asisten Teknis SI-APPIK** Kabupaten Kolaka Utara. Saya siap membantu panduan ambil tugas SPK, kuota 3 tugas aktif, foto bukti validasi, SLA dinas, atau lacak tiket (misal: `0003/ringan/2026`).'
+                : 'Halo! Saya **Asisten SI-APPIK** Kabupaten Kolaka Utara. Saya siap membantu panduan lapor (AI / Manual), beda tipe Titik vs Ruas Jalan, verifikasi OTP, ganti kata sandi, atau lacak tiket (misal: `0003/ringan/2026`).',
             isUser: false,
             time: DateTime.now(),
           ),
@@ -171,11 +167,11 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
   String _getSmartOfflineResponse(String input) {
     final lower = input.toLowerCase();
 
-    // ─── Respon Khusus Petugas Lapangan ──────────────────────────────
+    // ─── Respon Khusus Pekerja Lapangan ──────────────────────────────
     if (_isPetugas) {
-      if (lower.contains('apa itu petugas') || lower.contains('petugas lapangan') || lower.contains('peran petugas') || lower.contains('tugas petugas') || lower.contains('siapa petugas')) {
-        return '👷‍♂️ **Mengenal Peran Petugas Lapangan (Dinas PUPR & PRKP):**\n\n'
-            'Petugas Lapangan adalah **tim teknis operasional resmi** Pemerintah Kabupaten Kolaka Utara yang bertugas langsung di lokasi kejadian untuk menangani perbaikan fisik infrastruktur publik berdasarkan Surat Perintah Kerja (SPK) dari Operator Dinas.\n\n'
+      if (lower.contains('apa itu petugas') || lower.contains('pekerja lapangan') || lower.contains('peran petugas') || lower.contains('tugas petugas') || lower.contains('siapa petugas')) {
+        return '👷‍♂️ **Mengenal Peran Pekerja Lapangan (Dinas PUPR & PRKP):**\n\n'
+            'Pekerja Lapangan adalah **tim teknis operasional resmi** Pemerintah Kabupaten Kolaka Utara yang bertugas langsung di lokasi kejadian untuk menangani perbaikan fisik infrastruktur publik berdasarkan Surat Perintah Kerja (SPK) dari Operator Dinas.\n\n'
             '🔑 **Wewenang & Fitur Khusus di Aplikasi Mobile:**\n'
             '1. **Menerima Disposisi Tugas:** Memantau SPK penugasan pada tab *Tugas Aktif* lengkap dengan data koordinat GPS satelit dan foto laporan warga.\n'
             '2. **Navigasi Rute Nyata GIS (OSRM):** Menghubungkan langsung ke rute jalan nyata menuju titik kerusakan.\n'
@@ -189,7 +185,7 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
       }
 
       if (lower.contains('otp') || lower.contains('kode otp') || lower.contains('verifikasi otp') || lower.contains('cara otp')) {
-        return '✉️ **Panduan Kode OTP untuk Petugas Lapangan:**\n\n'
+        return '✉️ **Panduan Kode OTP untuk Pekerja Lapangan:**\n\n'
             'Kode OTP (*One-Time Password*) adalah 6 digit kode keamanan rahasia yang dikirimkan ke email resmi akun petugas Anda.\n\n'
             '1. **Fungsi OTP Petugas:** Digunakan untuk verifikasi identitas saat melakukan **Reset / Lupa Kata Sandi** secara mandiri di aplikasi mobile.\n'
             '2. **Cara Menggunakan:**\n'
@@ -215,7 +211,7 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
       }
 
       if (lower.contains('tentang aplikasi') || lower.contains('apa itu aplikasi') || lower.contains('info aplikasi')) {
-        return '📱 **Tentang Aplikasi Petugas Lapangan Kolaka Utara:**\n\n'
+        return '📱 **Tentang Aplikasi Pekerja Lapangan Kolaka Utara:**\n\n'
             'Aplikasi ini adalah modul kerja terpadu untuk tim teknis lapangan Dinas PUPR & PRKP Kabupaten Kolaka Utara.\n\n'
             '🌟 **Kemampuan Sistem:**\n'
             '• **Penerimaan SPK Real-Time:** Notifikasi penugasan langsung dari Operator Dinas.\n'
@@ -234,7 +230,7 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
       }
 
       if (lower.contains('pakai') || lower.contains('aplikasi') || lower.contains('panduan') || lower.contains('cara kerja')) {
-        return '📱 **Panduan Penggunaan Aplikasi Petugas Lapangan:**\n\n'
+        return '📱 **Panduan Penggunaan Aplikasi Pekerja Lapangan:**\n\n'
             '1. **Pantau SPK:** Tab Tugas Aktif menampilkan ringkasan tugas: Total Aduan, Menunggu Verifikasi, Ditugaskan, Dikerjakan, Menunggu Validasi, dan Tuntas.\n'
             '2. **Tab Semua Tugas vs Tugas Saya:** Gunakan tab untuk beralih antara melihat seluruh tugas tim atau penugasan khusus akun Anda.\n'
             '3. **Navigasi GIS:** Tekan kartu tugas untuk melihat rute jalan nyata (OSRM) menuju lokasi koordinat satelit.\n'
@@ -253,7 +249,7 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
 
       if (lower.contains('3') || lower.contains('maksimal') || lower.contains('batas tugas') || lower.contains('kuota')) {
         return '⚠️ **Ketentuan Batas Maksimal 3 Tugas Lapangan:**\n\n'
-            '• Setiap petugas lapangan hanya dapat memiliki maksimal **3 tugas berstatus "Sedang Dikerjakan"** secara bersamaan.\n'
+            '• Setiap pekerja lapangan hanya dapat memiliki maksimal **3 tugas berstatus "Sedang Dikerjakan"** secara bersamaan.\n'
             '• Aturan ini diterapkan oleh Dinas PUPR agar waktu penanganan (SLA) tetap terjamin dan kualitas fisik maksimal.\n'
             '• Jika Anda telah mencapai kuota 3 tugas, selesaikan dan kirimkan bukti salah satu tugas terlebih dahulu sebelum memulai tugas baru.';
       }
@@ -305,7 +301,7 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
       }
 
       if (lower.contains('k3') || lower.contains('helm') || lower.contains('rompi') || lower.contains('safety')) {
-        return '🛡️ **Standar K3 Petugas Lapangan PUPR:**\n\n'
+        return '🛡️ **Standar K3 Pekerja Lapangan PUPR:**\n\n'
             '1. **APD Wajib:** Rompi reflektif, helm proyek, sarung tangan, & safety boots.\n'
             '2. **Rambu Pengaman:** Pasang traffic cone minimal 50m sebelum titik kerja.\n'
             '3. **Flagman:** Siagakan 1 petugas pengatur buka-tutup jalur.\n'
@@ -358,10 +354,10 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
           '   • Masukkan kode OTP di aplikasi mobile dan masukkan kata sandi baru Anda.';
     }
 
-    // Tanya Mengenai Petugas Lapangan (Dari Sudut Pandang Warga)
-    if (lower.contains('apa itu petugas') || lower.contains('petugas lapangan') || lower.contains('siapa yang perbaiki') || lower.contains('siapa petugas')) {
-      return '👷‍♂️ **Siapa Itu Petugas Lapangan?**\n\n'
-          'Petugas Lapangan adalah **tim teknis operasional resmi** dari Dinas PUPR & PRKP Kabupaten Kolaka Utara yang diterjunkan ke lokasi untuk melakukan perbaikan fisik infrastruktur.\n\n'
+    // Tanya Mengenai Pekerja Lapangan (Dari Sudut Pandang Warga)
+    if (lower.contains('apa itu petugas') || lower.contains('pekerja lapangan') || lower.contains('siapa yang perbaiki') || lower.contains('siapa petugas')) {
+      return '👷‍♂️ **Siapa Itu Pekerja Lapangan?**\n\n'
+          'Pekerja Lapangan adalah **tim teknis operasional resmi** dari Dinas PUPR & PRKP Kabupaten Kolaka Utara yang diterjunkan ke lokasi untuk melakukan perbaikan fisik infrastruktur.\n\n'
           '• **Menerima SPK:** Mendapat perintah kerja resmi setelah laporan Anda diverifikasi oleh Operator Dinas.\n'
           '• **Navigasi Langsung:** Datang ke lokasi titik kerusakan berpandukan koordinat GPS di aplikasi.\n'
           '• **Pengerjaan Fisik:** Melakukan penambalan jalan aspal, penggantian lampu PJU, atau perbaikan darurat jembatan.\n'
@@ -373,7 +369,7 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
       return '🔒 **Kebijakan Privasi Nomor Telepon Pelapor:**\n\n'
           '• **Untuk Warga Lain:** Nomor HP pelapor disamarkan (contoh: *******890) dan dikunci dengan gembok privasi.\n'
           '• **Untuk Pelapor Sendiri:** Anda dapat melihat nomor telepon Anda sendiri pada detail laporan Anda.\n'
-          '• **Untuk Petugas Lapangan & Operator:** Nomor telepon pelapor dapat dilihat secara utuh agar petugas dapat menghubungi Anda jika membutuhkan konfirmasi patokan lokasi di lapangan.';
+          '• **Untuk Pekerja Lapangan & Operator:** Nomor telepon pelapor dapat dilihat secara utuh agar petugas dapat menghubungi Anda jika membutuhkan konfirmasi patokan lokasi di lapangan.';
     }
 
     if (lower.contains('beda') || lower.contains('ruas') || lower.contains('titik') || lower.contains('500') || lower.contains('panjang') || lower.contains('ringan') || lower.contains('berat')) {
@@ -434,9 +430,9 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
     }
 
     return _isPetugas
-        ? 'Halo Rekan Petugas Lapangan Dinas PUPR! 👷‍♂️\n'
+        ? 'Halo Rekan Pekerja Lapangan Dinas PUPR! 👷‍♂️\n'
             'Saya **Asisten Teknis SI-APPIK** Kabupaten Kolaka Utara. Anda dapat menanyakan seputar operasional aplikasi:\n\n'
-            '• 👷‍♂️ **Apa Itu Petugas Lapangan** (peran, tugas & wewenang)\n'
+            '• 👷‍♂️ **Apa Itu Pekerja Lapangan** (peran, tugas & wewenang)\n'
             '• 📋 **Cara Mengambil Tugas** (panduan ambil & mulai tugas SPK)\n'
             '• 📱 **Tentang Aplikasi** (fitur aplikasi & navigasi GIS)\n'
             '• ✉️ **Verifikasi OTP** (panduan OTP & keamanan akun)\n'
@@ -473,45 +469,31 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: Row(
+      body: SafeArea(
+        bottom: false,
+        child: Column(
           children: [
-            Container(
-              padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.1),
-                shape: BoxShape.circle,
+            V2FloatingHeader(
+              title: _isPetugas ? 'Asisten Teknis SI-APPIK' : 'Asisten SI-APPIK',
+              subtitle: _isPetugas ? 'Operasional Petugas Dinas PUPR' : 'Dukungan Warga Kolaka Utara',
+              leading: Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: AppColors.primaryContainer,
+                  borderRadius: BorderRadius.circular(11),
+                  border: Border.all(color: AppColors.primaryBorder),
+                ),
+                child: Icon(
+                  _isPetugas ? LucideIcons.hardHat : LucideIcons.sparkles,
+                  size: 18,
+                  color: AppColors.primary,
+                ),
               ),
-              child: Icon(_isPetugas ? LucideIcons.hardHat : LucideIcons.sparkles, color: AppColors.primary, size: 20),
             ),
-            const SizedBox(width: 10),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  _isPetugas ? 'Asisten Teknis SI-APPIK' : 'Asisten SI-APPIK',
-                  style: GoogleFonts.outfit(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-                Text(
-                  _isPetugas ? 'Operasional Petugas Dinas PUPR' : 'Dukungan Warga Kolaka Utara',
-                  style: GoogleFonts.inter(
-                    fontSize: 11,
-                    color: AppColors.textSecondary,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-        backgroundColor: Colors.white,
-        elevation: 0,
-      ),
-      body: Column(
-        children: [
+            Expanded(
+              child: Column(
+                children: [
           // Quick suggestion chips
           Container(
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
@@ -521,7 +503,7 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
               child: Row(
                 children: _isPetugas
                     ? [
-                        _buildQuickChip('Apa Itu Petugas Lapangan'),
+                        _buildQuickChip('Apa Itu Pekerja Lapangan'),
                         _buildQuickChip('Cara Mengambil Tugas'),
                         _buildQuickChip('Tentang Aplikasi'),
                         _buildQuickChip('Verifikasi OTP'),
@@ -587,46 +569,53 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
               ),
             ),
 
-          // Message Input Field
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, -2),
-                ),
-              ],
+          // Floating Chat Input Pill (Sesuai Desain FigCraft Gambar 4)
+          Padding(
+            padding: EdgeInsets.fromLTRB(
+              16,
+              8,
+              16,
+              widget.isKeyboardOpen ? 10 : 98,
             ),
-            child: SafeArea(
+            child: Container(
+              height: 52,
+              padding: const EdgeInsets.fromLTRB(16, 6, 6, 6),
+              decoration: BoxDecoration(
+                color: AppColors.surface,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: AppColors.border),
+              ),
               child: Row(
                 children: [
                   Expanded(
                     child: TextField(
                       controller: _messageController,
+                      style: GoogleFonts.inter(fontSize: 13, color: AppColors.textPrimary),
                       decoration: InputDecoration(
-                        hintText: 'Tanyakan sesuatu atau masukkan kode tiket...',
-                        hintStyle: const TextStyle(fontSize: 13),
-                        filled: true,
-                        fillColor: AppColors.background,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(24),
-                          borderSide: BorderSide.none,
+                        hintText: 'Tanya asisten SI-APPIK...',
+                        hintStyle: GoogleFonts.inter(
+                          fontSize: 13,
+                          color: AppColors.textSecondary.withValues(alpha: 0.7),
                         ),
+                        border: InputBorder.none,
+                        isDense: true,
+                        contentPadding: EdgeInsets.zero,
                       ),
                       onSubmitted: (_) => _sendMessage(),
                     ),
                   ),
                   const SizedBox(width: 8),
-                  CircleAvatar(
-                    backgroundColor: AppColors.primary,
-                    radius: 22,
-                    child: IconButton(
-                      icon: const Icon(LucideIcons.send, color: Colors.white, size: 18),
-                      onPressed: () => _sendMessage(),
+                  InkWell(
+                    onTap: () => _sendMessage(),
+                    borderRadius: BorderRadius.circular(14),
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: AppColors.primary,
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: const Icon(LucideIcons.arrowUp, color: Colors.white, size: 18),
                     ),
                   ),
                 ],
@@ -634,6 +623,10 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
             ),
           ),
         ],
+      ),
+            ),
+          ],
+        ),
       ),
     );
   }

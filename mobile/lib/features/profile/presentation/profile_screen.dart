@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb, Uint8List;
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -11,6 +12,8 @@ import '../../../core/network/api_client.dart';
 import '../../../core/utils/phone_validator.dart';
 import '../../../shared/theme/app_colors.dart';
 import '../../../shared/widgets/formatted_markdown_text.dart';
+import '../../../shared/widgets/v2_components.dart';
+import '../../../shared/widgets/v2_toast.dart';
 import '../../auth/presentation/login_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -60,8 +63,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _showPhotoPickerSheet() async {
     final isGuest = _user?.role == 'TAMU' || _user?.isAnonymous == true;
     if (isGuest) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Silakan login dengan akun terdaftar untuk mengubah foto profil.')),
+      showV2Toast(
+        context,
+        message: 'Silakan login dengan akun terdaftar untuk mengubah foto profil.',
+        type: V2ToastType.warning,
       );
       return;
     }
@@ -98,7 +103,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Navigator.pop(ctx);
                   final file = await _mediaService.takePhoto();
                   if (file != null) {
-                    await _handleUpdateAvatar(file.path);
+                    final bytes = await file.readAsBytes();
+                    await _handleUpdateAvatar(file.path, avatarBytes: bytes);
                   }
                 },
               ),
@@ -113,7 +119,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Navigator.pop(ctx);
                   final file = await _mediaService.pickFromGallery();
                   if (file != null) {
-                    await _handleUpdateAvatar(file.path);
+                    final bytes = await file.readAsBytes();
+                    await _handleUpdateAvatar(file.path, avatarBytes: bytes);
                   }
                 },
               ),
@@ -121,10 +128,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ListTile(
                   leading: Container(
                     padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(color: Colors.grey.shade100, shape: BoxShape.circle),
-                    child: const Icon(LucideIcons.trash2, color: Colors.blueGrey, size: 20),
+                    decoration: BoxDecoration(color: AppColors.statusRejected.withValues(alpha: 0.1), shape: BoxShape.circle),
+                    child: const Icon(LucideIcons.trash2, color: AppColors.statusRejected, size: 20),
                   ),
-                  title: const Text('Hapus Foto Profil', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: Colors.blueGrey)),
+                  title: const Text('Hapus Foto Profil', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: AppColors.statusRejected)),
                   onTap: () async {
                     Navigator.pop(ctx);
                     await _handleUpdateAvatar('');
@@ -187,31 +194,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     shape: BoxShape.circle,
                     border: Border.all(color: AppColors.primary.withValues(alpha: 0.2), width: 3),
                   ),
-                  child: hasAvatar
-                      ? (avatar.startsWith('http')
-                          ? Image.network(
-                              avatar,
-                              fit: BoxFit.cover,
-                              errorBuilder: (_, __, ___) => Icon(
-                                _user?.role == 'PETUGAS' ? LucideIcons.hardHat : LucideIcons.user,
-                                size: 70,
-                                color: AppColors.primary,
-                              ),
-                            )
-                          : (File(avatar).existsSync()
-                              ? Image.file(File(avatar), fit: BoxFit.cover)
-                              : Icon(
-                                  _user?.role == 'PETUGAS' ? LucideIcons.hardHat : LucideIcons.user,
-                                  size: 70,
-                                  color: AppColors.primary,
-                                )))
-                      : Icon(
-                          isGuest
-                              ? LucideIcons.userX
-                              : (_user?.role == 'PETUGAS' ? LucideIcons.hardHat : LucideIcons.user),
+                  child: () {
+                    final netUrl = _resolveAvatarNetworkUrl(avatar);
+                    if (netUrl != null) {
+                      return Image.network(
+                        netUrl,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => Icon(
+                          _user?.role == 'PETUGAS' ? LucideIcons.hardHat : LucideIcons.user,
                           size: 70,
-                          color: isGuest ? Colors.blueGrey : AppColors.primary,
+                          color: AppColors.primary,
                         ),
+                      );
+                    }
+                    if (hasAvatar && _canReadLocalFile(avatar)) {
+                      return Image.file(File(avatar), fit: BoxFit.cover);
+                    }
+                    return Icon(
+                      isGuest
+                          ? LucideIcons.userX
+                          : (_user?.role == 'PETUGAS' ? LucideIcons.hardHat : LucideIcons.user),
+                      size: 70,
+                      color: isGuest ? Colors.blueGrey : AppColors.primary,
+                    );
+                  }(),
                 ),
               ),
               const SizedBox(height: 16),
@@ -221,7 +227,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               const SizedBox(height: 4),
               Text(
-                _user?.role == 'PETUGAS' ? 'Petugas Lapangan Dinas PUPR' : (isGuest ? 'Warga Tamu (Anonim)' : 'Warga Terdaftar'),
+                _user?.role == 'PETUGAS' ? 'Pekerja Lapangan Dinas PUPR' : (isGuest ? 'Warga Tamu (Anonim)' : 'Warga Terdaftar'),
                 style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
               ),
               const SizedBox(height: 20),
@@ -279,13 +285,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Future<void> _handleUpdateAvatar(String avatarPath) async {
+  Future<void> _handleUpdateAvatar(String avatarPath, {Uint8List? avatarBytes}) async {
     if (_user == null) return;
     final isDeleting = avatarPath.isEmpty || avatarPath == 'DELETE';
     final res = await _authService.updateProfile(
       name: _user!.name,
       email: _user!.email,
       avatar: isDeleting ? 'DELETE' : avatarPath,
+      avatarBytes: isDeleting ? null : avatarBytes,
     );
     if (res['success'] == true) {
       setState(() {
@@ -296,17 +303,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
         }
       });
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(isDeleting ? 'Foto profil telah dihapus.' : 'Foto profil berhasil diperbarui!'),
-            backgroundColor: AppColors.primary,
-          ),
+        showV2Toast(
+          context,
+          message: isDeleting ? 'Foto profil telah dihapus.' : 'Foto profil berhasil diperbarui!',
+          type: V2ToastType.success,
         );
       }
     } else {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(res['message'] ?? 'Gagal memperbarui foto profil.')),
+        showV2Toast(
+          context,
+          message: res['message'] ?? 'Gagal memperbarui foto profil.',
+          type: V2ToastType.error,
         );
       }
     }
@@ -316,8 +324,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _showEditProfileModal() async {
     final isGuest = _user?.role == 'TAMU' || _user?.isAnonymous == true;
     if (isGuest) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Silakan login dengan akun terdaftar untuk mengubah profil.')),
+      showV2Toast(
+        context,
+        message: 'Silakan login dengan akun terdaftar untuk mengubah profil.',
+        type: V2ToastType.warning,
       );
       return;
     }
@@ -390,7 +400,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
                           ),
                           Text(
-                            _user?.role == 'PETUGAS' ? 'Perbarui data akun Petugas Lapangan' : 'Perbarui identitas Warga Terdaftar Anda',
+                            _user?.role == 'PETUGAS' ? 'Perbarui data akun Pekerja Lapangan' : 'Perbarui identitas Warga Terdaftar Anda',
                             style: const TextStyle(fontSize: 11, color: AppColors.textSecondary),
                           ),
                         ],
@@ -451,44 +461,57 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
 
-                const Text('Username / Nama Lengkap *', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+                Text('Username / Nama Lengkap *', style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
                 const SizedBox(height: 6),
                 TextField(
                   controller: nameCtrl,
+                  style: GoogleFonts.inter(fontSize: 13.5, color: AppColors.textPrimary),
                   onChanged: (_) {
                     if (nameError != null) setModalState(() => nameError = null);
                   },
                   decoration: InputDecoration(
                     hintText: 'Nama lengkap Anda',
-                    prefixIcon: const Icon(LucideIcons.user, size: 18),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    hintStyle: GoogleFonts.inter(fontSize: 13.5, color: AppColors.textSecondary.withValues(alpha: 0.7)),
+                    prefixIcon: const Icon(LucideIcons.user, size: 18, color: AppColors.textSecondary),
+                    filled: true,
+                    fillColor: AppColors.cardSurface,
                     errorText: nameError,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: AppColors.border)),
+                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: AppColors.border)),
+                    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: AppColors.primary, width: 1.5)),
                   ),
                 ),
                 const SizedBox(height: 14),
-                const Text('Alamat Email *', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+                Text('Alamat Email *', style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
                 const SizedBox(height: 6),
                 TextField(
                   controller: emailCtrl,
                   keyboardType: TextInputType.emailAddress,
+                  style: GoogleFonts.inter(fontSize: 13.5, color: AppColors.textPrimary),
                   onChanged: (_) {
                     if (emailError != null) setModalState(() => emailError = null);
                   },
                   decoration: InputDecoration(
                     hintText: 'contoh@email.com',
-                    prefixIcon: const Icon(LucideIcons.mail, size: 18),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    hintStyle: GoogleFonts.inter(fontSize: 13.5, color: AppColors.textSecondary.withValues(alpha: 0.7)),
+                    prefixIcon: const Icon(LucideIcons.mail, size: 18, color: AppColors.textSecondary),
+                    filled: true,
+                    fillColor: AppColors.cardSurface,
                     errorText: emailError,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: AppColors.border)),
+                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: AppColors.border)),
+                    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: AppColors.primary, width: 1.5)),
                   ),
                 ),
                 const SizedBox(height: 14),
-                const Text('No. Handphone / WhatsApp (10 - 13 digit)', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+                Text('No. Handphone / WhatsApp (10 - 13 digit)', style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
                 const SizedBox(height: 6),
                 TextField(
                   controller: phoneCtrl,
                   keyboardType: TextInputType.phone,
+                  style: GoogleFonts.inter(fontSize: 13.5, color: AppColors.textPrimary),
                   onChanged: (val) {
                     if (val.trim().isEmpty) {
                       setModalState(() {
@@ -505,9 +528,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   },
                   decoration: InputDecoration(
                     hintText: '08xxxxxxxxxx',
-                    prefixIcon: const Icon(LucideIcons.phone, size: 18),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                    hintStyle: GoogleFonts.inter(fontSize: 13.5, color: AppColors.textSecondary.withValues(alpha: 0.7)),
+                    prefixIcon: const Icon(LucideIcons.phone, size: 18, color: AppColors.textSecondary),
+                    filled: true,
+                    fillColor: AppColors.cardSurface,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: AppColors.border)),
+                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: AppColors.border)),
+                    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: AppColors.primary, width: 1.5)),
                   ),
                 ),
                 if (phoneFeedback != null)
@@ -525,11 +553,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                 const SizedBox(height: 14),
-                const Text('Kata Sandi Saat Ini (Wajib jika ganti kata sandi)', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+                Text('Kata Sandi Saat Ini (Wajib jika ganti kata sandi)', style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
                 const SizedBox(height: 6),
                 TextField(
                   controller: currentPassCtrl,
                   obscureText: obscureCurrent,
+                  style: GoogleFonts.inter(fontSize: 13.5, color: AppColors.textPrimary),
                   onChanged: (_) {
                     if (currentPassError != null || generalErrorBanner != null) {
                       setModalState(() {
@@ -540,27 +569,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   },
                   decoration: InputDecoration(
                     hintText: 'Masukkan kata sandi lama/saat ini',
-                    prefixIcon: const Icon(LucideIcons.keyRound, size: 18),
+                    hintStyle: GoogleFonts.inter(fontSize: 13.5, color: AppColors.textSecondary.withValues(alpha: 0.7)),
+                    prefixIcon: const Icon(LucideIcons.keyRound, size: 18, color: AppColors.textSecondary),
                     suffixIcon: IconButton(
-                      icon: Icon(obscureCurrent ? LucideIcons.eyeOff : LucideIcons.eye, size: 18),
+                      icon: Icon(obscureCurrent ? LucideIcons.eyeOff : LucideIcons.eye, size: 18, color: AppColors.textSecondary),
                       onPressed: () => setModalState(() => obscureCurrent = !obscureCurrent),
                     ),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    filled: true,
+                    fillColor: AppColors.cardSurface,
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: AppColors.border)),
+                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: AppColors.border)),
+                    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: AppColors.primary, width: 1.5)),
                     errorText: currentPassError,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
                   ),
                 ),
                 const SizedBox(height: 14),
-                const Text('Kata Sandi Baru (Opsional)', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+                Text('Kata Sandi Baru (Opsional)', style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
                 const SizedBox(height: 2),
-                const Text(
+                Text(
                   'Ketentuan: Minimal 8 karakter, serta wajib memiliki setidaknya 1 huruf besar (A-Z) dan 1 angka (0-9).',
-                  style: TextStyle(fontSize: 11, color: AppColors.textSecondary, height: 1.3),
+                  style: GoogleFonts.inter(fontSize: 11, color: AppColors.textSecondary, height: 1.3),
                 ),
                 const SizedBox(height: 6),
                 TextField(
                   controller: passCtrl,
                   obscureText: obscurePass,
+                  style: GoogleFonts.inter(fontSize: 13.5, color: AppColors.textPrimary),
                   onChanged: (_) {
                     if (passError != null || generalErrorBanner != null) {
                       setModalState(() {
@@ -571,22 +606,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   },
                   decoration: InputDecoration(
                     hintText: 'Biarkan kosong jika tidak ingin mengubah',
-                    prefixIcon: const Icon(LucideIcons.lock, size: 18),
+                    hintStyle: GoogleFonts.inter(fontSize: 13.5, color: AppColors.textSecondary.withValues(alpha: 0.7)),
+                    prefixIcon: const Icon(LucideIcons.lock, size: 18, color: AppColors.textSecondary),
                     suffixIcon: IconButton(
-                      icon: Icon(obscurePass ? LucideIcons.eyeOff : LucideIcons.eye, size: 18),
+                      icon: Icon(obscurePass ? LucideIcons.eyeOff : LucideIcons.eye, size: 18, color: AppColors.textSecondary),
                       onPressed: () => setModalState(() => obscurePass = !obscurePass),
                     ),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    filled: true,
+                    fillColor: AppColors.cardSurface,
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: AppColors.border)),
+                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: AppColors.border)),
+                    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: AppColors.primary, width: 1.5)),
                     errorText: passError,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
                   ),
                 ),
                 const SizedBox(height: 14),
-                const Text('Konfirmasi Kata Sandi Baru', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+                Text('Konfirmasi Kata Sandi Baru', style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
                 const SizedBox(height: 6),
                 TextField(
                   controller: confirmPassCtrl,
                   obscureText: obscureConfirm,
+                  style: GoogleFonts.inter(fontSize: 13.5, color: AppColors.textPrimary),
                   onChanged: (_) {
                     if (confirmPassError != null || generalErrorBanner != null) {
                       setModalState(() {
@@ -597,14 +638,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   },
                   decoration: InputDecoration(
                     hintText: 'Ulangi kata sandi baru',
-                    prefixIcon: const Icon(LucideIcons.lockKeyhole, size: 18),
+                    hintStyle: GoogleFonts.inter(fontSize: 13.5, color: AppColors.textSecondary.withValues(alpha: 0.7)),
+                    prefixIcon: const Icon(LucideIcons.lockKeyhole, size: 18, color: AppColors.textSecondary),
                     suffixIcon: IconButton(
-                      icon: Icon(obscureConfirm ? LucideIcons.eyeOff : LucideIcons.eye, size: 18),
+                      icon: Icon(obscureConfirm ? LucideIcons.eyeOff : LucideIcons.eye, size: 18, color: AppColors.textSecondary),
                       onPressed: () => setModalState(() => obscureConfirm = !obscureConfirm),
                     ),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    filled: true,
+                    fillColor: AppColors.cardSurface,
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: AppColors.border)),
+                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: AppColors.border)),
+                    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: AppColors.primary, width: 1.5)),
                     errorText: confirmPassError,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -718,7 +764,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               }
                             }
 
-                            final messenger = ScaffoldMessenger.of(context);
                             setModalState(() => isSaving = true);
 
                             // Pengecekan nomor telepon di database sebelum simpan
@@ -763,12 +808,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 _user = res['user'] ?? _user?.copyWith(name: name, email: email, phone: phone);
                               });
                               if (ctx.mounted) Navigator.pop(ctx);
-                              messenger.showSnackBar(
-                                const SnackBar(
-                                  content: Text('Profil dan informasi akun Anda berhasil diperbarui!'),
-                                  backgroundColor: AppColors.statusVerified,
-                                ),
-                              );
+                              if (mounted) {
+                                showV2Toast(
+                                  this.context,
+                                  message: 'Profil dan informasi akun Anda berhasil diperbarui!',
+                                  type: V2ToastType.success,
+                                );
+                              }
                             } else {
                               final serverMsg = res['message'] as String? ?? 'Gagal memperbarui profil.';
                               setModalState(() {
@@ -840,10 +886,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: isPetugas
-                        ? [const Color(0xFF1E3A8A), const Color(0xFF1E40AF)]
+                        ? [AppColors.primary, AppColors.primaryLight]
                         : isGuest
                             ? [Colors.blueGrey.shade700, Colors.blueGrey.shade900]
-                            : [AppColors.primary, const Color(0xFF0F3E68)],
+                            : [AppColors.primary, AppColors.primaryLight],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
@@ -869,7 +915,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               Flexible(
                                 child: Text(
                                   isPetugas
-                                      ? 'KARTU IDENTITAS PETUGAS'
+                                      ? 'KARTU IDENTITAS PEKERJA'
                                       : isGuest
                                           ? 'KARTU TAMU'
                                           : 'KARTU WARGA TERDAFTAR',
@@ -883,18 +929,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         const SizedBox(width: 8),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                           decoration: BoxDecoration(
-                            color: isGuest ? Colors.white24 : AppColors.primaryLight,
-                            borderRadius: BorderRadius.circular(12),
+                            color: isGuest ? Colors.white24 : AppColors.statusCompleted,
+                            borderRadius: BorderRadius.circular(99),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(isPetugas ? LucideIcons.shieldAlert : (isGuest ? LucideIcons.userX : LucideIcons.badgeCheck), color: Colors.white, size: 12),
+                              Icon(isGuest ? LucideIcons.userX : LucideIcons.badgeCheck, color: Colors.white, size: 12),
                               const SizedBox(width: 4),
                               Text(
-                                isPetugas ? 'Petugas' : (isGuest ? 'Tamu' : 'Aktif'),
+                                isGuest ? 'Tamu' : 'Aktif',
                                 style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
                               ),
                             ],
@@ -912,7 +958,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                _user?.name ?? (isPetugas ? 'Petugas Lapangan' : 'Warga Kolaka Utara'),
+                                _user?.name ?? (isPetugas ? 'Pekerja Lapangan' : 'Warga Kolaka Utara'),
                                 style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
                               ),
                               const SizedBox(height: 4),
@@ -966,7 +1012,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               const Text('Peran Akun', style: TextStyle(color: Colors.white60, fontSize: 10)),
                               const SizedBox(height: 2),
                               Text(
-                                isPetugas ? 'Petugas Lapangan' : (isGuest ? 'Mode Tamu' : 'Warga Terdaftar'),
+                                isPetugas ? 'Pekerja Lapangan' : (isGuest ? 'Mode Tamu' : 'Warga Terdaftar'),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 textAlign: TextAlign.end,
@@ -977,20 +1023,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       ],
                     ),
-                    if (isPetugas && _myTeam != null) ...[
+                    if (isPetugas) ...[
                       const SizedBox(height: 12),
                       const Divider(color: Colors.white24, height: 1),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 10),
                       Row(
                         children: [
-                          const Icon(LucideIcons.shieldCheck, size: 14, color: Colors.white70),
-                          const SizedBox(width: 6),
+                          const Icon(LucideIcons.hardHat, size: 14, color: Colors.white70),
+                          const SizedBox(width: 8),
                           Expanded(
-                            child: Text(
-                              'Regu: ${_myTeam!['name']} (${_myTeam!['code'] ?? 'REGU'}) • Ketua Regu: ${_myTeam!['leader_name'] ?? '-'}',
-                              style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('Regu Penugasan', style: TextStyle(color: Colors.white60, fontSize: 10)),
+                                const SizedBox(height: 2),
+                                Text(
+                                  _myTeam != null
+                                      ? '${_myTeam!['name']}${_myTeam!['code'] != null ? ' (${_myTeam!['code']})' : ''}'
+                                      : 'Belum tergabung dalam regu',
+                                  style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
                             ),
                           ),
                         ],
@@ -1101,14 +1156,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 padding: const EdgeInsets.all(18),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
-                    colors: [Color(0xFF1E3A8A), Color(0xFF2563EB)],
+                    colors: [AppColors.primary, AppColors.primaryLight],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
                   borderRadius: BorderRadius.circular(18),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF1E3A8A).withValues(alpha: 0.3),
+                      color: AppColors.primary.withValues(alpha: 0.3),
                       blurRadius: 14,
                       offset: const Offset(0, 5),
                     ),
@@ -1146,12 +1201,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(LucideIcons.shieldCheck, size: 12, color: Color(0xFF1E3A8A)),
+                              const Icon(LucideIcons.shieldCheck, size: 12, color: AppColors.primary),
                               const SizedBox(width: 4),
                               Text(
                                 userRoleInTeam,
                                 style: const TextStyle(
-                                  color: Color(0xFF1E3A8A),
+                                  color: AppColors.primary,
                                   fontSize: 11,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -1243,7 +1298,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
               if (members.isNotEmpty)
                 ...members.map((m) {
-                  final name = m['name'] ?? 'Petugas Lapangan';
+                  final name = m['name'] ?? 'Pekerja Lapangan';
                   final role = m['role'] ?? 'Anggota Regu';
                   final isLeader = m['is_leader'] == true || role == 'Ketua Regu';
                   final phone = m['phone'] ?? '-';
@@ -1328,7 +1383,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             style: TextStyle(
                               fontSize: 10,
                               fontWeight: FontWeight.bold,
-                              color: isLeader ? const Color(0xFF1E40AF) : const Color(0xFF475569),
+                              color: isLeader ? AppColors.primary : const Color(0xFF475569),
                             ),
                           ),
                         ),
@@ -1367,7 +1422,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           color: const Color(0xFFDBEAFE),
                           borderRadius: BorderRadius.circular(6),
                         ),
-                        child: const Text('Ketua Regu', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Color(0xFF1E40AF))),
+                        child: const Text('Ketua Regu', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppColors.primary)),
                       ),
                     ],
                   ),
@@ -1432,7 +1487,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          isPetugas ? 'Panduan Teknis Petugas Lapangan' : 'Panduan Penggunaan Aplikasi',
+                          isPetugas ? 'Panduan Teknis Pekerja Lapangan' : 'Panduan Penggunaan Aplikasi',
                           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
                         ),
                         Text(
@@ -1514,12 +1569,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ] else ...[
                 _buildGuideCard(
                   step: '1',
-                  title: 'Pilih Tipe Pelaporan yang Sesuai',
+                  title: 'Pilih Metode & Tipe Pelaporan',
                   icon: LucideIcons.route,
                   color: AppColors.primary,
                   content:
-                      '• **Kerusakan Ringan (< 500m):** Untuk lubang jalan tunggal/spot, lampu jalan PJU mati, atau fasilitas umum (cukup 1 titik koordinat GPS).\n'
-                      '• **Kerusakan Berat (≥ 500m):** Khusus jalan rusak parah berskala panjang kontinu. Wajib menentukan **Titik Awal Ruas** dan **Titik Akhir Ruas** di peta.',
+                      '• Tekan **+ Buat Aduan Baru** lalu pilih **Analisis AI Cerdas** (deteksi otomatis) atau **Lapor Manual**.\n'
+                      '• **Titik (Ringan < 500m):** Untuk lubang jalan tunggal, lampu jalan PJU mati, atau fasilitas umum (1 titik koordinat).\n'
+                      '• **Ruas Jalan (Berat ≥ 500m):** Khusus jalan rusak parah berskala panjang. Tentukan **Titik Awal** dan **Titik Akhir** di peta.',
                 ),
                 const SizedBox(height: 12),
                 _buildGuideCard(
@@ -1550,7 +1606,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   color: AppColors.primary,
                   content:
                       '• Operator memverifikasi data laporan dalam **< 2 jam kerja**.\n'
-                      '• Petugas lapangan Dinas PUPR menyelesaikan lubang jalan maksimal **48 jam** dan jembatan kritis maksimal **24 jam**.\n'
+                      '• Pekerja lapangan Dinas PUPR menyelesaikan lubang jalan maksimal **48 jam** dan jembatan kritis maksimal **24 jam**.\n'
                       '• Anda akan menerima notifikasi status secara berkala: **Dikerjakan**, **Menunggu Validasi**, hingga **Tuntas**.',
                 ),
                 const SizedBox(height: 12),
@@ -1821,11 +1877,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: ElevatedButton(
                       onPressed: () {
                         Navigator.pop(ctx);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Pengaturan notifikasi berhasil disimpan.'),
-                            backgroundColor: AppColors.primary,
-                          ),
+                        showV2Toast(
+                          context,
+                          message: 'Pengaturan notifikasi berhasil disimpan.',
+                          type: V2ToastType.success,
                         );
                       },
                       style: ElevatedButton.styleFrom(
@@ -1981,8 +2036,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 setState(() => _currentBaseUrl = newUrl);
                 if (ctx.mounted) Navigator.pop(ctx);
                 if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Alamat server berhasil diperbarui!')),
+                  showV2Toast(
+                    context,
+                    message: 'Alamat server berhasil diperbarui!',
+                    type: V2ToastType.success,
                   );
                 }
               }
@@ -2027,17 +2084,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  String? _resolveAvatarNetworkUrl(String? raw) {
+    if (raw == null || raw.isEmpty) return null;
+    if (raw.startsWith('http://') || raw.startsWith('https://')) return raw;
+    if (raw.startsWith('/storage/') || raw.startsWith('storage/')) {
+      final origin = _currentBaseUrl.replaceAll(RegExp(r'/api/v1/?$'), '');
+      final cleanPath = raw.startsWith('/') ? raw : '/$raw';
+      return '$origin$cleanPath';
+    }
+    return null;
+  }
+
+  bool _canReadLocalFile(String? path) {
+    if (kIsWeb || path == null || path.isEmpty) return false;
+    try {
+      return File(path).existsSync();
+    } catch (_) {
+      return false;
+    }
+  }
+
   Widget _buildAvatarWidget({double size = 32}) {
     final isGuest = _user?.role == 'TAMU' || _user?.isAnonymous == true;
     final avatar = _user?.avatar;
 
     if (avatar != null && avatar.isNotEmpty) {
-      if (avatar.startsWith('http')) {
+      final netUrl = _resolveAvatarNetworkUrl(avatar);
+      if (netUrl != null) {
         return CircleAvatar(
           radius: size,
-          backgroundImage: NetworkImage(avatar),
+          backgroundImage: NetworkImage(netUrl),
         );
-      } else if (File(avatar).existsSync()) {
+      } else if (_canReadLocalFile(avatar)) {
         return CircleAvatar(
           radius: size,
           backgroundImage: FileImage(File(avatar)),
@@ -2063,14 +2141,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: const Text('Profil & Akun Pengguna', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        foregroundColor: AppColors.textPrimary,
-      ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
+      body: SafeArea(
+        bottom: false,
+        child: Column(
+          children: [
+            V2FloatingHeader(
+              title: 'Profil & Akun',
+              subtitle: isPetugas ? 'Pekerja Lapangan Dinas PUPR' : 'Pengguna SI-APPIK Kolaka Utara',
+              leading: Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: AppColors.primaryContainer,
+                  borderRadius: BorderRadius.circular(11),
+                  border: Border.all(color: AppColors.primaryBorder),
+                ),
+                child: const Icon(LucideIcons.user, size: 18, color: AppColors.primary),
+              ),
+            ),
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 110),
         children: [
           // Profile Header Card
           Container(
@@ -2111,7 +2202,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        _user?.name ?? (isPetugas ? 'Petugas Lapangan' : 'Warga Tamu'),
+                        _user?.name ?? (isPetugas ? 'Pekerja Lapangan' : 'Warga Tamu'),
                         style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
                       ),
                       const SizedBox(height: 4),
@@ -2144,7 +2235,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             const SizedBox(width: 4),
                             Text(
                               isPetugas
-                                  ? 'Petugas Lapangan Terdaftar'
+                                  ? 'Pekerja Lapangan Terdaftar'
                                   : (isGuest ? 'Mode Tamu / Anonim' : 'Warga Terdaftar'),
                               style: TextStyle(
                                 fontSize: 11,
@@ -2190,7 +2281,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     title: const Text('Preview Akun', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
                     subtitle: Text(
-                      isPetugas ? 'Lihat kartu identitas Petugas Teknis' : 'Lihat kartu identitas Warga Terdaftar',
+                      isPetugas ? 'Lihat kartu identitas Pekerja Lapangan' : 'Lihat kartu identitas Warga Terdaftar',
                       style: const TextStyle(fontSize: 11, color: AppColors.textSecondary),
                     ),
                     trailing: const Icon(LucideIcons.chevronRight, size: 18),
@@ -2335,17 +2426,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
             icon: const Icon(LucideIcons.logOut, size: 18),
             label: Text(isGuest ? 'Masuk dengan Akun Terdaftar' : 'Keluar dari Akun', style: const TextStyle(fontWeight: FontWeight.bold)),
             style: ElevatedButton.styleFrom(
-              backgroundColor: isGuest ? AppColors.primary : Colors.white,
-              foregroundColor: isGuest ? Colors.white : AppColors.primary,
+              backgroundColor: isGuest ? AppColors.primary : const Color(0xFFFEF2F2),
+              foregroundColor: isGuest ? Colors.white : AppColors.statusRejected,
               elevation: 0,
               padding: const EdgeInsets.symmetric(vertical: 14),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(14),
-                side: const BorderSide(color: Color(0xFFBFDBFE)),
+                side: BorderSide(color: isGuest ? AppColors.primary : const Color(0xFFFECACA)),
               ),
             ),
           ),
         ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

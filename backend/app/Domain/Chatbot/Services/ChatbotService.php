@@ -34,8 +34,8 @@ class ChatbotService
             if ($found) {
                 $statusMap = [
                     'SUBMITTED' => '⏳ Menunggu Verifikasi Operator Dinas',
-                    'VERIFIED' => '✅ Terverifikasi, Menunggu Disposisi Petugas Lapangan',
-                    'DISPATCHED' => '🚚 Ditugaskan ke Petugas Lapangan PUPR/Dishub',
+                    'VERIFIED' => '✅ Terverifikasi, Menunggu Disposisi Pekerja Lapangan',
+                    'DISPATCHED' => '🚚 Ditugaskan ke Pekerja Lapangan PUPR/Dishub',
                     'IN_PROGRESS' => '🛠️ Sedang Dikerjakan Secara Fisik di Lokasi',
                     'WAITING_VERIFICATION' => '🔍 Pekerjaan Selesai, Menunggu Validasi Operator',
                     'COMPLETED' => '🎉 SELESAI TUNTAS (Pekerjaan Telah Tervalidasi)',
@@ -67,12 +67,12 @@ class ChatbotService
             }
         }
 
-        // 2. Tanya Apa Itu Petugas Lapangan (Peran, Tugas, & Wewenang)
-        if (str_contains($lower, 'apa itu petugas') || str_contains($lower, 'petugas lapangan') || str_contains($lower, 'peran petugas') || str_contains($lower, 'tugas petugas') || str_contains($lower, 'siapa petugas')) {
+        // 2. Tanya Apa Itu Pekerja Lapangan (Peran, Tugas, & Wewenang)
+        if (str_contains($lower, 'apa itu petugas') || str_contains($lower, 'pekerja lapangan') || str_contains($lower, 'peran petugas') || str_contains($lower, 'tugas petugas') || str_contains($lower, 'siapa petugas')) {
             return [
                 'next_state' => self::STATE_START,
-                'reply' => "👷‍♂️ **Mengenal Peran Petugas Lapangan (Dinas PUPR & PRKP):**\n\n"
-                    . "Petugas Lapangan adalah **tim teknis operasional resmi** Pemerintah Kabupaten Kolaka Utara yang bertugas langsung di lokasi kejadian untuk menangani perbaikan fisik infrastruktur publik (jalan, jembatan, lampu penerangan jalan, drainase) berdasarkan Surat Perintah Kerja (SPK) dari Operator Dinas.\n\n"
+                'reply' => "👷‍♂️ **Mengenal Peran Pekerja Lapangan (Dinas PUPR & PRKP):**\n\n"
+                    . "Pekerja Lapangan adalah **tim teknis operasional resmi** Pemerintah Kabupaten Kolaka Utara yang bertugas langsung di lokasi kejadian untuk menangani perbaikan fisik infrastruktur publik (jalan, jembatan, lampu penerangan jalan, drainase) berdasarkan Surat Perintah Kerja (SPK) dari Operator Dinas.\n\n"
                     . "🔑 **Wewenang & Fitur Khusus di Aplikasi Mobile:**\n"
                     . "1. **Menerima Disposisi Tugas:** Memantau SPK penugasan pada tab *Tugas Aktif* lengkap dengan data koordinat GPS satelit dan foto laporan warga.\n"
                     . "2. **Navigasi Rute Nyata GIS (OSRM):** Menghubungkan langsung ke rute jalan nyata menuju titik kerusakan.\n"
@@ -99,7 +99,7 @@ class ChatbotService
                     . "   • Sistem akan otomatis mengirimkan kode OTP 6 digit ke email Anda.\n"
                     . "   • Masukkan kode OTP pada halaman verifikasi di aplikasi mobile sebelum waktu kedaluwarsa (5 menit).\n"
                     . "   • Akun Anda langsung aktif dan resmi menjadi **Warga Terdaftar**.\n\n"
-                    . "2. **Untuk Lupa / Reset Kata Sandi (Warga & Petugas Lapangan):**\n"
+                    . "2. **Untuk Lupa / Reset Kata Sandi (Warga & Pekerja Lapangan):**\n"
                     . "   • Pada halaman login aplikasi, tekan **'Lupa Kata Sandi?'**.\n"
                     . "   • Masukkan alamat email akun terdaftar Anda.\n"
                     . "   • Cek kotak masuk (Inbox) atau folder Spam pada email Anda untuk melihat 6 digit kode OTP.\n"
@@ -127,7 +127,7 @@ class ChatbotService
                     . "   • Masukkan alamat email akun Anda yang terdaftar.\n"
                     . "   • Buka email Anda dan salin 6 digit **Kode OTP** yang dikirimkan sistem.\n"
                     . "   • Masukkan kode OTP tersebut di aplikasi mobile dan masukkan kata sandi baru Anda.\n\n"
-                    . "👷‍♂️ **Catatan Khusus Petugas Lapangan:**\n"
+                    . "👷‍♂️ **Catatan Khusus Pekerja Lapangan:**\n"
                     . "Meskipun akun Petugas dibuatkan oleh Superadmin Dinas PUPR, Anda dapat mengubah atau mereset kata sandi Anda sendiri kapan saja melalui fitur di atas!",
                 'draft' => [],
                 'is_complete' => false,
@@ -146,7 +146,7 @@ class ChatbotService
                     . "• 📍 **Geofencing Kabupaten:** Menjamin seluruh aduan berada di dalam batas administratif 15 kecamatan Kolaka Utara.\n"
                     . "• ⏱️ **Transparansi SLA:** Batas waktu penanganan terbuka (Jembatan darurat 24 jam, Jalan berlubang 48 jam, Lampu PJU 72 jam).\n"
                     . "• 🔒 **Perlindungan Privasi:** Nomor HP pelapor disamarkan untuk sesama warga demi menjaga keamanan data pribadi.\n"
-                    . "• 👷‍♂️ **Integrasi Petugas Lapangan:** Petugas URC langsung menerima SPK disposisi dan menuju lokasi via navigasi GIS terintegrasi.",
+                    . "• 👷‍♂️ **Integrasi Pekerja Lapangan:** Petugas URC langsung menerima SPK disposisi dan menuju lokasi via navigasi GIS terintegrasi.",
                 'draft' => [],
                 'is_complete' => false,
             ];
@@ -160,7 +160,7 @@ class ChatbotService
                     . "Demi menjaga kenyamanan dan keamanan data pribadi masyarakat Kolaka Utara:\n"
                     . "• **Untuk Warga Lain:** Nomor telepon pelapor disamarkan (contoh: *******890) dan dikunci dengan ikon gembok privasi.\n"
                     . "• **Untuk Pelapor Asli:** Anda dapat melihat nomor telepon Anda sendiri pada rincian laporan yang Anda buat.\n"
-                    . "• **Untuk Petugas Lapangan & Operator:** Nomor telepon pelapor dapat dilihat secara utuh agar petugas dapat menghubungi pelapor jika membutuhkan panduan titik lokasi kerusakan di lapangan.",
+                    . "• **Untuk Pekerja Lapangan & Operator:** Nomor telepon pelapor dapat dilihat secara utuh agar petugas dapat menghubungi pelapor jika membutuhkan panduan titik lokasi kerusakan di lapangan.",
                 'draft' => [],
                 'is_complete' => false,
             ];
@@ -240,7 +240,7 @@ class ChatbotService
                 'reply' => "⏱️ **Alur Kerja & Standar Waktu Penanganan (SLA Dinas):**\n\n"
                     . "1. **Pengajuan Laporan (`SUBMITTED`)** → Warga mengirim laporan disertai foto & GPS.\n"
                     . "2. **Verifikasi Operator (`VERIFIED`)** → Operator Dinas PUPR/Dishub memeriksa keabsahan data (< 2 jam kerja).\n"
-                    . "3. **Disposisi Petugas (`DISPATCHED`)** → Diteruskan ke tim petugas teknis lapangan terkait.\n"
+                    . "3. **Disposisi Petugas (`DISPATCHED`)** → Diteruskan ke tim pekerja lapangan terkait.\n"
                     . "4. **Penanganan Fisik di Lapangan (`IN_PROGRESS`)**:\n"
                     . "   • **Lubang / Titik Ringan:** Maksimal 48 Jam (2 Hari Kerja)\n"
                     . "   • **Jembatan Darurat / Kritis:** Maksimal 24 Jam (Prioritas Darurat)\n"
@@ -260,7 +260,7 @@ class ChatbotService
                 'reply' => "👥 **Peran dalam Sistem Pengaduan Kolaka Utara:**\n\n"
                     . "• **Warga Terdaftar:** Warga yang login dengan akun terdaftar resmi. Memiliki akses penuh ke riwayat laporan terpusat, notifikasi real-time, preview identitas akun, foto profil, dan pemantauan tiket aduan.\n"
                     . "• **Mode Tamu / Anonim:** Pengguna yang melapor tanpa login. Identitas nama dan kontak tidak ditampilkan pada publik demi privasi.\n"
-                    . "• **Petugas Lapangan:** Tim teknis lapangan Dinas PUPR/Dishub yang menerima surat perintah tugas, datang ke lokasi via GPS, melakukan pengerjaan fisik, dan mengunggah foto bukti penyelesaian.\n"
+                    . "• **Pekerja Lapangan:** Tim teknis lapangan Dinas PUPR/Dishub yang menerima surat perintah tugas, datang ke lokasi via GPS, melakukan pengerjaan fisik, dan mengunggah foto bukti penyelesaian.\n"
                     . "• **Operator Dinas:** Memverifikasi laporan masuk, menentukan prioritas, meneruskan disposisi, dan memvalidasi hasil kerja lapangan.\n"
                     . "• **Bupati / Pimpinan Daerah:** Memantau peta persebaran laporan GIS dan statistik kinerja penanganan se-Kabupaten Kolaka Utara secara real-time.",
                 'draft' => [],
@@ -315,7 +315,7 @@ class ChatbotService
         if (str_contains($lower, 'pakai aplikasi') || str_contains($lower, 'menggunakan aplikasi') || (str_contains($lower, 'aplikasi') && $role === 'PETUGAS')) {
             return [
                 'next_state' => self::STATE_START,
-                'reply' => "📱 **Panduan Penggunaan Aplikasi untuk Petugas Lapangan:**\n\n"
+                'reply' => "📱 **Panduan Penggunaan Aplikasi untuk Pekerja Lapangan:**\n\n"
                     . "1. **Kotak Ringkasan (KPI):** Memantau Total Aduan, Menunggu Verifikasi, Ditugaskan, Dikerjakan, Menunggu Validasi, dan Tuntas se-Kabupaten.\n"
                     . "2. **Filter Tugas:** Beralih antara *Semua Tugas* (tugas tim) dan *Tugas Saya* (tugas yang ditugaskan khusus ke regu Anda).\n"
                     . "3. **Mulai Kerja & Peta GIS:** Tekan kartu tugas untuk rute jalan nyata (OSRM) menuju koordinat GPS.\n"
@@ -346,7 +346,7 @@ class ChatbotService
             return [
                 'next_state' => self::STATE_START,
                 'reply' => "⚠️ **Aturan Batas Maksimal 3 Tugas Aktif:**\n\n"
-                    . "• Setiap petugas lapangan dibatasi maksimal mengerjakan **3 tugas berstatus 'Sedang Dikerjakan'** secara bersamaan.\n"
+                    . "• Setiap pekerja lapangan dibatasi maksimal mengerjakan **3 tugas berstatus 'Sedang Dikerjakan'** secara bersamaan.\n"
                     . "• Jika kuota 3 tugas terpenuhi, sistem akan memblokir tombol *Mulai Kerja Lapangan* untuk tugas ke-4.\n"
                     . "• Selesaikan dan kirimkan bukti foto minimal salah satu tugas terlebih dahulu agar kuota aktif kembali tersedia.",
                 'draft' => [],
@@ -359,7 +359,7 @@ class ChatbotService
             if ($role === 'PETUGAS') {
                 return [
                     'next_state' => self::STATE_START,
-                    'reply' => "📱 **Panduan Penggunaan Aplikasi untuk Petugas Lapangan:**\n\n"
+                    'reply' => "📱 **Panduan Penggunaan Aplikasi untuk Pekerja Lapangan:**\n\n"
                         . "1. **Kotak Ringkasan (KPI):** Memantau Total Aduan, Menunggu Verifikasi, Ditugaskan, Dikerjakan, Menunggu Validasi, dan Tuntas se-Kabupaten.\n"
                         . "2. **Filter Tugas:** Beralih antara *Semua Tugas* (tugas tim) dan *Tugas Saya* (tugas yang sedang Anda kerjakan).\n"
                         . "3. **Mulai Kerja & Peta GIS:** Tekan kartu tugas untuk rute jalan nyata (OSRM) menuju koordinat GPS.\n"
@@ -384,11 +384,11 @@ class ChatbotService
             ];
         }
 
-        // 16. Tanya SOP Petugas Lapangan & Teknis Pengerjaan
+        // 16. Tanya SOP Pekerja Lapangan & Teknis Pengerjaan
         if (str_contains($lower, 'sop') || str_contains($lower, 'spk') || str_contains($lower, 'pengerjaan') || str_contains($lower, 'tugas lapangan')) {
             return [
                 'next_state' => self::STATE_START,
-                'reply' => "🛠️ **Panduan Teknis & SOP Petugas Lapangan PUPR:**\n\n"
+                'reply' => "🛠️ **Panduan Teknis & SOP Pekerja Lapangan PUPR:**\n\n"
                     . "1. **Penerimaan SPK Tugas:** Operator mendisposisikan tiket aduan ke akun Anda. Buka menu *Tugas Aktif* untuk melihat rincian lokasi GPS, foto kerusakan warga, dan batas waktu SLA.\n"
                     . "2. **Mulai Bekerja (`Mulai Kerjakan`):** Tekan tombol *Mulai Kerjakan* sesampainya di lokasi agar operator & warga mengetahui pengerjaan fisik sedang berjalan (`IN_PROGRESS`).\n"
                     . "3. **SOP Perbaikan Standar PUPR & Dishub:**\n"
@@ -436,7 +436,7 @@ class ChatbotService
         if (str_contains($lower, 'k3') || str_contains($lower, 'helm') || str_contains($lower, 'rompi') || str_contains($lower, 'safety') || str_contains($lower, 'rambu') || str_contains($lower, 'selamat')) {
             return [
                 'next_state' => self::STATE_START,
-                'reply' => "🛡️ **Standar K3 & Keselamatan Petugas Lapangan PUPR:**\n\n"
+                'reply' => "🛡️ **Standar K3 & Keselamatan Pekerja Lapangan PUPR:**\n\n"
                     . "1. **APD Wajib:** Rompi keselamatan reflektif (high-visibility), helm proyek (hard hat), sarung tangan kerja, dan sepatu safety.\n"
                     . "2. **Rambu Pengaman Jalan:** Pasang traffic cone dan rambu peringatan pekerjaan jalan minimal 50 meter sebelum titik penanganan.\n"
                     . "3. **Petugas Pemandu (Flagman):** Tugaskan 1 orang rekan untuk mengatur buka-tutup lalu lintas jika jalan sempit.\n"
@@ -454,8 +454,8 @@ class ChatbotService
                 if ($isPetugas) {
                     return [
                         'next_state' => self::STATE_START,
-                        'reply' => "Halo Rekan Petugas Lapangan Dinas PUPR! 👷‍♂️\nSaya **Asisten Teknis SI-APPIK** Kabupaten Kolaka Utara. Siap memandu operasional aplikasi Anda:\n\n"
-                            . "• 👷‍♂️ Ketik **'Apa Itu Petugas Lapangan'** (peran, tugas, & wewenang)\n"
+                        'reply' => "Halo Rekan Pekerja Lapangan Dinas PUPR! 👷‍♂️\nSaya **Asisten Teknis SI-APPIK** Kabupaten Kolaka Utara. Siap memandu operasional aplikasi Anda:\n\n"
+                            . "• 👷‍♂️ Ketik **'Apa Itu Pekerja Lapangan'** (peran, tugas, & wewenang)\n"
                             . "• 📋 Ketik **'Cara Mengambil Tugas'** (panduan ambil & mulai tugas SPK)\n"
                             . "• 📱 Ketik **'Tentang Aplikasi'** (cara kerja aplikasi & navigasi GIS)\n"
                             . "• ✉️ Ketik **'Verifikasi OTP'** (panduan kode OTP & keamanan)\n"

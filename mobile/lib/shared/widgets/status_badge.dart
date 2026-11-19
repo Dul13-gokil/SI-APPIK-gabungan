@@ -25,6 +25,8 @@ class StatusBadge extends StatelessWidget {
         return AppColors.statusCompleted;
       case 'REJECTED':
         return AppColors.statusRejected;
+      case 'CANCELLED':
+        return AppColors.textSecondary;
       case 'REVISION_REQUIRED':
         return AppColors.accent;
       default:
@@ -55,6 +57,8 @@ class StatusBadge extends StatelessWidget {
         return 'Ditutup';
       case 'REJECTED':
         return 'Ditolak';
+      case 'CANCELLED':
+        return 'Dibatalkan';
       default:
         return status;
     }

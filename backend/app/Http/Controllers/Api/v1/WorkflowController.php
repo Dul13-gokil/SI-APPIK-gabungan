@@ -207,7 +207,7 @@ class WorkflowController extends Controller
     }
 
     /**
-     * Petugas Lapangan mulai pengerjaan laporan.
+     * Pekerja Lapangan mulai pengerjaan laporan.
      * Hanya diizinkan jika status sudah VERIFIED atau DISPATCHED.
      */
     public function startWork(Request $request, int $id): JsonResponse
@@ -251,7 +251,7 @@ class WorkflowController extends Controller
         DB::transaction(function () use ($complaint, $oldStatus, $newStatus, $request) {
             $complaint->update(['status' => $newStatus]);
             $worker = $request->user();
-            $workerName = $worker?->name ?? 'Petugas Lapangan';
+            $workerName = $worker?->name ?? 'Pekerja Lapangan';
             $workerTeam = $worker?->currentTeam();
 
             if ($complaint->latestDisposition) {
@@ -270,7 +270,7 @@ class WorkflowController extends Controller
                 'complaint_id' => $complaint->id,
                 'from_status'  => $oldStatus,
                 'to_status'    => $newStatus,
-                'note'         => "Petugas lapangan {$workerName}{$teamStr} telah mengambil laporan dan memulai proses perbaikan fisik di lokasi.",
+                'note'         => "Pekerja lapangan {$workerName}{$teamStr} telah mengambil laporan dan memulai proses perbaikan fisik di lokasi.",
                 'changed_by'   => $worker?->id,
             ]);
 
@@ -278,7 +278,7 @@ class WorkflowController extends Controller
                 $complaint,
                 'COMPLAINT_IN_PROGRESS',
                 'Laporan Sedang Dikerjakan',
-                "Petugas Lapangan {$workerName}{$teamStr} telah mengambil laporan Anda (#{$complaint->public_code}: \"{$complaint->title}\") dan saat ini berstatus Dikerjakan untuk segera dilakukan perbaikan fisik di lokasi."
+                "Pekerja Lapangan {$workerName}{$teamStr} telah mengambil laporan Anda (#{$complaint->public_code}: \"{$complaint->title}\") dan saat ini berstatus Dikerjakan untuk segera dilakukan perbaikan fisik di lokasi."
             );
         });
 
@@ -286,7 +286,7 @@ class WorkflowController extends Controller
     }
 
     /**
-     * Petugas Lapangan menyelesaikan pekerjaan dan mengunggah bukti selesai.
+     * Pekerja Lapangan menyelesaikan pekerjaan dan mengunggah bukti selesai.
      */
     public function finishWork(Request $request, int $id): JsonResponse
     {
@@ -347,14 +347,22 @@ class WorkflowController extends Controller
             }
 
             foreach ($photos as $photo) {
-                $realPath = $photo->getRealPath();
-                $fileData = ($hasFileDataCol && $realPath && file_exists($realPath)) ? base64_encode(file_get_contents($realPath)) : null;
                 $path = $photo->store('resolutions', 'public');
+                $storedAbsPath = \Illuminate\Support\Facades\Storage::disk('public')->path($path);
+                app(\App\Services\ImageWatermarkService::class)->applyFieldWatermark(
+                    $storedAbsPath,
+                    (string) $complaint->public_code,
+                    $complaint->latitude ? (float) $complaint->latitude : null,
+                    $complaint->longitude ? (float) $complaint->longitude : null,
+                    $user?->name
+                );
+                $realPath = is_file($storedAbsPath) ? $storedAbsPath : $photo->getRealPath();
+                $fileData = ($hasFileDataCol && $realPath && file_exists($realPath)) ? base64_encode(file_get_contents($realPath)) : null;
                 $photoAttrs = [
                     'complaint_id' => $complaint->id,
                     'storage_key'  => $path,
                     'url'          => null,
-                    'caption'      => 'Bukti Pekerjaan Selesai (Petugas Lapangan)',
+                    'caption'      => 'Bukti Pekerjaan Selesai (Pekerja Lapangan)',
                     'type'         => 'resolution_after',
                     'mime'         => $photo->getClientMimeType(),
                     'size'         => $photo->getSize(),
@@ -387,7 +395,7 @@ class WorkflowController extends Controller
     }
 
     /**
-     * Operator melakukan validasi akhir atas hasil kerja petugas lapangan.
+     * Operator melakukan validasi akhir atas hasil kerja pekerja lapangan.
      */
     public function validateResolution(Request $request, int $id): JsonResponse
     {

@@ -6,8 +6,10 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../core/auth/auth_service.dart';
 import '../../../core/config/app_config.dart';
 import '../../../shared/theme/app_colors.dart';
+import '../../../shared/widgets/v2_toast.dart';
 import '../../navigation/presentation/main_navigation_screen.dart';
 import 'register_screen.dart';
+import 'widgets/auth_ui_helpers.dart';
 
 class LoginScreen extends StatefulWidget {
   final String? initialErrorMessage;
@@ -299,7 +301,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'Aplikasi mobile dikhususkan untuk Warga Masyarakat dan Petugas Lapangan PUPR.',
+                      'Aplikasi mobile dikhususkan untuk Warga Masyarakat dan Pekerja Lapangan PUPR.',
                       style: TextStyle(fontSize: 12, color: Colors.blue.shade900),
                     ),
                   ),
@@ -328,8 +330,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 await launchUrl(uri, mode: LaunchMode.externalApplication);
               } catch (_) {
                 if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Silakan buka di browser: $webUrl')),
+                  showV2Toast(
+                    context,
+                    message: 'Silakan buka di browser: $webUrl',
+                    type: V2ToastType.info,
                   );
                 }
               }
@@ -582,149 +586,274 @@ class _LoginScreenState extends State<LoginScreen> {
                       width: 40,
                       height: 4,
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade300,
-                        borderRadius: BorderRadius.circular(2),
+                        color: AppColors.border,
+                        borderRadius: BorderRadius.circular(4),
                       ),
                     ),
                   ),
                   const SizedBox(height: 16),
+
+                  // Header Modal (Ikon + Judul + Tombol Tutup X)
                   Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.all(8),
+                        width: 42,
+                        height: 42,
                         decoration: BoxDecoration(
-                          color: AppColors.primary.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(10),
+                          color: AppColors.primaryContainer,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: AppColors.primaryBorder),
                         ),
                         child: const Icon(LucideIcons.keyRound, color: AppColors.primary, size: 20),
                       ),
-                      const SizedBox(width: 10),
-                      Text(
-                        currentStep == 1 ? 'Lupa Kata Sandi' : 'Verifikasi OTP & Sandi Baru',
-                        style: GoogleFonts.outfit(fontSize: 17, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Atur Ulang Kata Sandi',
+                              style: GoogleFonts.outfit(
+                                fontSize: 17,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.textPrimary,
+                              ),
+                            ),
+                            Text(
+                              'Verifikasi OTP Resmi SI-APPIK',
+                              style: GoogleFonts.inter(
+                                fontSize: 11.5,
+                                color: AppColors.textSecondary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () => Navigator.of(bCtx).pop(),
+                        borderRadius: BorderRadius.circular(10),
+                        child: Container(
+                          width: 36,
+                          height: 36,
+                          decoration: BoxDecoration(
+                            color: AppColors.cardSurface,
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: AppColors.border),
+                          ),
+                          child: const Icon(LucideIcons.x, size: 16, color: AppColors.textSecondary),
+                        ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 6),
-                  Text(
-                    currentStep == 1
-                        ? 'Layanan atur ulang sandi mandiri untuk akun Warga dan Petugas Lapangan. Masukkan email Anda untuk menerima kode OTP 6-digit.'
-                        : 'Masukkan 6 digit kode OTP yang telah dikirimkan ke ${emailCtrl.text.trim()} beserta kata sandi baru Anda.',
-                    style: GoogleFonts.inter(fontSize: 12, color: AppColors.textSecondary),
-                  ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 14),
 
-                  if (modalError != null)
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 12),
-                      padding: const EdgeInsets.all(10),
+                  // Indikator Langkah 1 / 2
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
-                        color: AppColors.statusRejected.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: AppColors.statusRejected.withValues(alpha: 0.3)),
+                        color: currentStep == 1
+                            ? AppColors.primaryContainer
+                            : AppColors.statusCompleted.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(99),
+                        border: Border.all(
+                          color: currentStep == 1
+                              ? AppColors.primaryBorder
+                              : AppColors.statusCompleted.withValues(alpha: 0.3),
+                        ),
                       ),
                       child: Text(
-                        modalError!,
-                        style: GoogleFonts.inter(color: AppColors.statusRejected, fontSize: 12),
+                        currentStep == 1
+                            ? 'Langkah 1 dari 2 • Verifikasi Email'
+                            : 'Langkah 2 dari 2 • Buat Sandi Baru',
+                        style: GoogleFonts.inter(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                          color: currentStep == 1 ? AppColors.primary : AppColors.statusCompleted,
+                        ),
                       ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+
+                  if (currentStep == 1)
+                    Text(
+                      'Masukkan alamat email terdaftar Anda untuk menerima kode OTP 6-digit.',
+                      style: GoogleFonts.inter(
+                        fontSize: 12.5,
+                        color: AppColors.textSecondary,
+                        height: 1.45,
+                      ),
+                    )
+                  else
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: AppColors.cardSurface,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: AppColors.border),
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              'OTP dikirim ke ${emailCtrl.text.trim()}',
+                              style: GoogleFonts.inter(fontSize: 12, color: AppColors.textSecondary),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          GestureDetector(
+                            onTap: isSubmitting
+                                ? null
+                                : () {
+                                    setModalState(() {
+                                      currentStep = 1;
+                                      modalError = null;
+                                      modalSuccess = null;
+                                    });
+                                  },
+                            child: Text(
+                              'Ganti',
+                              style: GoogleFonts.inter(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.primary,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  const SizedBox(height: 14),
+
+                  if (modalError != null)
+                    AuthStatusBanner(
+                      message: modalError!,
+                      icon: LucideIcons.alertCircle,
+                      color: AppColors.statusRejected,
                     ),
 
                   if (modalSuccess != null)
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 12),
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: AppColors.statusCompleted.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: AppColors.statusCompleted.withValues(alpha: 0.3)),
-                      ),
-                      child: Text(
-                        modalSuccess!,
-                        style: GoogleFonts.inter(color: AppColors.statusCompleted, fontSize: 12),
-                      ),
+                    AuthStatusBanner(
+                      message: modalSuccess!,
+                      icon: LucideIcons.checkCircle,
+                      color: AppColors.statusCompleted,
                     ),
 
                   if (currentStep == 1) ...[
+                    Text(
+                      'Email Akun Terdaftar',
+                      style: GoogleFonts.inter(
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
                     TextFormField(
                       controller: emailCtrl,
                       keyboardType: TextInputType.emailAddress,
-                      decoration: InputDecoration(
-                        labelText: 'Email Akun Terdaftar',
+                      style: GoogleFonts.inter(fontSize: 13.5, color: AppColors.textPrimary),
+                      decoration: buildAuthInputDecoration(
                         hintText: 'nama@email.com',
-                        prefixIcon: const Icon(LucideIcons.mail, size: 18),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                        prefixIcon: LucideIcons.mail,
                       ),
                       validator: (v) => (v == null || v.trim().isEmpty) ? 'Email wajib diisi' : null,
                     ),
                     const SizedBox(height: 18),
-                    ElevatedButton(
-                      onPressed: isSubmitting
-                          ? null
-                          : () async {
-                              if (!modalFormKey.currentState!.validate()) return;
-                              setModalState(() {
-                                isSubmitting = true;
-                                modalError = null;
-                                modalSuccess = null;
-                              });
+                    SizedBox(
+                      height: 50,
+                      child: ElevatedButton(
+                        onPressed: isSubmitting
+                            ? null
+                            : () async {
+                                if (!modalFormKey.currentState!.validate()) return;
+                                setModalState(() {
+                                  isSubmitting = true;
+                                  modalError = null;
+                                  modalSuccess = null;
+                                });
 
-                              final res = await _authService.sendForgotPasswordOtp(emailCtrl.text.trim());
+                                final res = await _authService.sendForgotPasswordOtp(emailCtrl.text.trim());
 
-                              if (!mounted) return;
-                              setModalState(() {
-                                isSubmitting = false;
-                                if (res['success'] == true) {
-                                  currentStep = 2;
-                                  modalSuccess = res['message'] ?? 'Kode OTP telah dikirimkan ke email.';
-                                } else {
-                                  modalError = res['message'] ?? 'Gagal mengirim kode OTP.';
-                                }
-                              });
-                            },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                if (!mounted) return;
+                                setModalState(() {
+                                  isSubmitting = false;
+                                  if (res['success'] == true) {
+                                    currentStep = 2;
+                                    modalSuccess = res['message'] ?? 'Kode OTP telah dikirimkan ke email.';
+                                  } else {
+                                    modalError = res['message'] ?? 'Gagal mengirim kode OTP.';
+                                  }
+                                });
+                              },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                        ),
+                        child: isSubmitting
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                              )
+                            : Text(
+                                'Kirim Kode OTP ke Email',
+                                style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.bold),
+                              ),
                       ),
-                      child: isSubmitting
-                          ? const SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-                            )
-                          : Text('Kirim Kode OTP ke Email', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
                     ),
                   ] else ...[
-                    // Step 2: Masukkan Kode OTP & Sandi Baru
+                    Text(
+                      'Kode OTP 6 Digit',
+                      style: GoogleFonts.inter(
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
                     TextFormField(
                       controller: otpCtrl,
                       keyboardType: TextInputType.number,
                       maxLength: 6,
-                      decoration: InputDecoration(
-                        labelText: 'Kode OTP (6 Digit)',
-                        prefixIcon: const Icon(LucideIcons.shieldCheck, size: 18),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                        counterText: '',
-                      ),
+                      style: GoogleFonts.inter(fontSize: 13.5, color: AppColors.textPrimary),
+                      decoration: buildAuthInputDecoration(
+                        hintText: 'Masukkan 6 digit kode OTP',
+                        prefixIcon: LucideIcons.shieldCheck,
+                      ).copyWith(counterText: ''),
                       validator: (v) => (v == null || v.trim().length != 6) ? 'Kode OTP harus 6 digit' : null,
                     ),
                     const SizedBox(height: 12),
 
+                    Text(
+                      'Kata Sandi Baru',
+                      style: GoogleFonts.inter(
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
                     TextFormField(
                       controller: newPassCtrl,
                       obscureText: obscureNew,
-                      decoration: InputDecoration(
-                        labelText: 'Kata Sandi Baru',
-                        prefixIcon: const Icon(LucideIcons.lock, size: 18),
+                      style: GoogleFonts.inter(fontSize: 13.5, color: AppColors.textPrimary),
+                      decoration: buildAuthInputDecoration(
+                        hintText: 'Min. 8 karakter (huruf besar, kecil, angka)',
+                        prefixIcon: LucideIcons.lock,
                         suffixIcon: IconButton(
-                          icon: Icon(obscureNew ? LucideIcons.eyeOff : LucideIcons.eye, size: 18),
+                          icon: Icon(
+                            obscureNew ? LucideIcons.eyeOff : LucideIcons.eye,
+                            size: 18,
+                            color: AppColors.textSecondary,
+                          ),
                           onPressed: () => setModalState(() => obscureNew = !obscureNew),
                         ),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                       ),
                       validator: (v) {
                         if (v == null || v.length < 8) return 'Minimal 8 karakter';
@@ -736,86 +865,111 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 12),
 
+                    Text(
+                      'Konfirmasi Kata Sandi Baru',
+                      style: GoogleFonts.inter(
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
                     TextFormField(
                       controller: confirmPassCtrl,
                       obscureText: obscureConfirm,
-                      decoration: InputDecoration(
-                        labelText: 'Konfirmasi Kata Sandi Baru',
-                        prefixIcon: const Icon(LucideIcons.lock, size: 18),
+                      style: GoogleFonts.inter(fontSize: 13.5, color: AppColors.textPrimary),
+                      decoration: buildAuthInputDecoration(
+                        hintText: 'Ulangi kata sandi baru',
+                        prefixIcon: LucideIcons.lock,
                         suffixIcon: IconButton(
-                          icon: Icon(obscureConfirm ? LucideIcons.eyeOff : LucideIcons.eye, size: 18),
+                          icon: Icon(
+                            obscureConfirm ? LucideIcons.eyeOff : LucideIcons.eye,
+                            size: 18,
+                            color: AppColors.textSecondary,
+                          ),
                           onPressed: () => setModalState(() => obscureConfirm = !obscureConfirm),
                         ),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                       ),
                       validator: (v) => v != newPassCtrl.text ? 'Konfirmasi kata sandi tidak cocok' : null,
                     ),
                     const SizedBox(height: 18),
 
-                    ElevatedButton(
-                      onPressed: isSubmitting
-                          ? null
-                          : () async {
-                              if (!modalFormKey.currentState!.validate()) return;
-                              setModalState(() {
-                                isSubmitting = true;
-                                modalError = null;
-                              });
-
-                              final nav = Navigator.of(bCtx);
-                              final messenger = ScaffoldMessenger.of(context);
-
-                              final res = await _authService.forgotPassword(
-                                email: emailCtrl.text.trim(),
-                                otp: otpCtrl.text.trim(),
-                                password: newPassCtrl.text,
-                                passwordConfirmation: confirmPassCtrl.text,
-                              );
-
-                              if (!mounted) return;
-
-                              if (res['success'] == true) {
-                                nav.pop();
-                                messenger.showSnackBar(
-                                  SnackBar(
-                                    content: Text(res['message'] ?? 'Kata sandi berhasil diatur ulang! Silakan masuk.'),
-                                    backgroundColor: AppColors.statusCompleted,
-                                  ),
-                                );
-                              } else {
+                    SizedBox(
+                      height: 50,
+                      child: ElevatedButton(
+                        onPressed: isSubmitting
+                            ? null
+                            : () async {
+                                if (!modalFormKey.currentState!.validate()) return;
                                 setModalState(() {
-                                  isSubmitting = false;
-                                  modalError = res['message'] ?? 'Gagal memperbarui kata sandi. Pastikan kode OTP benar.';
+                                  isSubmitting = true;
+                                  modalError = null;
                                 });
-                              }
-                            },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+
+                                final nav = Navigator.of(bCtx);
+
+                                final res = await _authService.forgotPassword(
+                                  email: emailCtrl.text.trim(),
+                                  otp: otpCtrl.text.trim(),
+                                  password: newPassCtrl.text,
+                                  passwordConfirmation: confirmPassCtrl.text,
+                                );
+
+                                if (!mounted) return;
+
+                                if (res['success'] == true) {
+                                  nav.pop();
+                                  showV2Toast(
+                                    this.context,
+                                    message: res['message'] ?? 'Kata sandi berhasil diatur ulang! Silakan masuk.',
+                                    type: V2ToastType.success,
+                                  );
+                                } else {
+                                  setModalState(() {
+                                    isSubmitting = false;
+                                    modalError = res['message'] ?? 'Gagal memperbarui kata sandi. Pastikan kode OTP benar.';
+                                  });
+                                }
+                              },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                        ),
+                        child: isSubmitting
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                              )
+                            : Text(
+                                'Simpan Kata Sandi Baru',
+                                style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.bold),
+                              ),
                       ),
-                      child: isSubmitting
-                          ? const SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-                            )
-                          : Text('Verifikasi OTP & Simpan Kata Sandi', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
                     ),
                     const SizedBox(height: 8),
-                    TextButton(
-                      onPressed: isSubmitting
-                          ? null
-                          : () {
-                              setModalState(() {
-                                currentStep = 1;
-                                modalError = null;
-                                modalSuccess = null;
-                              });
-                            },
-                      child: Text('Kirim Ulang Kode / Ganti Email', style: GoogleFonts.inter(color: AppColors.textSecondary, fontSize: 12)),
+                    Center(
+                      child: TextButton(
+                        onPressed: isSubmitting
+                            ? null
+                            : () {
+                                setModalState(() {
+                                  currentStep = 1;
+                                  modalError = null;
+                                  modalSuccess = null;
+                                });
+                              },
+                        child: Text(
+                          'Kirim Ulang Kode / Ganti Email',
+                          style: GoogleFonts.inter(
+                            color: AppColors.textSecondary,
+                            fontSize: 12.5,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ],
@@ -834,22 +988,22 @@ class _LoginScreenState extends State<LoginScreen> {
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
             child: Form(
               key: _formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Brand Logo & Header
+                  // Header Brand Ringkas (Selaras Web Mobile V2)
                   Center(
                     child: Container(
-                      width: 90,
-                      height: 90,
-                      padding: const EdgeInsets.all(8),
+                      width: 56,
+                      height: 56,
+                      padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(24),
-                        border: Border.all(color: AppColors.border),
+                        color: AppColors.primaryContainer,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: AppColors.primaryBorder),
                       ),
                       child: Image.asset(
                         'assets/images/logo_pin.png',
@@ -857,223 +1011,228 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10),
                   Center(
                     child: Text(
                       'SI-APPIK',
                       style: GoogleFonts.outfit(
-                        fontSize: 28,
-                        fontWeight: FontWeight.w900,
+                        fontSize: 22,
+                        fontWeight: FontWeight.w800,
                         color: AppColors.textPrimary,
-                        letterSpacing: 0.5,
+                        letterSpacing: -0.3,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 6),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                  const SizedBox(height: 2),
+                  Center(
                     child: Text(
-                      'Sistem Informasi Aduan & Penanganan\nPrasarana Infrastruktur Kabupaten',
+                      'Kabupaten Kolaka Utara • Sulawesi Tenggara',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.inter(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                         color: AppColors.textSecondary,
-                        height: 1.4,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 32),
-
-                  // Error Message Banner
-                  if (_errorMessage != null)
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 20),
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: AppColors.statusRejected.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: AppColors.statusRejected.withValues(alpha: 0.3),
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          const Icon(LucideIcons.alertCircle, color: AppColors.statusRejected, size: 20),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Text(
-                              _errorMessage!,
-                              style: const TextStyle(color: AppColors.statusRejected, fontSize: 13),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                  // Identifier Field (Email atau Nomor Telepon)
-                  Text(
-                    'Email atau Nomor Telepon',
-                    style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
-                  ),
-                  const SizedBox(height: 6),
-                  TextFormField(
-                    controller: _emailController,
-                    keyboardType: TextInputType.text,
-                    decoration: InputDecoration(
-                      hintText: 'Masukkan email atau no. HP',
-                      prefixIcon: const Icon(LucideIcons.user, size: 20),
-                      filled: true,
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
-                        borderSide: const BorderSide(color: AppColors.border),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
-                        borderSide: const BorderSide(color: AppColors.border),
-                      ),
-                    ),
-                    validator: (v) {
-                      if (v == null || v.trim().isEmpty) return 'Email atau Nomor Telepon wajib diisi';
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 18),
-
-                  // Password Field
-                  Text(
-                    'Password',
-                    style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
-                  ),
-                  const SizedBox(height: 6),
-                  TextFormField(
-                    controller: _passwordController,
-                    obscureText: _obscurePassword,
-                    decoration: InputDecoration(
-                      hintText: 'Masukkan password',
-                      prefixIcon: const Icon(LucideIcons.lock, size: 20),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _obscurePassword ? LucideIcons.eyeOff : LucideIcons.eye,
-                          size: 20,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _obscurePassword = !_obscurePassword;
-                          });
-                        },
-                      ),
-                      filled: true,
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
-                        borderSide: const BorderSide(color: AppColors.border),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
-                        borderSide: const BorderSide(color: AppColors.border),
-                      ),
-                    ),
-                    validator: (v) {
-                      if (v == null || v.isEmpty) return 'Password wajib diisi';
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 8),
-
-                  // Lupa Kata Sandi Link
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                      onPressed: _showForgotPasswordModal,
-                      style: TextButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                        minimumSize: Size.zero,
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
-                      child: Text(
-                        'Lupa Kata Sandi?',
-                        style: GoogleFonts.inter(
-                          color: AppColors.primary,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                        ),
                       ),
                     ),
                   ),
                   const SizedBox(height: 20),
 
-                  // Login Button
-                  ElevatedButton(
-                    onPressed: _isLoading ? null : _handleLogin,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 15),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      elevation: 2,
-                    ),
-                    child: _isLoading
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-                          )
-                        : Text(
-                            'Masuk ke Akun',
-                            style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.bold),
-                          ),
-                  ),
-                  const SizedBox(height: 18),
-
-                  // Divider
-                  Row(
-                    children: [
-                      const Expanded(child: Divider(color: AppColors.border)),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        child: Text(
-                          'atau masuk dengan',
-                          style: GoogleFonts.inter(color: AppColors.textSecondary, fontSize: 12),
+                  // Kartu Login Utama (rounded 24px + border #E2E8F0)
+                  Container(
+                    padding: const EdgeInsets.all(22),
+                    decoration: BoxDecoration(
+                      color: AppColors.surface,
+                      borderRadius: BorderRadius.circular(24),
+                      border: Border.all(color: AppColors.border),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.textPrimary.withValues(alpha: 0.04),
+                          blurRadius: 24,
+                          offset: const Offset(0, 8),
                         ),
-                      ),
-                      const Expanded(child: Divider(color: AppColors.border)),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Google Sign-In Button
-                  OutlinedButton(
-                    onPressed: _isLoading ? null : _handleGoogleSignIn,
-                    style: OutlinedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: AppColors.textPrimary,
-                      side: const BorderSide(color: AppColors.border),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                      ],
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Image.asset(
-                          'assets/images/google_logo.png',
-                          width: 20,
-                          height: 20,
-                        ),
-                        const SizedBox(width: 10),
                         Text(
-                          'Masuk dengan Akun Google',
-                          style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w600),
+                          'Masuk ke Akun',
+                          style: GoogleFonts.outfit(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textPrimary,
+                            letterSpacing: -0.3,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Masuk untuk melaporkan kerusakan atau memantau progres penanganan infrastruktur.',
+                          style: GoogleFonts.inter(
+                            fontSize: 12.5,
+                            color: AppColors.textSecondary,
+                            height: 1.45,
+                          ),
+                        ),
+                        const SizedBox(height: 18),
+
+                        if (_errorMessage != null)
+                          AuthStatusBanner(
+                            message: _errorMessage!,
+                            icon: LucideIcons.alertCircle,
+                            color: AppColors.statusRejected,
+                          ),
+
+                        Text(
+                          'Email atau Nomor HP',
+                          style: GoogleFonts.inter(
+                            fontSize: 12.5,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        TextFormField(
+                          controller: _emailController,
+                          keyboardType: TextInputType.text,
+                          style: GoogleFonts.inter(fontSize: 13.5, color: AppColors.textPrimary),
+                          decoration: buildAuthInputDecoration(
+                            hintText: 'nama@email.com / 0812...',
+                            prefixIcon: LucideIcons.mail,
+                          ),
+                          validator: (v) {
+                            if (v == null || v.trim().isEmpty) return 'Email atau Nomor HP wajib diisi';
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 14),
+
+                        Text(
+                          'Kata Sandi',
+                          style: GoogleFonts.inter(
+                            fontSize: 12.5,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        TextFormField(
+                          controller: _passwordController,
+                          obscureText: _obscurePassword,
+                          style: GoogleFonts.inter(fontSize: 13.5, color: AppColors.textPrimary),
+                          decoration: buildAuthInputDecoration(
+                            hintText: 'Masukkan kata sandi',
+                            prefixIcon: LucideIcons.lock,
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _obscurePassword ? LucideIcons.eyeOff : LucideIcons.eye,
+                                size: 18,
+                                color: AppColors.textSecondary,
+                              ),
+                              onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                            ),
+                          ),
+                          validator: (v) {
+                            if (v == null || v.isEmpty) return 'Kata sandi wajib diisi';
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 8),
+
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: TextButton(
+                            onPressed: _showForgotPasswordModal,
+                            style: TextButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                              minimumSize: Size.zero,
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            ),
+                            child: Text(
+                              'Lupa kata sandi?',
+                              style: GoogleFonts.inter(
+                                color: AppColors.primary,
+                                fontSize: 12.5,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+
+                        SizedBox(
+                          height: 50,
+                          child: ElevatedButton(
+                            onPressed: _isLoading ? null : _handleLogin,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primary,
+                              foregroundColor: Colors.white,
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                            ),
+                            child: _isLoading
+                                ? const SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                                  )
+                                : Text(
+                                    'Masuk ke Akun',
+                                    style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.bold),
+                                  ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+
+                        Row(
+                          children: [
+                            const Expanded(child: Divider(color: AppColors.border)),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 12),
+                              child: Text(
+                                'atau masuk dengan',
+                                style: GoogleFonts.inter(color: AppColors.textSecondary, fontSize: 11.5),
+                              ),
+                            ),
+                            const Expanded(child: Divider(color: AppColors.border)),
+                          ],
+                        ),
+                        const SizedBox(height: 14),
+
+                        SizedBox(
+                          height: 48,
+                          child: OutlinedButton(
+                            onPressed: _isLoading ? null : _handleGoogleSignIn,
+                            style: OutlinedButton.styleFrom(
+                              backgroundColor: AppColors.surface,
+                              foregroundColor: AppColors.textPrimary,
+                              side: const BorderSide(color: AppColors.border),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  'assets/images/google_logo.png',
+                                  width: 18,
+                                  height: 18,
+                                ),
+                                const SizedBox(width: 10),
+                                Text(
+                                  'Masuk dengan Akun Google',
+                                  style: GoogleFonts.inter(fontSize: 13.5, fontWeight: FontWeight.w600),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 20),
 
-                  // Register Link
+                  // Link Daftar Akun
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -1090,7 +1249,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: Text(
                           'Daftar Sekarang',
                           style: GoogleFonts.inter(
-                            color: AppColors.primaryLight,
+                            color: AppColors.primary,
                             fontWeight: FontWeight.bold,
                             fontSize: 13,
                           ),

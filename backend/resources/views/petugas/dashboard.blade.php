@@ -10,7 +10,7 @@
 
 <div class="py-4 sm:py-6 space-y-5">
 
-    <!-- Header Petugas Lapangan (Seragam Desain Admin) -->
+    <!-- Header Pekerja Lapangan (Seragam Desain Admin) -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
         <div>
             <h2 class="font-outfit font-bold text-lg sm:text-xl text-[#0F172A] leading-tight">
@@ -58,7 +58,7 @@
         </div>
     @endif
 
-    <!-- Ringkasan KPI Petugas Lapangan (Flat Bordered Seragam Admin) -->
+    <!-- Ringkasan KPI Pekerja Lapangan (Flat Bordered Seragam Admin) -->
     <div class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-7 gap-2 sm:gap-3">
         <!-- 1. Total Aduan -->
         <div class="p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
@@ -236,6 +236,11 @@
         ])
     </div>
 
+    <!-- Tab Laporan Kinerja Pekerja Lapangan (Individu, Regu, & Responsivitas Operator) -->
+    <div id="petugasTabContent-performance" class="hidden space-y-5">
+        @include('partials.petugas_performance_report')
+    </div>
+
     <!-- Wadah Kartu Terpadu Daftar Tugas Lapangan (Seragam Admin & Kepala Daerah) -->
     <div id="petugasUnifiedCard" class="hidden card-white rounded-2xl p-5 sm:p-6 bg-white border border-[#E2E8F0] shadow-xs space-y-4">
     <!-- Filter Pencarian dan Kategori (Seragam Daftar Pengguna & Daftar Aduan) -->
@@ -277,8 +282,8 @@
                     <span>Reset</span>
                 </button>
 
-                <!-- Toggle Tata Letak Daftar / Petak (Rata Kanan) -->
-                <div class="inline-flex items-center p-0.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] shrink-0 ml-auto" role="group" aria-label="Tata letak tugas">
+                <!-- Toggle Tata Letak Daftar / Petak (Rata Kanan, Rapat dengan Filter) -->
+                <div class="inline-flex items-center p-0.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] shrink-0" role="group" aria-label="Tata letak tugas">
                     <button type="button" id="petugasLayoutBtn-list" onclick="setPetugasLayout('list')"
                         class="px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer bg-[#2563EB] text-white">
                         <i data-lucide="list" class="w-3.5 h-3.5"></i>
@@ -855,7 +860,7 @@
 
     document.addEventListener('DOMContentLoaded', function() {
         const urlTab = new URLSearchParams(window.location.search).get('tab');
-        if (urlTab && ['spatial', 'assigned', 'tasks', 'validation', 'history'].includes(urlTab)) {
+        if (urlTab && ['spatial', 'assigned', 'tasks', 'validation', 'history', 'performance'].includes(urlTab)) {
             switchPetugasTab(urlTab);
         }
     });
@@ -893,7 +898,7 @@
         }
 
         // 2. Hide all contents
-        const panels = ['spatial', 'assigned', 'tasks', 'validation', 'history'];
+        const panels = ['spatial', 'assigned', 'tasks', 'validation', 'history', 'performance'];
         panels.forEach(p => {
             const el = document.getElementById('petugasTabContent-' + p);
             if (el) el.classList.add('hidden');
@@ -909,10 +914,10 @@
         const unifiedCard = document.getElementById('petugasUnifiedCard');
         const filterContainer = document.getElementById('petugasFilterContainer');
         const paginationBar = document.getElementById('petugasPaginationBar');
-        const isSpatial = (tabName === 'spatial');
-        if (unifiedCard) unifiedCard.classList.toggle('hidden', isSpatial);
-        if (filterContainer) filterContainer.classList.toggle('hidden', isSpatial);
-        if (paginationBar) paginationBar.classList.toggle('hidden', isSpatial);
+        const hideListContainer = (tabName === 'spatial' || tabName === 'performance');
+        if (unifiedCard) unifiedCard.classList.toggle('hidden', hideListContainer);
+        if (filterContainer) filterContainer.classList.toggle('hidden', hideListContainer);
+        if (paginationBar) paginationBar.classList.toggle('hidden', hideListContainer);
         if (typeof petugasPaginationState !== 'undefined') petugasPaginationState.page = 1;
         applyPetugasFilters(false);
 
@@ -1396,7 +1401,7 @@
             }
         }
 
-        // 2b. Foto Bukti Penanganan Petugas Lapangan (Selalu tampil berdampingan)
+        // 2b. Foto Bukti Penanganan Pekerja Lapangan (Selalu tampil berdampingan)
         const photoAfter = document.getElementById('pmPhotoAfter');
         const photoAfterContainer = document.getElementById('pmPhotoAfterContainer');
         const photoAfterPlaceholder = document.getElementById('pmPhotoAfterPlaceholder');
@@ -1491,7 +1496,7 @@
         }
         const pmTeamLeaderEl = document.getElementById('pmTeamLeader');
         if (pmTeamLeaderEl) {
-            pmTeamLeaderEl.innerText = item.team_leader || item.assignee_name || 'Petugas Lapangan';
+            pmTeamLeaderEl.innerText = item.team_leader || item.assignee_name || 'Pekerja Lapangan';
         }
         const pmTeamPhoneEl = document.getElementById('pmTeamPhone');
         const pmTeamPhoneTextEl = document.getElementById('pmTeamPhoneText');
@@ -1668,7 +1673,7 @@
 </script>
 
 @push('modals')
-    <!-- MODAL DETAIL LENGKAP PENGADUAN PETUGAS LAPANGAN (Desain 1:1 Landing & Admin SI-APPIK V2 — 760px Desktop & Mobile Bottom Sheet) -->
+    <!-- MODAL DETAIL LENGKAP PENGADUAN PEKERJA LAPANGAN (Desain 1:1 Landing & Admin SI-APPIK V2 — 760px Desktop & Mobile Bottom Sheet) -->
     <div id="petugasDetailModal" class="hidden fixed inset-0 z-50 bg-slate-900/65 flex items-end sm:items-center justify-center p-3.5 sm:p-5 overscroll-contain">
         <div class="bg-white rounded-[24px] border border-[#E2E8F0] shadow-[0_20px_50px_rgba(15,23,42,0.22)] sm:max-w-[760px] w-full max-h-[86vh] sm:max-h-[90vh] overflow-hidden flex flex-col relative">
 
@@ -1895,7 +1900,7 @@
         </div>
     </div>
 
-    <!-- MODAL EDIT PROFIL PETUGAS LAPANGAN -->
+    <!-- MODAL EDIT PROFIL PEKERJA LAPANGAN -->
     <div id="petugasProfileModal" class="fixed inset-0 z-[99999] hidden items-center justify-center p-4 bg-slate-900/65 transition-opacity duration-200">
         <div class="bg-white rounded-3xl max-w-md w-full shadow-2xl border border-slate-100 overflow-hidden transform transition-all scale-95 opacity-0 duration-200" id="petugasProfileModalContent">
             <div class="p-6 space-y-4">
@@ -1906,7 +1911,7 @@
                         </div>
                         <div>
                             <h3 class="font-outfit font-extrabold text-base text-slate-900">
-                                Profil Petugas Lapangan
+                                Profil Pekerja Lapangan
                             </h3>
                             <p class="text-xs text-slate-400">
                                 Perbarui identitas diri, nomor kontak, & kata sandi

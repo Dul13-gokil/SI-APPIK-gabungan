@@ -112,14 +112,14 @@ class WebAuthController extends Controller
             ], 404);
         }
 
-        // Khusus Akun WARGA: Portal website khusus aparatur internal (Operator, Petugas Lapangan, Kepala Daerah).
+        // Khusus Akun WARGA: Portal website khusus aparatur internal (Operator, Pekerja Lapangan, Kepala Daerah).
         // Warga masyarakat wajib diarahkan menggunakan Aplikasi Mobile SI-APPIK.
         if ($user->isWarga()) {
             return response()->json([
                 'status'   => 'warga_blocked',
                 'is_warga' => true,
                 'name'     => $user->name,
-                'message'  => 'Akun Anda terdaftar sebagai Warga Masyarakat. Portal website ini khusus diperuntukkan bagi Operator, Petugas Lapangan, dan Kepala Daerah. Silakan gunakan Aplikasi Mobile SI-APPIK untuk mengatur ulang kata sandi Anda.',
+                'message'  => 'Akun Anda terdaftar sebagai Warga Masyarakat. Portal website ini khusus diperuntukkan bagi Operator, Pekerja Lapangan, dan Kepala Daerah. Silakan gunakan Aplikasi Mobile SI-APPIK untuk mengatur ulang kata sandi Anda.',
             ], 403);
         }
 
@@ -208,7 +208,7 @@ class WebAuthController extends Controller
     }
 
     /**
-     * Alur wajib login pertama kali: Verifikasi Nama, No. WhatsApp, dan Sandi Baru (Operator & Petugas Lapangan)
+     * Alur wajib login pertama kali: Verifikasi Nama, No. WhatsApp, dan Sandi Baru (Operator & Pekerja Lapangan)
      */
     public function completeFirstLoginSetup(Request $request): RedirectResponse
     {
@@ -299,7 +299,7 @@ class WebAuthController extends Controller
                 'is_warga' => true,
                 'name'     => $user->name,
                 'email'    => $user->email,
-                'message'  => 'Akun ini terdaftar sebagai Warga Masyarakat. Portal website ini khusus diperuntukkan bagi Operator, Petugas Lapangan, dan Kepala Daerah. Silakan gunakan Aplikasi Mobile SI-APPIK pada smartphone Anda.',
+                'message'  => 'Akun ini terdaftar sebagai Warga Masyarakat. Portal website ini khusus diperuntukkan bagi Operator, Pekerja Lapangan, dan Kepala Daerah. Silakan gunakan Aplikasi Mobile SI-APPIK pada smartphone Anda.',
             ]);
         }
 

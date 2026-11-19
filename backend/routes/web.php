@@ -114,7 +114,10 @@ Route::get('/storage/{path}', function (string $path) {
     $cleanPath = ltrim($path, '/');
     $diskPath = storage_path('app/public/' . $cleanPath);
     if (is_file($diskPath)) {
-        return response()->file($diskPath);
+        return response()->file($diskPath, [
+            'Access-Control-Allow-Origin' => '*',
+            'Cache-Control' => 'public, max-age=86400',
+        ]);
     }
 
     $photo = \App\Models\ComplaintPhoto::where('storage_key', $cleanPath)->first();
@@ -129,3 +132,20 @@ Route::get('/storage/{path}', function (string $path) {
 
     abort(404);
 })->where('path', '.*');
+
+// Ekspor Rekapitulasi CSV (Excel) & Cetak Berita Acara Penyelesaian (BAP)
+Route::middleware(['auth', 'role:SUPERADMIN,ADMIN,OPERATOR,DINAS,BUPATI,KEPALA_DAERAH'])->group(function () {
+    Route::get('/reports/export-csv', [\App\Http\Controllers\Web\WebReportController::class, 'exportCsv'])->name('reports.export-csv');
+});
+Route::middleware(['auth', 'role:SUPERADMIN,ADMIN,OPERATOR,DINAS,BUPATI,KEPALA_DAERAH,PETUGAS'])->group(function () {
+    Route::get('/complaints/{id}/bap', [\App\Http\Controllers\Web\WebReportController::class, 'printBap'])->name('complaints.bap');
+    Route::get('/petugas/performance/print', [\App\Http\Controllers\Web\WebReportController::class, 'printPetugasPerformance'])->name('petugas.performance.print');
+});
+
+// Dokumen Cetak Resmi via Signed URL (30 menit, khusus akses aman dari Aplikasi Mobile)
+Route::middleware('signed')->group(function () {
+    Route::get('/mobile-print/petugas-performance/{user}', [\App\Http\Controllers\Web\WebReportController::class, 'printPetugasPerformanceSigned'])
+        ->name('mobile.petugas.performance.print');
+    Route::get('/mobile-print/complaints/{id}/bap', [\App\Http\Controllers\Web\WebReportController::class, 'printBapSigned'])
+        ->name('mobile.complaints.bap');
+});

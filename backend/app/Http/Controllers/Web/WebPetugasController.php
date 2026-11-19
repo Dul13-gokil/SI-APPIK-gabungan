@@ -44,7 +44,7 @@ class WebPetugasController extends Controller
                 ->take(15)
                 ->get();
         } else {
-            // Petugas lapangan: ambil tugas yang di-disposisi ke dirinya atau ke regunya
+            // Pekerja lapangan: ambil tugas yang di-disposisi ke dirinya atau ke regunya
             $myTeam = $user->currentTeam();
             $teamId = $myTeam?->id;
 
@@ -187,7 +187,7 @@ class WebPetugasController extends Controller
                     'deadline'             => $disp?->deadline ? $disp->deadline->translatedFormat('d M Y') : null,
                     'instruction'          => $disp?->instruction ?? 'Lakukan penanganan fisik sesuai standar teknis.',
                     'department_name'      => $disp?->department?->name ?? 'Dinas Teknis',
-                    'assignee_name'        => $disp?->assignee?->name ?? 'Petugas Lapangan',
+                    'assignee_name'        => $disp?->assignee?->name ?? 'Pekerja Lapangan',
                     'assignee_phone'       => $disp?->assignee?->phone ?? null,
                     'ai_repair_estimate'   => $c->ai_repair_estimate,
                     'photo_url'            => $photo,
@@ -285,7 +285,7 @@ class WebPetugasController extends Controller
         DB::transaction(function () use ($complaint, $oldStatus, $newStatus) {
             $complaint->update(['status' => $newStatus]);
             $worker = auth()->user();
-            $workerName = $worker?->name ?? 'Petugas Lapangan';
+            $workerName = $worker?->name ?? 'Pekerja Lapangan';
             $workerTeam = $worker?->currentTeam();
 
             if ($complaint->latestDisposition) {
@@ -304,7 +304,7 @@ class WebPetugasController extends Controller
                 'complaint_id' => $complaint->id,
                 'from_status'  => $oldStatus,
                 'to_status'    => $newStatus,
-                'note'         => "Petugas lapangan {$workerName}{$teamStr} telah mengambil laporan dan memulai proses penanganan fisik di lokasi.",
+                'note'         => "Pekerja lapangan {$workerName}{$teamStr} telah mengambil laporan dan memulai proses penanganan fisik di lokasi.",
                 'changed_by'   => auth()->id(),
             ]);
 
@@ -314,7 +314,7 @@ class WebPetugasController extends Controller
                     'user_id'   => $complaint->user_id,
                     'type'      => 'COMPLAINT_IN_PROGRESS',
                     'title'     => 'Laporan Sedang Dikerjakan',
-                    'body'      => "Petugas Lapangan {$workerName}{$teamStr} telah mengambil laporan Anda (#{$complaint->public_code}: \"{$complaint->title}\") dan saat ini berstatus Dikerjakan untuk segera dilakukan perbaikan fisik di lokasi.",
+                    'body'      => "Pekerja Lapangan {$workerName}{$teamStr} telah mengambil laporan Anda (#{$complaint->public_code}: \"{$complaint->title}\") dan saat ini berstatus Dikerjakan untuk segera dilakukan perbaikan fisik di lokasi.",
                     'data_json' => [
                         'complaint_id'   => $complaint->id,
                         'public_code'    => $complaint->public_code,
@@ -370,9 +370,17 @@ class WebPetugasController extends Controller
 
             if ($request->hasFile('photos')) {
                 foreach ($request->file('photos') as $photo) {
-                    $realPath = $photo->getRealPath();
-                    $fileData = ($hasFileDataCol && $realPath && file_exists($realPath)) ? base64_encode(file_get_contents($realPath)) : null;
                     $path = $photo->store('resolutions', 'public');
+                    $storedAbsPath = \Illuminate\Support\Facades\Storage::disk('public')->path($path);
+                    app(\App\Services\ImageWatermarkService::class)->applyFieldWatermark(
+                        $storedAbsPath,
+                        (string) $complaint->public_code,
+                        $complaint->latitude ? (float) $complaint->latitude : null,
+                        $complaint->longitude ? (float) $complaint->longitude : null,
+                        auth()->user()?->name
+                    );
+                    $realPath = is_file($storedAbsPath) ? $storedAbsPath : $photo->getRealPath();
+                    $fileData = ($hasFileDataCol && $realPath && file_exists($realPath)) ? base64_encode(file_get_contents($realPath)) : null;
                     $photoAttrs = [
                         'complaint_id' => $complaint->id,
                         'storage_key'  => $path,

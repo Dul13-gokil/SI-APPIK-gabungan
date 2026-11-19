@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -9,6 +10,8 @@ import '../../../core/network/api_client.dart';
 import '../../../shared/models/complaint_model.dart';
 import '../../../shared/theme/app_colors.dart';
 import '../../../shared/widgets/status_badge.dart';
+import '../../../shared/widgets/v2_components.dart';
+import '../../../shared/widgets/v2_toast.dart';
 
 class ComplaintDetailScreen extends StatefulWidget {
   final int complaintId;
@@ -31,6 +34,9 @@ class _ComplaintDetailScreenState extends State<ComplaintDetailScreen> {
   bool _isLoading = true;
   String? _errorMessage;
   bool _isSupporting = false;
+  int _selectedRating = 0;
+  bool _isSubmittingRating = false;
+  final TextEditingController _ratingCommentCtrl = TextEditingController();
   int _currentPhotoIndex = 0;
   int _currentCompletionIndex = 0;
 
@@ -44,6 +50,7 @@ class _ComplaintDetailScreenState extends State<ComplaintDetailScreen> {
   void dispose() {
     _photoPageController.dispose();
     _completionPageController.dispose();
+    _ratingCommentCtrl.dispose();
     super.dispose();
   }
 
@@ -97,18 +104,20 @@ class _ComplaintDetailScreenState extends State<ComplaintDetailScreen> {
         });
 
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(supported ? 'Dukungan berhasil ditambahkan 👍' : 'Dukungan dibatalkan'),
-              duration: const Duration(seconds: 2),
-            ),
+          showV2Toast(
+            context,
+            message: supported ? 'Dukungan berhasil ditambahkan 👍' : 'Dukungan dibatalkan',
+            type: supported ? V2ToastType.success : V2ToastType.info,
+            duration: const Duration(seconds: 2),
           );
         }
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Gagal memberikan dukungan: $e')),
+        showV2Toast(
+          context,
+          message: 'Gagal memberikan dukungan: $e',
+          type: V2ToastType.error,
         );
       }
     } finally {
@@ -136,8 +145,10 @@ class _ComplaintDetailScreenState extends State<ComplaintDetailScreen> {
     } catch (_) {
       if (mounted) {
         Clipboard.setData(ClipboardData(text: phone));
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Nomor $phone disalin ke clipboard')),
+        showV2Toast(
+          context,
+          message: 'Nomor $phone disalin ke clipboard',
+          type: V2ToastType.info,
         );
       }
     }
@@ -156,8 +167,10 @@ class _ComplaintDetailScreenState extends State<ComplaintDetailScreen> {
     } catch (_) {
       if (mounted) {
         Clipboard.setData(ClipboardData(text: phone));
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Nomor $phone disalin ke clipboard')),
+        showV2Toast(
+          context,
+          message: 'Nomor $phone disalin ke clipboard',
+          type: V2ToastType.info,
         );
       }
     }
@@ -165,69 +178,125 @@ class _ComplaintDetailScreenState extends State<ComplaintDetailScreen> {
 
   void _copyToClipboard(String text, String label) {
     Clipboard.setData(ClipboardData(text: text));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('$label berhasil disalin ke clipboard'),
-        duration: const Duration(seconds: 2),
-      ),
+    showV2Toast(
+      context,
+      message: '$label berhasil disalin ke clipboard',
+      type: V2ToastType.success,
+      duration: const Duration(seconds: 2),
     );
   }
 
-  Future<void> _confirmDeleteComplaint() async {
+  Future<void> _confirmCancelComplaint() async {
+    final reasonCtrl = TextEditingController();
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Row(
           children: [
-            Icon(LucideIcons.trash2, color: AppColors.statusRejected, size: 22),
+            Icon(LucideIcons.xCircle, color: AppColors.statusRejected, size: 22),
             SizedBox(width: 8),
-            Text('Hapus Laporan', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            Text('Batalkan Laporan', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           ],
         ),
-        content: const Text(
-          'Apakah Anda yakin ingin menghapus laporan pengaduan ini? Tindakan ini permanen dan tidak dapat dibatalkan.',
-          style: TextStyle(fontSize: 13),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Batal'),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.statusRejected,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Laporan yang dibatalkan tidak akan diproses oleh dinas dan akan tercatat pada riwayat "Dibatalkan" di Aduan Saya.',
+              style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
             ),
-            child: const Text('Hapus Sekarang'),
+            const SizedBox(height: 12),
+            TextField(
+              controller: reasonCtrl,
+              maxLines: 2,
+              decoration: InputDecoration(
+                hintText: 'Alasan pembatalan (opsional)...',
+                hintStyle: const TextStyle(fontSize: 12.5, color: AppColors.textSecondary),
+                filled: true,
+                fillColor: AppColors.background,
+                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(color: AppColors.border),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(color: AppColors.border),
+                ),
+              ),
+            ),
+          ],
+        ),
+        actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        actions: [
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: () => Navigator.pop(ctx, false),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppColors.textSecondary,
+                    side: const BorderSide(color: AppColors.border),
+                    padding: const EdgeInsets.symmetric(vertical: 11),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  ),
+                  child: const Text('Kembali', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () => Navigator.pop(ctx, true),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.statusRejected,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 11),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  ),
+                  child: const Text('Batalkan', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                ),
+              ),
+            ],
           ),
         ],
       ),
     );
+
+    final reasonText = reasonCtrl.text.trim();
+    reasonCtrl.dispose();
 
     if (confirm != true) return;
 
     setState(() => _isLoading = true);
 
     try {
-      final res = await _apiClient.dio.delete('/complaints/${widget.complaintId}');
+      final res = await _apiClient.dio.post(
+        '/complaints/${widget.complaintId}/cancel',
+        data: {
+          if (reasonText.isNotEmpty) 'reason': reasonText,
+        },
+      );
       if (res.statusCode == 200) {
         if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Laporan berhasil dihapus.'),
-            backgroundColor: AppColors.statusCompleted,
-          ),
-        );
+        final rootCtx = Navigator.of(context, rootNavigator: true).context;
         Navigator.pop(context, true);
+        if (rootCtx.mounted) {
+          showV2Toast(
+            rootCtx,
+            message: 'Laporan berhasil dibatalkan.',
+            type: V2ToastType.success,
+          );
+        }
       }
     } catch (e) {
       if (mounted) {
         setState(() => _isLoading = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Gagal menghapus laporan: $e'), backgroundColor: AppColors.statusRejected),
+        showV2Toast(
+          context,
+          message: 'Gagal membatalkan laporan: $e',
+          type: V2ToastType.error,
         );
       }
     }
@@ -286,7 +355,7 @@ class _ComplaintDetailScreenState extends State<ComplaintDetailScreen> {
     );
   }
 
-  bool get _canDelete {
+  bool get _canCancel {
     if (_currentUser == null || _complaint == null) return false;
     if (_complaint!.status != 'SUBMITTED') {
       return false;
@@ -316,6 +385,8 @@ class _ComplaintDetailScreenState extends State<ComplaintDetailScreen> {
         return 'Penanganan Tuntas Selesai';
       case 'REJECTED':
         return 'Laporan Ditolak';
+      case 'CANCELLED':
+        return 'Laporan Dibatalkan';
       default:
         return rawStatus;
     }
@@ -325,20 +396,16 @@ class _ComplaintDetailScreenState extends State<ComplaintDetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: const Text(
-          'Detail Laporan',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-        ),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        foregroundColor: AppColors.textPrimary,
+      appBar: buildV2AppBar(
+        title: 'Detail Laporan',
+        subtitle: _complaint != null ? '#${_complaint!.publicCode}' : null,
+        automaticallyImplyLeading: true,
         actions: [
-          if (_canDelete)
+          if (_canCancel)
             IconButton(
-              icon: const Icon(LucideIcons.trash2, color: AppColors.statusRejected, size: 20),
-              tooltip: 'Hapus Laporan Ini',
-              onPressed: _confirmDeleteComplaint,
+              icon: const Icon(LucideIcons.xCircle, color: AppColors.statusRejected, size: 20),
+              tooltip: 'Batalkan Laporan Ini',
+              onPressed: _confirmCancelComplaint,
             ),
         ],
       ),
@@ -406,15 +473,26 @@ class _ComplaintDetailScreenState extends State<ComplaintDetailScreen> {
           const SizedBox(height: 12),
 
           // ─── 8. BATAS WAKTU PENGERJAAN (SLA) (Di Bawah Lokasi Kerusakan) ───
-          // Catatan: Pada tahap Verifikasi / Draft / Ditolak, penugasan teknis belum diterbitkan sehingga belum ada batas waktu pengerjaan
-          if (c.status != 'SUBMITTED' && c.status != 'VERIFICATION' && c.status != 'VERIFIED' && c.status != 'DRAFT' && c.status != 'REJECTED') ...[
+          // Catatan: Pada tahap Verifikasi / Draft / Ditolak / Dibatalkan, penugasan teknis belum diterbitkan sehingga belum ada batas waktu pengerjaan
+          if (!const {'SUBMITTED', 'VERIFICATION', 'VERIFIED', 'DRAFT', 'REJECTED', 'CANCELLED'}.contains(c.status.toUpperCase())) ...[
             _buildDeadlineCard(c),
             const SizedBox(height: 12),
           ],
 
           // ─── 9. DUKUNGAN MASYARAKAT (UPVOTE) ───
-          _buildSupportButton(c),
-          const SizedBox(height: 14),
+          // Hanya warga (CITIZEN) yang dapat mendukung, dan disembunyikan jika laporan sudah Selesai / Dibatalkan / Ditolak
+          if (_currentUser != null &&
+              const {'CITIZEN', 'WARGA', 'USER'}.contains(_currentUser!.role.toUpperCase()) &&
+              !const {'COMPLETED', 'CLOSED', 'CANCELLED', 'REJECTED'}.contains(c.status.toUpperCase())) ...[
+            _buildSupportButton(c),
+            const SizedBox(height: 14),
+          ],
+
+          // ─── 9B. SURVEI KEPUASAN WARGA PASCA-PERBAIKAN (RATING 1-5 BINTANG) ───
+          if (c.status == 'COMPLETED' || c.status == 'CLOSED') ...[
+            _buildCitizenRatingCard(c),
+            const SizedBox(height: 14),
+          ],
 
           // ─── 10. ALUR TINDAK LANJUT PENANGANAN (TIMELINE) ───
           _buildTimelineCard(),
@@ -424,74 +502,78 @@ class _ComplaintDetailScreenState extends State<ComplaintDetailScreen> {
     );
   }
 
-  /// Top Bar Badges: Tipe Kerusakan -> Kategori -> Status (Selaras 1 Baris)
+  /// Top Bar Badges: Status -> Tipe Kerusakan -> Kategori (Penuh Kiri-Kanan & Terpusat di Tengah)
   Widget _buildTopBarBadges(ComplaintModel c) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: AppColors.border),
       ),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        physics: const BouncingScrollPhysics(),
-        child: Row(
-          children: [
-            // Tipe Kerusakan
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: c.damageType == 'major' ? AppColors.damageTypeMajorBg : AppColors.damageTypeMinorBg,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color: c.damageType == 'major' ? AppColors.damageTypeMajorBorder : AppColors.damageTypeMinorBorder,
-                ),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    c.damageType == 'major' ? LucideIcons.gitCommit : LucideIcons.mapPin,
-                    size: 11,
-                    color: c.damageType == 'major' ? AppColors.damageTypeMajor : AppColors.damageTypeMinor,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    c.damageType == 'major' ? 'Kerusakan Berat' : 'Kerusakan Ringan',
-                    style: TextStyle(
-                      color: c.damageType == 'major' ? AppColors.damageTypeMajor : AppColors.damageTypeMinor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 10.5,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            // Kategori
-            if (c.categoryName != null) ...[
+      child: Center(
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Status (Pertama Paling Kiri)
+              StatusBadge(status: c.status),
               const SizedBox(width: 6),
+              // Tipe Kerusakan
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF1F5F9),
+                  color: c.damageType == 'major' ? AppColors.damageTypeMajorBg : AppColors.damageTypeMinorBg,
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: const Color(0xFFE2E8F0)),
-                ),
-                child: Text(
-                  c.categoryName!,
-                  style: const TextStyle(
-                    color: Color(0xFF334155),
-                    fontWeight: FontWeight.w600,
-                    fontSize: 10.5,
+                  border: Border.all(
+                    color: c.damageType == 'major' ? AppColors.damageTypeMajorBorder : AppColors.damageTypeMinorBorder,
                   ),
                 ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      c.damageType == 'major' ? LucideIcons.gitCommit : LucideIcons.mapPin,
+                      size: 11,
+                      color: c.damageType == 'major' ? AppColors.damageTypeMajor : AppColors.damageTypeMinor,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      c.damageType == 'major' ? 'Kerusakan Berat' : 'Kerusakan Ringan',
+                      style: TextStyle(
+                        color: c.damageType == 'major' ? AppColors.damageTypeMajor : AppColors.damageTypeMinor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 10.5,
+                      ),
+                    ),
+                  ],
+                ),
               ),
+              // Kategori
+              if (c.categoryName != null) ...[
+                const SizedBox(width: 6),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF1F5F9),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: const Color(0xFFE2E8F0)),
+                  ),
+                  child: Text(
+                    c.categoryName!,
+                    style: const TextStyle(
+                      color: Color(0xFF334155),
+                      fontWeight: FontWeight.w600,
+                      fontSize: 10.5,
+                    ),
+                  ),
+                ),
+              ],
             ],
-            const SizedBox(width: 6),
-            // Status
-            StatusBadge(status: c.status),
-          ],
+          ),
         ),
       ),
     );
@@ -661,7 +743,7 @@ class _ComplaintDetailScreenState extends State<ComplaintDetailScreen> {
     );
   }
 
-  /// Foto Bukti Penanganan Petugas Lapangan (Bagian Bawah)
+  /// Foto Bukti Penanganan Pekerja Lapangan (Bagian Bawah)
   Widget _buildAfterPhotoSection(ComplaintModel c) {
     if (c.completionPhotos.isEmpty) {
       if (c.status == 'WAITING_VERIFICATION') {
@@ -679,7 +761,7 @@ class _ComplaintDetailScreenState extends State<ComplaintDetailScreen> {
               SizedBox(width: 10),
               Expanded(
                 child: Text(
-                  'Pekerjaan fisik telah selesai dikerjakan oleh petugas lapangan dan saat ini sedang dalam tahap inspeksi mutu oleh operator dinas sebelum ditutup tuntas.',
+                  'Pekerjaan fisik telah selesai dikerjakan oleh pekerja lapangan dan saat ini sedang dalam tahap inspeksi mutu oleh operator dinas sebelum ditutup tuntas.',
                   style: TextStyle(fontSize: 12, color: Color(0xFF92400E), height: 1.4, fontWeight: FontWeight.w500),
                 ),
               ),
@@ -882,21 +964,13 @@ class _ComplaintDetailScreenState extends State<ComplaintDetailScreen> {
             children: [
               Row(
                 children: [
-                  Text(
-                    '#${c.publicCode}',
-                    style: const TextStyle(
-                      fontFamily: 'monospace',
-                      fontSize: 12.5,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.primary,
-                    ),
-                  ),
+                  V2TicketCodeChip(code: c.publicCode),
                   const SizedBox(width: 6),
                   InkWell(
                     onTap: () => _copyToClipboard(c.publicCode, 'Kode Laporan'),
-                    borderRadius: BorderRadius.circular(4),
+                    borderRadius: BorderRadius.circular(6),
                     child: const Padding(
-                      padding: EdgeInsets.all(2),
+                      padding: EdgeInsets.all(4),
                       child: Icon(LucideIcons.copy, size: 13, color: AppColors.textSecondary),
                     ),
                   ),
@@ -904,13 +978,13 @@ class _ComplaintDetailScreenState extends State<ComplaintDetailScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 10),
 
           // Judul Laporan
           Text(
             c.title,
-            style: const TextStyle(
-              fontSize: 16,
+            style: GoogleFonts.outfit(
+              fontSize: 17,
               fontWeight: FontWeight.bold,
               color: AppColors.textPrimary,
               height: 1.3,
@@ -1072,59 +1146,62 @@ class _ComplaintDetailScreenState extends State<ComplaintDetailScreen> {
 
   /// Regu Lapangan Pelaksana & Koordinator Lapangan
   Widget _buildTeamCard(ComplaintModel c) {
-    final leaderName = c.teamLeaderName ?? c.assigneeName ?? 'Petugas Teknis Lapangan';
+    final leaderName = c.teamLeaderName ?? c.assigneeName ?? 'Pekerja Lapangan';
     final leaderPhone = c.teamLeaderPhone ?? c.effectiveAssigneePhone;
     final teamName = c.teamName ?? 'Regu Lapangan PUPR';
 
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFFF8FAFC),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFBFDBFE)),
+        color: AppColors.primaryContainer,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: AppColors.primaryBorder),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header Baris Regu
+          // Header Baris Regu (Selaras Web V2)
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                width: 36,
-                height: 36,
+                width: 40,
+                height: 40,
                 decoration: BoxDecoration(
                   color: AppColors.primary,
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(LucideIcons.hardHat, size: 18, color: Colors.white),
+                child: const Icon(LucideIcons.hardHat, size: 20, color: Colors.white),
               ),
-              const SizedBox(width: 10),
+              const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'REGU LAPANGAN PELAKSANA',
-                      style: TextStyle(
-                        fontSize: 9.5,
+                      style: GoogleFonts.inter(
+                        fontSize: 10,
                         fontWeight: FontWeight.w800,
                         color: AppColors.primary,
                         letterSpacing: 0.5,
                       ),
                     ),
-                    const SizedBox(height: 1),
+                    const SizedBox(height: 2),
                     Text(
                       teamName,
-                      style: const TextStyle(
-                        fontSize: 13.5,
+                      style: GoogleFonts.outfit(
+                        fontSize: 14.5,
                         fontWeight: FontWeight.bold,
                         color: AppColors.textPrimary,
                       ),
                     ),
-                    const Text(
-                      'Dinas Pekerjaan Umum & Penataan Ruang (PUPR)',
-                      style: TextStyle(fontSize: 10.5, color: AppColors.textSecondary),
+                    Text(
+                      'Dinas Pekerjaan Umum dan Penataan Ruang (PUPR)',
+                      style: GoogleFonts.inter(
+                        fontSize: 11,
+                        color: AppColors.textSecondary,
+                      ),
                     ),
                   ],
                 ),
@@ -1133,62 +1210,75 @@ class _ComplaintDetailScreenState extends State<ComplaintDetailScreen> {
           ),
           const SizedBox(height: 10),
 
-          // Card Kontak Koordinator Lapangan / Kepala Regu
+          // Card Putih Kontak Ketua Regu (Wrap agar aman di layar sempit)
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: const Color(0xFFE2E8F0)),
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: AppColors.primaryBorder),
             ),
-            child: Row(
+            child: Wrap(
+              alignment: WrapAlignment.spaceBetween,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: 8,
+              runSpacing: 8,
               children: [
-                const CircleAvatar(
-                  radius: 12,
-                  backgroundColor: Color(0xFFEFF6FF),
-                  child: Icon(LucideIcons.shieldCheck, size: 13, color: AppColors.primary),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Ketua Regu (Koordinator Lapangan):',
-                        style: TextStyle(fontSize: 9.5, color: AppColors.textSecondary, fontWeight: FontWeight.w600),
-                      ),
-                      Text(
-                        leaderName,
-                        style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const CircleAvatar(
+                      radius: 13,
+                      backgroundColor: AppColors.primaryContainer,
+                      child: Icon(LucideIcons.crown, size: 13, color: AppColors.primary),
+                    ),
+                    const SizedBox(width: 8),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Ketua Regu:',
+                          style: GoogleFonts.inter(
+                            fontSize: 10,
+                            color: AppColors.textSecondary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        Text(
+                          leaderName,
+                          style: GoogleFonts.inter(
+                            fontSize: 12.5,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
                 if (leaderPhone != null && leaderPhone.trim().isNotEmpty)
                   InkWell(
                     onTap: () => _callPhone(leaderPhone),
-                    borderRadius: BorderRadius.circular(6),
+                    borderRadius: BorderRadius.circular(8),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFEFF6FF),
-                        borderRadius: BorderRadius.circular(6),
-                        border: Border.all(color: const Color(0xFFBFDBFE)),
+                        color: AppColors.primaryContainer,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: AppColors.primaryBorder),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(LucideIcons.phoneCall, size: 11, color: AppColors.primary),
-                          const SizedBox(width: 4),
+                          const Icon(LucideIcons.phoneCall, size: 12, color: AppColors.primary),
+                          const SizedBox(width: 5),
                           Text(
                             leaderPhone,
-                            style: const TextStyle(
-                              fontSize: 11,
+                            style: GoogleFonts.inter(
+                              fontSize: 11.5,
                               fontWeight: FontWeight.bold,
                               color: AppColors.primary,
-                              fontFamily: 'monospace',
                             ),
                           ),
                         ],
@@ -1201,6 +1291,8 @@ class _ComplaintDetailScreenState extends State<ComplaintDetailScreen> {
 
           // Instruksi Pengerjaan (Jika Ada)
           if (c.revisionNotes != null && c.revisionNotes!.trim().isNotEmpty) ...[
+            const SizedBox(height: 10),
+            const Divider(height: 1, color: AppColors.primaryBorder),
             const SizedBox(height: 8),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1210,7 +1302,12 @@ class _ComplaintDetailScreenState extends State<ComplaintDetailScreen> {
                 Expanded(
                   child: Text(
                     'Instruksi: ${c.revisionNotes}',
-                    style: const TextStyle(fontSize: 11, fontStyle: FontStyle.italic, color: AppColors.textSecondary),
+                    style: GoogleFonts.inter(
+                      fontSize: 11.5,
+                      fontStyle: FontStyle.italic,
+                      color: AppColors.textSecondary,
+                      height: 1.4,
+                    ),
                   ),
                 ),
               ],
@@ -1315,15 +1412,36 @@ class _ComplaintDetailScreenState extends State<ComplaintDetailScreen> {
                   ),
                 ],
               ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF1F5F9),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Text(
-                  '${c.latitude.toStringAsFixed(5)}, ${c.longitude.toStringAsFixed(5)}',
-                  style: const TextStyle(fontSize: 10, fontFamily: 'monospace', color: AppColors.textSecondary),
+              InkWell(
+                onTap: () async {
+                  final uri = Uri.parse('https://www.google.com/maps/search/?api=1&query=${c.latitude},${c.longitude}');
+                  if (await canLaunchUrl(uri)) {
+                    await launchUrl(uri, mode: LaunchMode.externalApplication);
+                  }
+                },
+                borderRadius: BorderRadius.circular(8),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryContainer,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: AppColors.primaryBorder),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(LucideIcons.mapPin, size: 12, color: AppColors.primary),
+                      const SizedBox(width: 4),
+                      Text(
+                        'Buka di Peta',
+                        style: GoogleFonts.inter(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -1508,6 +1626,220 @@ class _ComplaintDetailScreenState extends State<ComplaintDetailScreen> {
                 );
               }).toList(),
             ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _submitRating() async {
+    if (_selectedRating < 1 || _selectedRating > 5) {
+      showV2Toast(
+        context,
+        message: 'Silakan pilih 1 hingga 5 bintang terlebih dahulu.',
+        type: V2ToastType.warning,
+      );
+      return;
+    }
+
+    setState(() => _isSubmittingRating = true);
+    try {
+      final res = await _apiClient.dio.post(
+        '/complaints/${widget.complaintId}/rating',
+        data: {
+          'rating': _selectedRating,
+          if (_ratingCommentCtrl.text.trim().isNotEmpty)
+            'comment': _ratingCommentCtrl.text.trim(),
+        },
+      );
+      if (res.statusCode == 200 && mounted) {
+        setState(() {
+          _complaint = _complaint!.copyWith(
+            ratingScore: _selectedRating,
+            ratingComment: _ratingCommentCtrl.text.trim().isNotEmpty
+                ? _ratingCommentCtrl.text.trim()
+                : null,
+          );
+          _isSubmittingRating = false;
+        });
+        showV2Toast(
+          context,
+          message: 'Terima kasih! Penilaian Anda telah disimpan.',
+          type: V2ToastType.success,
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isSubmittingRating = false);
+        showV2Toast(
+          context,
+          message: 'Gagal menyimpan penilaian: $e',
+          type: V2ToastType.error,
+        );
+      }
+    }
+  }
+
+  Widget _buildCitizenRatingCard(ComplaintModel c) {
+    final isOwner = _currentUser != null && c.userId != null && c.userId == _currentUser!.id;
+    final hasRated = c.ratingScore != null && c.ratingScore! > 0;
+
+    if (!hasRated && !isOwner) {
+      return const SizedBox.shrink();
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFFFBEB),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: const Color(0xFFFDE68A)),
+                ),
+                child: const Icon(LucideIcons.star, size: 16, color: AppColors.statusInProgress),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      hasRated ? 'Penilaian Kepuasan Warga' : 'Beri Nilai Hasil Perbaikan',
+                      style: GoogleFonts.outfit(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    Text(
+                      hasRated
+                          ? 'Penilaian resmi pelapor terhadap kualitas penanganan'
+                          : 'Seberapa puas Anda dengan hasil perbaikan di lapangan?',
+                      style: GoogleFonts.inter(fontSize: 11, color: AppColors.textSecondary),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          if (hasRated) ...[
+            Row(
+              children: [
+                ...List.generate(5, (i) {
+                  final filled = i < c.ratingScore!;
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 4),
+                    child: Icon(
+                      Icons.star_rounded,
+                      size: 22,
+                      color: filled ? AppColors.statusInProgress : AppColors.border,
+                    ),
+                  );
+                }),
+                const SizedBox(width: 6),
+                Text(
+                  '${c.ratingScore} / 5',
+                  style: GoogleFonts.outfit(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+              ],
+            ),
+            if (c.ratingComment != null && c.ratingComment!.trim().isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: AppColors.background,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: AppColors.border),
+                ),
+                child: Text(
+                  '"${c.ratingComment}"',
+                  style: GoogleFonts.inter(
+                    fontSize: 12,
+                    color: AppColors.textPrimary,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+              ),
+            ],
+          ] else ...[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(5, (i) {
+                final star = i + 1;
+                final active = star <= _selectedRating;
+                return IconButton(
+                  onPressed: () => setState(() => _selectedRating = star),
+                  icon: Icon(
+                    Icons.star_rounded,
+                    size: 32,
+                    color: active ? AppColors.statusInProgress : AppColors.border,
+                  ),
+                );
+              }),
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: _ratingCommentCtrl,
+              maxLines: 2,
+              style: GoogleFonts.inter(fontSize: 12.5, color: AppColors.textPrimary),
+              decoration: InputDecoration(
+                hintText: 'Tulis ulasan singkat Anda (opsional)...',
+                hintStyle: GoogleFonts.inter(fontSize: 12, color: AppColors.textSecondary),
+                filled: true,
+                fillColor: AppColors.background,
+                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(color: AppColors.border),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(color: AppColors.border),
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _isSubmittingRating ? null : _submitRating,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 11),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                ),
+                child: _isSubmittingRating
+                    ? const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                      )
+                    : Text(
+                        'Kirim Penilaian',
+                        style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.bold),
+                      ),
+              ),
+            ),
+          ],
         ],
       ),
     );

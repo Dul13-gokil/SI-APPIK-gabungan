@@ -43,7 +43,7 @@ class WebBupatiController extends Controller
 
         // Arsip Laporan (Selesai & Ditolak) untuk Tab 3 (Sama seperti Operator)
         $archivedComplaints = Complaint::with(['category', 'user', 'citizen', 'photos', 'latestDisposition.assignee', 'latestDisposition.department', 'statusHistories'])
-            ->whereIn('status', ['COMPLETED', 'CLOSED', 'REJECTED'])
+            ->whereIn('status', ['COMPLETED', 'CLOSED', 'REJECTED', 'CANCELLED'])
             ->latest()
             ->take(100)
             ->get();
@@ -162,7 +162,7 @@ class WebBupatiController extends Controller
                     'photo_url'            => $photo ? ($photo->url ?? asset('storage/' . $photo->storage_key)) : null,
                     'photo_after_url'      => $afterPhoto && $afterPhoto->id !== ($photo?->id) ? ($afterPhoto->url ?? asset('storage/' . $afterPhoto->storage_key)) : null,
                     'department_name'      => $c->latestDisposition?->department?->name ?? 'Dinas Terkait',
-                    'assignee_name'        => $c->latestDisposition?->assignee?->name ?? 'Petugas Lapangan',
+                    'assignee_name'        => $c->latestDisposition?->assignee?->name ?? 'Pekerja Lapangan',
                     'instruction'          => $c->latestDisposition?->instruction ?? '-',
                     'ai_category'          => $c->ai_category ?? ($c->category?->name ?? 'Kerusakan Fisik'),
                     'ai_confidence'        => $c->ai_confidence ? round($c->ai_confidence * 100) : 90,

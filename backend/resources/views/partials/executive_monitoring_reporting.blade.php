@@ -94,6 +94,35 @@
     $reportTeams = isset($teams) ? $teams : \App\Models\Team::with('leader')->get();
 @endphp
 
+@php
+    $activeExecSubtab = in_array(request('exec_subtab'), ['infra', 'field', 'operator'], true)
+        ? request('exec_subtab')
+        : 'infra';
+@endphp
+
+<!-- 0. SUB-MENU HEADER LAPORAN KINERJA (1 Baris Penuh di Mobile & Desktop — Seragam Admin, Operator, & Kepala Daerah) -->
+<div class="grid grid-cols-3 sm:inline-flex items-center gap-1.5 sm:gap-2 mb-4 no-print">
+    <button type="button" id="execPerfTabBtn-infra" onclick="switchExecPerfTab('infra')"
+        class="px-2 sm:px-4 py-2 rounded-xl text-[11px] sm:text-xs transition cursor-pointer inline-flex items-center justify-center gap-1.5 sm:gap-2 whitespace-nowrap {{ $activeExecSubtab === 'infra' ? 'font-bold bg-[#2563EB] text-white' : 'font-semibold bg-white text-[#475569] border border-[#E2E8F0] hover:text-[#0F172A]' }}">
+        <i data-lucide="building-2" class="w-3.5 h-3.5 shrink-0"></i>
+        <span class="sm:hidden truncate">Infrastruktur</span>
+        <span class="hidden sm:inline">Kinerja Infrastruktur</span>
+    </button>
+    <button type="button" id="execPerfTabBtn-field" onclick="switchExecPerfTab('field')"
+        class="px-2 sm:px-4 py-2 rounded-xl text-[11px] sm:text-xs transition cursor-pointer inline-flex items-center justify-center gap-1.5 sm:gap-2 whitespace-nowrap {{ $activeExecSubtab === 'field' ? 'font-bold bg-[#2563EB] text-white' : 'font-semibold bg-white text-[#475569] border border-[#E2E8F0] hover:text-[#0F172A]' }}">
+        <i data-lucide="hard-hat" class="w-3.5 h-3.5 shrink-0"></i>
+        <span class="sm:hidden truncate">Pekerja Lap.</span>
+        <span class="hidden sm:inline">Kinerja Pekerja Lapangan</span>
+    </button>
+    <button type="button" id="execPerfTabBtn-operator" onclick="switchExecPerfTab('operator')"
+        class="px-2 sm:px-4 py-2 rounded-xl text-[11px] sm:text-xs transition cursor-pointer inline-flex items-center justify-center gap-1.5 sm:gap-2 whitespace-nowrap {{ $activeExecSubtab === 'operator' ? 'font-bold bg-[#2563EB] text-white' : 'font-semibold bg-white text-[#475569] border border-[#E2E8F0] hover:text-[#0F172A]' }}">
+        <i data-lucide="shield-check" class="w-3.5 h-3.5 shrink-0"></i>
+        <span class="sm:hidden truncate">Operator</span>
+        <span class="hidden sm:inline">Kinerja Operator</span>
+    </button>
+</div>
+
+<div id="execPerfTabPanel-infra" class="{{ $activeExecSubtab === 'infra' ? '' : 'hidden' }} space-y-4">
 <!-- 1. TOOLBAR AKSI LAPORAN RESMI (PDF) — SI-APPIK V2 -->
 <div class="card-white rounded-[20px] p-4 sm:p-5 bg-white border border-[#E2E8F0] flex flex-col xl:flex-row xl:items-center justify-between gap-4">
     <div class="flex items-center gap-3 min-w-0">
@@ -510,7 +539,7 @@
                             <table class="w-full text-left border-collapse border border-slate-400 text-[11px]">
                                 <tbody>
                                     <tr>
-                                        <td class="border border-slate-400 py-1.5 px-2.5 font-semibold">Petugas Lapangan (Tindakan Fisik)</td>
+                                        <td class="border border-slate-400 py-1.5 px-2.5 font-semibold">Pekerja Lapangan (Tindakan Fisik)</td>
                                         <td class="border border-slate-400 py-1.5 px-2.5 text-right font-bold">{{ $fieldCount }} Tindakan ({{ $fieldPercent }}%)</td>
                                     </tr>
                                     <tr>
@@ -743,7 +772,7 @@
                         <div class="text-[11px] space-y-0.5">
                             <div>- Kinerja Dinas PUPR (Tepat Waktu SLA): {{ $totalOnTime }} Laporan</div>
                             <div>- Kinerja Dinas PUPR (Terlambat Lewat SLA): {{ $totalLate }} Laporan</div>
-                            <div>- Kontribusi Petugas Lapangan: {{ $fieldCount }} Tindakan Fisik ({{ $fieldPercent }}%)</div>
+                            <div>- Kontribusi Pekerja Lapangan: {{ $fieldCount }} Tindakan Fisik ({{ $fieldPercent }}%)</div>
                             <div>- Kontribusi Operator Verifikasi: {{ $operatorCount }} Telaah Laporan ({{ $operatorPercent }}%)</div>
                             <div>- Kontribusi Dinas PUPR: {{ $deptCount }} Penyelesaian Akhir ({{ $deptPercent }}%)</div>
                         </div>
@@ -895,6 +924,34 @@
 </script>
 
 <!-- STYLES KHUSUS CETAK DOKUMEN (PRINT TO PDF A4) -->
+</div><!-- /execPerfTabPanel-infra -->
+
+<div id="execPerfTabPanel-field" class="{{ $activeExecSubtab === 'field' ? '' : 'hidden' }} space-y-5">
+    @include('partials.cross_role_performance_section')
+</div>
+
+<div id="execPerfTabPanel-operator" class="{{ $activeExecSubtab === 'operator' ? '' : 'hidden' }} space-y-5">
+    @include('partials.operator_performance_section')
+</div>
+
+<script>
+    window._activeExecSubtab = @json($activeExecSubtab);
+
+    function switchExecPerfTab(tab) {
+        window._activeExecSubtab = tab;
+        ['infra', 'field', 'operator'].forEach(t => {
+            const panel = document.getElementById('execPerfTabPanel-' + t);
+            const btn = document.getElementById('execPerfTabBtn-' + t);
+            if (panel) panel.classList.toggle('hidden', t !== tab);
+            if (btn) {
+                btn.className = t === tab
+                    ? 'px-2 sm:px-4 py-2 rounded-xl text-[11px] sm:text-xs font-bold transition cursor-pointer bg-[#2563EB] text-white inline-flex items-center justify-center gap-1.5 sm:gap-2 whitespace-nowrap'
+                    : 'px-2 sm:px-4 py-2 rounded-xl text-[11px] sm:text-xs font-semibold transition cursor-pointer bg-white text-[#475569] border border-[#E2E8F0] hover:text-[#0F172A] inline-flex items-center justify-center gap-1.5 sm:gap-2 whitespace-nowrap';
+            }
+        });
+    }
+</script>
+
 <style>
 @media print {
     body * {

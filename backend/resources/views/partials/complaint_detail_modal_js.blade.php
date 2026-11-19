@@ -67,9 +67,26 @@
             } else if (s === 'REJECTED') {
                 statusBadge.className = 'shrink-0 px-2.5 py-1 rounded-md text-xs font-bold bg-red-50 text-red-700 border border-red-200 whitespace-nowrap';
                 statusBadge.innerText = 'DITOLAK';
+            } else if (s === 'CANCELLED') {
+                statusBadge.className = 'shrink-0 px-2.5 py-1 rounded-md text-xs font-bold bg-slate-100 text-slate-600 border border-slate-200 whitespace-nowrap';
+                statusBadge.innerText = 'DIBATALKAN';
             } else {
                 statusBadge.className = 'shrink-0 px-2.5 py-1 rounded-md text-xs font-bold bg-red-50 text-red-700 border border-red-200 whitespace-nowrap';
                 statusBadge.innerText = 'VERIFIKASI';
+            }
+        }
+
+        // Tombol Cetak BAP (khusus laporan COMPLETED / CLOSED)
+        const bapBtn = document.getElementById('sharedModalBapBtn');
+        if (bapBtn) {
+            const st = String(item.status || '').toUpperCase();
+            if ((st === 'COMPLETED' || st === 'CLOSED') && item.id) {
+                bapBtn.href = `/complaints/${item.id}/bap`;
+                bapBtn.classList.remove('hidden');
+                bapBtn.classList.add('inline-flex');
+            } else {
+                bapBtn.classList.add('hidden');
+                bapBtn.classList.remove('inline-flex');
             }
         }
 
@@ -131,11 +148,19 @@
             ? item.officer_photos
             : (item.completion_photo_url ? [item.completion_photo_url] : []);
 
+        const compBox = document.getElementById('sharedModalCompletionBox');
+        const compPill = document.getElementById('sharedModalCompletionPill');
+
         if (compContainer) compContainer.classList.remove('hidden');
         if (officerPhotos.length > 0) {
             compImg.src = officerPhotos[0];
             compImg.classList.remove('hidden');
             if (compPlaceholder) compPlaceholder.classList.add('hidden');
+            if (compBox) compBox.className = 'aspect-[16/10] rounded-xl sm:rounded-2xl overflow-hidden border border-[#A7F3D0] bg-[#ECFDF5] relative flex items-center justify-center';
+            if (compPill) {
+                compPill.className = 'absolute bottom-2 left-2 sm:bottom-3 sm:left-3 bg-[#047857]/90 text-white text-[10px] sm:text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5 pointer-events-none';
+                compPill.innerHTML = '<i data-lucide="badge-check" class="w-3 h-3 shrink-0 hidden sm:inline"></i><span id="sharedModalCompletionPhotoLabel">Foto Hasil Pengerjaan</span>';
+            }
 
             if (officerGallery) {
                 if (officerPhotos.length > 1) {
@@ -151,10 +176,46 @@
                     officerGallery.innerHTML = '';
                 }
             }
+            if (window.lucide) window.lucide.createIcons();
         } else {
             compImg.classList.add('hidden');
             if (compPlaceholder) compPlaceholder.classList.remove('hidden');
             if (officerGallery) officerGallery.classList.add('hidden');
+
+            const statusUpper = String(item.status || '').toUpperCase();
+
+            if (statusUpper === 'CANCELLED') {
+                if (compBox) compBox.className = 'aspect-[16/10] rounded-xl sm:rounded-2xl overflow-hidden border border-slate-200 bg-slate-50 relative flex items-center justify-center';
+                if (compPlaceholder) {
+                    compPlaceholder.className = 'inset-0 absolute flex flex-col items-center justify-center text-center p-3 text-slate-600 bg-slate-50';
+                    compPlaceholder.innerHTML = '<i data-lucide="x-circle" class="w-6 h-6 mb-1 text-slate-400"></i><span id="sharedModalCompletionText" class="text-[11px] sm:text-xs font-semibold leading-tight">Laporan Dibatalkan</span>';
+                }
+                if (compPill) {
+                    compPill.className = 'absolute bottom-2 left-2 sm:bottom-3 sm:left-3 bg-slate-600/90 text-white text-[10px] sm:text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5 pointer-events-none';
+                    compPill.innerHTML = '<i data-lucide="x-circle" class="w-3 h-3 shrink-0 hidden sm:inline"></i><span id="sharedModalCompletionPhotoLabel">Laporan Dibatalkan</span>';
+                }
+            } else if (statusUpper === 'REJECTED') {
+                if (compBox) compBox.className = 'aspect-[16/10] rounded-xl sm:rounded-2xl overflow-hidden border border-red-200 bg-red-50 relative flex items-center justify-center';
+                if (compPlaceholder) {
+                    compPlaceholder.className = 'inset-0 absolute flex flex-col items-center justify-center text-center p-3 text-red-700 bg-red-50';
+                    compPlaceholder.innerHTML = '<i data-lucide="x-circle" class="w-6 h-6 mb-1 text-red-500"></i><span id="sharedModalCompletionText" class="text-[11px] sm:text-xs font-semibold leading-tight">Laporan Ditolak</span>';
+                }
+                if (compPill) {
+                    compPill.className = 'absolute bottom-2 left-2 sm:bottom-3 sm:left-3 bg-red-600/90 text-white text-[10px] sm:text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5 pointer-events-none';
+                    compPill.innerHTML = '<i data-lucide="x-circle" class="w-3 h-3 shrink-0 hidden sm:inline"></i><span id="sharedModalCompletionPhotoLabel">Laporan Ditolak</span>';
+                }
+            } else {
+                if (compBox) compBox.className = 'aspect-[16/10] rounded-xl sm:rounded-2xl overflow-hidden border border-[#A7F3D0] bg-[#ECFDF5] relative flex items-center justify-center';
+                if (compPlaceholder) {
+                    compPlaceholder.className = 'inset-0 absolute flex flex-col items-center justify-center text-center p-3 text-[#047857] bg-[#ECFDF5]';
+                    compPlaceholder.innerHTML = '<i data-lucide="clock" class="w-5 h-5 mb-1 text-[#10B981]"></i><span id="sharedModalCompletionText" class="text-[11px] sm:text-xs font-semibold leading-tight">Menunggu Foto Hasil Pengerjaan</span>';
+                }
+                if (compPill) {
+                    compPill.className = 'absolute bottom-2 left-2 sm:bottom-3 sm:left-3 bg-[#047857]/90 text-white text-[10px] sm:text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5 pointer-events-none';
+                    compPill.innerHTML = '<i data-lucide="badge-check" class="w-3 h-3 shrink-0 hidden sm:inline"></i><span id="sharedModalCompletionPhotoLabel">Foto Hasil Pengerjaan</span>';
+                }
+            }
+            if (window.lucide) window.lucide.createIcons();
         }
 
         // 8. Identitas Pelapor Aduan
@@ -212,7 +273,7 @@
                 if (offNameEl) offNameEl.innerText = teamNameStr;
 
                 if (offDeptEl) offDeptEl.innerText = item.department_name || 'Dinas Pekerjaan Umum dan Penataan Ruang (PUPR)';
-                if (leaderEl) leaderEl.innerText = item.team_leader || item.assignee_name || item.officer_name || 'Petugas Lapangan';
+                if (leaderEl) leaderEl.innerText = item.team_leader || item.assignee_name || item.officer_name || 'Pekerja Lapangan';
 
                 const teamPhone = item.team_leader_phone || item.officer_phone || item.assignee_phone || '081100000004';
                 if (teamPhoneText) teamPhoneText.innerText = teamPhone;
