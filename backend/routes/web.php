@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 
 // 1. Halaman Beranda Publik (GIS Persebaran & Tracking Aduan) — Di-cache 60 detik agar cepat & bebas lag
 Route::get('/', function () {
-    $data = \Illuminate\Support\Facades\Cache::remember('landing_page_stats_v1', 60, function () {
+    $data = \Illuminate\Support\Facades\Cache::remember('landing_page_stats_v2', 60, function () {
         $statusCounts = Complaint::selectRaw('status, count(*) as total')
             ->groupBy('status')
             ->pluck('total', 'status');
@@ -33,7 +33,14 @@ Route::get('/', function () {
             'rejected'           => (int) ($statusCounts['REJECTED'] ?? 0),
         ];
 
-        $districts = Region::pluck('district')->filter()->unique()->sort()->values();
+        // Simpan sebagai array PHP murni (bukan Collection object) agar aman dari serializable_classes=false di Laravel 13
+        $districts = Region::pluck('district')
+            ->filter()
+            ->map(fn ($d) => (string) $d)
+            ->unique()
+            ->sort()
+            ->values()
+            ->all();
 
         $catCounts = Complaint::whereNotIn('status', ['REJECTED'])
             ->selectRaw('category_id, count(*) as total')
