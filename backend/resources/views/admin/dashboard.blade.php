@@ -1923,12 +1923,44 @@
                 <div id="adminArchiveEmptyNotice" class="hidden rounded-2xl p-8 text-center text-[#64748B] text-xs bg-[#F8FAFC] border border-[#E2E8F0]">
                     Tidak ada arsip aduan yang cocok dengan filter pencarian.
                 </div>
+
+                <!-- Pagination Bar Arsip Aduan (5 / 10 / 50 per halaman, default 10) -->
+                <div id="adminArchivePaginationBar" class="rounded-2xl bg-white border border-[#E2E8F0] px-4 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                    <div class="flex flex-wrap items-center gap-3 text-[#475569]">
+                        <div class="flex items-center gap-2">
+                            <span class="font-medium">Tampilkan:</span>
+                            <select id="adminArchivePageSizeSelect" onchange="changeAdminArchivePageSize(this.value)" aria-label="Jumlah arsip laporan per halaman"
+                                class="text-xs font-semibold rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] text-[#0F172A] px-2.5 py-1.5 focus:outline-none focus:border-[#2563EB] cursor-pointer">
+                                <option value="5">5 laporan</option>
+                                <option value="10" selected>10 laporan</option>
+                                <option value="50">50 laporan</option>
+                            </select>
+                        </div>
+                        <span id="adminArchivePageInfo" class="font-medium">Menampilkan 0–0 dari 0 laporan</span>
+                    </div>
+                    <div id="adminArchivePageControls" class="flex items-center gap-1.5 flex-wrap"></div>
+                </div>
             @endif
         </div>
     </div>
 
     <script>
-        function filterAdminArchive() {
+        function changeAdminArchivePageSize(size) {
+            if (typeof adminPaginationState !== 'undefined' && adminPaginationState.adminArchive) {
+                adminPaginationState.adminArchive.size = parseInt(size, 10) || 10;
+                adminPaginationState.adminArchive.page = 1;
+            }
+            filterAdminArchive(true);
+        }
+
+        function goAdminArchivePage(page) {
+            if (typeof adminPaginationState !== 'undefined' && adminPaginationState.adminArchive) {
+                adminPaginationState.adminArchive.page = page;
+            }
+            filterAdminArchive(true);
+        }
+
+        function filterAdminArchive(keepPage = false) {
             const q = (document.getElementById('adminArchiveSearchInput')?.value || '').trim().toLowerCase();
             const cat = document.getElementById('adminArchiveCategorySelect')?.value || 'ALL';
             const type = document.getElementById('adminArchiveTypeSelect')?.value || 'ALL';
@@ -1937,7 +1969,9 @@
             if (resetBtn) {
                 resetBtn.classList.toggle('hidden', q === '' && cat === 'ALL' && type === 'ALL' && st === 'ALL');
             }
-            let visibleCount = 0;
+            if (!keepPage && typeof adminPaginationState !== 'undefined' && adminPaginationState.adminArchive) {
+                adminPaginationState.adminArchive.page = 1;
+            }
             const matchEl = (el) => {
                 const elSearch = (el.dataset.search || '').toLowerCase();
                 const elCat = el.dataset.category || '';
@@ -1951,14 +1985,36 @@
                     || elStatus === st;
                 return okSearch && okCat && okType && okStatus;
             };
-            document.querySelectorAll('.admin-archive-row').forEach(row => {
+            const rows = Array.from(document.querySelectorAll('.admin-archive-row'));
+            const cards = Array.from(document.querySelectorAll('.admin-archive-grid-card'));
+            const matchedRows = [];
+            const matchedCards = [];
+
+            rows.forEach((row, idx) => {
                 const show = matchEl(row);
-                row.classList.toggle('hidden', !show);
-                if (show) visibleCount++;
+                const card = cards[idx];
+                row.classList.remove('hidden');
+                if (card) card.classList.remove('hidden');
+                if (show) {
+                    matchedRows.push(row);
+                    if (card) matchedCards.push(card);
+                } else {
+                    row.style.display = 'none';
+                    if (card) card.style.display = 'none';
+                }
             });
-            document.querySelectorAll('.admin-archive-grid-card').forEach(card => {
-                card.classList.toggle('hidden', !matchEl(card));
-            });
+
+            if (typeof renderPagination === 'function' && typeof adminPaginationState !== 'undefined' && adminPaginationState.adminArchive) {
+                renderPagination('adminArchive', matchedRows, 'adminArchivePageInfo', 'adminArchivePageControls', 'laporan', 'goAdminArchivePage');
+                matchedCards.forEach((card, i) => {
+                    card.style.display = matchedRows[i] ? matchedRows[i].style.display : 'none';
+                });
+            } else {
+                matchedRows.forEach(r => r.style.display = '');
+                matchedCards.forEach(c => c.style.display = '');
+            }
+
+            const visibleCount = matchedRows.length;
             const emptyEl = document.getElementById('adminArchiveEmptyNotice');
             const tableWrap = document.getElementById('adminTableWrap-archive');
             const gridWrap = document.getElementById('adminArchiveGridWrap');
@@ -3035,6 +3091,7 @@
         users: { page: 1, size: 10 },
         complaints: { page: 1, size: 10 },
         teams: { page: 1, size: 5 },
+        adminArchive: { page: 1, size: 10 },
         adminRejected: { page: 1, size: 10 }
     };
 
@@ -3370,11 +3427,13 @@
             setAdminUsersLayout('grid');
             setAdminComplaintsLayout('grid');
             setAdminTeamsLayout('grid');
+            setAdminArchiveLayout('grid');
             setAdminRejectedLayout('grid');
         }
         filterUsersTable(true);
         filterComplaintsTable(true);
         applyAdminTeamsPagination();
+        filterAdminArchive(true);
         filterAdminRejected(true);
     });
 
