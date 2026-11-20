@@ -1,7 +1,8 @@
 {{-- Tabel Daftar Pengaduan Terpadu (Seragam Admin: KODE | JUDUL & LOKASI | TIPE | KATEGORI | PELAPOR | STATUS | PETUGAS | AKSI) --}}
 @php
     $isPetugas = str_starts_with($mode ?? '', 'petugas-');
-    $detailFn = $isPetugas ? 'openPetugasDetailModal' : 'openOperatorModal';
+    $isAdmin = str_starts_with($mode ?? '', 'admin-');
+    $detailFn = $detailFn ?? ($isPetugas ? 'openPetugasDetailModal' : ($isAdmin ? 'openAdminDetailModal' : 'openOperatorModal'));
     $hasAction = in_array($mode ?? '', ['operator-verify', 'operator-dispatched', 'operator-validation', 'petugas-assigned', 'petugas-tasks']);
 @endphp
 <div id="{{ $wrapId }}" class="rounded-xl border border-[#E2E8F0] overflow-hidden md:overflow-x-auto bg-white {{ !empty($hidden) ? 'hidden' : '' }}">

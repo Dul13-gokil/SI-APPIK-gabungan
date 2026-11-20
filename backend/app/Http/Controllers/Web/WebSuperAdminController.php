@@ -188,7 +188,26 @@ class WebSuperAdminController extends Controller
                 ];
             });
 
-        $complaintsDetailMap = $complaints->keyBy('id')->map(function ($c) {
+        // Arsip Aduan resmi (Selesai, Dibatalkan Warga, dan Ditolak oleh Operator — otomatis tidak termasuk penolakan Super Admin karena global scope excludeAdminRejected)
+        $archivedComplaints = Complaint::with(['category', 'user', 'citizen', 'photos', 'latestDisposition.team.leader', 'latestDisposition.assignee.teams.leader', 'latestDisposition.department', 'statusHistories', 'aiAssessments'])
+            ->whereIn('status', ['COMPLETED', 'CLOSED', 'REJECTED', 'CANCELLED'])
+            ->latest('updated_at')
+            ->get();
+
+        // Arsip laporan yang ditolak khusus oleh Super Admin (hanya tampil untuk Super Admin)
+        $adminRejectedComplaints = Complaint::withoutGlobalScope('excludeAdminRejected')
+            ->where('rejected_by_superadmin', true)
+            ->with(['category', 'user', 'citizen', 'photos', 'adminRejector'])
+            ->latest('admin_rejected_at')
+            ->get();
+
+        // Gabungkan seluruh laporan (aktif + arsip + ditolak admin) ke peta detail modal agar semua tab selalu bisa dibuka
+        $allForDetailMap = $complaints
+            ->concat($archivedComplaints)
+            ->concat($adminRejectedComplaints)
+            ->keyBy('id');
+
+        $complaintsDetailMap = $allForDetailMap->map(function ($c) {
             $citizenPhotos = $c->photos->filter(function($p) {
                 return $p->type !== 'resolution_after';
             })->map(fn($p) => $p->url ?? asset('storage/' . $p->storage_key))->values();
@@ -269,19 +288,6 @@ class WebSuperAdminController extends Controller
         // Cek limit role sistem (Maksimal 1 Bupati, Maksimal 1 Super Admin)
         $hasBupati = User::whereIn('role', ['KEPALA_DAERAH', 'BUPATI'])->exists();
         $hasSuperAdmin = User::whereIn('role', ['SUPERADMIN', 'ADMIN'])->exists();
-
-        // Arsip Aduan resmi (Selesai, Dibatalkan Warga, dan Ditolak oleh Operator — otomatis tidak termasuk penolakan Super Admin karena global scope excludeAdminRejected)
-        $archivedComplaints = Complaint::with(['category', 'user', 'citizen', 'photos', 'latestDisposition.team.leader', 'latestDisposition.assignee.teams.leader', 'latestDisposition.department', 'statusHistories', 'aiAssessments'])
-            ->whereIn('status', ['COMPLETED', 'CLOSED', 'REJECTED', 'CANCELLED'])
-            ->latest('updated_at')
-            ->get();
-
-        // Arsip laporan yang ditolak khusus oleh Super Admin (hanya tampil untuk Super Admin)
-        $adminRejectedComplaints = Complaint::withoutGlobalScope('excludeAdminRejected')
-            ->where('rejected_by_superadmin', true)
-            ->with(['category', 'user', 'citizen', 'photos', 'adminRejector'])
-            ->latest('admin_rejected_at')
-            ->get();
 
         return view('admin.dashboard', compact(
             'summary', 'complaints', 'users', 'bupati', 'categories', 'departments', 
