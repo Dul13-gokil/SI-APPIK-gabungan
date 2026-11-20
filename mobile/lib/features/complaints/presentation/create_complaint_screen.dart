@@ -634,9 +634,10 @@ class _CreateComplaintScreenState extends State<CreateComplaintScreen> {
     try {
       final formData = FormData();
       for (var i = 0; i < files.length; i++) {
+        final bytes = await files[i].readAsBytes();
         formData.files.add(MapEntry(
           'photos[]',
-          await MultipartFile.fromFile(files[i].path, filename: 'damage_$i.jpg'),
+          MultipartFile.fromBytes(bytes, filename: 'damage_$i.jpg'),
         ));
       }
 
@@ -833,9 +834,10 @@ class _CreateComplaintScreenState extends State<CreateComplaintScreen> {
       }
 
       for (var i = 0; i < _selectedPhotos.length; i++) {
+        final bytes = await _selectedPhotos[i].readAsBytes();
         formData.files.add(MapEntry(
           'photos[]',
-          await MultipartFile.fromFile(_selectedPhotos[i].path, filename: 'evidence_$i.jpg'),
+          MultipartFile.fromBytes(bytes, filename: 'evidence_$i.jpg'),
         ));
       }
 

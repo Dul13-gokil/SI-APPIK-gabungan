@@ -1,5 +1,5 @@
-import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -723,57 +723,210 @@ class _FieldTasksScreenState extends State<FieldTasksScreen> {
 
     final photo = await _mediaService.takePhoto();
     if (photo == null || !mounted) return;
+    final photoBytes = await photo.readAsBytes();
+    if (!mounted) return;
 
     final noteController = TextEditingController();
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Row(
-          children: [
-            Icon(LucideIcons.camera, color: AppColors.primary, size: 20),
-            SizedBox(width: 8),
-            Text('Bukti Penyelesaian Fisik', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Foto berhasil diambil. Masukkan catatan teknis pekerjaan lapangan untuk divalidasi oleh Operator:',
-              style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: noteController,
-              maxLines: 3,
-              style: const TextStyle(fontSize: 13),
-              decoration: InputDecoration(
-                hintText: 'Contoh: Tambal lubang aspal 2 titik menggunakan hotmix AC-WC telah tuntas & rata.',
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+      barrierDismissible: false,
+      builder: (ctx) => Dialog(
+        backgroundColor: AppColors.surface,
+        surfaceTintColor: Colors.transparent,
+        insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header Dialog
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(LucideIcons.camera, color: AppColors.primary, size: 20),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Bukti Penyelesaian Fisik',
+                          style: GoogleFonts.outfit(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 16.5,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'Tiket #${task.publicCode}',
+                          style: GoogleFonts.inter(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () => Navigator.pop(ctx, false),
+                    borderRadius: BorderRadius.circular(10),
+                    child: const Padding(
+                      padding: EdgeInsets.all(4),
+                      child: Icon(LucideIcons.x, size: 18, color: AppColors.textSecondary),
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Batal')),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.statusCompleted,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            ),
-            child: const Text('Kirim ke Operator'),
+              const SizedBox(height: 16),
+
+              // Pratinjau Foto Bukti (Kompatibel Web & Mobile)
+              ClipRRect(
+                borderRadius: BorderRadius.circular(14),
+                child: Stack(
+                  children: [
+                    Image.memory(
+                      photoBytes,
+                      width: double.infinity,
+                      height: 148,
+                      fit: BoxFit.cover,
+                    ),
+                    Positioned(
+                      left: 10,
+                      bottom: 10,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        decoration: BoxDecoration(
+                          color: AppColors.statusCompleted,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(LucideIcons.circleCheck, color: Colors.white, size: 13),
+                            const SizedBox(width: 5),
+                            Text(
+                              'Foto bukti siap dikirim',
+                              style: GoogleFonts.inter(
+                                color: Colors.white,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // Label & Input Catatan Teknis
+              Text(
+                'Catatan Teknis Pekerjaan',
+                style: GoogleFonts.inter(
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Jelaskan ringkas hasil perbaikan di lapangan untuk divalidasi oleh Operator:',
+                style: GoogleFonts.inter(
+                  fontSize: 12,
+                  color: AppColors.textSecondary,
+                  height: 1.4,
+                ),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: noteController,
+                maxLines: 3,
+                style: GoogleFonts.inter(fontSize: 13, color: AppColors.textPrimary, height: 1.4),
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: AppColors.background,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                  hintText: 'Contoh: Tambal lubang aspal 2 titik menggunakan hotmix AC-WC telah tuntas & rata.',
+                  hintStyle: GoogleFonts.inter(fontSize: 12.5, color: AppColors.textSecondary.withValues(alpha: 0.75)),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.border, width: 1.2),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.primary, width: 1.6),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // Tombol Aksi Seimbang (Tap Target >= 46px)
+              Row(
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                      height: 46,
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.pop(ctx, false),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: AppColors.textSecondary,
+                          side: const BorderSide(color: AppColors.border, width: 1.2),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                        child: Text(
+                          'Batal',
+                          style: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 13),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    flex: 2,
+                    child: SizedBox(
+                      height: 46,
+                      child: ElevatedButton.icon(
+                        onPressed: () => Navigator.pop(ctx, true),
+                        icon: const Icon(LucideIcons.send, size: 15),
+                        label: Text(
+                          'Kirim ke Operator',
+                          style: GoogleFonts.inter(fontWeight: FontWeight.w700, fontSize: 13),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.statusCompleted,
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
 
     if (confirmed != true || !mounted) return;
 
     try {
+      final fileName = photo.name.isNotEmpty ? photo.name : 'resolution.jpg';
       final formData = FormData();
       formData.fields.add(MapEntry(
         'note',
@@ -781,7 +934,7 @@ class _FieldTasksScreenState extends State<FieldTasksScreen> {
       ));
       formData.files.add(MapEntry(
         'photos[]',
-        await MultipartFile.fromFile(File(photo.path).path, filename: 'resolution.jpg'),
+        MultipartFile.fromBytes(photoBytes, filename: fileName),
       ));
 
       final res = await _apiClient.dio.post('/complaints/${task.id}/finish-work', data: formData);
@@ -798,7 +951,7 @@ class _FieldTasksScreenState extends State<FieldTasksScreen> {
           e.type == DioExceptionType.connectionError ||
           e.type == DioExceptionType.connectionTimeout ||
           e.type == DioExceptionType.receiveTimeout;
-      if (isNetworkErr) {
+      if (isNetworkErr && !kIsWeb) {
         final finalNote = noteController.text.isNotEmpty
             ? noteController.text
             : 'Pekerjaan perbaikan fisik telah diselesaikan di lapangan';
@@ -808,7 +961,7 @@ class _FieldTasksScreenState extends State<FieldTasksScreen> {
             publicCode: task.publicCode,
             title: task.title,
             note: finalNote,
-            photoPath: File(photo.path).path,
+            photoPath: photo.path,
             queuedAt: DateTime.now().toIso8601String(),
           ),
         );
