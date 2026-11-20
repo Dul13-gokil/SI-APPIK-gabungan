@@ -349,8 +349,10 @@ class WebSuperAdminController extends Controller
         $validated = $request->validate([
             'name'     => 'required|string|max:255',
             'email'    => 'required|email|unique:users,email',
-            'phone'    => 'nullable|string|max:20',
+            'phone'    => 'nullable|string|max:20|unique:users,phone',
             'role'     => 'required|in:ADMIN,SUPERADMIN,KEPALA_DAERAH,BUPATI,OPERATOR,PETUGAS,WARGA',
+        ], [
+            'phone.unique' => 'Nomor handphone ini sudah terdaftar pada akun pengguna lain.',
         ]);
 
         // Aturan 1: Akun WARGA disembunyikan dan dilarang dibuat oleh Super Admin dari web
@@ -405,8 +407,10 @@ class WebSuperAdminController extends Controller
         $validated = $request->validate([
             'name'     => 'required|string|max:255',
             'email'    => 'required|email|unique:users,email,' . $user->id,
-            'phone'    => 'nullable|string|max:20',
+            'phone'    => 'nullable|string|max:20|unique:users,phone,' . $user->id,
             'role'     => 'nullable|string',
+        ], [
+            'phone.unique' => 'Nomor handphone ini sudah terdaftar pada akun pengguna lain.',
         ]);
 
         // Simpan data lama untuk komparasi jejak audit & notifikasi keamanan

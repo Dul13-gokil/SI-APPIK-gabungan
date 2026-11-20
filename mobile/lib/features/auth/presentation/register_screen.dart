@@ -692,7 +692,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         obscureText: _obscurePassword,
                         style: GoogleFonts.inter(fontSize: 13.5, color: AppColors.textPrimary),
                         decoration: buildAuthInputDecoration(
-                          hintText: 'Minimal 8 karakter',
+                          hintText: 'Min. 8 karakter (huruf besar, kecil, angka)',
                           prefixIcon: LucideIcons.lock,
                           suffixIcon: IconButton(
                             icon: Icon(
@@ -704,7 +704,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                         ),
                         validator: (v) {
-                          if (v == null || v.length < 8) return 'Password minimal 8 karakter';
+                          if (v == null || v.length < 8) return 'Kata sandi minimal 8 karakter';
+                          if (!RegExp(r'[A-Z]').hasMatch(v)) return 'Wajib mengandung huruf besar (A-Z)';
+                          if (!RegExp(r'[a-z]').hasMatch(v)) return 'Wajib mengandung huruf kecil (a-z)';
+                          if (!RegExp(r'[0-9]').hasMatch(v)) return 'Wajib mengandung angka (0-9)';
                           return null;
                         },
                       ),
@@ -721,7 +724,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           hintText: 'Ulangi kata sandi',
                           prefixIcon: LucideIcons.lock,
                         ),
-                        validator: (v) => (v == null || v.isEmpty) ? 'Konfirmasi kata sandi wajib diisi' : null,
+                        validator: (v) {
+                          if (v == null || v.isEmpty) return 'Konfirmasi kata sandi wajib diisi';
+                          if (v != _passwordController.text) return 'Konfirmasi kata sandi tidak cocok';
+                          return null;
+                        },
                       ),
                       const SizedBox(height: 20),
 
