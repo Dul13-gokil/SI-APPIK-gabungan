@@ -84,16 +84,16 @@ Route::prefix('admin')->middleware(['auth', 'active', 'role:SUPERADMIN,ADMIN'])-
     // Pengaturan Dispatch Mode & Manajemen Regu Tim Lapangan
     Route::post('/settings/dispatch-mode', [WebTeamController::class, 'updateDispatchMode'])->name('admin.settings.dispatch-mode');
     Route::post('/teams', [WebTeamController::class, 'store'])->name('admin.teams.store');
-    Route::post('/teams/{team}', [WebTeamController::class, 'update'])->name('admin.teams.update');
-    Route::post('/teams/{team}/delete', [WebTeamController::class, 'destroy'])->name('admin.teams.destroy');
+    Route::match(['post', 'put'], '/teams/{team}', [WebTeamController::class, 'update'])->name('admin.teams.update');
+    Route::match(['post', 'delete'], '/teams/{team}/delete', [WebTeamController::class, 'destroy'])->name('admin.teams.destroy');
     Route::post('/teams/{team}/members', [WebTeamController::class, 'addMember'])->name('admin.teams.members.add');
-    Route::post('/teams/{team}/members/{user}', [WebTeamController::class, 'removeMember'])->name('admin.teams.members.remove');
+    Route::match(['post', 'delete'], '/teams/{team}/members/{user}', [WebTeamController::class, 'removeMember'])->name('admin.teams.members.remove');
     Route::post('/teams/{team}/leader/{user}', [WebTeamController::class, 'setLeader'])->name('admin.teams.leader.set');
 
     // Manajemen Wilayah GIS
     Route::post('/regions/{id}/coordinates', [WebSuperAdminController::class, 'updateCoordinates'])->name('admin.regions.coordinates');
     Route::post('/regions', [WebSuperAdminController::class, 'storeRegion'])->name('admin.regions.store');
-    Route::post('/regions/{id}/delete', [WebSuperAdminController::class, 'deleteRegion'])->name('admin.regions.delete');
+    Route::match(['post', 'delete'], '/regions/{id}/delete', [WebSuperAdminController::class, 'deleteRegion'])->name('admin.regions.delete');
 });
 
 // 4. Pusat Kendali Operator Dinas
