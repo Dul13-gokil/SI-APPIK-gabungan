@@ -80,7 +80,11 @@ class OtpService
             }
         }
 
-        Log::info("OTP Generated [{$purpose}] for {$normalizedEmail}: {$code} (Expires in {$validMinutes}m)");
+        if (app()->environment('local')) {
+            Log::info("OTP Generated [{$purpose}] for {$normalizedEmail}: {$code} (Expires in {$validMinutes}m)");
+        } else {
+            Log::info("OTP Generated [{$purpose}] for {$normalizedEmail} (mail_sent=" . ($mailSent ? 'true' : 'false') . ", expires_in={$validMinutes}m)");
+        }
 
         return [
             'success'   => true,

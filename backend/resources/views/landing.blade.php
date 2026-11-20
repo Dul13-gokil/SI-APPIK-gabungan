@@ -6,9 +6,9 @@
     <!-- Slideshow Latar Belakang Hero (Terklip di dalam overflow-hidden agar parallax tidak menimpa section di bawah) -->
     <div class="absolute inset-0 overflow-hidden pointer-events-none z-0">
         <div id="landingHeroSlideshow" class="absolute inset-0 will-change-transform">
-            <img src="{{ asset('images/hero/repair-jalan.jpg') }}" alt="Perbaikan Jalan Regu PUPR" fetchpriority="high" decoding="async" class="landing-hero-slide active-slide absolute inset-0 w-full h-full object-cover opacity-100 transition-opacity duration-1000">
-            <img data-src="{{ asset('images/hero/repair-pju.jpg') }}" alt="Pemeliharaan PJU Kabupaten" decoding="async" class="landing-hero-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000">
-            <img data-src="{{ asset('images/hero/repair-fasum.jpg') }}" alt="Perbaikan Fasilitas Umum Kabupaten" decoding="async" class="landing-hero-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000">
+            <img src="{{ asset('images/hero/repair-jalan.webp') }}" alt="Perbaikan Jalan Regu PUPR" fetchpriority="high" decoding="async" class="landing-hero-slide active-slide absolute inset-0 w-full h-full object-cover opacity-100 transition-opacity duration-1000">
+            <img data-src="{{ asset('images/hero/repair-pju.webp') }}" alt="Pemeliharaan PJU Kabupaten" decoding="async" class="landing-hero-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000">
+            <img data-src="{{ asset('images/hero/repair-fasum.webp') }}" alt="Perbaikan Fasilitas Umum Kabupaten" decoding="async" class="landing-hero-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000">
             <!-- Overlay Gelap Kontras Tinggi -->
             <div class="absolute inset-0 bg-gradient-to-b from-slate-950/85 via-slate-950/70 to-slate-950/90"></div>
         </div>

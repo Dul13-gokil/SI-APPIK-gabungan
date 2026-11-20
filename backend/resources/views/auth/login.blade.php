@@ -9,9 +9,9 @@
     <aside class="hidden lg:flex flex-col justify-between bg-[#0F172A] px-14 py-9 text-white h-full overflow-hidden relative">
         <!-- Slideshow 5 Gambar Kabupaten dengan Animasi Zoom-In -> Zoom-Out -->
         <div id="loginHeroSlideshow" class="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-            <img src="{{ asset('images/hero/repair-jalan.jpg') }}" alt="Perbaikan Jalan Kabupaten" class="login-slide active-slide absolute inset-0 w-full h-full object-cover opacity-100 transition-opacity duration-1000">
-            <img src="{{ asset('images/hero/repair-pju.jpg') }}" alt="Pemeliharaan PJU Kabupaten" class="login-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000">
-            <img src="{{ asset('images/hero/repair-fasum.jpg') }}" alt="Perbaikan Fasilitas Umum Kabupaten" class="login-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000">
+            <img src="{{ asset('images/hero/repair-jalan.webp') }}" alt="Perbaikan Jalan Kabupaten" fetchpriority="high" decoding="async" class="login-slide active-slide absolute inset-0 w-full h-full object-cover opacity-100 transition-opacity duration-1000">
+            <img src="{{ asset('images/hero/repair-pju.webp') }}" alt="Pemeliharaan PJU Kabupaten" loading="lazy" decoding="async" class="login-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000">
+            <img src="{{ asset('images/hero/repair-fasum.webp') }}" alt="Perbaikan Fasilitas Umum Kabupaten" loading="lazy" decoding="async" class="login-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000">
             <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/55 to-slate-950/75"></div>
         </div>
 

@@ -272,6 +272,19 @@ class AuthController extends Controller
             }
 
             $googleData = $response->json();
+
+            // Pastikan email Google telah terverifikasi secara resmi
+            $emailVerified = filter_var($googleData['email_verified'] ?? false, FILTER_VALIDATE_BOOLEAN);
+            if (!$emailVerified) {
+                return ApiResponse::error('Akun Google Anda belum memverifikasi alamat email.', [], 403);
+            }
+
+            // Validasi audience (Client ID) jika dikonfigurasi di environment
+            $expectedClientId = config('services.google.client_id') ?: env('GOOGLE_CLIENT_ID');
+            if (!empty($expectedClientId) && (($googleData['aud'] ?? '') !== $expectedClientId)) {
+                return ApiResponse::error('Token Google tidak diterbitkan untuk aplikasi SI-APPIK.', [], 401);
+            }
+
             $email = strtolower(trim($googleData['email']));
             $name = $googleData['name'] ?? explode('@', $email)[0];
 

@@ -16,38 +16,40 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-// 1. Halaman Beranda Publik (GIS Persebaran & Tracking Aduan)
+// 1. Halaman Beranda Publik (GIS Persebaran & Tracking Aduan) — Di-cache 60 detik agar cepat & bebas lag
 Route::get('/', function () {
-    $total = Complaint::count();
-    $submitted = Complaint::whereIn('status', ['SUBMITTED', 'VERIFICATION'])->count();
-    $dispatched = Complaint::where('status', 'DISPATCHED')->count();
-    $inProgress = Complaint::where('status', 'IN_PROGRESS')->count();
-    $waitingValidation = Complaint::where('status', 'WAITING_VERIFICATION')->count();
-    $completed = Complaint::whereIn('status', ['COMPLETED', 'CLOSED'])->count();
-    $rejected = Complaint::where('status', 'REJECTED')->count();
+    $data = \Illuminate\Support\Facades\Cache::remember('landing_page_stats_v1', 60, function () {
+        $statusCounts = Complaint::selectRaw('status, count(*) as total')
+            ->groupBy('status')
+            ->pluck('total', 'status');
 
-    $stats = [
-        'total'              => $total,
-        'submitted'          => $submitted,
-        'dispatched'         => $dispatched,
-        'in_progress'        => $inProgress,
-        'waiting_validation' => $waitingValidation,
-        'completed'          => $completed,
-        'rejected'           => $rejected,
-    ];
+        $stats = [
+            'total'              => (int) $statusCounts->sum(),
+            'submitted'          => (int) (($statusCounts['SUBMITTED'] ?? 0) + ($statusCounts['VERIFICATION'] ?? 0)),
+            'dispatched'         => (int) ($statusCounts['DISPATCHED'] ?? 0),
+            'in_progress'        => (int) ($statusCounts['IN_PROGRESS'] ?? 0),
+            'waiting_validation' => (int) ($statusCounts['WAITING_VERIFICATION'] ?? 0),
+            'completed'          => (int) (($statusCounts['COMPLETED'] ?? 0) + ($statusCounts['CLOSED'] ?? 0)),
+            'rejected'           => (int) ($statusCounts['REJECTED'] ?? 0),
+        ];
 
-    $districts = Region::pluck('district')->filter()->unique()->sort()->values();
+        $districts = Region::pluck('district')->filter()->unique()->sort()->values();
 
-    $allComplaints = Complaint::whereNotIn('status', ['REJECTED'])
-        ->select('id', 'category_id')
-        ->get();
-    $categoryStats = [
-        'jalan' => $allComplaints->where('category_id', 1)->count(),
-        'pju' => $allComplaints->where('category_id', 2)->count(),
-        'fasilitas' => $allComplaints->where('category_id', 3)->count(),
-    ];
+        $catCounts = Complaint::whereNotIn('status', ['REJECTED'])
+            ->selectRaw('category_id, count(*) as total')
+            ->groupBy('category_id')
+            ->pluck('total', 'category_id');
 
-    return view('landing', compact('stats', 'districts', 'categoryStats'));
+        $categoryStats = [
+            'jalan'     => (int) ($catCounts[1] ?? 0),
+            'pju'       => (int) ($catCounts[2] ?? 0),
+            'fasilitas' => (int) ($catCounts[3] ?? 0),
+        ];
+
+        return compact('stats', 'districts', 'categoryStats');
+    });
+
+    return view('landing', $data);
 })->name('home');
 
 // 2. Autentikasi Web
@@ -57,7 +59,7 @@ Route::match(['get', 'post'], '/logout', [WebAuthController::class, 'logout'])->
 Route::post('/forgot-password', [WebAuthController::class, 'sendForgotPasswordOtp'])->middleware('throttle:5,1')->name('password.update');
 Route::post('/auth/forgot-password/send-otp', [WebAuthController::class, 'sendForgotPasswordOtp'])->middleware('throttle:5,1')->name('auth.forgot-password.send-otp');
 Route::post('/auth/forgot-password/reset', [WebAuthController::class, 'resetForgotPassword'])->middleware('throttle:5,1')->name('auth.forgot-password.reset');
-Route::post('/auth/check-warga', [WebAuthController::class, 'checkWargaRole'])->name('auth.check-warga');
+Route::post('/auth/check-warga', [WebAuthController::class, 'checkWargaRole'])->middleware('throttle:30,1')->name('auth.check-warga');
 Route::post('/profile/first-login-setup', [WebAuthController::class, 'completeFirstLoginSetup'])->middleware(['auth', 'active'])->name('profile.first-login.setup');
 Route::get('/download-apk', [WebAuthController::class, 'downloadApk'])->name('download.apk');
 
@@ -109,11 +111,17 @@ Route::prefix('petugas')->middleware(['auth', 'active', 'role:PETUGAS,SUPERADMIN
     Route::post('/profile', [WebPetugasController::class, 'updateProfile'])->name('petugas.profile.update');
 });
 
-// 7. Fallback Permanen Media Foto Pengaduan dari PostgreSQL (jika file disk ephemeral Railway ter-reset saat redeploy)
+// 7. Fallback Permanen Media Foto Pengaduan dari PostgreSQL (Dilindungi Anti Path Traversal)
 Route::get('/storage/{path}', function (string $path) {
-    $cleanPath = ltrim($path, '/');
-    $diskPath = storage_path('app/public/' . $cleanPath);
-    if (is_file($diskPath)) {
+    $cleanPath = ltrim(str_replace('\\', '/', $path), '/');
+    if ($cleanPath === '' || str_contains($cleanPath, '..') || str_contains($cleanPath, "\0")) {
+        abort(403, 'Akses path tidak diizinkan.');
+    }
+
+    $baseDir = realpath(storage_path('app/public'));
+    $diskPath = $baseDir ? realpath($baseDir . DIRECTORY_SEPARATOR . $cleanPath) : false;
+
+    if ($diskPath !== false && $baseDir !== false && str_starts_with($diskPath, $baseDir . DIRECTORY_SEPARATOR) && is_file($diskPath)) {
         return response()->file($diskPath, [
             'Access-Control-Allow-Origin' => '*',
             'Cache-Control' => 'public, max-age=86400',

@@ -17,8 +17,10 @@ class ChatbotController extends Controller
     public function createSession(Request $request): JsonResponse
     {
         $user = AuthController::resolveUser($request);
-        $userId = $user?->id ?? 1;
-        $role = $user?->role ?? $request->input('role') ?? 'WARGA';
+        $userId = $user?->id;
+        // Cegah spoofing role dari client: hanya akun terautentikasi yang bisa memakai role non-warga
+        $requestedRole = strtoupper((string) $request->input('role', 'WARGA'));
+        $role = $user?->role ?? (in_array($requestedRole, ['WARGA', 'TAMU'], true) ? $requestedRole : 'WARGA');
 
         $session = ChatSession::create([
             'user_id' => $userId,
@@ -54,12 +56,20 @@ class ChatbotController extends Controller
     public function sendMessage(Request $request, string $sessionId): JsonResponse
     {
         $request->validate([
-            'message' => 'required|string',
+            'message' => 'required|string|max:2000',
         ]);
 
         $session = ChatSession::findOrFail($sessionId);
-        $user = $session->user ?? AuthController::resolveUser($request);
-        $role = $user?->role ?? $request->input('role') ?? 'WARGA';
+        $authUser = AuthController::resolveUser($request);
+
+        // Proteksi BOLA/IDOR: sesi milik akun terdaftar tidak boleh diakses pengguna lain
+        if ($session->user_id !== null && (!$authUser || (int) $session->user_id !== (int) $authUser->id)) {
+            return ApiResponse::error('Anda tidak memiliki izin mengakses sesi percakapan ini.', [], 403);
+        }
+
+        $user = $authUser ?? $session->user;
+        $requestedRole = strtoupper((string) $request->input('role', 'WARGA'));
+        $role = $user?->role ?? (in_array($requestedRole, ['WARGA', 'TAMU'], true) ? $requestedRole : 'WARGA');
 
         // Record User Message
         ChatMessage::create([

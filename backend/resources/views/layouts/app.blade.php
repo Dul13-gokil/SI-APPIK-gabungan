@@ -8,16 +8,17 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'SI-APPIK')</title>
     @if(request()->routeIs('home'))
-        <link rel="preload" as="image" href="{{ asset('images/hero/repair-jalan.jpg') }}" fetchpriority="high">
+        <link rel="preload" as="image" href="{{ asset('images/hero/repair-jalan.webp') }}" fetchpriority="high">
     @endif
-    <link rel="icon" type="image/png" href="{{ asset('images/logo-pin.png') }}?v=5">
-    <link rel="shortcut icon" type="image/png" href="{{ asset('images/logo-pin.png') }}?v=5">
-    <link rel="apple-touch-icon" href="{{ asset('images/logo-pin.png') }}?v=5">
+    <link rel="icon" type="image/png" href="{{ asset('images/logo-pin.png') }}?v=6">
+    <link rel="shortcut icon" type="image/png" href="{{ asset('images/logo-pin.png') }}?v=6">
+    <link rel="apple-touch-icon" href="{{ asset('images/logo-pin.png') }}?v=6">
 
-    <!-- Google Fonts: Inter & Outfit -->
+    <!-- Google Fonts: Inter & Outfit + Preconnect CDN -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://unpkg.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
 
     <!-- Tailwind CSS (Precompiled Vite CSS jika tersedia, fallback ke CDN) -->
     @if(file_exists(public_path('build/manifest.json')))
@@ -49,12 +50,15 @@
         </script>
     @endif
 
-    <!-- Lucide Icons CDN -->
+    <!-- Lucide Icons CDN (Non-blocking) -->
     <script defer src="https://unpkg.com/lucide@latest"></script>
 
-    <!-- Leaflet GIS Map CSS & JS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    @if(!request()->routeIs('login'))
+        <!-- Leaflet GIS Map CSS (Non-blocking) & JS (Defer) -->
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" media="print" onload="this.media='all'" />
+        <noscript><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" /></noscript>
+        <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    @endif
 
     <style>
         body {

@@ -25,9 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\SecurityHeadersMiddleware::class,
         ]);
         $middleware->validateCsrfTokens(except: [
-            'auth/*',
             'api/*',
-            'check-warga-role',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

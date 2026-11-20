@@ -3,7 +3,7 @@ set -e
 
 # Pastikan hanya satu MPM (mpm_prefork) yang aktif di Apache
 rm -f /etc/apache2/mods-enabled/mpm_event.* /etc/apache2/mods-enabled/mpm_worker.* || true
-a2enmod mpm_prefork rewrite >/dev/null 2>&1 || true
+a2enmod mpm_prefork rewrite deflate expires headers >/dev/null 2>&1 || true
 
 # Sesuaikan port Apache dengan variabel PORT yang diberikan oleh Railway
 PORT="${PORT:-80}"
@@ -54,8 +54,9 @@ php artisan storage:link --force || true
 chown -R www-data:www-data /var/www/html/storage || true
 chmod -R 775 /var/www/html/storage || true
 
-# Bersihkan & cache konfigurasi
+# Bersihkan lalu bangun ulang cache produksi Laravel (config, routes, views)
 php artisan optimize:clear || true
+php artisan optimize || true
 
 # Jalankan migrasi database otomatis saat deploy
 echo "Menjalankan migrasi database..."
