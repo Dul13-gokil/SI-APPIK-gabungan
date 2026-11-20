@@ -324,7 +324,7 @@ class WorkflowController extends Controller
 
         $hasFileDataCol = ComplaintPhoto::ensureFileDataColumnExists();
 
-        DB::transaction(function () use ($complaint, $validated, $oldStatus, $newStatus, $request, $hasFileDataCol) {
+        DB::transaction(function () use ($complaint, $validated, $oldStatus, $newStatus, $request, $hasFileDataCol, $user) {
             $complaint->update(['status' => $newStatus]);
 
             if ($complaint->latestDisposition) {
@@ -349,13 +349,17 @@ class WorkflowController extends Controller
             foreach ($photos as $photo) {
                 $path = $photo->store('resolutions', 'public');
                 $storedAbsPath = \Illuminate\Support\Facades\Storage::disk('public')->path($path);
-                app(\App\Services\ImageWatermarkService::class)->applyFieldWatermark(
-                    $storedAbsPath,
-                    (string) $complaint->public_code,
-                    $complaint->latitude ? (float) $complaint->latitude : null,
-                    $complaint->longitude ? (float) $complaint->longitude : null,
-                    $user?->name
-                );
+                try {
+                    app(\App\Services\ImageWatermarkService::class)->applyFieldWatermark(
+                        $storedAbsPath,
+                        (string) $complaint->public_code,
+                        $complaint->latitude ? (float) $complaint->latitude : null,
+                        $complaint->longitude ? (float) $complaint->longitude : null,
+                        $user?->name
+                    );
+                } catch (\Throwable $e) {
+                    \Illuminate\Support\Facades\Log::warning('Gagal menerapkan watermark pada foto bukti selesai: ' . $e->getMessage());
+                }
                 $realPath = is_file($storedAbsPath) ? $storedAbsPath : $photo->getRealPath();
                 $fileData = ($hasFileDataCol && $realPath && file_exists($realPath)) ? base64_encode(file_get_contents($realPath)) : null;
                 $photoAttrs = [
@@ -387,7 +391,7 @@ class WorkflowController extends Controller
                 $complaint,
                 'COMPLAINT_WAITING_VERIFICATION',
                 'Pekerjaan Lapangan Selesai!',
-                "Petugas telah menyelesaikan perbaikan untuk laporan #{$complaint->public_code}. Saat ini menunggu verifikasi & validasi akhir oleh Operator."
+                "Pekerja lapangan telah menyelesaikan perbaikan untuk laporan #{$complaint->public_code}. Saat ini menunggu verifikasi & validasi akhir oleh Operator."
             );
         });
 
