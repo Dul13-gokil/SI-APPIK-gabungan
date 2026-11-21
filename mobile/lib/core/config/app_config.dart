@@ -4,10 +4,10 @@ class AppConfig {
   static const String appName = 'Aduan Jalan';
   static const String appVersion = '1.0.0';
 
-  // Default Server API Production Resmi:
-  // https://aduan.aispektra.com/api/v1
-  static String get defaultBaseUrl => 'https://aduan.aispektra.com';
-  static String activeOrigin = 'https://aduan.aispektra.com';
+  // Default Server API Production Railway:
+  // https://si-appik-production.up.railway.app/api/v1
+  static String get defaultBaseUrl => 'https://si-appik-production.up.railway.app';
+  static String activeOrigin = 'https://si-appik-production.up.railway.app';
   static String get baseUrl => normalizeUrl(defaultBaseUrl);
   
   static const int connectTimeout = 15000;
@@ -46,16 +46,16 @@ class AppConfig {
     if (fixed.startsWith('http://localhost:8000') ||
         fixed.startsWith('http://127.0.0.1:8000') ||
         fixed.startsWith('http://100.86.30.42:8000') ||
-        fixed.startsWith('https://si-appik-production.up.railway.app') ||
-        fixed.startsWith('http://si-appik-production.up.railway.app')) {
+        fixed.startsWith('https://aduan.aispektra.com') ||
+        fixed.startsWith('http://aduan.aispektra.com')) {
       fixed = fixed.replaceFirst('http://localhost:8000', origin);
       fixed = fixed.replaceFirst('http://127.0.0.1:8000', origin);
       fixed = fixed.replaceFirst('http://100.86.30.42:8000', origin);
-      fixed = fixed.replaceFirst('https://si-appik-production.up.railway.app', origin);
-      fixed = fixed.replaceFirst('http://si-appik-production.up.railway.app', origin);
+      fixed = fixed.replaceFirst('https://aduan.aispektra.com', origin);
+      fixed = fixed.replaceFirst('http://aduan.aispektra.com', origin);
     }
-    if (fixed.startsWith('http://aduan.aispektra.com')) {
-      fixed = fixed.replaceFirst('http://aduan.aispektra.com', 'https://aduan.aispektra.com');
+    if (fixed.startsWith('http://si-appik-production.up.railway.app')) {
+      fixed = fixed.replaceFirst('http://si-appik-production.up.railway.app', 'https://si-appik-production.up.railway.app');
     }
     if (!fixed.startsWith('http://') && !fixed.startsWith('https://')) {
       if (fixed.startsWith('/')) {
@@ -70,9 +70,9 @@ class AppConfig {
   static Future<String> getBaseUrl() async {
     final prefs = await SharedPreferences.getInstance();
     var custom = prefs.getString(_keyCustomBaseUrl);
-    // Bersihkan cache lama (Railway / IP lokal / Tailscale) agar perangkat otomatis memakai server utama
+    // Bersihkan cache lama (aispektra / IP lokal / Tailscale) agar perangkat otomatis memakai Railway production
     if (custom != null &&
-        (custom.contains('si-appik-production.up.railway.app') ||
+        (custom.contains('aduan.aispektra.com') ||
             custom.contains('100.86.30.42') ||
             custom.contains('127.0.0.1') ||
             custom.contains('localhost'))) {

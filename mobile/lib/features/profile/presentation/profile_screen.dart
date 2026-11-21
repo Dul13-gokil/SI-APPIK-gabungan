@@ -2015,13 +2015,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
               controller: controller,
               decoration: InputDecoration(
                 labelText: 'Base URL API',
-                hintText: 'https://aduan.aispektra.com/api/v1',
+                hintText: 'https://si-appik-production.up.railway.app/api/v1',
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
             ),
             const SizedBox(height: 8),
             const Text(
-              'Production Utama: https://aduan.aispektra.com/api/v1\nTailscale VPN: http://100.86.30.42:8000/api/v1\nUSB adb reverse: http://127.0.0.1:8000/api/v1',
+              'Production Railway: https://si-appik-production.up.railway.app/api/v1\nTailscale VPN: http://100.86.30.42:8000/api/v1\nUSB adb reverse: http://127.0.0.1:8000/api/v1',
               style: TextStyle(fontSize: 11, color: AppColors.primaryLight),
             ),
           ],

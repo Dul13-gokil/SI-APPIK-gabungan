@@ -16,47 +16,47 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-// 1. Halaman Beranda Publik (GIS Persebaran & Tracking Aduan) — Di-cache 60 detik agar cepat & bebas lag
+// 1. Halaman Beranda Publik (GIS Persebaran & Tracking Aduan) — Langsung dari data aktual PostgreSQL (sinkron 100% dengan Peta & API)
 Route::get('/', function () {
-    $data = \Illuminate\Support\Facades\Cache::remember('landing_page_stats_v2', 60, function () {
-        $statusCounts = Complaint::selectRaw('status, count(*) as total')
-            ->groupBy('status')
-            ->pluck('total', 'status');
+    $allStatusCounts = Complaint::selectRaw('status, count(*) as total')
+        ->groupBy('status')
+        ->pluck('total', 'status');
 
-        $stats = [
-            'total'              => (int) $statusCounts->sum(),
-            'submitted'          => (int) (($statusCounts['SUBMITTED'] ?? 0) + ($statusCounts['VERIFICATION'] ?? 0)),
-            'dispatched'         => (int) ($statusCounts['DISPATCHED'] ?? 0),
-            'in_progress'        => (int) ($statusCounts['IN_PROGRESS'] ?? 0),
-            'waiting_validation' => (int) ($statusCounts['WAITING_VERIFICATION'] ?? 0),
-            'completed'          => (int) (($statusCounts['COMPLETED'] ?? 0) + ($statusCounts['CLOSED'] ?? 0)),
-            'rejected'           => (int) ($statusCounts['REJECTED'] ?? 0),
-        ];
+    // Publik: Hanya hitung laporan valid (non-REJECTED & non-DRAFT) agar 100% sama dengan Peta GIS & API Summary
+    $publicTotal = (int) $allStatusCounts
+        ->reject(fn ($cnt, $st) => in_array($st, ['REJECTED', 'DRAFT'], true))
+        ->sum();
 
-        // Simpan sebagai array PHP murni (bukan Collection object) agar aman dari serializable_classes=false di Laravel 13
-        $districts = Region::pluck('district')
-            ->filter()
-            ->map(fn ($d) => (string) $d)
-            ->unique()
-            ->sort()
-            ->values()
-            ->all();
+    $stats = [
+        'total'              => $publicTotal,
+        'submitted'          => (int) (($allStatusCounts['SUBMITTED'] ?? 0) + ($allStatusCounts['VERIFICATION'] ?? 0) + ($allStatusCounts['VERIFIED'] ?? 0)),
+        'dispatched'         => (int) ($allStatusCounts['DISPATCHED'] ?? 0),
+        'in_progress'        => (int) (($allStatusCounts['IN_PROGRESS'] ?? 0) + ($allStatusCounts['REVISION_REQUIRED'] ?? 0)),
+        'waiting_validation' => (int) ($allStatusCounts['WAITING_VERIFICATION'] ?? 0),
+        'completed'          => (int) (($allStatusCounts['COMPLETED'] ?? 0) + ($allStatusCounts['CLOSED'] ?? 0)),
+        'rejected'           => (int) ($allStatusCounts['REJECTED'] ?? 0),
+    ];
 
-        $catCounts = Complaint::whereNotIn('status', ['REJECTED'])
-            ->selectRaw('category_id, count(*) as total')
-            ->groupBy('category_id')
-            ->pluck('total', 'category_id');
+    $districts = Region::pluck('district')
+        ->filter()
+        ->map(fn ($d) => (string) $d)
+        ->unique()
+        ->sort()
+        ->values()
+        ->all();
 
-        $categoryStats = [
-            'jalan'     => (int) ($catCounts[1] ?? 0),
-            'pju'       => (int) ($catCounts[2] ?? 0),
-            'fasilitas' => (int) ($catCounts[3] ?? 0),
-        ];
+    $catCounts = Complaint::whereNotIn('status', ['REJECTED', 'DRAFT'])
+        ->selectRaw('category_id, count(*) as total')
+        ->groupBy('category_id')
+        ->pluck('total', 'category_id');
 
-        return compact('stats', 'districts', 'categoryStats');
-    });
+    $categoryStats = [
+        'jalan'     => (int) ($catCounts[1] ?? 0),
+        'pju'       => (int) ($catCounts[2] ?? 0),
+        'fasilitas' => (int) ($catCounts[3] ?? 0),
+    ];
 
-    return view('landing', $data);
+    return view('landing', compact('stats', 'districts', 'categoryStats'));
 })->name('home');
 
 // 2. Autentikasi Web
