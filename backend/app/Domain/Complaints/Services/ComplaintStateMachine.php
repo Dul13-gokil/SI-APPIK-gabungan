@@ -3,6 +3,7 @@
 namespace App\Domain\Complaints\Services;
 
 use App\Domain\Complaints\Enums\ComplaintStatus;
+use App\Domain\Complaints\Exceptions\InvalidStatusTransitionException;
 use InvalidArgumentException;
 
 class ComplaintStateMachine
@@ -51,7 +52,7 @@ class ComplaintStateMachine
         $toKey = $to instanceof ComplaintStatus ? $to->value : $to;
 
         if (!self::canTransition($fromKey, $toKey)) {
-            throw new InvalidArgumentException("Perubahan status tidak sah: dari {$fromKey} ke {$toKey}.");
+            throw InvalidStatusTransitionException::between($fromKey, $toKey);
         }
     }
 

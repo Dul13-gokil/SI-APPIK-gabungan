@@ -26,8 +26,8 @@ class ComplaintApiTest extends TestCase
             'title' => 'Jalan Rusak Parah',
             'description' => 'Ada lubang besar di jalan utama.',
             'address' => 'Jl. Merdeka No. 1',
-            'latitude' => -7.123,
-            'longitude' => 110.123,
+            'latitude' => -3.5060,
+            'longitude' => 120.8878,
             'status' => 'SUBMITTED',
             'priority_score' => 60.0,
             'priority_level' => 'HIGH',
@@ -58,8 +58,8 @@ class ComplaintApiTest extends TestCase
             'description' => 'Pondasi jembatan retak setelah hujan deras.',
             'category_id' => $cat->id,
             'address' => 'Desa Sukamaju RT 02',
-            'latitude' => -7.1245,
-            'longitude' => 110.1256,
+            'latitude' => -3.5061,
+            'longitude' => 120.8879,
             'is_anonymous' => false,
         ];
 

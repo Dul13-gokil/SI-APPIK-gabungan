@@ -331,20 +331,8 @@ class ComplaintController extends Controller
             );
         }
 
-        // Generate Distinct Public Code by Damage Type (e.g. 0005/ringan/2026 or 0004/berat/2026)
-        // Wajib menggunakan withoutGlobalScopes() agar laporan yang ditolak Super Admin tetap dihitung
-        // dan tidak menyebabkan duplikasi unik (SQL 23505 Unique Violation / 500 Server Error)
-        $nextId = (Complaint::withoutGlobalScopes()->max('id') ?? 0) + 1;
-        $typeCode = ($damageType === 'major') ? 'berat' : 'ringan';
-        $year = date('Y');
-        do {
-            $seq = str_pad($nextId, 4, '0', STR_PAD_LEFT);
-            $publicCode = "{$seq}/{$typeCode}/{$year}";
-            $exists = Complaint::withoutGlobalScopes()->where('public_code', $publicCode)->exists();
-            if ($exists) {
-                $nextId++;
-            }
-        } while ($exists);
+        // Kode publik dibuat di dalam transaksi memakai advisory lock PostgreSQL
+        // agar dua laporan bersamaan tidak memperoleh nomor urut yang sama.
 
         // Initial Priority Calculation (SAP Section 18)
         $priorityCalc = $this->priorityService->calculate(
@@ -357,19 +345,14 @@ class ComplaintController extends Controller
 
         $hasFileDataCol = ComplaintPhoto::ensureFileDataColumnExists();
 
-        $complaint = DB::transaction(function () use ($validated, $damageType, $userId, $publicCode, $priorityCalc, $photoFiles, $hasFileDataCol) {
+        $complaint = DB::transaction(function () use ($validated, $damageType, $userId, $priorityCalc, $photoFiles, $hasFileDataCol) {
+            $publicCode = $this->generatePublicCode($damageType);
             $isAnon = filter_var($validated['is_anonymous'] ?? false, FILTER_VALIDATE_BOOLEAN);
 
             $latFloat = (float) $validated['latitude'];
             $lonFloat = (float) $validated['longitude'];
 
-            $regionId = $validated['region_id'] ?? null;
-            if (!$regionId) {
-                $nearest = \App\Models\Region::selectRaw('*, (6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance', [$latFloat, $lonFloat, $latFloat])
-                    ->orderBy('distance', 'asc')
-                    ->first();
-                $regionId = $nearest?->id;
-            }
+            $regionId = $validated['region_id'] ?? $this->nearestRegion($latFloat, $lonFloat)?->id;
 
             $enrichedAddress = $this->enrichAddressWithAdministrativeLocation(
                 $validated['address'],
@@ -477,6 +460,32 @@ class ComplaintController extends Controller
     }
 
     /**
+     * Nomor urut kode publik (mis. 0005/ringan/2026).
+     * Dipanggil di dalam transaksi; advisory lock mencegah dua laporan memakai nomor sama.
+     * shortcut: hanya Postgres yang diserialisasi, tambahkan GET_LOCK bila produksi pindah ke MySQL.
+     */
+    protected function generatePublicCode(string $damageType): string
+    {
+        if (DB::connection()->getDriverName() === 'pgsql') {
+            DB::select('SELECT pg_advisory_xact_lock(?)', [738292001]);
+        }
+
+        $nextId = (int) (Complaint::withoutGlobalScopes()->max('id') ?? 0) + 1;
+        $typeCode = $damageType === 'major' ? 'berat' : 'ringan';
+        $year = date('Y');
+
+        do {
+            $publicCode = str_pad((string) $nextId, 4, '0', STR_PAD_LEFT) . "/{$typeCode}/{$year}";
+            $exists = Complaint::withoutGlobalScopes()->where('public_code', $publicCode)->exists();
+            if ($exists) {
+                $nextId++;
+            }
+        } while ($exists);
+
+        return $publicCode;
+    }
+
+    /**
      * Batalkan laporan pengaduan oleh warga pemilik laporan (hanya saat status SUBMITTED / Verifikasi).
      * Laporan tidak dihapus permanen melainkan diubah statusnya ke CANCELLED untuk jejak arsip.
      */
@@ -521,13 +530,13 @@ class ComplaintController extends Controller
             ]);
 
             \App\Models\AuditLog::create([
-                'actor_user_id' => $user->id,
+                'actor_id'      => $user->id,
                 'action'        => 'complaint.cancelled',
-                'entity_type'   => 'complaint',
+                'entity_type'   => \App\Models\Complaint::class,
                 'entity_id'     => $complaint->id,
                 'before_json'   => ['status' => $fromStatus],
                 'after_json'    => ['status' => 'CANCELLED', 'reason' => $reason !== '' ? $reason : null],
-                'ip_address'    => $request->ip(),
+                'ip'            => $request->ip(),
             ]);
         });
 
@@ -636,6 +645,24 @@ class ComplaintController extends Controller
         ], 'Terima kasih! Penilaian Anda terhadap hasil perbaikan telah disimpan.');
     }
 
+    /**
+     * Region (kecamatan/desa) terdekat dihitung di PHP agar query tetap portabel
+     * di PostgreSQL, MySQL, dan SQLite (SQLite tidak punya fungsi trigonometri).
+     * shortcut: memuat semua region tiap panggilan, pindahkan ke PostGIS bila jumlah region membesar.
+     */
+    protected function nearestRegion(float $lat, float $lon): ?\App\Models\Region
+    {
+        return \App\Models\Region::query()
+            ->get()
+            ->sortBy(fn ($region) => $this->haversineMeters(
+                $lat,
+                $lon,
+                (float) $region->latitude,
+                (float) $region->longitude
+            ))
+            ->first();
+    }
+
     protected function haversineMeters(float $lat1, float $lon1, float $lat2, float $lon2): float
     {
         $earthRadius = 6371000.0;
@@ -729,9 +756,7 @@ class ComplaintController extends Controller
         $lon = (float) $request->lon;
 
         // Cari kecamatan dan desa/pusat administratif terdekat dari 15 kecamatan resmi Kabupaten
-        $nearestRegion = \App\Models\Region::selectRaw('*, (6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance', [$lat, $lon, $lat])
-            ->orderBy('distance', 'asc')
-            ->first();
+        $nearestRegion = $this->nearestRegion($lat, $lon);
 
         $road = '';
         $village = $nearestRegion?->village ?? 'Kel. Lasusua';
@@ -804,9 +829,7 @@ class ComplaintController extends Controller
             return $address;
         }
 
-        $nearest = \App\Models\Region::selectRaw('*, (6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance', [$lat, $lon, $lat])
-            ->orderBy('distance', 'asc')
-            ->first();
+        $nearest = $this->nearestRegion($lat, $lon);
 
         $districtName = $nearest ? str_ireplace(['Kecamatan', 'Kec.'], '', $nearest->district) : 'Lasusua';
         $villageName = $nearest ? str_ireplace(['Desa/Kel.', 'Desa', 'Kelurahan', 'Kel.'], '', $nearest->village) : 'Lasusua';

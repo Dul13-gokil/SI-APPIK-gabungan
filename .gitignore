@@ -10,6 +10,10 @@ Thumbs.db
 *.swp
 cloudflared.exe
 
+# Environment file untuk docker compose di root (jangan di-commit)
+/.env
+/.env.docker
+
 # IDEs & Editors
 .idea/
 .vscode/

@@ -131,7 +131,7 @@ class WebOperatorController extends Controller
                     'severity_text'    => $c->severity_text,
                     'category_name'    => $c->category?->name ?? 'Infrastruktur',
                     'reporter_name'    => $c->user?->name ?? $c->citizen?->name ?? 'Warga Terdaftar',
-                    'reporter_phone'   => $c->user?->phone ?? $c->citizen?->phone ?? '081344697178',
+                    'reporter_phone'   => $c->user?->phone ?? $c->citizen?->phone ?? null,
                     'created_at_human' => $c->created_at?->diffForHumans() ?? '',
                     'photo_url'        => $photo ? ($photo->url ?? asset('storage/' . $photo->storage_key)) : null,
                     'photo_after_url'  => $afterPhoto && $afterPhoto->id !== ($photo?->id) ? ($afterPhoto->url ?? asset('storage/' . $afterPhoto->storage_key)) : null,
@@ -503,16 +503,27 @@ class WebOperatorController extends Controller
                     'deadline'    => $deadline,
                 ]);
             } else {
-                Disposition::create([
-                    'complaint_id'  => $complaint->id,
-                    'department_id' => 1,
-                    'team_id'       => $team?->id,
-                    'assigned_by'   => auth()->id(),
-                    'assigned_to'   => $assignedTo,
-                    'instruction'   => $instruction,
-                    'deadline'      => $deadline,
-                    'status'        => 'PENDING',
-                ]);
+                // Jangan asumsikan id dinas = 1; ambil dari regu, kategori, atau dinas pertama.
+                $departmentId = $team?->department_id
+                    ?? $complaint->category?->department_id
+                    ?? \App\Models\Department::query()->value('id');
+
+                if ($departmentId) {
+                    Disposition::create([
+                        'complaint_id'  => $complaint->id,
+                        'department_id' => $departmentId,
+                        'team_id'       => $team?->id,
+                        'assigned_by'   => auth()->id(),
+                        'assigned_to'   => $assignedTo,
+                        'instruction'   => $instruction,
+                        'deadline'      => $deadline,
+                        'status'        => 'PENDING',
+                    ]);
+                } else {
+                    \Illuminate\Support\Facades\Log::warning(
+                        "Tidak ada data dinas untuk disposisi laporan #{$complaint->public_code}."
+                    );
+                }
             }
 
             $targetName = $team ? "Regu {$team->name} [{$team->code}]" : "Terbuka untuk Klaim Mandiri";

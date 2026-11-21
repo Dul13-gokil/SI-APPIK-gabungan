@@ -105,8 +105,8 @@ function initExecutiveMonitoringCharts() {
         }
         const ctxCat = catCanvas.getContext('2d');
         const blueTones = ['#2563EB', '#2563EB', '#3B82F6', '#60A5FA', '#93C5FD', '#BFDBFE'];
-        const catLabels = {!! json_encode($categories->pluck('name')) !!};
-        const catData = {!! json_encode($categories->pluck('complaints_count')) !!};
+        const catLabels = @json($categories->pluck('name'));
+        const catData = @json($categories->pluck('complaints_count'));
 
         categoryDistributionChartInstance = new Chart(ctxCat, {
             type: 'doughnut',

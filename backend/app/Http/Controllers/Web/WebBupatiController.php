@@ -156,7 +156,7 @@ class WebBupatiController extends Controller
                     'severity_text'        => $c->severity_text,
                     'category_name'        => $c->category?->name ?? 'Infrastruktur Umum',
                     'reporter_name'        => $c->user?->name ?? $c->citizen?->name ?? 'Warga Terdaftar',
-                    'reporter_phone'       => $c->user?->phone ?? $c->citizen?->phone ?? '081344697178',
+                    'reporter_phone'       => $c->user?->phone ?? $c->citizen?->phone ?? null,
                     'created_at_human'     => $c->created_at?->diffForHumans() ?? '',
                     'created_at_formatted' => $c->created_at?->translatedFormat('d M Y, H:i') ?? '',
                     'photo_url'            => $photo ? ($photo->url ?? asset('storage/' . $photo->storage_key)) : null,

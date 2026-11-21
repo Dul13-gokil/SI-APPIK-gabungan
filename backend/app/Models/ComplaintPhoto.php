@@ -42,9 +42,15 @@ class ComplaintPhoto extends Model
      */
     public static function ensureFileDataColumnExists(): bool
     {
+        static $exists = false;
+
+        if ($exists) {
+            return true;
+        }
+
         try {
             if (\Illuminate\Support\Facades\Schema::hasColumn('complaint_photos', 'file_data')) {
-                return true;
+                return $exists = true;
             }
 
             if (\Illuminate\Support\Facades\DB::connection()->getDriverName() === 'pgsql') {
@@ -55,7 +61,7 @@ class ComplaintPhoto extends Model
                 });
             }
 
-            return \Illuminate\Support\Facades\Schema::hasColumn('complaint_photos', 'file_data');
+            return $exists = \Illuminate\Support\Facades\Schema::hasColumn('complaint_photos', 'file_data');
         } catch (\Throwable $e) {
             return false;
         }

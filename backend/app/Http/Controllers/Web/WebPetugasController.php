@@ -257,27 +257,10 @@ class WebPetugasController extends Controller
             return back()->with('error', "Pekerjaan belum dapat dimulai. Status saat ini: {$oldStatus} (Menunggu verifikasi operator).");
         }
 
-        $dispatchMode = \App\Models\SystemSetting::get('dispatch_mode', 'HYBRID');
-        $worker       = auth()->user();
-        $workerTeam   = $worker?->currentTeam();
-        $workerTeamId = $workerTeam?->id;
-        $latestDisp   = $complaint->latestDisposition;
+        $worker = auth()->user();
 
-        if ($dispatchMode === 'OPERATOR_ONLY') {
-            if (!$latestDisp || (!$latestDisp->team_id && !$latestDisp->assigned_to)) {
-                return back()->with('error', "Mode penugasan saat ini adalah 'Operator Saja'. Laporan ini wajib ditunjuk regunya oleh Operator terlebih dahulu.");
-            }
-            if ($latestDisp->team_id && $latestDisp->team_id !== $workerTeamId) {
-                $assignedTeamName = $latestDisp->team?->name ?? 'Regu lain';
-                return back()->with('error', "Laporan ini telah ditugaskan khusus untuk {$assignedTeamName} oleh Operator. Regu Anda tidak berhak mengambil tugas ini.");
-            }
-        } else {
-            // HYBRID atau SELF_CLAIM_ONLY
-            if ($latestDisp && $latestDisp->team_id && $latestDisp->team_id !== $workerTeamId) {
-                $assignedTeamName = $latestDisp->team?->name ?? 'Regu lain';
-                return back()->with('error', "Laporan ini telah ditugaskan khusus untuk {$assignedTeamName}. Regu Anda tidak dapat mengambil tugas ini.");
-            }
-        }
+        // Team shield + kuota tugas aktif, aturan yang sama dengan API.
+        app(\App\Domain\Complaints\Services\FieldTaskAuthorizer::class)->assertCanStart($worker, $complaint);
 
         $newStatus = 'IN_PROGRESS';
         ComplaintStateMachine::validateTransition($oldStatus, $newStatus);
@@ -340,24 +323,11 @@ class WebPetugasController extends Controller
         $oldStatus = $complaint->status;
         $newStatus = 'WAITING_VERIFICATION';
 
-        ComplaintStateMachine::validateTransition($oldStatus, $newStatus);
-
-        // Validasi Otorisasi
+        // Otorisasi lebih dulu: regu lain selalu 403, bukan bocor status 422.
         $user = auth()->user();
-        if (!$user->isSuperAdmin()) {
-            $latestDisp = $complaint->latestDisposition;
-            $workerTeamIds = $user->teams()->pluck('teams.id')->toArray();
+        app(\App\Domain\Complaints\Services\FieldTaskAuthorizer::class)->assertCanFinish($user, $complaint);
 
-            if ($latestDisp) {
-                if ($latestDisp->team_id && !in_array($latestDisp->team_id, $workerTeamIds, false)) {
-                    $assignedTeamName = $latestDisp->team?->name ?? 'Regu Lain';
-                    return back()->with('error', "Laporan ini dikerjakan oleh {$assignedTeamName}. Regu Anda tidak memiliki hak untuk mengunggah bukti pengerjaan laporan ini.");
-                }
-                if (!$latestDisp->team_id && $latestDisp->assigned_to && $latestDisp->assigned_to !== $user->id) {
-                    return back()->with('error', "Laporan ini ditugaskan khusus untuk petugas lain.");
-                }
-            }
-        }
+        ComplaintStateMachine::validateTransition($oldStatus, $newStatus);
 
         $hasFileDataCol = ComplaintPhoto::ensureFileDataColumnExists();
 

@@ -52,7 +52,7 @@ class ChatbotService
                         . "• **Lokasi:** {$found->address}\n"
                         . "• **Tanggal Lapor:** {$found->created_at->format('d M Y H:i')} WITA\n"
                         . ($found->damage_type ? "• **Tipe Kerusakan:** {$found->damage_type}\n" : "")
-                        . ($found->estimated_length_meters ? "• **Estimasi Panjang:** " . number_format($found->estimated_length_meters, 0, ',', '.') . " meter\n" : "")
+                        . ($found->road_length ? "• **Estimasi Panjang:** {$found->road_length}\n" : "")
                         . "\n💡 *Notifikasi perkembangan tiket ini otomatis dikirim ke akun Warga Terdaftar Anda.* Ada hal lain yang ingin Anda tanyakan?",
                     'draft' => [],
                     'is_complete' => false,

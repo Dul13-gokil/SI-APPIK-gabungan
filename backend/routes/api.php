@@ -20,7 +20,7 @@ Route::prefix('v1')->group(function () {
     // ==========================================
     // 1. PUBLIC ROUTES (Rate Limited & Open GIS)
     // ==========================================
-    Route::middleware('throttle:5,1')->group(function () {
+    Route::middleware('throttle:api-auth')->group(function () {
         Route::post('/auth/register/send-otp',        [AuthController::class, 'sendRegisterOtp']);
         Route::post('/auth/register',                 [AuthController::class, 'register']);
         Route::post('/auth/login',                    [AuthController::class, 'login']);
@@ -33,11 +33,11 @@ Route::prefix('v1')->group(function () {
     // Public feeds & GIS analytics (Data telepon disensor di ComplaintResource demi privasi UU PDP)
     Route::get('/complaints',                           [ComplaintController::class, 'index']);
     Route::get('/complaints/nearby-duplicates',         [ComplaintController::class, 'nearbyDuplicates']);
-    Route::post('/complaints',                          [ComplaintController::class, 'store'])->middleware('throttle:10,1'); // Mendukung Warga Login & Anonim (Rate Limited)
+    Route::post('/complaints',                          [ComplaintController::class, 'store'])->middleware('throttle:complaint-create'); // Mendukung Warga Login & Anonim (Rate Limited)
     Route::get('/complaints/{id}',                      [ComplaintController::class, 'show']);
     Route::get('/complaints/{id}/timeline',             [ComplaintController::class, 'timeline']);
     Route::get('/complaints/{id}/duplicate-candidates', [ComplaintController::class, 'duplicateCandidates']);
-    Route::get('/reverse-geocode',                      [ComplaintController::class, 'reverseGeocode'])->middleware('throttle:30,1');
+    Route::get('/reverse-geocode',                      [ComplaintController::class, 'reverseGeocode'])->middleware('throttle:reverse-geocode');
 
     // Dashboard Executive & GIS Maps
     Route::get('/dashboard/summary',     [DashboardController::class, 'summary']);
@@ -45,13 +45,13 @@ Route::prefix('v1')->group(function () {
     Route::get('/dashboard/performance', [DashboardController::class, 'performance']);
 
     // AI Chatbot Assistant (Public Access, Rate Limited 30 req/min)
-    Route::middleware('throttle:30,1')->group(function () {
+    Route::middleware('throttle:api-chat')->group(function () {
         Route::post('/chat/sessions',               [ChatbotController::class, 'createSession']);
         Route::post('/chat/sessions/{id}/messages', [ChatbotController::class, 'sendMessage']);
     });
 
     // AI Computer Vision (Rate limited to 15 req/min to protect server GPU/CPU)
-    Route::post('/ai/classify-image', [AIServiceController::class, 'classifyImage'])->middleware('throttle:15,1');
+    Route::post('/ai/classify-image', [AIServiceController::class, 'classifyImage'])->middleware('throttle:api-ai');
 
 
     // ==========================================

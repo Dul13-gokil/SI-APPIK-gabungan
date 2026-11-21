@@ -50,19 +50,37 @@ class DuplicateDetectionService
             return $query->orderBy('distance_m', 'asc')->get();
         }
 
-        // 2. Haversine Formula Fallback (Standard PostgreSQL / MySQL / SQLite)
-        $haversine = "(6371000 * acos(LEAST(1.0, GREATEST(-1.0, cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude))))))";
-
-        $query = Complaint::query()
-            ->select('*')
-            ->selectRaw("{$haversine} AS distance_m", [$latitude, $longitude, $latitude])
+        // 2. Fallback portabel (PostgreSQL / MySQL / SQLite): jarak dihitung di PHP.
+        // shortcut: memuat semua laporan aktif, andalkan PostGIS bila volume data sudah besar.
+        $candidates = Complaint::query()
             ->whereIn('status', $activeStatuses)
-            ->whereRaw("{$haversine} <= ?", [$latitude, $longitude, $latitude, $radiusMeters]);
+            ->when($excludeComplaintId, fn ($query) => $query->where('id', '!=', $excludeComplaintId))
+            ->get();
 
-        if ($excludeComplaintId) {
-            $query->where('id', '!=', $excludeComplaintId);
-        }
+        return $candidates
+            ->map(function (Complaint $complaint) use ($latitude, $longitude) {
+                $complaint->setAttribute('distance_m', $this->haversineMeters(
+                    $latitude,
+                    $longitude,
+                    (float) $complaint->latitude,
+                    (float) $complaint->longitude
+                ));
 
-        return $query->orderBy('distance_m', 'asc')->get();
+                return $complaint;
+            })
+            ->filter(fn (Complaint $complaint) => $complaint->distance_m <= $radiusMeters)
+            ->sortBy('distance_m')
+            ->values();
+    }
+
+    private function haversineMeters(float $lat1, float $lon1, float $lat2, float $lon2): float
+    {
+        $earthRadius = 6371000.0;
+        $dLat = deg2rad($lat2 - $lat1);
+        $dLon = deg2rad($lon2 - $lon1);
+        $a = sin($dLat / 2) ** 2
+            + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * sin($dLon / 2) ** 2;
+
+        return $earthRadius * 2 * atan2(sqrt($a), sqrt(1 - $a));
     }
 }

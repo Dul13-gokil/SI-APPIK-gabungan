@@ -62,6 +62,19 @@ COPY --from=assets /app/public/build /var/www/html/public/build
 # Install dependensi PHP tanpa dev packages
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
+# Dependensi Computer Vision untuk ai_analyzer.py (opencv-headless + numpy)
+COPY requirements.txt /var/www/html/requirements.txt
+RUN pip3 install --no-cache-dir --break-system-packages -r /var/www/html/requirements.txt
+
+# Batas upload PHP harus di atas validasi aplikasi (foto maks 10 MB, ruas panjang 5-10 foto).
+RUN { \
+    echo 'upload_max_filesize=12M'; \
+    echo 'post_max_size=64M'; \
+    echo 'max_file_uploads=15'; \
+    echo 'memory_limit=256M'; \
+    echo 'max_execution_time=120'; \
+} > /usr/local/etc/php/conf.d/uploads.ini
+
 # Beri permission ke storage dan cache
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache

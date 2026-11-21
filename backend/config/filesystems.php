@@ -33,7 +33,9 @@ return [
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app/private'),
-            'serve' => true,
+            // Wajib false: rute bawaan Laravel memakai URI /storage/{path} sehingga
+            // menimpa route fallback foto di routes/web.php dan menghasilkan 404.
+            'serve' => false,
             'throw' => false,
             'report' => false,
         ],

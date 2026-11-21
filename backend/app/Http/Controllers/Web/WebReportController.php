@@ -47,7 +47,7 @@ class WebReportController extends Controller
             // UTF-8 BOM agar Microsoft Excel langsung membaca karakter & kolom dengan rapi
             fwrite($out, "\xEF\xBB\xBF");
 
-            fputcsv($out, [
+            $this->putCsvRow($out, [
                 'Kode Tiket',
                 'Tanggal Masuk (WITA)',
                 'Judul Laporan',
@@ -76,7 +76,7 @@ class WebReportController extends Controller
                     default => 'Menunggu Verifikasi',
                 };
 
-                fputcsv($out, [
+                $this->putCsvRow($out, [
                     '#' . $c->public_code,
                     $c->created_at?->timezone('Asia/Makassar')->format('d/m/Y H:i') ?? '-',
                     $c->title,
@@ -142,7 +142,7 @@ class WebReportController extends Controller
             return response()->streamDownload(function () use ($rows) {
                 $out = fopen('php://output', 'w');
                 fwrite($out, "\xEF\xBB\xBF");
-                fputcsv($out, [
+                $this->putCsvRow($out, [
                     'Kode Regu',
                     'Nama Regu',
                     'Ketua Regu',
@@ -159,7 +159,7 @@ class WebReportController extends Controller
                     'Skor Kinerja',
                 ]);
                 foreach ($rows as $tm) {
-                    fputcsv($out, [
+                    $this->putCsvRow($out, [
                         $tm['team_code'],
                         $tm['team_name'],
                         $tm['leader_name'],
@@ -168,7 +168,7 @@ class WebReportController extends Controller
                         $tm['total_tasks'],
                         $tm['completed'],
                         $tm['completion_rate'],
-                        "{$tm['active_quota']}/3",
+                        "{$tm['active_quota']}/" . \App\Models\SystemSetting::get('max_active_tasks', 3),
                         $tm['avg_response_hours'] ?? '-',
                         $tm['avg_repair_hours'] ?? '-',
                         $tm['first_pass_rate'],
@@ -193,7 +193,7 @@ class WebReportController extends Controller
         return response()->streamDownload(function () use ($rows) {
             $out = fopen('php://output', 'w');
             fwrite($out, "\xEF\xBB\xBF");
-            fputcsv($out, [
+            $this->putCsvRow($out, [
                 'Nama Petugas',
                 'Email',
                 'Telepon',
@@ -209,7 +209,7 @@ class WebReportController extends Controller
                 'Skor Kinerja',
             ]);
             foreach ($rows as $of) {
-                fputcsv($out, [
+                $this->putCsvRow($out, [
                     $of['name'],
                     $of['email'],
                     $of['phone'],
@@ -353,5 +353,26 @@ class WebReportController extends Controller
     public function printBapSigned(int $id)
     {
         return $this->printBap($id);
+    }
+
+    /**
+     * Tulis satu baris CSV dengan proteksi formula injection (Excel/Sheets).
+     */
+    private function putCsvRow($handle, array $row): void
+    {
+        fputcsv($handle, array_map([$this, 'csvCell'], $row));
+    }
+
+    private function csvCell(mixed $value): mixed
+    {
+        if (! is_string($value)) {
+            return $value;
+        }
+
+        $trimmed = ltrim($value);
+
+        return ($trimmed !== '' && in_array($trimmed[0], ['=', '+', '-', '@', "\t", "\r"], true))
+            ? "'" . $value
+            : $value;
     }
 }

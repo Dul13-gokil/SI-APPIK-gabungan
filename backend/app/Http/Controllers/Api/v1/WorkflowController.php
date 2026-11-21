@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\v1;
 
 use App\Domain\Complaints\Services\ComplaintStateMachine;
+use App\Domain\Complaints\Services\FieldTaskAuthorizer;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ApiResponse;
 use App\Http\Resources\ComplaintResource;
@@ -219,31 +220,9 @@ class WorkflowController extends Controller
             return ApiResponse::error("Pekerjaan belum dapat dimulai. Status laporan saat ini: {$oldStatus} (Menunggu verifikasi operator).", 422);
         }
 
-        // Validasi Mode Penugasan Sistem (OPERATOR_ONLY, HYBRID, SELF_CLAIM_ONLY)
-        $dispatchMode = \App\Models\SystemSetting::get('dispatch_mode', 'HYBRID');
-        $worker       = $request->user();
-        $workerTeam   = $worker?->currentTeam();
-        $workerTeamId = $workerTeam?->id;
-        $latestDisp   = $complaint->latestDisposition;
-
-        if ($dispatchMode === 'OPERATOR_ONLY') {
-            if (!$latestDisp || (!$latestDisp->team_id && !$latestDisp->assigned_to)) {
-                return ApiResponse::error("Mode penugasan saat ini adalah 'Operator Saja' (Komando Terpusat). Laporan ini wajib ditunjuk regunya oleh Operator terlebih dahulu sebelum dapat dikerjakan.", 403);
-            }
-            if ($latestDisp->team_id && $latestDisp->team_id !== $workerTeamId) {
-                $assignedTeamName = $latestDisp->team?->name ?? 'Regu lain';
-                return ApiResponse::error("Laporan ini telah ditugaskan khusus untuk {$assignedTeamName} oleh Operator. Regu Anda tidak berhak mengambil tugas ini.", 403);
-            }
-            if (!$latestDisp->team_id && $latestDisp->assigned_to && $latestDisp->assigned_to !== $worker?->id) {
-                return ApiResponse::error("Laporan ini ditugaskan khusus untuk petugas lain oleh Operator.", 403);
-            }
-        } else {
-            // HYBRID atau SELF_CLAIM_ONLY: jika sudah ditugaskan ke regu tertentu atau sedang revisi
-            if ($latestDisp && $latestDisp->team_id && $latestDisp->team_id !== $workerTeamId) {
-                $assignedTeamName = $latestDisp->team?->name ?? 'Regu lain';
-                return ApiResponse::error("Laporan ini telah ditugaskan khusus untuk {$assignedTeamName}. Regu Anda tidak dapat mengambil tugas ini.", 403);
-            }
-        }
+        // Team shield + kuota tugas aktif (satu sumber aturan untuk web dan API).
+        $worker = $request->user();
+        app(FieldTaskAuthorizer::class)->assertCanStart($worker, $complaint);
 
         $newStatus = 'IN_PROGRESS';
         ComplaintStateMachine::validateTransition($oldStatus, $newStatus);
@@ -300,27 +279,11 @@ class WorkflowController extends Controller
         $oldStatus = $complaint->status;
         $newStatus = 'WAITING_VERIFICATION';
 
-        ComplaintStateMachine::validateTransition($oldStatus, $newStatus);
-
-        // Validasi Otorisasi: Hanya regu/petugas yang ditugaskan yang berhak mengunggah bukti selesai
+        // Otorisasi lebih dulu: regu lain selalu 403, bukan bocor status 422.
         $user = $request->user();
-        $isInternalAdmin = $user && in_array($user->role, ['SUPERADMIN', 'ADMIN', 'OPERATOR'], true);
+        app(FieldTaskAuthorizer::class)->assertCanFinish($user, $complaint);
 
-        if (!$isInternalAdmin) {
-            $latestDisp    = $complaint->latestDisposition;
-            $workerTeamIds = $user ? $user->teams()->pluck('teams.id')->toArray() : [];
-
-            if ($latestDisp) {
-                if ($latestDisp->team_id && !in_array($latestDisp->team_id, $workerTeamIds, false)) {
-                    $assignedTeamName = $latestDisp->team?->name ?? 'Regu Lain';
-                    return ApiResponse::error("Laporan ini dikerjakan oleh {$assignedTeamName}. Regu Anda tidak memiliki izin untuk mengunggah bukti pengerjaan laporan ini.", 403);
-                }
-
-                if (!$latestDisp->team_id && $latestDisp->assigned_to && $latestDisp->assigned_to !== $user?->id) {
-                    return ApiResponse::error("Laporan ini ditugaskan khusus untuk petugas lain. Anda tidak memiliki izin untuk mengunggah bukti penyelesaian laporan ini.", 403);
-                }
-            }
-        }
+        ComplaintStateMachine::validateTransition($oldStatus, $newStatus);
 
         $hasFileDataCol = ComplaintPhoto::ensureFileDataColumnExists();
 
@@ -510,8 +473,9 @@ class WorkflowController extends Controller
 
         $complaint = Complaint::findOrFail($id);
         $parent    = Complaint::findOrFail($validated['parent_complaint_id']);
+        $fromStatus = $complaint->status;
 
-        DB::transaction(function () use ($complaint, $parent, $validated, $request) {
+        DB::transaction(function () use ($complaint, $parent, $validated, $request, $fromStatus) {
             $complaint->update([
                 'status'              => 'CLOSED',
                 'parent_complaint_id' => $parent->id,
@@ -519,7 +483,7 @@ class WorkflowController extends Controller
 
             ComplaintStatusHistory::create([
                 'complaint_id' => $complaint->id,
-                'from_status'  => $complaint->status,
+                'from_status'  => $fromStatus,
                 'to_status'    => 'CLOSED',
                 'note'         => "Laporan ditutup dan digabungkan ke laporan induk ({$parent->public_code}). " . ($validated['note'] ?? ''),
                 'changed_by'   => $request->user()?->id,

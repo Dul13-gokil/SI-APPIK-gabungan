@@ -33,7 +33,41 @@ return Application::configure(basePath: dirname(__DIR__))
             fn (Request $request) => $request->is('api/*') || $request->expectsJson(),
         );
 
+        // Pelanggaran aturan bisnis yang sudah ditangani handler di bawah tidak perlu masuk log error.
+        $exceptions->dontReport([
+            \App\Domain\Complaints\Exceptions\InvalidStatusTransitionException::class,
+            \App\Domain\Complaints\Exceptions\FieldTaskAuthorizationException::class,
+        ]);
+
         $exceptions->render(function (\Illuminate\Session\TokenMismatchException $e, Request $request) {
             return redirect()->route('login')->with('info', 'Sesi formulir Anda telah disegarkan. Silakan coba masuk kembali.');
+        });
+
+        // Transisi status ilegal -> 422, bukan 500.
+        $exceptions->render(function (\App\Domain\Complaints\Exceptions\InvalidStatusTransitionException $e, Request $request) {
+            if ($request->is('api/*') || $request->expectsJson()) {
+                return response()->json([
+                    'status'  => 'error',
+                    'message' => $e->getMessage(),
+                    'data'    => null,
+                    'meta'    => ['timestamp' => now()->toIso8601String()],
+                ], 422);
+            }
+
+            return back()->with('error', $e->getMessage());
+        });
+
+        // Pelanggaran team shield (403) dan kuota tugas (422) dari FieldTaskAuthorizer.
+        $exceptions->render(function (\App\Domain\Complaints\Exceptions\FieldTaskAuthorizationException $e, Request $request) {
+            if ($request->is('api/*') || $request->expectsJson()) {
+                return response()->json([
+                    'status'  => 'error',
+                    'message' => $e->getMessage(),
+                    'data'    => null,
+                    'meta'    => ['timestamp' => now()->toIso8601String()],
+                ], $e->statusCode);
+            }
+
+            return back()->with('error', $e->getMessage());
         });
     })->create();

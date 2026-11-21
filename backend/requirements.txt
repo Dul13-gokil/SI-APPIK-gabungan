@@ -1,0 +1,4 @@
+# Dependensi Computer Vision untuk ai_analyzer.py
+# Versi OpenCV dipin di bawah 5 karena cv2.CascadeClassifier dihapus pada OpenCV 5.
+opencv-python-headless>=4.9,<5
+numpy>=1.26

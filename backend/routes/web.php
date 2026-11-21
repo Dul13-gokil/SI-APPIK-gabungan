@@ -61,12 +61,12 @@ Route::get('/', function () {
 
 // 2. Autentikasi Web
 Route::get('/login', [WebAuthController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [WebAuthController::class, 'login'])->middleware('throttle:5,1');
+Route::post('/login', [WebAuthController::class, 'login'])->middleware('throttle:login');
 Route::match(['get', 'post'], '/logout', [WebAuthController::class, 'logout'])->name('logout');
-Route::post('/forgot-password', [WebAuthController::class, 'sendForgotPasswordOtp'])->middleware('throttle:5,1')->name('password.update');
-Route::post('/auth/forgot-password/send-otp', [WebAuthController::class, 'sendForgotPasswordOtp'])->middleware('throttle:5,1')->name('auth.forgot-password.send-otp');
-Route::post('/auth/forgot-password/reset', [WebAuthController::class, 'resetForgotPassword'])->middleware('throttle:5,1')->name('auth.forgot-password.reset');
-Route::post('/auth/check-warga', [WebAuthController::class, 'checkWargaRole'])->middleware('throttle:30,1')->name('auth.check-warga');
+Route::post('/forgot-password', [WebAuthController::class, 'sendForgotPasswordOtp'])->middleware('throttle:password-reset')->name('password.update');
+Route::post('/auth/forgot-password/send-otp', [WebAuthController::class, 'sendForgotPasswordOtp'])->middleware('throttle:password-reset')->name('auth.forgot-password.send-otp');
+Route::post('/auth/forgot-password/reset', [WebAuthController::class, 'resetForgotPassword'])->middleware('throttle:password-reset')->name('auth.forgot-password.reset');
+Route::post('/auth/check-warga', [WebAuthController::class, 'checkWargaRole'])->middleware('throttle:check-warga')->name('auth.check-warga');
 Route::post('/profile/first-login-setup', [WebAuthController::class, 'completeFirstLoginSetup'])->middleware(['auth', 'active'])->name('profile.first-login.setup');
 Route::get('/download-apk', [WebAuthController::class, 'downloadApk'])->name('download.apk');
 

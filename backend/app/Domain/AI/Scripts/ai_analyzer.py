@@ -30,11 +30,11 @@ _onnx_pothole_net = None
 _onnx_rdd_net = None
 
 def get_model_path(filename):
-    script_dir = os.path.dirname(__file__)
+    script_dir = os.path.dirname(os.path.abspath(__file__))
     candidates = [
         os.path.join(script_dir, filename),
-        os.path.abspath(os.path.join(script_dir, '../../../../../', filename)),
-        os.path.abspath(os.path.join('D:/Laragon/laragon/www/aduan', filename))
+        os.path.abspath(os.path.join(script_dir, '../../../../..', filename)),
+        os.path.join(os.getcwd(), filename),
     ]
     for c in candidates:
         if os.path.exists(c):

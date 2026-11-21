@@ -697,7 +697,7 @@ class WebSuperAdminController extends Controller
 
         \App\Models\ComplaintStatusHistory::create([
             'complaint_id' => $complaint->id,
-            'user_id'      => auth()->id(),
+            'changed_by'   => auth()->id(),
             'from_status'  => $fromStatus,
             'to_status'    => \App\Domain\Complaints\Enums\ComplaintStatus::REJECTED->value,
             'note'         => "Ditolak oleh Super Admin: {$reason}",

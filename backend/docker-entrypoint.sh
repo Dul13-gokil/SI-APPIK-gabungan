@@ -49,6 +49,7 @@ if [ -n "$DB_TARGET" ] && [ -f "/var/www/html/database/si-appik.sql" ]; then
 fi
 
 # Buat ulang symlink storage dengan bersih dan pastikan permission dapat dibaca Apache
+mkdir -p /var/www/html/storage/app/public
 rm -rf /var/www/html/public/storage || true
 php artisan storage:link --force || true
 chown -R www-data:www-data /var/www/html/storage || true

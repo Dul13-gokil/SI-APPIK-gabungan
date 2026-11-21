@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Alur Workflow SI-APPIK - Kabupaten Kolaka Utara</title>
+<style>
+  :root{
+    --primary:#1E3A8A; --primary-light:#3B82F6; --primary-dark:#172554;
+    --bg:#F8FAFC; --border:#E2E8F0; --ink:#0F172A; --muted:#475569;
+    --submitted:#EF4444; --dispatched:#1E40AF; --progress:#F59E0B;
+    --done:#10B981; --rejected:#DC2626; --violet:#7C3AED;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font-family:"Segoe UI",system-ui,-apple-system,sans-serif;line-height:1.55}
+  .sheet{max-width:1040px;margin:0 auto;padding:40px 32px 64px;background:#fff;
+         border-left:1px solid var(--border);border-right:1px solid var(--border)}
+  header{border-bottom:3px solid var(--primary);padding-bottom:18px;margin-bottom:26px}
+  h1{font-size:26px;line-height:1.2;margin:0 0 6px;color:var(--primary-dark);letter-spacing:-.3px}
+  .sub{color:var(--muted);font-size:13.5px;margin:0}
+  h2{font-size:15px;text-transform:uppercase;letter-spacing:.09em;color:var(--primary);
+     margin:34px 0 14px;padding-bottom:7px;border-bottom:1px solid var(--border)}
+  p{margin:0 0 10px}
+  .lede{font-size:14px;color:var(--muted);margin-bottom:18px}
+
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 6px;padding:0;list-style:none}
+  .chip{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:600;
+        padding:6px 11px;border-radius:999px;border:1px solid var(--border);background:#fff}
+  .dot{width:9px;height:9px;border-radius:50%;flex:0 0 auto}
+
+  .flow{margin:0;padding:0;list-style:none}
+  .stage{position:relative;display:grid;grid-template-columns:44px 1fr;gap:16px;padding-bottom:20px}
+  .stage:not(:last-child)::before{content:"";position:absolute;left:21px;top:40px;bottom:0;
+        width:2px;background:var(--border)}
+  .num{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;
+       font-weight:700;font-size:15px;background:var(--primary);color:#fff;z-index:1}
+  .num.alt{background:var(--primary-light)}
+  .card{border:1px solid var(--border);border-radius:12px;padding:14px 16px;background:#fff}
+  .card h3{margin:0 0 3px;font-size:15px}
+  .who{font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--primary-light);margin:0 0 8px}
+  .card ul{margin:6px 0 0;padding-left:18px;font-size:13px;color:var(--muted)}
+  .card li{margin-bottom:3px}
+  .meta{font-size:12px;color:var(--muted);margin-top:8px;padding-top:8px;border-top:1px dashed var(--border)}
+  .meta b{color:var(--ink)}
+  .code{font-family:Consolas,"Courier New",monospace;font-size:11.5px;background:#F1F5F9;
+        padding:1px 5px;border-radius:4px;color:var(--primary-dark)}
+
+  .branch{margin:0 0 22px 60px;border:1px dashed #CBD5E1;border-left:4px solid var(--progress);
+          border-radius:10px;padding:12px 16px;background:#FFFBEB}
+  .branch.red{border-left-color:var(--rejected);background:#FEF2F2}
+  .branch h4{margin:0 0 4px;font-size:13.5px}
+  .branch p{margin:0;font-size:12.5px;color:var(--muted)}
+
+  table{width:100%;border-collapse:collapse;font-size:12.5px;margin-bottom:8px}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:top}
+  th{background:#F1F5F9;font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+  td b{font-weight:600}
+  .pill{display:inline-block;font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:999px;color:#fff}
+  .p-sub{background:var(--submitted)} .p-dis{background:var(--dispatched)}
+  .p-prog{background:var(--progress)} .p-done{background:var(--done)}
+  .p-rej{background:var(--rejected)} .p-mute{background:#64748B}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .note{border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:12.5px;background:#F8FAFC}
+  .note h4{margin:0 0 5px;font-size:13px;color:var(--primary-dark)}
+  .note.warn{background:#FFFBEB;border-color:#FCD34D}
+  .note ul{margin:0;padding-left:17px;color:var(--muted)}
+
+  footer{margin-top:36px;padding-top:14px;border-top:1px solid var(--border);
+         font-size:11.5px;color:var(--muted);display:flex;justify-content:space-between;gap:16px}
+
+  @media (max-width:680px){
+    .sheet{padding:24px 16px 40px}
+    .grid2{grid-template-columns:1fr}
+    .branch{margin-left:0}
+  }
+  @media print{
+    body{background:#fff}
+    .sheet{max-width:none;border:0;padding:0}
+    h2{page-break-after:avoid}
+    .stage,.branch,.note{page-break-inside:avoid}
+    .num{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+    .chip,.pill{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  }
+</style>
+</head>
+<body>
+<main class="sheet">
+
+<header>
+  <h1>Alur Workflow SI-APPIK</h1>
+  <p class="sub">Sistem Informasi Pengaduan &amp; Penanganan Kerusakan Infrastruktur Kabupaten Kolaka Utara &middot; Laravel + Flutter + AI Computer Vision</p>
+</header>
+
+<p class="lede">Alur di bawah adalah perilaku yang benar-benar berjalan di kode dan sudah diuji pada server lokal. Tujuh tahap utama, tiga jalur keluar (tolak, batal, revisi), dan satu portal publik tanpa login.</p>
+
+<h2>Status dan warnanya</h2>
+<ul class="chips">
+  <li class="chip"><span class="dot" style="background:var(--submitted)"></span>SUBMITTED</li>
+  <li class="chip"><span class="dot" style="background:var(--dispatched)"></span>DISPATCHED</li>
+  <li class="chip"><span class="dot" style="background:var(--progress)"></span>IN_PROGRESS / WAITING_VERIFICATION / REVISION_REQUIRED</li>
+  <li class="chip"><span class="dot" style="background:var(--done)"></span>COMPLETED / CLOSED</li>
+  <li class="chip"><span class="dot" style="background:var(--rejected)"></span>REJECTED</li>
+  <li class="chip"><span class="dot" style="background:#64748B"></span>CANCELLED</li>
+</ul>
+
+<h2>Alur utama</h2>
+<ol class="flow">
+
+  <li class="stage">
+    <span class="num">1</span>
+    <div class="card">
+      <p class="who">Warga &middot; aplikasi mobile</p>
+      <h3>Daftar atau masuk sebagai tamu</h3>
+      <ul>
+        <li>Registrasi OTP 6 digit ke email, berlaku 10 menit, hangus setelah 3 kali salah.</li>
+        <li>Bisa juga login Google, atau langsung mode tamu untuk lapor anonim.</li>
+        <li>Warga tidak bisa login ke website: diarahkan mengunduh aplikasi mobile.</li>
+      </ul>
+      <p class="meta"><b>Endpoint:</b> <span class="code">/auth/register/send-otp</span> <span class="code">/auth/register</span> <span class="code">/auth/login</span> <span class="code">/auth/google</span></p>
+    </div>
+  </li>
+
+  <li class="stage">
+    <span class="num">2</span>
+    <div class="card">
+      <p class="who">Warga &middot; aplikasi mobile</p>
+      <h3>Susun laporan</h3>
+      <ul>
+        <li>Kategori, judul, deskripsi, alamat, lalu ambil titik GPS dan reverse geocode.</li>
+        <li>Kerusakan titik (minor) atau ruas panjang (major, wajib 5 foto, titik awal-akhir, panjang, polyline).</li>
+        <li>Sistem memeriksa laporan serupa dalam radius 100 m sebelum dikirim.</li>
+        <li>AI memeriksa foto dan mengisi kategori serta tingkat keyakinan.</li>
+        <li>Lokasi wajib di dalam batas kabupaten: lat -3.80 .. -2.75, lon 120.70 .. 121.50.</li>
+      </ul>
+      <p class="meta"><b>Endpoint:</b> <span class="code">/complaints/nearby-duplicates</span> <span class="code">/ai/classify-image</span> <span class="code">POST /complaints</span></p>
+    </div>
+  </li>
+
+  <li class="stage">
+    <span class="num">3</span>
+    <div class="card">
+      <p class="who">Operator &middot; web /operator</p>
+      <h3>Verifikasi dan tugaskan</h3>
+      <ul>
+        <li>Tab Verifikasi berisi laporan SUBMITTED. Pilih dinas, regu, instruksi, dan tenggat 1-30 hari (default 3).</li>
+        <li>Status langsung menjadi DISPATCHED dan dibuat disposisi PENDING untuk regu.</li>
+        <li>Bila regu dikosongkan, tugas terbuka untuk diklaim regu mana pun dan semua petugas dinotifikasi.</li>
+        <li>Mode penugasan menentukan: OPERATOR_ONLY, HYBRID (default), atau SELF_CLAIM_ONLY.</li>
+      </ul>
+      <p class="meta"><b>Status:</b> <span class="pill p-sub">SUBMITTED</span> &rarr; <span class="pill p-dis">DISPATCHED</span> &nbsp; <b>Endpoint:</b> <span class="code">POST /operator/complaints/{id}/verify-dispatch</span></p>
+    </div>
+  </li>
+
+  <li class="stage">
+    <span class="num">4</span>
+    <div class="card">
+      <p class="who">Regu lapangan &middot; web /petugas atau mobile</p>
+      <h3>Ambil tugas dan mulai kerja</h3>
+      <ul>
+        <li>Petugas melihat tab "Tugas Regu Saya" atau semua tugas lapangan se-kabupaten.</li>
+        <li>Hanya boleh mengambil tugas milik regunya; tugas regu lain ditolak dengan HTTP 403.</li>
+        <li>Menekan Mulai Kerja mencatat petugas pelaksana dan mengirim notifikasi ke pelapor.</li>
+      </ul>
+      <p class="meta"><b>Status:</b> <span class="pill p-dis">DISPATCHED</span> &rarr; <span class="pill p-prog">IN_PROGRESS</span> &nbsp; <b>Endpoint:</b> <span class="code">POST /complaints/{id}/start-work</span></p>
+    </div>
+  </li>
+
+  <li class="stage">
+    <span class="num">5</span>
+    <div class="card">
+      <p class="who">Regu lapangan</p>
+      <h3>Kerjakan dan kirim bukti</h3>
+      <ul>
+        <li>Wajib mengisi catatan pekerjaan dan mengunggah foto bukti (maks 10 MB per foto).</li>
+        <li>Foto diberi watermark kode tiket, koordinat, dan nama petugas, lalu disimpan di disk dan di database.</li>
+        <li>Bila sinyal buruk, mobile menyimpan bukti di antrean offline dan mengirim otomatis saat tersambung.</li>
+        <li>Pekerjaan lapangan tidak pernah langsung tuntas: selalu masuk antrean validasi operator.</li>
+      </ul>
+      <p class="meta"><b>Status:</b> <span class="pill p-prog">IN_PROGRESS</span> &rarr; <span class="pill p-prog">WAITING_VERIFICATION</span> &nbsp; <b>Endpoint:</b> <span class="code">POST /complaints/{id}/finish-work</span></p>
+    </div>
+  </li>
+
+  <li class="stage">
+    <span class="num">6</span>
+    <div class="card">
+      <p class="who">Operator &middot; tab Validasi</p>
+      <h3>Uji mutu hasil kerja</h3>
+      <ul>
+        <li>Operator membandingkan foto sebelum dan sesudah, lalu memilih Selesai atau Revisi.</li>
+        <li>Selesai menutup disposisi dan memberi notifikasi penyelesaian ke pelapor.</li>
+        <li>Revisi mengembalikan tugas ke petugas yang sama beserta catatan perbaikan.</li>
+      </ul>
+      <p class="meta"><b>Status:</b> <span class="pill p-prog">WAITING_VERIFICATION</span> &rarr; <span class="pill p-done">COMPLETED</span> atau <span class="pill p-prog">REVISION_REQUIRED</span> &nbsp; <b>Endpoint:</b> <span class="code">POST /operator/complaints/{id}/validate</span></p>
+    </div>
+  </li>
+
+  <li class="stage">
+    <span class="num alt">7</span>
+    <div class="card">
+      <p class="who">Warga dan pimpinan</p>
+      <h3>Pantau, nilai, dan laporkan</h3>
+      <ul>
+        <li>Warga memantau timeline, memberi dukungan, dan menilai hasil perbaikan 1-5 setelah selesai.</li>
+        <li>Bupati melihat dashboard eksekutif read-only: peta, capaian, kinerja dinas, statistik kecamatan.</li>
+        <li>Operator dan Super Admin mengekspor CSV serta mencetak BAP dan rekap kinerja petugas.</li>
+      </ul>
+      <p class="meta"><b>Endpoint:</b> <span class="code">/complaints/{id}/timeline</span> <span class="code">/complaints/{id}/rating</span> <span class="code">/reports/export-csv</span> <span class="code">/complaints/{id}/bap</span></p>
+    </div>
+  </li>
+</ol>
+
+<h2>Jalur keluar</h2>
+
+<div class="branch red">
+  <h4>Ditolak operator (SUBMITTED &rarr; REJECTED)</h4>
+  <p>Alasan wajib diisi. Pelapor langsung menerima notifikasi penolakan. Laporan hilang dari daftar publik dan masuk arsip.</p>
+</div>
+
+<div class="branch">
+  <h4>Revisi pekerjaan (WAITING_VERIFICATION &rarr; REVISION_REQUIRED &rarr; IN_PROGRESS)</h4>
+  <p>Operator menilai hasil belum sesuai standar. Petugas yang ditugaskan dinotifikasi, memperbaiki di lapangan, lalu mengirim bukti ulang.</p>
+</div>
+
+<div class="branch red">
+  <h4>Ditolak permanen oleh Super Admin</h4>
+  <p>Bisa dari status apa pun kecuali yang sudah ditolak, dibatalkan, atau ditutup. Wajib mengetik ulang kode tiket sebagai konfirmasi. Laporan disembunyikan dari semua query publik.</p>
+</div>
+
+<div class="branch">
+  <h4>Dibatalkan pelapor (SUBMITTED &rarr; CANCELLED)</h4>
+  <p>Hanya oleh pemilik laporan dan hanya sebelum masuk proses. Setelah ditugaskan, pembatalan tidak tersedia.</p>
+</div>
+
+<h2>Wewenang transisi</h2>
+<table>
+  <thead>
+    <tr><th>Dari</th><th>Ke</th><th>Aktor</th><th>Jalur</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><span class="pill p-sub">SUBMITTED</span></td><td><span class="pill p-dis">DISPATCHED</span></td><td>Operator</td><td>web verify-dispatch</td></tr>
+    <tr><td><span class="pill p-sub">SUBMITTED</span></td><td><span class="pill p-done">VERIFIED</span> / <span class="pill p-rej">REJECTED</span></td><td>Operator</td><td>API /verify</td></tr>
+    <tr><td><span class="pill p-sub">SUBMITTED</span></td><td><span class="pill p-mute">CANCELLED</span></td><td>Pelapor</td><td>API /cancel</td></tr>
+    <tr><td><span class="pill p-dis">DISPATCHED</span></td><td><span class="pill p-prog">IN_PROGRESS</span></td><td>Petugas</td><td>start-work</td></tr>
+    <tr><td><span class="pill p-prog">IN_PROGRESS</span></td><td><span class="pill p-prog">WAITING_VERIFICATION</span></td><td>Petugas</td><td>finish-work</td></tr>
+    <tr><td><span class="pill p-prog">WAITING_VERIFICATION</span></td><td><span class="pill p-done">COMPLETED</span> / <span class="pill p-prog">REVISION_REQUIRED</span></td><td>Operator</td><td>validate</td></tr>
+    <tr><td><span class="pill p-prog">REVISION_REQUIRED</span></td><td><span class="pill p-prog">IN_PROGRESS</span></td><td>Petugas</td><td>start-work</td></tr>
+    <tr><td>selain REJECTED / CANCELLED / CLOSED</td><td><span class="pill p-rej">REJECTED</span></td><td>Super Admin</td><td>admin reject</td></tr>
+  </tbody>
+</table>
+
+<h2>Mode penugasan</h2>
+<div class="grid2">
+  <div class="note">
+    <h4>OPERATOR_ONLY</h4>
+    <p>Regu wajib ditunjuk operator. Petugas tidak bisa mengambil tugas yang belum ditunjuk.</p>
+  </div>
+  <div class="note">
+    <h4>HYBRID (default)</h4>
+    <p>Operator menugaskan. Tugas tanpa regu boleh diklaim regu mana pun yang siap.</p>
+  </div>
+  <div class="note">
+    <h4>SELF_CLAIM_ONLY</h4>
+    <p>Operator tidak boleh menugaskan. Regu mengklaim sendiri dari daftar tugas terbuka.</p>
+  </div>
+  <div class="note">
+    <h4>Batas wewenang</h4>
+    <p>Tugas yang sudah dipegang satu regu terkunci untuk regu itu. Regu lain mendapat HTTP 403 di backend dan tombol terkunci di aplikasi.</p>
+  </div>
+</div>
+
+<h2>Catatan implementasi</h2>
+<div class="note warn">
+  <h4>Sudah ditegakkan dan diuji</h4>
+  <ul>
+    <li>Kuota 3 tugas aktif per regu ditegakkan di web dan API (batas dapat diatur lewat pengaturan sistem).</li>
+    <li>Team shield seragam: regu lain selalu HTTP 403, diperiksa sebelum validasi status.</li>
+    <li>Transisi status ilegal mengembalikan HTTP 422, bukan 500.</li>
+    <li>Jejak audit pembatalan dan penolakan Super Admin kini mencatat aktor dengan benar.</li>
+  </ul>
+</div>
+<div class="note">
+  <h4>Belum diselesaikan (keputusan produk)</h4>
+  <ul>
+    <li>Hasil AI tidak disimpan per laporan; hanya dikembalikan ke aplikasi lewat endpoint klasifikasi.</li>
+    <li>Sandi awal akun staf masih "password" dan penggantiannya baru berupa imbauan.</li>
+    <li>COMPLETED &rarr; CLOSED belum punya aksi di antarmuka.</li>
+    <li>Orkestrasi alur masih ada di dua tempat (API dan web) meski aturannya sudah satu service.</li>
+  </ul>
+</div>
+
+<footer>
+  <span>SI-APPIK &middot; Kabupaten Kolaka Utara</span>
+  <span>Dokumen alur workflow &middot; diverifikasi pada server lokal 127.0.0.1:8000</span>
+</footer>
+
+</main>
+</body>
+</html>
