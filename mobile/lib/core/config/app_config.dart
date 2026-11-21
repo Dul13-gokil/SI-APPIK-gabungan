@@ -1,17 +1,13 @@
-import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AppConfig {
   static const String appName = 'Aduan Jalan';
   static const String appVersion = '1.0.0';
 
-  // Dual Base URL otomatis sesuai platform:
-  // - Chrome / Web (kIsWeb): USB adb reverse / lokal http://127.0.0.1:8000
-  // - Mobile Android/iOS: Tailscale VPN http://100.86.30.42:8000
-  static String get defaultBaseUrl =>
-      kIsWeb ? 'http://127.0.0.1:8000' : 'http://100.86.30.42:8000';
-  static String activeOrigin =
-      kIsWeb ? 'http://127.0.0.1:8000' : 'http://100.86.30.42:8000';
+  // Default Server API Production Resmi:
+  // https://aduan.aispektra.com/api/v1
+  static String get defaultBaseUrl => 'https://aduan.aispektra.com';
+  static String activeOrigin = 'https://aduan.aispektra.com';
   static String get baseUrl => normalizeUrl(defaultBaseUrl);
   
   static const int connectTimeout = 15000;
@@ -49,13 +45,17 @@ class AppConfig {
     final origin = activeOrigin.isNotEmpty ? activeOrigin : defaultBaseUrl;
     if (fixed.startsWith('http://localhost:8000') ||
         fixed.startsWith('http://127.0.0.1:8000') ||
-        fixed.startsWith('http://100.86.30.42:8000')) {
+        fixed.startsWith('http://100.86.30.42:8000') ||
+        fixed.startsWith('https://si-appik-production.up.railway.app') ||
+        fixed.startsWith('http://si-appik-production.up.railway.app')) {
       fixed = fixed.replaceFirst('http://localhost:8000', origin);
       fixed = fixed.replaceFirst('http://127.0.0.1:8000', origin);
       fixed = fixed.replaceFirst('http://100.86.30.42:8000', origin);
+      fixed = fixed.replaceFirst('https://si-appik-production.up.railway.app', origin);
+      fixed = fixed.replaceFirst('http://si-appik-production.up.railway.app', origin);
     }
-    if (fixed.startsWith('http://si-appik-production.up.railway.app')) {
-      fixed = fixed.replaceFirst('http://si-appik-production.up.railway.app', 'https://si-appik-production.up.railway.app');
+    if (fixed.startsWith('http://aduan.aispektra.com')) {
+      fixed = fixed.replaceFirst('http://aduan.aispektra.com', 'https://aduan.aispektra.com');
     }
     if (!fixed.startsWith('http://') && !fixed.startsWith('https://')) {
       if (fixed.startsWith('/')) {
@@ -70,12 +70,12 @@ class AppConfig {
   static Future<String> getBaseUrl() async {
     final prefs = await SharedPreferences.getInstance();
     var custom = prefs.getString(_keyCustomBaseUrl);
-    // Bersihkan cache lama jika masih menunjuk ke URL production Railway
-    // atau jika platform Web/Mobile masih menyimpan URL default platform lawannya
+    // Bersihkan cache lama (Railway / IP lokal / Tailscale) agar perangkat otomatis memakai server utama
     if (custom != null &&
         (custom.contains('si-appik-production.up.railway.app') ||
-            (kIsWeb && custom.contains('100.86.30.42')) ||
-            (!kIsWeb && custom.contains('127.0.0.1')))) {
+            custom.contains('100.86.30.42') ||
+            custom.contains('127.0.0.1') ||
+            custom.contains('localhost'))) {
       await prefs.remove(_keyCustomBaseUrl);
       custom = null;
     }
