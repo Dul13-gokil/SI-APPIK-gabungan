@@ -8,7 +8,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'SI-APPIK')</title>
     @if(request()->routeIs('home'))
-        <link rel="preload" as="image" href="{{ asset('images/hero/repair-jalan.webp') }}" fetchpriority="high">
+        <link rel="preload" as="image" href="{{ asset('images/hero/hero-1.webp') }}" fetchpriority="high">
     @endif
     <link rel="icon" type="image/png" href="{{ asset('images/logo-pin.png') }}?v=6">
     <link rel="shortcut icon" type="image/png" href="{{ asset('images/logo-pin.png') }}?v=6">
@@ -123,6 +123,44 @@
         .leaflet-container a.leaflet-popup-close-button:hover {
             background: #FFFFFF !important;
             color: #EF4444 !important;
+        }
+        @if(request()->is('/') || request()->routeIs('home'))
+        .leaflet-popup-content-wrapper {
+            border-radius: 0px !important;
+            border: none !important;
+            box-shadow: 0 12px 30px rgba(74, 0, 18, 0.20) !important;
+        }
+        .leaflet-bar {
+            border-radius: 0px !important;
+            overflow: hidden !important;
+            border: none !important;
+            box-shadow: 0 4px 14px rgba(74, 0, 18, 0.18) !important;
+        }
+        .leaflet-bar a {
+            border-radius: 0px !important;
+            border-color: #E6D5C1 !important;
+            color: #2B0F16 !important;
+            background-color: #FFFFFF !important;
+            transition: background-color 0.2s ease, color 0.2s ease !important;
+        }
+        .leaflet-bar a:hover {
+            background-color: #F3E6D5 !important;
+            color: #800020 !important;
+        }
+        @endif
+        .smooth-ease {
+            transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        a, button {
+            -webkit-tap-highlight-color: transparent;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
         }
     </style>
 </head>
@@ -375,114 +413,130 @@
     </div>
 
 @else
-    <!-- Halaman Publik (Tanpa Sidebar) -->
-    <div class="min-h-full flex flex-col justify-between">
+    <!-- Halaman Publik (Tanpa Sidebar - SI-APPIK E-Gov Maroon & Cream 1:1 FigCraft Page 1128) -->
+    <div class="min-h-full flex flex-col justify-between bg-[#FFF9F2]">
         @if(!request()->routeIs('login'))
-            <!-- Public Top Navbar (Floating Pill di Desktop, Sticky App Bar di Mobile) -->
-            <div class="sticky top-0 z-40 w-full md:pt-3 md:px-6 pointer-events-none">
-                <header class="pointer-events-auto bg-white/95 backdrop-blur-md text-[#0F172A] border-b md:border border-[#E2E8F0] md:rounded-full md:max-w-7xl md:mx-auto md:shadow-sm w-full">
-                    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
-                        <!-- Brand & Kepanjangan -->
-                        <a href="{{ url('/') }}#top" class="flex items-center gap-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2563EB] rounded-full min-w-0">
-                            <div class="w-9 h-9 rounded-full bg-[#EFF6FF] border border-[#BFDBFE] flex items-center justify-center p-1.5 shrink-0">
+            <!-- Desktop Top Institutional Maroon Ribbon (36px, Node 1131) & Mobile 4px Accent Bar -->
+            <div class="md:hidden h-[4px] w-full bg-[#800020]"></div>
+            <div class="hidden md:block w-full bg-[#800020] text-[#FFF9F2] h-[36px]">
+                <div class="max-w-[1280px] mx-auto px-6 xl:px-0 h-full flex items-center justify-between text-[11.5px]">
+                    <span class="font-semibold tracking-[0.1px]">Portal Resmi Pemerintah Kabupaten &middot; Dinas Pekerjaan Umum dan Penataan Ruang</span>
+                    <span class="font-normal text-[#F3E6D5]">Layanan Pengaduan Infrastruktur &middot; 15 Kecamatan</span>
+                </div>
+            </div>
+
+            <!-- Public Main Navbar: Transparent at top (blends directly into #FFF9F2 canvas), Frosted Glass Cream on scroll -->
+            <div id="publicNavWrapper" class="sticky top-0 z-40 w-full transition-shadow duration-300 smooth-ease">
+                <header id="publicHeader" class="bg-transparent text-[#2B0F16] w-full transition-[background-color,backdrop-filter,border-color] duration-300 smooth-ease border-b border-transparent">
+                    <div class="max-w-[1280px] mx-auto px-5 sm:px-6 xl:px-0 h-[68px] md:h-[76px] flex items-center justify-between gap-3 sm:gap-4 relative">
+                        <!-- Brand & Instansi (Exact Node 1134-1138) -->
+                        <a href="{{ url('/') }}#top" class="flex items-center gap-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#800020] min-w-0 shrink-0 group">
+                            <div class="w-[38px] h-[38px] rounded-none bg-[#F3E6D5] flex items-center justify-center p-1.5 shrink-0 transition-transform duration-300 smooth-ease group-hover:scale-[1.03]">
                                 <img src="{{ asset('images/logo-pin.png') }}" class="w-full h-full object-contain" alt="Logo SI-APPIK">
                             </div>
                             <div class="leading-none min-w-0">
-                                <span class="font-outfit font-bold text-lg text-[#0F172A] tracking-tight block">
+                                <span class="font-outfit font-bold text-[19px] text-[#2B0F16] tracking-[0.2px] block leading-none">
                                     SI-APPIK
                                 </span>
-                                <span class="hidden lg:block text-[11px] text-[#475569] font-medium mt-0.5 truncate">
-                                    Kabupaten &bull; Dinas PUPR
+                                <span class="block text-[11.5px] text-[#6D4E55] font-normal mt-1 truncate">
+                                    Kabupaten &middot; Dinas PUPR
                                 </span>
                             </div>
                         </a>
 
-                        <!-- Nav Links + CTA + Mobile Burger -->
-                        <div class="flex items-center gap-3 lg:gap-6 shrink-0">
-                            <nav id="publicDesktopNav" class="hidden md:flex items-center gap-5 lg:gap-6 text-[13px] font-semibold text-[#475569]" aria-label="Navigasi Utama">
-                                <a href="{{ url('/') }}#top" data-nav-target="top" class="public-nav-link relative py-1.5 text-[#2563EB] border-b-2 border-[#2563EB] transition-colors duration-200">Beranda</a>
-                                <a href="{{ url('/') }}#mapSectionContainer" data-nav-target="mapSectionContainer" class="public-nav-link relative py-1.5 border-b-2 border-transparent hover:text-[#2563EB] transition-colors duration-200">Peta Sebaran</a>
-                                <a href="{{ url('/') }}#kategori-infrastruktur" data-nav-target="kategori-infrastruktur" class="public-nav-link relative py-1.5 border-b-2 border-transparent hover:text-[#2563EB] transition-colors duration-200 whitespace-nowrap">Kategori &amp; Layanan</a>
-                                <a href="{{ url('/') }}#download-app" data-nav-target="download-app" class="public-nav-link relative py-1.5 border-b-2 border-transparent hover:text-[#2563EB] transition-colors duration-200">Unduh Aplikasi</a>
-                            </nav>
+                        <!-- Desktop Center Nav Links (Exact Order Node 1139-1144) -->
+                        <nav id="publicDesktopNav" class="hidden md:flex items-center gap-7 lg:gap-9 h-full text-[13.5px] font-normal text-[#593B42]" aria-label="Navigasi Utama">
+                            <a href="{{ url('/') }}#top" data-nav-target="top" class="public-nav-link relative h-full inline-flex items-center font-bold text-[#800020] border-b-[2px] border-[#D45060] transition-colors duration-250 smooth-ease">Beranda</a>
+                            <a href="{{ url('/') }}#kategori-infrastruktur" data-nav-target="kategori-infrastruktur" class="public-nav-link relative h-full inline-flex items-center border-b-[2px] border-transparent hover:text-[#800020] transition-colors duration-250 smooth-ease whitespace-nowrap">Bidang Layanan</a>
+                            <a href="{{ url('/') }}#mapSectionContainer" data-nav-target="mapSectionContainer" class="public-nav-link relative h-full inline-flex items-center border-b-[2px] border-transparent hover:text-[#800020] transition-colors duration-250 smooth-ease whitespace-nowrap">Peta Sebaran</a>
+                            <a href="{{ url('/') }}#alur-penanganan" data-nav-target="alur-penanganan" class="public-nav-link relative h-full inline-flex items-center border-b-[2px] border-transparent hover:text-[#800020] transition-colors duration-250 smooth-ease whitespace-nowrap">Alur Penanganan</a>
+                            <a href="{{ url('/') }}#download-app" data-nav-target="download-app" class="public-nav-link relative h-full inline-flex items-center border-b-[2px] border-transparent hover:text-[#800020] transition-colors duration-250 smooth-ease whitespace-nowrap">Aplikasi Mobile</a>
+                        </nav>
+
+                        <!-- Right CTA + Mobile Menu (Exact Node 1145 & Mobile 1365) -->
+                        <div class="flex items-center gap-2 shrink-0">
+                            <button type="button" id="publicBurgerBtn" onclick="togglePublicMobileMenu()" aria-label="Buka Menu Navigasi" aria-expanded="false" aria-controls="publicMobileMenu"
+                                class="md:hidden h-[40px] px-4 rounded-none bg-[#F3E6D5] hover:bg-[#E6D5C1] active:scale-[0.98] text-[#2B0F16] text-[13px] font-semibold inline-flex items-center justify-center transition-all duration-200 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#800020]">
+                                <span id="publicBurgerLabel">Menu</span>
+                            </button>
 
                             @auth
-                                <a href="{{ auth()->user()->isSuperAdmin() ? route('admin.dashboard') : (auth()->user()->isOperator() ? route('operator.dashboard') : (auth()->user()->isBupati() ? route('bupati.dashboard') : route('petugas.dashboard'))) }}" 
-                                    class="px-5 h-10 rounded-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-semibold text-xs sm:text-[13px] transition inline-flex items-center gap-2 whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2563EB]">
+                                <a href="{{ auth()->user()->isSuperAdmin() ? route('admin.dashboard') : (auth()->user()->isOperator() ? route('operator.dashboard') : (auth()->user()->isBupati() ? route('bupati.dashboard') : route('petugas.dashboard'))) }}"
+                                    class="px-5 h-[44px] rounded-none bg-[#800020] hover:bg-[#630018] active:scale-[0.98] text-white font-semibold text-[13.5px] transition-all duration-200 inline-flex items-center gap-2 whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#800020]">
                                     <i data-lucide="layout-dashboard" class="w-4 h-4 shrink-0"></i>
                                     <span class="whitespace-nowrap">Dashboard Petugas</span>
                                 </a>
                             @else
-                                <a href="{{ route('login') }}" title="Masuk" aria-label="Masuk"
-                                    class="w-10 md:w-auto md:px-6 h-10 rounded-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold text-xs sm:text-[13px] transition inline-flex items-center justify-center gap-1.5 whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2563EB]">
-                                    <i data-lucide="external-link" class="w-4 h-4 shrink-0 md:hidden"></i>
-                                    <span class="hidden md:inline whitespace-nowrap">Masuk</span>
+                                <a href="{{ route('login') }}" title="Masuk Portal" aria-label="Masuk Portal"
+                                    class="px-4 md:px-0 md:w-[134px] h-[40px] md:h-[44px] rounded-none bg-[#800020] hover:bg-[#630018] active:scale-[0.98] text-white font-semibold text-[13px] md:text-[13.5px] transition-all duration-200 inline-flex items-center justify-center whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#800020]">
+                                    <span class="md:hidden">Masuk</span>
+                                    <span class="hidden md:inline whitespace-nowrap">Masuk Portal</span>
                                 </a>
                             @endauth
-
-                        <!-- Burger Menu Button (Mobile / Tablet) dengan Animasi 3 Garis <-> X -->
-                        <button type="button" id="publicBurgerBtn" onclick="togglePublicMobileMenu()" aria-label="Buka Menu Navigasi" aria-expanded="false" aria-controls="publicMobileMenu"
-                            class="md:hidden w-10 h-10 rounded-lg border border-[#E2E8F0] bg-white hover:bg-[#F8FAFC] text-[#0F172A] flex items-center justify-center transition cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2563EB]">
-                            <span class="relative w-5 h-4 flex flex-col justify-between items-center pointer-events-none" aria-hidden="true">
-                                <span id="burgerLine1" class="block w-5 h-0.5 bg-[#0F172A] rounded-full transition-all duration-300 ease-in-out origin-center"></span>
-                                <span id="burgerLine2" class="block w-5 h-0.5 bg-[#0F172A] rounded-full transition-all duration-200 ease-in-out"></span>
-                                <span id="burgerLine3" class="block w-5 h-0.5 bg-[#0F172A] rounded-full transition-all duration-300 ease-in-out origin-center"></span>
-                            </span>
-                        </button>
+                        </div>
                     </div>
-                </div>
 
-                <!-- Mobile Dropdown Menu (Animasi Buka-Tutup ke Bawah & Atas) -->
-                <div id="publicMobileMenu" class="md:hidden overflow-hidden bg-white border-t border-transparent px-5 transition-all duration-300 ease-in-out" style="max-height: 0px; opacity: 0; padding-top: 0px; padding-bottom: 0px; transform: translateY(-6px);">
-                    <div class="space-y-1">
-                        <a href="{{ url('/') }}#top" data-nav-target="top" onclick="closePublicMobileMenu()" class="public-mobile-link block px-3 py-2.5 rounded-lg text-sm font-semibold text-[#2563EB] bg-[#EFF6FF] transition-colors">Beranda</a>
-                        <a href="{{ url('/') }}#mapSectionContainer" data-nav-target="mapSectionContainer" onclick="closePublicMobileMenu()" class="public-mobile-link block px-3 py-2.5 rounded-lg text-sm font-medium text-[#0F172A] hover:bg-[#EFF6FF] hover:text-[#2563EB] transition-colors">Peta Sebaran</a>
-                        <a href="{{ url('/') }}#kategori-infrastruktur" data-nav-target="kategori-infrastruktur" onclick="closePublicMobileMenu()" class="public-mobile-link block px-3 py-2.5 rounded-lg text-sm font-medium text-[#0F172A] hover:bg-[#EFF6FF] hover:text-[#2563EB] transition-colors">Kategori &amp; Layanan</a>
-                        <a href="{{ url('/') }}#download-app" data-nav-target="download-app" onclick="closePublicMobileMenu()" class="public-mobile-link block px-3 py-2.5 rounded-lg text-sm font-medium text-[#0F172A] hover:bg-[#EFF6FF] hover:text-[#2563EB] transition-colors">Unduh Aplikasi</a>
+                    <!-- Mobile Dropdown Menu (Warm Ivory & Maroon, 0px Sharp) -->
+                    <div id="publicMobileMenu" class="md:hidden overflow-hidden bg-[#FFF9F2]/95 backdrop-blur-xl px-5 transition-all duration-300 smooth-ease border-t border-[#E6D5C1]" style="max-height: 0px; opacity: 0; padding-top: 0px; padding-bottom: 0px; border-top-width: 0px; transform: translateY(-4px);">
+                        <div class="space-y-1">
+                            <a href="{{ url('/') }}#top" data-nav-target="top" onclick="closePublicMobileMenu()" class="public-mobile-link block px-3.5 py-3 rounded-none border-l-[3px] border-[#800020] bg-[#F3E6D5] text-sm font-bold text-[#800020] transition-colors">Beranda</a>
+                            <a href="{{ url('/') }}#kategori-infrastruktur" data-nav-target="kategori-infrastruktur" onclick="closePublicMobileMenu()" class="public-mobile-link block px-3.5 py-3 rounded-none border-l-[3px] border-transparent text-sm font-medium text-[#593B42] hover:bg-[#F3E6D5] hover:text-[#2B0F16] transition-colors">Bidang Layanan</a>
+                            <a href="{{ url('/') }}#mapSectionContainer" data-nav-target="mapSectionContainer" onclick="closePublicMobileMenu()" class="public-mobile-link block px-3.5 py-3 rounded-none border-l-[3px] border-transparent text-sm font-medium text-[#593B42] hover:bg-[#F3E6D5] hover:text-[#2B0F16] transition-colors">Peta Sebaran</a>
+                            <a href="{{ url('/') }}#alur-penanganan" data-nav-target="alur-penanganan" onclick="closePublicMobileMenu()" class="public-mobile-link block px-3.5 py-3 rounded-none border-l-[3px] border-transparent text-sm font-medium text-[#593B42] hover:bg-[#F3E6D5] hover:text-[#2B0F16] transition-colors">Alur Penanganan</a>
+                            <a href="{{ url('/') }}#download-app" data-nav-target="download-app" onclick="closePublicMobileMenu()" class="public-mobile-link block px-3.5 py-3 rounded-none border-l-[3px] border-transparent text-sm font-medium text-[#593B42] hover:bg-[#F3E6D5] hover:text-[#2B0F16] transition-colors">Aplikasi Mobile</a>
+                        </div>
                     </div>
-                </div>
-            </header>
+                </header>
             </div>
             <script>
                 let isPublicMobileMenuOpen = false;
+                function syncPublicHeaderBackground() {
+                    const navWrapper = document.getElementById('publicNavWrapper');
+                    const headerEl = document.getElementById('publicHeader');
+                    if (!navWrapper || !headerEl) return;
+                    const scrolled = (window.scrollY || 0) > 16;
+                    const showBg = scrolled || isPublicMobileMenuOpen;
+
+                    if (showBg) {
+                        headerEl.style.backgroundColor = 'rgba(255, 249, 242, 0.84)';
+                        headerEl.style.backdropFilter = 'blur(18px) saturate(160%)';
+                        headerEl.style.webkitBackdropFilter = 'blur(18px) saturate(160%)';
+                        headerEl.style.borderBottom = '1px solid #E6D5C1';
+                        navWrapper.classList.add('shadow-[0_10px_28px_rgba(74,0,18,0.10)]');
+                    } else {
+                        headerEl.style.backgroundColor = 'transparent';
+                        headerEl.style.backdropFilter = 'none';
+                        headerEl.style.webkitBackdropFilter = 'none';
+                        headerEl.style.borderBottom = '1px solid transparent';
+                        navWrapper.classList.remove('shadow-[0_10px_28px_rgba(74,0,18,0.10)]');
+                    }
+                }
+
                 function applyPublicMobileMenuState(open) {
                     const menu = document.getElementById('publicMobileMenu');
                     const btn = document.getElementById('publicBurgerBtn');
-                    const l1 = document.getElementById('burgerLine1');
-                    const l2 = document.getElementById('burgerLine2');
-                    const l3 = document.getElementById('burgerLine3');
+                    const lbl = document.getElementById('publicBurgerLabel');
                     isPublicMobileMenuOpen = open;
                     if (menu) {
                         if (open) {
-                            menu.style.maxHeight = '260px';
+                            menu.style.maxHeight = '320px';
                             menu.style.opacity = '1';
                             menu.style.paddingTop = '12px';
-                            menu.style.paddingBottom = '12px';
+                            menu.style.paddingBottom = '14px';
+                            menu.style.borderTopWidth = '1px';
                             menu.style.transform = 'translateY(0)';
-                            menu.style.borderTopColor = '#E2E8F0';
                         } else {
                             menu.style.maxHeight = '0px';
                             menu.style.opacity = '0';
                             menu.style.paddingTop = '0px';
                             menu.style.paddingBottom = '0px';
-                            menu.style.transform = 'translateY(-6px)';
-                            menu.style.borderTopColor = 'transparent';
+                            menu.style.borderTopWidth = '0px';
+                            menu.style.transform = 'translateY(-4px)';
                         }
                     }
                     if (btn) btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-                    if (l1 && l2 && l3) {
-                        if (open) {
-                            l1.style.transform = 'translateY(7px) rotate(45deg)';
-                            l2.style.opacity = '0';
-                            l2.style.transform = 'scaleX(0)';
-                            l3.style.transform = 'translateY(-7px) rotate(-45deg)';
-                        } else {
-                            l1.style.transform = '';
-                            l2.style.opacity = '1';
-                            l2.style.transform = '';
-                            l3.style.transform = '';
-                        }
-                    }
+                    if (lbl) lbl.textContent = open ? 'Tutup' : 'Menu';
+                    syncPublicHeaderBackground();
                 }
                 function togglePublicMobileMenu() {
                     applyPublicMobileMenuState(!isPublicMobileMenuOpen);
@@ -491,36 +545,37 @@
                     applyPublicMobileMenuState(false);
                 }
 
-                // Scroll-Spy Navbar (Desktop & Mobile)
+                // Scroll-Spy Navbar + Transparent-to-Glass Header (Desktop & Mobile)
                 document.addEventListener('DOMContentLoaded', () => {
-                    const sectionIds = ['top', 'mapSectionContainer', 'kategori-infrastruktur', 'download-app'];
+                    const sectionIds = ['top', 'kategori-infrastruktur', 'mapSectionContainer', 'alur-penanganan', 'download-app'];
                     const sections = sectionIds.map(id => document.getElementById(id)).filter(Boolean);
-                    if (!sections.length) return;
 
                     const setActiveNav = (activeId) => {
                         document.querySelectorAll('.public-nav-link').forEach(link => {
                             const isMatch = link.getAttribute('data-nav-target') === activeId;
                             if (isMatch) {
-                                link.classList.add('text-[#2563EB]', 'border-[#2563EB]');
-                                link.classList.remove('border-transparent');
+                                link.classList.add('text-[#800020]', 'font-bold', 'border-[#D45060]');
+                                link.classList.remove('border-transparent', 'font-normal', 'text-[#593B42]');
                             } else {
-                                link.classList.remove('text-[#2563EB]', 'border-[#2563EB]');
-                                link.classList.add('border-transparent');
+                                link.classList.remove('text-[#800020]', 'font-bold', 'border-[#D45060]');
+                                link.classList.add('border-transparent', 'font-normal', 'text-[#593B42]');
                             }
                         });
                         document.querySelectorAll('.public-mobile-link').forEach(link => {
                             const isMatch = link.getAttribute('data-nav-target') === activeId;
                             if (isMatch) {
-                                link.classList.add('text-[#2563EB]', 'bg-[#EFF6FF]', 'font-semibold');
-                                link.classList.remove('text-[#0F172A]', 'font-medium');
+                                link.classList.add('text-[#800020]', 'bg-[#F3E6D5]', 'border-[#800020]', 'font-bold');
+                                link.classList.remove('text-[#593B42]', 'border-transparent', 'font-medium');
                             } else {
-                                link.classList.remove('text-[#2563EB]', 'bg-[#EFF6FF]', 'font-semibold');
-                                link.classList.add('text-[#0F172A]', 'font-medium');
+                                link.classList.remove('text-[#800020]', 'bg-[#F3E6D5]', 'border-[#800020]', 'font-bold');
+                                link.classList.add('text-[#593B42]', 'border-transparent', 'font-medium');
                             }
                         });
                     };
 
                     const updateOnScroll = () => {
+                        syncPublicHeaderBackground();
+                        if (!sections.length) return;
                         let currentId = 'top';
                         for (const sec of sections) {
                             const rect = sec.getBoundingClientRect();
@@ -559,22 +614,33 @@
             </script>
         @endif
 
-        <!-- Main Content (Full-width on landing page & login split-screen, container on other pages) -->
-        <main class="flex-1 w-full {{ (request()->is('/') || request()->routeIs('login')) ? '' : 'max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 pb-12' }}">
+        <!-- Main Content -->
+        <main class="flex-1 w-full {{ (request()->is('/') || request()->routeIs('login')) ? '' : 'max-w-[1280px] mx-auto px-6 sm:px-8 lg:px-10 py-12' }}">
             @yield('content')
         </main>
 
         @if(!request()->routeIs('login'))
-        <footer class="border-t border-[#E2E8F0] bg-white py-6 px-6 text-center text-xs text-[#475569]">
-            <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
-                <span>© 2026 Pemerintah Kabupaten • Dinas Pekerjaan Umum dan Penataan Ruang (PUPR)</span>
-                <div class="flex items-center gap-4 text-xs font-semibold text-[#475569]">
-                    <a href="#download-app" class="text-[#2563EB] hover:text-[#1D4ED8] flex items-center gap-1.5 transition font-bold">
-                        <i data-lucide="smartphone" class="w-3.5 h-3.5 text-[#2563EB]"></i>
-                        <span>Aplikasi Warga</span>
-                    </a>
-                    <a href="https://play.google.com" target="_blank" rel="noopener noreferrer" class="hover:text-[#2563EB] transition">Google Play</a>
-                    <a href="https://www.apple.com/app-store/" target="_blank" rel="noopener noreferrer" class="hover:text-[#2563EB] transition">App Store</a>
+        <!-- Footer Resmi Deep Burgundy (#4A0012 · Exact FigCraft Node 1352) -->
+        <footer class="relative z-20 bg-[#4A0012] text-[#F3E6D5]">
+            <div class="max-w-[1280px] mx-auto px-5 sm:px-6 xl:px-0 py-7 md:py-0 md:h-[108px] flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
+                <div class="flex items-center gap-3.5">
+                    <div class="hidden md:flex w-[34px] h-[34px] rounded-none bg-white items-center justify-center p-1.5 shrink-0">
+                        <img src="{{ asset('images/logo-pin.png') }}" class="w-full h-full object-contain" alt="Logo SI-APPIK">
+                    </div>
+                    <div>
+                        <span class="font-outfit font-bold text-[15.5px] md:text-[16px] text-white block leading-tight">SI-APPIK Kabupaten</span>
+                        <span class="text-[11.5px] md:text-[12px] text-[#F3E6D5] block mt-0.5">
+                            <span class="md:hidden">&copy; 2026 Pemerintah Kabupaten &middot; Dinas PUPR</span>
+                            <span class="hidden md:inline">&copy; 2026 Pemerintah Kabupaten &middot; Dinas Pekerjaan Umum dan Penataan Ruang (PUPR)</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="hidden md:flex items-center gap-7 text-[12.5px] font-normal text-[#F3E6D5]">
+                    <a href="{{ url('/') }}#top" class="hover:text-white transition">Beranda</a>
+                    <a href="{{ url('/') }}#kategori-infrastruktur" class="hover:text-white transition">Bidang Layanan</a>
+                    <a href="{{ url('/') }}#mapSectionContainer" class="hover:text-white transition">Peta Sebaran</a>
+                    <a href="{{ url('/') }}#alur-penanganan" class="hover:text-white transition">Alur Penanganan</a>
+                    <a href="{{ route('login') }}" class="text-white hover:text-[#F3E6D5] font-semibold transition">Masuk Portal</a>
                 </div>
             </div>
         </footer>
