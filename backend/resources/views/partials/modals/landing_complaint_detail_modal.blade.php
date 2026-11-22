@@ -1,16 +1,21 @@
-<!-- Modal Detail Pengaduan Publik (1:1 FigCraft Maroon & Cream Node 2321 · 0px Sharp, Connected Stepper Desktop & Mobile) -->
+<!-- Modal Detail Pengaduan Publik (SI-APPIK Maroon & Cream · Frosted Glass, Subtle Rounded, Connected Stepper Desktop & Mobile) -->
 <div id="landingComplaintDetailModal" role="dialog" aria-modal="true" aria-labelledby="landingModalTitle"
-    class="fixed inset-0 z-[9999] hidden flex items-end sm:items-center justify-center p-0 sm:p-6 bg-[#4A0012]/65 backdrop-blur-[3px] overscroll-contain transition-opacity duration-250 smooth-ease opacity-0">
+    class="fixed inset-0 z-[9999] hidden flex items-end sm:items-center justify-center p-0 sm:p-6 bg-[#4A0012]/60 backdrop-blur-[6px] overscroll-contain transition-opacity duration-250 smooth-ease opacity-0">
     <div id="landingModalCard"
-        class="bg-white w-full sm:max-w-[820px] rounded-none border-t-[4px] border-t-[#800020] shadow-[0_24px_64px_rgba(74,0,18,0.36)] overflow-hidden flex flex-col max-h-[92vh] sm:max-h-[90vh] transition-all duration-300 smooth-ease translate-y-5 sm:translate-y-3 sm:scale-[0.98] opacity-0">
+        class="bg-white/92 backdrop-blur-2xl w-full sm:max-w-[820px] rounded-t-[14px] sm:rounded-[12px] border-t-[4px] border-t-[#800020] shadow-[0_28px_72px_rgba(74,0,18,0.38)] overflow-hidden flex flex-col max-h-[92vh] sm:max-h-[90vh] transition-all duration-300 smooth-ease translate-y-5 sm:translate-y-3 sm:scale-[0.98] opacity-0">
 
-        <!-- Scrollable Main Surface (Header + Title + Photos + Info Panel + Progress Tracker) -->
-        <div class="px-5 pt-5 pb-5 sm:px-8 sm:pt-7 sm:pb-6 overflow-y-auto space-y-5 flex-1 overscroll-contain bg-white" style="-webkit-overflow-scrolling: touch;">
+        <!-- Subtle Mobile Bottom Sheet Drag Cue -->
+        <div class="sm:hidden flex justify-center pt-2.5 pb-0.5 bg-transparent shrink-0">
+            <span class="w-10 h-1 rounded-full bg-[#E6D5C1]"></span>
+        </div>
 
-            <!-- Top Row: Solid Pekat Badge + Ticket & Date + Warm Sand Close Button -->
+        <!-- Scrollable Main Surface -->
+        <div class="px-5 pt-4 pb-5 sm:px-8 sm:pt-7 sm:pb-6 overflow-y-auto space-y-5 flex-1 overscroll-contain bg-transparent" style="-webkit-overflow-scrolling: touch;">
+
+            <!-- Top Row: Solid Pekat Badge + Ticket & Date + Close Button -->
             <div class="flex items-start justify-between gap-3">
                 <div class="flex flex-wrap items-center gap-x-3 gap-y-1.5 min-w-0">
-                    <span id="landingModalStatusBadge" class="shrink-0 px-3.5 py-1.5 rounded-none text-[12px] font-bold bg-[#047857] text-white leading-none">
+                    <span id="landingModalStatusBadge" class="shrink-0 px-3.5 py-1.5 rounded-[6px] text-[12px] font-bold bg-[#047857] text-white leading-none">
                         Selesai
                     </span>
                     <span class="text-[12.5px] sm:text-[13px] text-[#6D4E55] font-normal">
@@ -21,7 +26,7 @@
                 </div>
 
                 <button type="button" onclick="closeLandingDetailModal()" aria-label="Tutup Rincian Laporan"
-                    class="w-10 h-10 sm:w-9 sm:h-9 rounded-none bg-[#F3E6D5] hover:bg-[#E6D5C1] active:scale-[0.95] text-[#2B0F16] flex items-center justify-center transition-colors cursor-pointer shrink-0 focus-visible:outline-2 focus-visible:outline-[#800020]">
+                    class="w-10 h-10 sm:w-9 sm:h-9 rounded-[8px] bg-[#F3E6D5]/85 backdrop-blur-md hover:bg-[#E6D5C1] active:scale-[0.95] text-[#2B0F16] flex items-center justify-center transition-colors cursor-pointer shrink-0 focus-visible:outline-none">
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
             </div>
@@ -38,14 +43,14 @@
                 </p>
             </div>
 
-            <!-- 1. Side-by-Side Before & After Photos (0px Sharp, Click-to-Zoom) -->
+            <!-- 1. Side-by-Side Before & After Photos (Subtle 8px Rounded + Frosted Glass Tags, Zero Outline) -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 <div id="landingModalPhotoContainer" class="space-y-1.5">
-                    <div class="aspect-[16/10] sm:h-[208px] w-full rounded-none overflow-hidden bg-[#4A0012] relative flex items-center justify-center group">
+                    <div class="aspect-[16/10] sm:h-[208px] w-full rounded-[8px] overflow-hidden bg-[#4A0012] relative flex items-center justify-center group">
                         <img id="landingModalPhoto" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
                             alt="Foto Kondisi Dilaporkan" onclick="openLandingImageLightbox(this.src)"
                             class="w-full h-full object-cover cursor-zoom-in transition-transform duration-500 smooth-ease group-hover:scale-[1.03]">
-                        <div class="absolute bottom-3 left-3 bg-[#4A0012]/92 text-white text-[11.5px] font-semibold px-3 py-1.5 rounded-none pointer-events-none">
+                        <div class="absolute bottom-3 left-3 bg-[#4A0012]/84 backdrop-blur-md text-white text-[11.5px] font-semibold px-3 py-1.5 rounded-[6px] pointer-events-none">
                             Kondisi Dilaporkan
                         </div>
                     </div>
@@ -53,16 +58,16 @@
                 </div>
 
                 <div id="landingModalCompletionPhotoContainer" class="space-y-1.5">
-                    <div class="aspect-[16/10] sm:h-[208px] w-full rounded-none overflow-hidden bg-[#F3E6D5] relative flex items-center justify-center group">
+                    <div class="aspect-[16/10] sm:h-[208px] w-full rounded-[8px] overflow-hidden bg-[#F3E6D5]/80 relative flex items-center justify-center group">
                         <img id="landingModalCompletionPhoto" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
                             alt="Foto Hasil Perbaikan" onclick="openLandingImageLightbox(this.src)"
                             class="w-full h-full object-cover cursor-zoom-in transition-transform duration-500 smooth-ease group-hover:scale-[1.03]">
-                        <div id="landingModalCompletionPlaceholder" class="hidden inset-0 absolute flex flex-col items-center justify-center text-center p-4 bg-[#F3E6D5] text-[#593B42]">
+                        <div id="landingModalCompletionPlaceholder" class="hidden inset-0 absolute flex flex-col items-center justify-center text-center p-4 bg-[#F3E6D5]/85 backdrop-blur-sm text-[#593B42]">
                             <i data-lucide="clock" class="w-5 h-5 mb-1.5 text-[#800020]"></i>
                             <span class="text-xs font-bold text-[#2B0F16]">Menunggu Dokumentasi Perbaikan</span>
                             <span class="text-[11px] text-[#6D4E55] mt-0.5">Foto tampil setelah Pekerja Lapangan selesai</span>
                         </div>
-                        <div id="landingModalCompletionTag" class="absolute bottom-3 left-3 bg-[#047857] text-white text-[11.5px] font-semibold px-3 py-1.5 rounded-none pointer-events-none">
+                        <div id="landingModalCompletionTag" class="absolute bottom-3 left-3 bg-[#047857]/88 backdrop-blur-md text-white text-[11.5px] font-semibold px-3 py-1.5 rounded-[6px] pointer-events-none">
                             &#10003; Hasil Perbaikan
                         </div>
                     </div>
@@ -70,9 +75,8 @@
                 </div>
             </div>
 
-            <!-- 2. Warm Ivory #FFF9F2 2-Column Info Block (0px Sharp) -->
-            <div class="bg-[#FFF9F2] rounded-none p-5 sm:px-6 sm:py-5 grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6">
-                <!-- Left: Lokasi Kerusakan -->
+            <!-- 2. Frosted Warm Ivory Info Block (Zero Perimeter Outline) -->
+            <div class="bg-[#FFF9F2]/88 backdrop-blur-md rounded-[8px] p-5 sm:px-6 sm:py-5 grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6">
                 <div class="space-y-1.5">
                     <span class="text-[12px] font-semibold text-[#6D4E55] block">
                         Lokasi Kerusakan
@@ -87,7 +91,6 @@
                     </a>
                 </div>
 
-                <!-- Right: Ditangani oleh + Warga Pelapor -->
                 <div class="sm:border-l sm:border-[#E6D5C1] sm:pl-6 space-y-3">
                     <div class="space-y-0.5">
                         <span class="text-[12px] font-semibold text-[#6D4E55] block">
@@ -105,14 +108,14 @@
                         <p class="text-[13.5px] font-medium text-[#593B42] leading-snug">
                             <span id="landingModalReporter">Warga Terdaftar</span>
                             <span class="text-[#6D4E55]"> (<span id="landingModalReporterPhone">********</span>)</span>
-                            <span id="landingModalAnonymousBadge" class="hidden ml-1.5 text-[10px] font-bold px-1.5 py-0.5 rounded-none bg-[#4A0012] text-white align-middle">Anonim</span>
+                            <span id="landingModalAnonymousBadge" class="hidden ml-1.5 text-[10px] font-bold px-1.5 py-0.5 rounded-[4px] bg-[#4A0012] text-white align-middle">Anonim</span>
                         </p>
                     </div>
                 </div>
             </div>
 
-            <!-- 3. Ruas Panjang Strip (Only if Major Road Damage) -->
-            <div id="landingModalMajorRoadBox" class="hidden bg-[#FFF9F2] border-l-[4px] border-l-[#800020] rounded-none px-5 py-3.5 flex flex-wrap items-center justify-between gap-4 text-xs">
+            <!-- 3. Ruas Panjang Strip -->
+            <div id="landingModalMajorRoadBox" class="hidden bg-[#FFF9F2] border-l-[4px] border-l-[#800020] rounded-[8px] px-5 py-3.5 flex flex-wrap items-center justify-between gap-4 text-xs">
                 <div>
                     <span class="font-semibold text-[#6D4E55] block">Kerusakan Ruas Panjang</span>
                     <span id="landingModalRoadCondition" class="font-bold text-[#2B0F16]">-</span>
@@ -123,23 +126,22 @@
                 </div>
             </div>
 
-            <!-- 4. Progres Penanganan Aduan (Vertical Connected Stepper Mobile + Horizontal 4-Step Desktop) -->
+            <!-- 4. Progres Penanganan Aduan (Vertical Connected Stepper Mobile + Horizontal Desktop) -->
             <div class="pt-1 space-y-3">
                 <span class="text-[11px] font-bold uppercase tracking-[0.08em] text-[#6D4E55] block">
                     PROGRES PENANGANAN ADUAN
                 </span>
                 <div id="landingModalTimeline" class="relative">
                     <!-- Desktop Horizontal Connecting Track -->
-                    <div class="hidden sm:block absolute top-[6px] left-[6px] right-[6px] h-[2.5px] bg-[#E6D5C1] z-0" aria-hidden="true">
-                        <div id="landingProgressFill" class="h-full bg-[#800020] transition-all duration-500 smooth-ease" style="width: 0%;"></div>
+                    <div class="hidden sm:block absolute top-[6px] left-[6px] right-[6px] h-[2.5px] bg-[#E6D5C1] rounded-full z-0" aria-hidden="true">
+                        <div id="landingProgressFill" class="h-full bg-[#800020] rounded-full transition-all duration-500 smooth-ease" style="width: 0%;"></div>
                     </div>
 
                     <div class="flex flex-col sm:grid sm:grid-cols-4 sm:gap-x-3 relative z-10">
-                        <!-- Step 1 -->
                         <div class="flex sm:flex-col items-stretch sm:items-start gap-3.5 sm:gap-2" data-step="1">
                             <div class="flex flex-col items-center shrink-0 sm:block">
                                 <span class="step-dot w-3.5 h-3.5 rounded-full bg-[#800020] ring-[3px] ring-white transition-colors duration-300 shrink-0 mt-0.5 sm:mt-0 block"></span>
-                                <span data-mobile-connector="1" class="sm:hidden w-[2.5px] flex-1 min-h-[22px] bg-[#E6D5C1] my-1 transition-colors duration-300"></span>
+                                <span data-mobile-connector="1" class="sm:hidden w-[2.5px] flex-1 min-h-[22px] bg-[#E6D5C1] my-1 rounded-full transition-colors duration-300"></span>
                             </div>
                             <div class="flex-1 pb-3.5 sm:pb-0 flex items-baseline justify-between sm:block gap-2">
                                 <span class="step-label block text-[13px] sm:text-[12.5px] font-bold text-[#2B0F16] leading-tight">Dilaporkan</span>
@@ -147,11 +149,10 @@
                             </div>
                         </div>
 
-                        <!-- Step 2 -->
                         <div class="flex sm:flex-col items-stretch sm:items-start gap-3.5 sm:gap-2" data-step="2">
                             <div class="flex flex-col items-center shrink-0 sm:block">
                                 <span class="step-dot w-3.5 h-3.5 rounded-full bg-[#E6D5C1] ring-[3px] ring-white transition-colors duration-300 shrink-0 mt-0.5 sm:mt-0 block"></span>
-                                <span data-mobile-connector="2" class="sm:hidden w-[2.5px] flex-1 min-h-[22px] bg-[#E6D5C1] my-1 transition-colors duration-300"></span>
+                                <span data-mobile-connector="2" class="sm:hidden w-[2.5px] flex-1 min-h-[22px] bg-[#E6D5C1] my-1 rounded-full transition-colors duration-300"></span>
                             </div>
                             <div class="flex-1 pb-3.5 sm:pb-0 flex items-baseline justify-between sm:block gap-2">
                                 <span class="step-label block text-[13px] sm:text-[12.5px] font-medium text-[#6D4E55] leading-tight">Diverifikasi</span>
@@ -159,11 +160,10 @@
                             </div>
                         </div>
 
-                        <!-- Step 3 -->
                         <div class="flex sm:flex-col items-stretch sm:items-start gap-3.5 sm:gap-2" data-step="3">
                             <div class="flex flex-col items-center shrink-0 sm:block">
                                 <span class="step-dot w-3.5 h-3.5 rounded-full bg-[#E6D5C1] ring-[3px] ring-white transition-colors duration-300 shrink-0 mt-0.5 sm:mt-0 block"></span>
-                                <span data-mobile-connector="3" class="sm:hidden w-[2.5px] flex-1 min-h-[22px] bg-[#E6D5C1] my-1 transition-colors duration-300"></span>
+                                <span data-mobile-connector="3" class="sm:hidden w-[2.5px] flex-1 min-h-[22px] bg-[#E6D5C1] my-1 rounded-full transition-colors duration-300"></span>
                             </div>
                             <div class="flex-1 pb-3.5 sm:pb-0 flex items-baseline justify-between sm:block gap-2">
                                 <span class="step-label block text-[13px] sm:text-[12.5px] font-medium text-[#6D4E55] leading-tight">Dikerjakan Regu</span>
@@ -171,7 +171,6 @@
                             </div>
                         </div>
 
-                        <!-- Step 4 -->
                         <div class="flex sm:flex-col items-stretch sm:items-end sm:text-right gap-3.5 sm:gap-2" data-step="4">
                             <div class="flex flex-col items-center shrink-0 sm:block">
                                 <span class="step-dot w-3.5 h-3.5 rounded-full bg-[#E6D5C1] ring-[3px] ring-white transition-colors duration-300 shrink-0 mt-0.5 sm:mt-0 block"></span>
@@ -186,18 +185,18 @@
             </div>
         </div>
 
-        <!-- Clean Warm Ivory Footer Bar (0px Sharp Buttons) -->
-        <div class="px-5 py-4 sm:px-8 bg-[#FFF9F2] flex flex-col sm:flex-row sm:items-center justify-between gap-3 shrink-0">
+        <!-- Clean Frosted Warm Ivory Footer Bar (Zero Outline) -->
+        <div class="px-5 py-4 sm:px-8 bg-[#FFF9F2]/90 backdrop-blur-lg flex flex-col sm:flex-row sm:items-center justify-between gap-3 shrink-0">
             <span id="landingModalFooterNote" class="text-[12.5px] text-[#593B42]">
                 Tervalidasi resmi oleh Operator Dinas PUPR Kabupaten
             </span>
             <div class="flex items-center gap-3 shrink-0">
                 <a id="landingModalFooterMapsLink" href="#" target="_blank" rel="noopener noreferrer"
-                    class="flex-1 sm:flex-initial sm:w-[144px] h-[44px] sm:h-[42px] rounded-none bg-[#F3E6D5] hover:bg-[#E6D5C1] active:scale-[0.98] text-[#2B0F16] font-bold text-[13px] inline-flex items-center justify-center transition-colors cursor-pointer">
+                    class="flex-1 sm:flex-initial sm:w-[144px] h-[44px] sm:h-[42px] rounded-[8px] bg-[#F3E6D5] hover:bg-[#E6D5C1] active:scale-[0.98] text-[#2B0F16] font-bold text-[13px] inline-flex items-center justify-center transition-colors cursor-pointer">
                     Buka di Peta
                 </a>
                 <button type="button" onclick="closeLandingDetailModal()"
-                    class="flex-1 sm:flex-initial sm:w-[118px] h-[44px] sm:h-[42px] rounded-none bg-[#800020] hover:bg-[#630018] active:scale-[0.98] text-white font-bold text-[13px] inline-flex items-center justify-center transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#800020]">
+                    class="flex-1 sm:flex-initial sm:w-[118px] h-[44px] sm:h-[42px] rounded-[8px] bg-[#800020] hover:bg-[#630018] active:scale-[0.98] text-white font-bold text-[13px] inline-flex items-center justify-center transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#800020]">
                     Tutup
                 </button>
             </div>
@@ -338,7 +337,7 @@
         const isMajor = item.damage_type === 'major';
         if (typeText) typeText.textContent = isMajor ? 'Kerusakan Berat' : 'Kerusakan Ringan';
 
-        // Solid Pekat Status Badge (0px Sharp)
+        // Solid Pekat Status Badge (Subtle 6px Rounded)
         const statusBadge = document.getElementById('landingModalStatusBadge');
         const st = String(item.status || '').toUpperCase();
         let statusLabel = 'Verifikasi';
@@ -360,7 +359,7 @@
 
         if (statusBadge) {
             statusBadge.textContent = statusLabel;
-            statusBadge.className = `shrink-0 px-3.5 py-1.5 rounded-none text-[12px] font-bold leading-none ${statusBg}`;
+            statusBadge.className = `shrink-0 px-3.5 py-1.5 rounded-[6px] text-[12px] font-bold leading-none ${statusBg}`;
         }
 
         // Before Photo
@@ -387,7 +386,7 @@
                     citizenPhotos.forEach(url => {
                         const btn = document.createElement('button');
                         btn.type = 'button';
-                        btn.className = 'w-12 h-12 rounded-none overflow-hidden bg-[#F3E6D5] shrink-0 hover:ring-2 hover:ring-[#800020] transition cursor-pointer';
+                        btn.className = 'w-12 h-12 rounded-[6px] overflow-hidden bg-[#F3E6D5] shrink-0 hover:ring-2 hover:ring-[#800020] transition cursor-pointer';
                         btn.addEventListener('click', () => { photoImg.src = url; });
                         const img = document.createElement('img');
                         img.src = url;
@@ -433,7 +432,7 @@
                     officerPhotos.forEach(url => {
                         const btn = document.createElement('button');
                         btn.type = 'button';
-                        btn.className = 'w-12 h-12 rounded-none overflow-hidden bg-[#F3E6D5] shrink-0 hover:ring-2 hover:ring-[#047857] transition cursor-pointer';
+                        btn.className = 'w-12 h-12 rounded-[6px] overflow-hidden bg-[#F3E6D5] shrink-0 hover:ring-2 hover:ring-[#047857] transition cursor-pointer';
                         btn.addEventListener('click', () => { if (compImg) compImg.src = url; });
                         const img = document.createElement('img');
                         img.src = url;
@@ -572,7 +571,7 @@
             overlay = document.createElement('div');
             overlay.id = 'landingImageLightbox';
             overlay.className = 'fixed inset-0 z-[10000] bg-[#4A0012]/92 backdrop-blur-[3px] flex items-center justify-center p-4 cursor-zoom-out transition-opacity duration-200 opacity-0';
-            overlay.innerHTML = '<img id="landingLightboxImg" src="" alt="Preview Foto" class="max-w-full max-h-[90vh] rounded-none shadow-2xl object-contain transition-transform duration-250 smooth-ease scale-[0.97]">';
+            overlay.innerHTML = '<img id="landingLightboxImg" src="" alt="Preview Foto" class="max-w-full max-h-[90vh] rounded-[10px] shadow-2xl object-contain transition-transform duration-250 smooth-ease scale-[0.97]">';
             overlay.addEventListener('click', () => {
                 overlay.classList.remove('opacity-100');
                 overlay.classList.add('opacity-0');
