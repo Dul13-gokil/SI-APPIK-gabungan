@@ -22,9 +22,9 @@ Route::get('/', function () {
         ->groupBy('status')
         ->pluck('total', 'status');
 
-    // Publik: Hanya hitung laporan valid (non-REJECTED & non-DRAFT) agar 100% sama dengan Peta GIS & API Summary
+    // Publik: Hanya hitung laporan valid (non-REJECTED, non-DRAFT, non-CANCELLED) agar 100% sama dengan Peta GIS & API Summary
     $publicTotal = (int) $allStatusCounts
-        ->reject(fn ($cnt, $st) => in_array($st, ['REJECTED', 'DRAFT'], true))
+        ->reject(fn ($cnt, $st) => in_array($st, ['REJECTED', 'DRAFT', 'CANCELLED'], true))
         ->sum();
 
     $stats = [
@@ -45,7 +45,7 @@ Route::get('/', function () {
         ->values()
         ->all();
 
-    $catCounts = Complaint::whereNotIn('status', ['REJECTED', 'DRAFT'])
+    $catCounts = Complaint::whereNotIn('status', ['REJECTED', 'DRAFT', 'CANCELLED'])
         ->selectRaw('category_id, count(*) as total')
         ->groupBy('category_id')
         ->pluck('total', 'category_id');

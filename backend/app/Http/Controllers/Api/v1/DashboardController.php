@@ -43,8 +43,8 @@ class DashboardController extends Controller
                 ]);
             }
         } else {
-            // Publik: Hanya hitung laporan yang valid (non-REJECTED & non-DRAFT)
-            $query->whereNotIn('status', ['REJECTED', 'DRAFT']);
+            // Publik: Hanya hitung laporan yang valid (non-REJECTED, non-DRAFT, non-CANCELLED)
+            $query->whereNotIn('status', ['REJECTED', 'DRAFT', 'CANCELLED']);
         }
 
         $total = (clone $query)->count();
@@ -90,8 +90,8 @@ class DashboardController extends Controller
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         } else {
-            // Laporan yang ditolak tidak boleh ditampilkan di peta publik
-            $query->whereNotIn('status', ['REJECTED']);
+            // Laporan yang ditolak, draft, atau dibatalkan tidak ditampilkan di peta publik
+            $query->whereNotIn('status', ['REJECTED', 'DRAFT', 'CANCELLED']);
         }
 
         if ($request->filled('category_id')) {
