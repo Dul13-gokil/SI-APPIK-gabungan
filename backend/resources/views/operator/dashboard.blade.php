@@ -21,6 +21,11 @@
                 'subtitle' => 'Laporan yang telah diverifikasi dan diterbitkan surat tugas, menunggu pengerjaan di lapangan.',
                 'count' => $dispatched->count(),
             ],
+            'ready' => [
+                'title' => 'Siap Ditugaskan (Verifikasi AI)',
+                'subtitle' => 'Laporan yang sudah lolos verifikasi otomatis AI. Operator hanya perlu menugaskan atau menolak.',
+                'count' => $readyToDispatch->count(),
+            ],
             'inprogress' => [
                 'title' => 'Pemantauan Pengerjaan Lapangan',
                 'subtitle' => 'Awasi progres fisik perbaikan dan kepatuhan batas waktu penyelesaian (SLA).',
@@ -444,6 +449,23 @@
                     Tidak ditemukan laporan yang cocok dengan kata kunci atau kategori filter yang dipilih.
                 </div>
             @endif
+    </div>
+
+    <!-- TAB 1b: SIAP DITUGASKAN (SUDAH DIVERIFIKASI AI) -->
+    <div id="tabPanel-ready" class="tab-panel {{ $activeTab === 'ready' ? '' : 'hidden' }} space-y-4">
+        @if($readyToDispatch->isEmpty())
+            <div class="card-white rounded-2xl p-12 text-center space-y-2 bg-white border border-[#E2E8F0]">
+                <div class="w-10 h-10 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto">
+                    <i data-lucide="sparkles" class="w-5 h-5"></i>
+                </div>
+                <h4 class="font-bold text-sm text-slate-800">Belum ada laporan siap ditugaskan</h4>
+                <p class="text-xs text-slate-400 max-w-md mx-auto">
+                    Laporan yang lolos verifikasi otomatis AI (keyakinan &ge; 80%) akan muncul di sini untuk ditugaskan ke regu lapangan.
+                </p>
+            </div>
+        @else
+            @include('partials.role_complaints_table', ['wrapId' => 'operatorTableWrap-ready', 'rowClass' => 'operator-ready-row', 'items' => $readyToDispatch, 'mode' => 'operator-ready', 'hidden' => false])
+        @endif
     </div>
 
     <!-- TAB 2: LAPORAN DITUGASKAN (MENUNGGU PEKERJA LAPANGAN MULAI BEKERJA) -->
@@ -2085,6 +2107,10 @@
                 title: 'Daftar Pengaduan Telah Ditugaskan ke Petugas',
                 subtitle: 'Laporan yang telah diverifikasi dan diterbitkan instruksi penugasan, menunggu dimulainya pengerjaan fisik di lapangan'
             },
+            'ready': {
+                title: 'Siap Ditugaskan (Verifikasi Otomatis AI)',
+                subtitle: 'Laporan yang sudah lolos verifikasi AI. Operator hanya menugaskan regu atau menolak bila lokasi di luar wewenang.'
+            },
             'inprogress': {
                 title: 'Pemantauan Pelaksanaan Penanganan Lapangan',
                 subtitle: 'Pengawasan progres fisik penanganan dan kepatuhan batas waktu Service Level Agreement (SLA)'
@@ -3382,6 +3408,9 @@
         if (currentTab === 'dispatched') {
             selector = '.complaint-dispatched-card';
             rowSelector = '.operator-dispatched-row';
+        } else if (currentTab === 'ready') {
+            selector = '.complaint-ready-card';
+            rowSelector = '.operator-ready-row';
         } else if (currentTab === 'inprogress') {
             selector = '.complaint-inprogress-card';
             rowSelector = '.operator-inprogress-row';

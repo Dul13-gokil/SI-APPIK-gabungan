@@ -8,11 +8,13 @@ use App\Domain\Complaints\Services\PriorityService;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ApiResponse;
 use App\Http\Resources\ComplaintResource;
+use App\Models\AiAssessment;
 use App\Models\Category;
 use App\Models\Complaint;
 use App\Models\ComplaintPhoto;
 use App\Models\ComplaintStatusHistory;
 use App\Models\Disposition;
+use App\Models\Notification;
 use App\Models\Support;
 use App\Models\SystemSetting;
 use App\Models\User;
@@ -260,6 +262,11 @@ class ComplaintController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
+        // Kompatibilitas APK lama: kategori PJU (2) sudah digabung ke Fasilitas Umum Lainnya (3).
+        if ((int) $request->input('category_id') === 2) {
+            $request->merge(['category_id' => 3]);
+        }
+
         $validated = $request->validate([
             'title'             => 'required|string|max:255',
             'description'       => 'required|string',
@@ -267,6 +274,7 @@ class ComplaintController extends Controller
             'region_id'         => 'nullable|exists:regions,id',
             'latitude'          => 'required|numeric|between:-90,90',
             'longitude'         => 'required|numeric|between:-180,180',
+            'radius_m'          => 'nullable|integer|min:5|max:100',
             'address'           => 'required|string|max:500',
             'is_anonymous'      => 'nullable',
             'damage_type'       => 'nullable|in:minor,major',
@@ -331,8 +339,33 @@ class ComplaintController extends Controller
             );
         }
 
-        // Kode publik dibuat di dalam transaksi memakai advisory lock PostgreSQL
-        // agar dua laporan bersamaan tidak memperoleh nomor urut yang sama.
+        // Klasifikasi AI: berat/ringan dan kategori ditentukan model (keputusan rapat).
+        // Di bawah ambang 80% laporan tetap SUBMITTED dan masuk antrean operator.
+        $aiResult = null;
+        if (!empty($photoFiles)) {
+            try {
+                $aiResult = $this->aiService->classifyMultipleImages($photoFiles);
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('Klasifikasi AI gagal saat lapor: ' . $e->getMessage());
+            }
+        }
+
+        $aiValid = is_array($aiResult)
+            && ($aiResult['is_valid_infrastructure'] ?? false) === true
+            && isset($aiResult['category_id']);
+        $aiConfidence = $aiValid ? (float) ($aiResult['confidence'] ?? 0) : 0.0;
+
+        if ($aiValid) {
+            $aiCategory = (int) $aiResult['category_id'];
+            // PJU (kategori 2) sudah tidak ada; semua fasilitas non-jalan masuk kategori 3.
+            $validated['category_id'] = in_array($aiCategory, [1, 3], true) ? $aiCategory : 3;
+            $damageType = ((int) ($aiResult['severity_level'] ?? 1) >= 3) ? 'major' : 'minor';
+        }
+
+        $autoVerified = $aiValid && $aiConfidence >= 0.80;
+        $initialStatus = $autoVerified ? 'VERIFIED' : 'SUBMITTED';
+
+        $category = Category::findOrFail($validated['category_id']);
 
         // Initial Priority Calculation (SAP Section 18)
         $priorityCalc = $this->priorityService->calculate(
@@ -345,7 +378,7 @@ class ComplaintController extends Controller
 
         $hasFileDataCol = ComplaintPhoto::ensureFileDataColumnExists();
 
-        $complaint = DB::transaction(function () use ($validated, $damageType, $userId, $priorityCalc, $photoFiles, $hasFileDataCol) {
+        $complaint = DB::transaction(function () use ($validated, $damageType, $userId, $priorityCalc, $photoFiles, $hasFileDataCol, $initialStatus, $autoVerified) {
             $publicCode = $this->generatePublicCode($damageType);
             $isAnon = filter_var($validated['is_anonymous'] ?? false, FILTER_VALIDATE_BOOLEAN);
 
@@ -385,7 +418,9 @@ class ComplaintController extends Controller
                 'end_latitude'      => $validated['end_latitude'] ?? null,
                 'end_longitude'     => $validated['end_longitude'] ?? null,
                 'route_coordinates' => $routeCoords,
-                'status'            => 'SUBMITTED',
+                'status'            => $initialStatus,
+                'verified_by_ai'    => $autoVerified,
+                'radius_m'          => (int) ($validated['radius_m'] ?? 20),
                 'priority_score'    => $priorityCalc['score'],
                 'priority_level'    => $priorityCalc['level'],
                 'is_anonymous'      => $isAnon,
@@ -452,9 +487,67 @@ class ComplaintController extends Controller
             return $complaint;
         });
 
+        // Simpan hasil klasifikasi AI dan catat verifikasi otomatis.
+        if ($aiValid) {
+            AiAssessment::create([
+                'complaint_id' => $complaint->id,
+                'model'        => (string) ($aiResult['model_version'] ?? 'cv-spatial-opencv-v2.5'),
+                'task'         => 'DAMAGE_CLASSIFICATION',
+                'result_json'  => $aiResult,
+                'confidence'   => $aiConfidence,
+            ]);
+        }
+
+        if ($autoVerified) {
+            ComplaintStatusHistory::create([
+                'complaint_id' => $complaint->id,
+                'from_status'  => 'SUBMITTED',
+                'to_status'    => 'VERIFIED',
+                'note'         => 'Diverifikasi otomatis oleh AI (keyakinan ' . round($aiConfidence * 100) . '%).',
+                'changed_by'   => null,
+            ]);
+
+            Notification::create([
+                'user_id'   => $complaint->user_id,
+                'type'      => 'COMPLAINT_VERIFIED',
+                'title'     => 'Laporan Diverifikasi Otomatis',
+                'body'      => "Laporan #{$complaint->public_code} sudah lolos verifikasi AI dan menunggu penugasan regu lapangan.",
+                'data_json' => [
+                    'complaint_id' => $complaint->id,
+                    'public_code'  => $complaint->public_code,
+                ],
+            ]);
+        }
+
+        // Tawaran dukungan bila sudah ada aduan lain di radius yang sama.
+        $radius = (int) ($validated['radius_m'] ?? 20);
+        $similar = $this->duplicateService->findCandidates(
+            (float) $validated['latitude'],
+            (float) $validated['longitude'],
+            $radius,
+            $complaint->id
+        );
+
+        $payload = (new ComplaintResource($complaint->load(['category', 'user', 'photos'])))->toArray(request());
+        $payload['radius_m'] = $radius;
+        $payload['verified_by_ai'] = $autoVerified;
+        $payload['similar_complaints'] = $similar->map(fn ($item) => [
+            'id'             => $item->id,
+            'public_code'    => $item->public_code,
+            'title'          => $item->title,
+            'status'         => $item->status,
+            'distance_m'     => round((float) ($item->distance_m ?? 0)),
+            'supports_count' => $item->supports()->count(),
+        ])->values()->all();
+        $payload['similar_message'] = $similar->isNotEmpty()
+            ? 'Aduan serupa sudah ada di radius ini. Dukung aduan yang sudah ada agar tidak duplikat.'
+            : null;
+
         return ApiResponse::success(
-            new ComplaintResource($complaint->load(['category', 'user', 'photos'])),
-            'Laporan pengaduan berhasil dikirim',
+            $payload,
+            $autoVerified
+                ? 'Laporan diterima dan sudah diverifikasi otomatis oleh AI.'
+                : 'Laporan pengaduan berhasil dikirim',
             201
         );
     }
@@ -568,7 +661,7 @@ class ComplaintController extends Controller
         $lat = (float) $request->query('lat', 0);
         $lng = (float) $request->query('lng', 0);
         $categoryId = $request->query('category_id');
-        $radiusMeters = max(50, min(500, (int) $request->query('radius', 100)));
+        $radiusMeters = max(5, min(200, (int) $request->query('radius', 20)));
 
         if ($lat === 0.0 && $lng === 0.0) {
             return ApiResponse::success([]);

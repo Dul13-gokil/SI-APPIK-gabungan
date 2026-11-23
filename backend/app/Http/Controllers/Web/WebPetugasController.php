@@ -378,7 +378,15 @@ class WebPetugasController extends Controller
             ]);
         });
 
-        return back()->with('success', "Bukti pengerjaan laporan #{$complaint->public_code} berhasil dikirim ke Operator untuk validasi akhir.");
+        $autoCompleted = app(\App\Domain\Complaints\Services\CompletionValidationService::class)
+            ->validate($complaint->fresh(), auth()->id());
+
+        return back()->with(
+            'success',
+            $autoCompleted
+                ? "Pekerjaan laporan #{$complaint->public_code} dinyatakan selesai otomatis oleh AI."
+                : "Bukti pengerjaan laporan #{$complaint->public_code} berhasil dikirim ke Operator untuk validasi akhir."
+        );
     }
 
     public function updateProfile(Request $request): RedirectResponse

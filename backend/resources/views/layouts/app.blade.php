@@ -236,6 +236,7 @@
                                 @php
                                     $operatorMenuItems = [
                                         ['tab' => 'verify', 'label' => 'Verifikasi Aduan', 'icon' => 'filter'],
+                                        ['tab' => 'ready', 'label' => 'Siap Ditugaskan (AI)', 'icon' => 'sparkles'],
                                         ['tab' => 'dispatched', 'label' => 'Ditugaskan', 'icon' => 'send'],
                                         ['tab' => 'inprogress', 'label' => 'Dikerjakan', 'icon' => 'hammer'],
                                         ['tab' => 'validation', 'label' => 'Validasi Hasil', 'icon' => 'check-square'],
@@ -291,7 +292,7 @@
                         </div>
                     @endif
 
-                    @if(auth()->user()->isPetugas() || auth()->user()->isSuperAdmin())
+                    @if(auth()->user()->isPetugas() || auth()->user()->isPengawas() || auth()->user()->isSuperAdmin())
                         <div class="role-accordion-group rounded-xl transition">
                             <button type="button" onclick="toggleRoleAccordion('petugas')" aria-expanded="{{ $isPetugasRoute ? 'true' : 'false' }}"
                                 class="w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl text-xs font-bold border {{ $isPetugasRoute ? 'bg-[#EFF6FF] text-[#2563EB] border-[#BFDBFE]' : 'bg-white text-[#334155] border-[#E2E8F0] hover:bg-[#F8FAFC] hover:text-[#0F172A]' }} transition">
@@ -323,6 +324,30 @@
                                     </a>
                                 @endforeach
                             </div>
+                        </div>
+                    @endif
+                    @php
+                        $extraMenuItems = array_values(array_filter([
+                            auth()->user()->isMonitoring() || auth()->user()->isSuperAdmin() || auth()->user()->isKepalaDinas()
+                                ? ['url' => route('monitoring.dashboard'), 'label' => 'Dashboard Monitoring', 'icon' => 'monitor-dot']
+                                : null,
+                            auth()->user()->isSuperAdmin()
+                                ? ['url' => route('admin.activity'), 'label' => 'Log Aktivitas', 'icon' => 'scroll-text']
+                                : null,
+                            auth()->user()->isOperator() || auth()->user()->isSuperAdmin()
+                                ? ['url' => route('operator.petugas.create'), 'label' => 'Tambah Pekerja Lapangan', 'icon' => 'user-plus']
+                                : null,
+                        ]));
+                    @endphp
+                    @if(!empty($extraMenuItems))
+                        <div class="pt-2 mt-1 border-t border-[#E2E8F0] space-y-1">
+                            @foreach($extraMenuItems as $item)
+                                <a href="{{ $item['url'] }}"
+                                   class="sidebar-subitem flex items-center gap-2 px-3 py-2 rounded-xl text-[11px] font-semibold transition {{ url()->current() === $item['url'] ? 'bg-[#2563EB] text-white font-bold shadow-xs' : 'text-[#475569] hover:bg-[#F8FAFC] hover:text-[#0F172A]' }}">
+                                    <i data-lucide="{{ $item['icon'] }}" class="w-3.5 h-3.5 shrink-0 {{ url()->current() === $item['url'] ? 'text-white' : 'text-[#64748B]' }}"></i>
+                                    <span class="truncate">{{ $item['label'] }}</span>
+                                </a>
+                            @endforeach
                         </div>
                     @endif
                 </nav>

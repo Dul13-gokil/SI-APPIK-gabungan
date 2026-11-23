@@ -42,8 +42,8 @@ class EnsureUserHasRole
             }
         }
 
-        // SUPERADMIN & ADMIN have full administrative access to all internal management portals
-        if (in_array($userRole, ['SUPERADMIN', 'ADMIN'], true)) {
+        // SUPERADMIN, ADMIN, dan KEPALA DINAS (role DINAS) berakses penuh ke seluruh portal internal.
+        if (in_array($userRole, ['SUPERADMIN', 'ADMIN', 'DINAS'], true)) {
             return $next($request);
         }
 

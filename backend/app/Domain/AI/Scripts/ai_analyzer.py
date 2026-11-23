@@ -511,8 +511,8 @@ def analyze_single_image(image_path, road_only=False):
             return {
                 "is_valid_infrastructure": True,
                 "is_damaged": True,
-                "category_id": 2,
-                "category_label": "Penerangan Jalan Umum (PJU)",
+                "category_id": 3,
+                "category_label": "Fasilitas Umum Lainnya",
                 "confidence": 0.95,
                 "severity_level": 3,
                 "severity_text": "SEDANG (Lampu Mati / Perlu Perbaikan)",

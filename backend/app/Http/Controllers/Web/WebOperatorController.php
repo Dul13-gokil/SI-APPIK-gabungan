@@ -14,6 +14,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
 
 class WebOperatorController extends Controller
@@ -25,6 +26,12 @@ class WebOperatorController extends Controller
         // 1. Antrean Verifikasi Laporan Masuk
         $pendingVerification = Complaint::with(['category', 'user', 'citizen', 'photos', 'aiAssessments'])
             ->whereIn('status', ['SUBMITTED', 'VERIFICATION'])
+            ->latest()
+            ->get();
+
+        // 1b. Laporan yang sudah diverifikasi AI dan siap ditugaskan (tanpa verifikasi manual)
+        $readyToDispatch = Complaint::with(['category', 'user', 'citizen', 'photos', 'aiAssessments', 'latestDisposition'])
+            ->where('status', 'VERIFIED')
             ->latest()
             ->get();
 
@@ -70,6 +77,7 @@ class WebOperatorController extends Controller
             'dispatched'      => $dispatchedCount,
             'in_progress'     => $inProgressCount,
             'pending'         => $pendingCount,
+            'ready'           => $readyToDispatch->count(),
             'waiting_verification' => $waitingValidation->count(),
             'rejected'        => $rejectedCount,
             'completion_rate' => $completionRate,
@@ -199,6 +207,7 @@ class WebOperatorController extends Controller
     return view('operator.dashboard', compact(
         'activeTab',
         'pendingVerification',
+        'readyToDispatch',
         'dispatched',
         'inProgress',
         'waitingValidation',
@@ -555,5 +564,64 @@ class WebOperatorController extends Controller
 
         return redirect()->route('operator.dashboard', ['tab' => 'dispatched'])
             ->with('success', "Penugasan regu untuk laporan #{$complaint->public_code} berhasil diperbarui.");
+    }
+
+    /**
+     * Form tambah akun pekerja lapangan (khusus Operator).
+     */
+    public function createFieldWorker(): View
+    {
+        $teams = \App\Models\Team::where('is_active', true)->orderBy('name')->get();
+
+        return view('operator.field_worker_create', compact('teams'));
+    }
+
+    /**
+     * Simpan akun pekerja lapangan baru. Role dikunci PETUGAS; sandi awal "password".
+     */
+    public function storeFieldWorker(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'name'    => 'required|string|max:255',
+            'email'   => 'required|email|max:255|unique:users,email',
+            'phone'   => ['nullable', 'string', 'max:20', 'unique:users,phone'],
+            'team_id' => 'nullable|exists:teams,id',
+        ], [
+            'email.unique' => 'Email tersebut sudah dipakai akun lain.',
+            'phone.unique' => 'Nomor HP tersebut sudah terdaftar.',
+        ]);
+
+        $user = User::create([
+            'name'     => $validated['name'],
+            'email'    => $validated['email'],
+            'phone'    => $validated['phone'] ?? null,
+            'password' => Hash::make('password'),
+            'role'     => 'PETUGAS',
+        ]);
+
+        if (! empty($validated['team_id'])) {
+            \App\Models\TeamMember::create([
+                'team_id' => $validated['team_id'],
+                'user_id' => $user->id,
+                'role'    => 'MEMBER',
+            ]);
+        }
+
+        \App\Models\AuditLog::create([
+            'actor_id'    => auth()->id(),
+            'action'      => 'USER_CREATED_BY_OPERATOR',
+            'entity_type' => User::class,
+            'entity_id'   => $user->id,
+            'before_json' => null,
+            'after_json'  => [
+                'email'   => $user->email,
+                'role'    => 'PETUGAS',
+                'team_id' => $validated['team_id'] ?? null,
+            ],
+            'ip'          => $request->ip(),
+        ]);
+
+        return redirect()->route('operator.dashboard')
+            ->with('success', "Akun pekerja lapangan {$user->name} dibuat. Sandi awal: password (wajib diganti saat login pertama).");
     }
 }

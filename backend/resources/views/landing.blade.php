@@ -266,7 +266,7 @@
             </h2>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             <div data-reveal style="transition-delay: 0ms;" class="bg-white rounded-[24px] border border-[#E2E8F0] shadow-[0_6px_18px_rgba(15,23,42,0.04)] hover:shadow-md hover:border-[#2563EB]/40 transition-all duration-200 p-5 sm:p-6 flex flex-col justify-between gap-4">
                 <div class="flex items-start justify-between gap-2">
                     <div class="w-11 h-11 rounded-[12px] bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE] flex items-center justify-center shrink-0">
@@ -284,21 +284,6 @@
 
             <div data-reveal style="transition-delay: 90ms;" class="bg-white rounded-[24px] border border-[#E2E8F0] shadow-[0_6px_18px_rgba(15,23,42,0.04)] hover:shadow-md hover:border-[#2563EB]/40 transition-all duration-200 p-5 sm:p-6 flex flex-col justify-between gap-4">
                 <div class="flex items-start justify-between gap-2">
-                    <div class="w-11 h-11 rounded-[12px] bg-[#FEF3C7] text-[#D97706] border border-[#FDE68A] flex items-center justify-center shrink-0">
-                        <i data-lucide="lightbulb" class="w-5 h-5"></i>
-                    </div>
-                    <span id="catCountPju" class="px-3 py-1 rounded-full bg-[#EFF6FF] border border-[#BFDBFE] text-xs font-bold text-[#2563EB] whitespace-nowrap">
-                        {{ $categoryStats['pju'] ?? 0 }} Laporan
-                    </span>
-                </div>
-                <div>
-                    <h3 class="font-outfit font-bold text-base sm:text-lg text-[#0F172A] leading-snug">Penerangan Jalan Umum</h3>
-                    <p class="text-xs sm:text-sm text-[#475569] mt-1.5 leading-relaxed">Lampu jalan padam, tiang miring, atau jaringan kabel penerangan putus.</p>
-                </div>
-            </div>
-
-            <div data-reveal style="transition-delay: 180ms;" class="bg-white rounded-[24px] border border-[#E2E8F0] shadow-[0_6px_18px_rgba(15,23,42,0.04)] hover:shadow-md hover:border-[#2563EB]/40 transition-all duration-200 p-5 sm:p-6 flex flex-col justify-between gap-4">
-                <div class="flex items-start justify-between gap-2">
                     <div class="w-11 h-11 rounded-[12px] bg-[#ECFDF5] text-[#10B981] border border-[#A7F3D0] flex items-center justify-center shrink-0">
                         <i data-lucide="building-2" class="w-5 h-5"></i>
                     </div>
@@ -307,8 +292,8 @@
                     </span>
                 </div>
                 <div>
-                    <h3 class="font-outfit font-bold text-base sm:text-lg text-[#0F172A] leading-snug">Fasilitas Umum</h3>
-                    <p class="text-xs sm:text-sm text-[#475569] mt-1.5 leading-relaxed">Trotoar, taman kota, rambu, dan prasarana umum daerah lainnya.</p>
+                    <h3 class="font-outfit font-bold text-base sm:text-lg text-[#0F172A] leading-snug">Fasilitas Umum Lainnya</h3>
+                    <p class="text-xs sm:text-sm text-[#475569] mt-1.5 leading-relaxed">Lampu jalan padam, trotoar, taman kota, rambu, dan prasarana umum daerah lainnya.</p>
                 </div>
             </div>
         </div>
@@ -644,29 +629,18 @@
 
     function updateCategoryCounts(data) {
         if (!Array.isArray(data)) return;
-        const counts = { jalan: 0, pju: 0, fasilitas: 0 };
+        const counts = { jalan: 0, fasilitas: 0 };
         data.forEach(item => {
             const catId = Number(item.category_id || 0);
+            // Hanya 2 kategori resmi: 1 = Jalan & Jembatan, sisanya Fasilitas Umum Lainnya
             if (catId === 1) {
                 counts.jalan++;
-            } else if (catId === 2) {
-                counts.pju++;
-            } else if (catId === 3) {
-                counts.fasilitas++;
             } else {
-                const catName = (item.category_name || item.category || '').toLowerCase();
-                if (catName.includes('penerangan') || catName.includes('pju')) {
-                    counts.pju++;
-                } else if (catName.includes('fasilitas') || catName.includes('trotoar')) {
-                    counts.fasilitas++;
-                } else if (catName.includes('jalan') || catName.includes('jembatan')) {
-                    counts.jalan++;
-                }
+                counts.fasilitas++;
             }
         });
         const mapIds = {
             catCountJalan: counts.jalan,
-            catCountPju: counts.pju,
             catCountFasilitas: counts.fasilitas
         };
         Object.entries(mapIds).forEach(([id, val]) => {

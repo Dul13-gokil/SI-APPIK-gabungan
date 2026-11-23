@@ -715,4 +715,36 @@ class WebSuperAdminController extends Controller
 
         return back()->with('success', "Laporan #{$complaint->public_code} telah ditolak dan dipindahkan ke Arsip Ditolak (khusus Super Admin).");
     }
+
+    /**
+     * Log aktivitas sistem (keputusan rapat: Super Admin mendapat fitur log aktivitas).
+     */
+    public function activityLog(Request $request): \Illuminate\View\View
+    {
+        $query = \App\Models\AuditLog::with('actor')->latest('id');
+
+        if ($request->filled('action')) {
+            $needle = '%' . strtolower((string) $request->input('action')) . '%';
+            $query->whereRaw('LOWER(action) LIKE ?', [$needle]);
+        }
+
+        if ($request->filled('actor')) {
+            $needle = '%' . strtolower((string) $request->input('actor')) . '%';
+            $query->whereHas('actor', function ($q) use ($needle) {
+                $q->whereRaw('LOWER(name) LIKE ?', [$needle]);
+            });
+        }
+
+        if ($request->filled('from')) {
+            $query->whereDate('created_at', '>=', $request->input('from'));
+        }
+
+        if ($request->filled('to')) {
+            $query->whereDate('created_at', '<=', $request->input('to'));
+        }
+
+        $logs = $query->paginate(50)->withQueryString();
+
+        return view('admin.activity_log', compact('logs'));
+    }
 }

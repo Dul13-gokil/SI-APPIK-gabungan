@@ -300,8 +300,7 @@ class _CreateComplaintScreenState extends State<CreateComplaintScreen> {
 
   final List<Map<String, dynamic>> _categories = [
     {'id': 1, 'name': 'Jalan & Jembatan', 'icon': LucideIcons.truck},
-    {'id': 2, 'name': 'Penerangan Jalan Umum (PJU)', 'icon': LucideIcons.lightbulb},
-    {'id': 3, 'name': 'Fasilitas Umum', 'icon': LucideIcons.building2},
+    {'id': 3, 'name': 'Fasilitas Umum Lainnya', 'icon': LucideIcons.building2},
   ];
 
   @override
@@ -1292,7 +1291,7 @@ class _CreateComplaintScreenState extends State<CreateComplaintScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Tipe Pelaporan Kerusakan *',
+          'Bentuk Laporan *',
           style: GoogleFonts.inter(
             fontSize: 12.5,
             fontWeight: FontWeight.w600,
@@ -1325,7 +1324,7 @@ class _CreateComplaintScreenState extends State<CreateComplaintScreen> {
                     ),
                     child: Center(
                       child: Text(
-                        'Titik (Ringan)',
+                        'Kerusakan Titik',
                         style: GoogleFonts.inter(
                           fontSize: 12.5,
                           fontWeight: FontWeight.bold,
@@ -1353,7 +1352,7 @@ class _CreateComplaintScreenState extends State<CreateComplaintScreen> {
                     ),
                     child: Center(
                       child: Text(
-                        'Ruas Jalan (Berat)',
+                        'Ruas Panjang',
                         style: GoogleFonts.inter(
                           fontSize: 12.5,
                           fontWeight: FontWeight.w600,
@@ -1366,6 +1365,11 @@ class _CreateComplaintScreenState extends State<CreateComplaintScreen> {
               ),
             ],
           ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          'Tingkat kerusakan (berat/ringan) ditentukan otomatis oleh AI dari foto yang Anda kirim.',
+          style: GoogleFonts.inter(fontSize: 11, color: AppColors.textSecondary),
         ),
       ],
     );

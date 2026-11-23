@@ -3,7 +3,7 @@
     $isPetugas = str_starts_with($mode ?? '', 'petugas-');
     $isAdmin = str_starts_with($mode ?? '', 'admin-');
     $detailFn = $detailFn ?? ($isPetugas ? 'openPetugasDetailModal' : ($isAdmin ? 'openAdminDetailModal' : 'openOperatorModal'));
-    $hasAction = in_array($mode ?? '', ['operator-verify', 'operator-dispatched', 'operator-validation', 'petugas-assigned', 'petugas-tasks']);
+    $hasAction = in_array($mode ?? '', ['operator-verify', 'operator-ready', 'operator-dispatched', 'operator-validation', 'petugas-assigned', 'petugas-tasks']);
 @endphp
 <div id="{{ $wrapId }}" class="rounded-xl border border-[#E2E8F0] overflow-hidden md:overflow-x-auto bg-white {{ !empty($hidden) ? 'hidden' : '' }}">
     <table class="block md:table w-full text-left text-xs text-slate-600">
@@ -33,6 +33,7 @@
                         'WAITING_VERIFICATION' => 'VALIDASI',
                         'IN_PROGRESS' => 'DIKERJAKAN',
                         'DISPATCHED' => 'DITUGASKAN',
+                        'VERIFIED' => 'SIAP DITUGASKAN',
                         'REJECTED' => 'DITOLAK',
                         'CANCELLED' => 'DIBATALKAN',
                         'REVISION_REQUIRED' => 'PERLU REVISI',
@@ -114,6 +115,17 @@
                                         class="px-2.5 py-1.5 rounded-lg bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-semibold text-[11px] inline-flex items-center gap-1 transition cursor-pointer">
                                         <i data-lucide="send" class="w-3 h-3"></i>
                                         <span>Verifikasi</span>
+                                    </button>
+                                @elseif($mode === 'operator-ready')
+                                    <button type="button" onclick="openDispatchModal({{ $item->id }})"
+                                        class="px-2.5 py-1.5 rounded-lg bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-semibold text-[11px] inline-flex items-center gap-1 transition cursor-pointer">
+                                        <i data-lucide="send" class="w-3 h-3"></i>
+                                        <span>Tugaskan</span>
+                                    </button>
+                                    <button type="button" onclick="confirmRejectComplaint({{ $item->id }}, '{{ $item->public_code }}')"
+                                        class="px-2.5 py-1.5 rounded-lg bg-white hover:bg-red-50 text-red-600 border border-red-200 font-semibold text-[11px] inline-flex items-center gap-1 transition cursor-pointer">
+                                        <i data-lucide="x" class="w-3 h-3"></i>
+                                        <span>Tolak</span>
                                     </button>
                                 @elseif($mode === 'operator-dispatched')
                                     @if(($dispatchMode ?? 'HYBRID') === 'SELF_CLAIM_ONLY')

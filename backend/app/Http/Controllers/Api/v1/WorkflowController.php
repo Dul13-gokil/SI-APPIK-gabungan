@@ -358,7 +358,17 @@ class WorkflowController extends Controller
             );
         });
 
-        return ApiResponse::success(new ComplaintResource($complaint->fresh()), 'Bukti pengerjaan berhasil dikirim ke Operator untuk validasi akhir.');
+        // Keputusan rapat: AI memvalidasi hasil kerja. Bila kerusakan tidak lagi terdeteksi,
+        // laporan langsung COMPLETED; bila ragu tetap WAITING_VERIFICATION untuk operator.
+        $autoCompleted = app(\App\Domain\Complaints\Services\CompletionValidationService::class)
+            ->validate($complaint->fresh(), $request->user()?->id);
+
+        return ApiResponse::success(
+            new ComplaintResource($complaint->fresh()),
+            $autoCompleted
+                ? 'Bukti diterima dan pekerjaan dinyatakan selesai otomatis oleh AI.'
+                : 'Bukti pengerjaan berhasil dikirim ke Operator untuk validasi akhir.'
+        );
     }
 
     /**

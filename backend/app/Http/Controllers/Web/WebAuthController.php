@@ -280,6 +280,18 @@ class WebAuthController extends Controller
             return redirect()->intended('/petugas');
         }
 
+        if ($user->isPengawas()) {
+            return redirect()->intended('/petugas');
+        }
+
+        if ($user->isMonitoring()) {
+            return redirect()->intended('/monitoring');
+        }
+
+        if ($user->isKepalaDinas()) {
+            return redirect()->intended('/operator');
+        }
+
         return redirect()->route('home');
     }
 

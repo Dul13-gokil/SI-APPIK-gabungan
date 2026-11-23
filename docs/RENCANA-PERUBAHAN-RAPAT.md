@@ -1,0 +1,140 @@
+# Rencana Perubahan dari Rapat (SI-APPIK)
+
+Sumber: keputusan rapat yang disampaikan pemilik proyek. Dokumen ini memetakan setiap
+keputusan ke perubahan teknis, menandai mana yang bisa langsung dikerjakan dan mana yang
+masih menunggu keputusan atau data.
+
+Status kode saat ini: Docker + tunnel https://aduan.aispektra.com jalan, 27 test lulus.
+
+## Status pelaksanaan (diperbarui)
+
+Sudah dikerjakan dan diuji:
+
+1. Kategori menjadi 2 (Jalan & Jembatan, Fasilitas Umum Lainnya); data PJU dipindahkan, APK lama yang masih mengirim `category_id=2` dipetakan ke 3.
+2. Radius laporan 20 m tersimpan di `complaints.radius_m`; cek duplikat dan respons API memakai radius itu.
+3. Respons laporan memuat `similar_complaints` + pesan "dukung aduan yang sudah ada".
+4. AI menentukan berat/ringan dan kategori; keyakinan >= 80% -> status `VERIFIED` (`verified_by_ai`), di bawahnya tetap `SUBMITTED`.
+5. Hasil klasifikasi disimpan di `ai_assessments` (dulu tidak pernah disimpan).
+6. AI memvalidasi hasil kerja: kerusakan tidak terdeteksi -> `COMPLETED` (`completion_verified_by_ai`), selain itu `WAITING_VERIFICATION`.
+7. Operator boleh menolak laporan berstatus `DISPATCHED`.
+8. Operator mendapat halaman tambah akun pekerja lapangan (`/operator/petugas/baru`) dengan jejak audit.
+9. Peran baru `PENGAWAS` dan `MONITORING`; role `DINAS` (Kepala Dinas) berakses penuh. `/monitoring` hanya baca.
+10. SUPERADMIN mendapat halaman log aktivitas (`/admin/activity`) dengan filter aksi, aktor, dan tanggal.
+
+11. Portal operator mendapat tab "Siap Ditugaskan (AI)" untuk laporan berstatus `VERIFIED` (tombol Tugaskan/Tolak). Sebelumnya laporan lolos AI tidak muncul di tab mana pun.
+12. Landing page hanya menampilkan 2 kartu kategori; statistik tidak lagi memakai kategori PJU yang sudah dihapus.
+13. Aplikasi mobile: daftar kategori 2 (PJU dihapus), label "Kerusakan Titik"/"Ruas Panjang" (bukan Ringan/Berat), dan keterangan bahwa berat/ringan ditentukan AI.
+14. Sidebar: menu Log Aktivitas (Super Admin), Tambah Pekerja Lapangan (Operator/Dinas), Dashboard Monitoring, dan portal Petugas kini tampil untuk PENGAWAS.
+15. Bug layout: `needsFirstLoginSetup()` memanggil `Hash::check` pada hash non-bcrypt dan membuat seluruh halaman 500; kini dijaga `Hash::isHashed`.
+
+Belum dikerjakan:
+
+1. Antarmuka PENGAWAS untuk menambah/melepas anggota regu (backend belum dibuat).
+2. Pencabutan laporan kinerja dari menu/rute PETUGAS dan PENGAWAS.
+3. Lingkaran radius 20 m pada peta web dan mobile.
+4. Pemetaan jaringan jalan provinsi/kabupaten dari OSM.
+5. Penegakan radius 20 m saat petugas memotret bukti pengerjaan.
+6. Rebuild APK mobile (kode sudah diubah; SDK Flutter tidak ada di mesin ini, jadi belum dikompilasi/diuji).
+7. Radius 20 m dari sisi warga di mobile (input radius + peta lingkaran).
+
+---
+
+## 1. Ringkasan keputusan vs kondisi kode sebelum perubahan (riwayat perencanaan)
+
+| Keputusan rapat | Kondisi sekarang | Perlu |
+| :--- | :--- | :--- |
+| Klasifikasi berat/ringan otomatis oleh AI | Warga memilih `damage_type` manual; AI hanya mengisi kategori | AI menentukan `damage_type`, warga tetap boleh menulis deskripsi |
+| Kategori laporan jadi 2 | Sudah ada 3: Jalan & Jembatan, PJU, Fasilitas Umum | Gabungkan PJU ke "Fasilitas Umum Lainnya" + migrasi data |
+| Titik radius 20 m saat input | Belum ada; duplikat dicek 100 m | Kolom `radius_m` default 20, dipakai untuk duplikat + peta |
+| Verifikasi operator diganti AI | Operator verifikasi manual (SUBMITTED -> DISPATCHED) | AI menetapkan VERIFIED otomatis, operator hanya menugaskan |
+| Validasi hasil kerja diganti AI | Operator memvalidasi WAITING_VERIFICATION | AI membandingkan foto sebelum/sesudah -> COMPLETED |
+| Pemetaan jalan provinsi & kabupaten | Hanya batas kabupaten (`public/geojson/kolaka_utara.geojson`) | Butuh data jaringan jalan (lihat pertanyaan 3) |
+| Foto pengerjaan memakai radius | Bebas, tanpa cek lokasi | Validasi jarak foto ke titik laporan |
+| Notifikasi "aduan sudah ada, tolong dukung" | Ada cek duplikat, belum ada notifikasi/dukungan otomatis | Tampilkan tawaran dukung saat lapor di radius sama |
+| Tombol tolak untuk operator pada status ditugaskan | State machine: DISPATCHED hanya ke IN_PROGRESS/WAITING_VERIFICATION | Tambah transisi DISPATCHED -> REJECTED |
+| Operator boleh menambah akun pekerja lapangan | Hanya Super Admin yang bisa (`/admin/users`) | Form khusus operator, role dibatasi PETUGAS |
+| Peran PENGAWAS | Tidak ada | Peran baru, boleh menambah anggota regu |
+| Hapus laporan kinerja | Ada `/petugas/performance`, `/field/performance`, cetak kinerja | Cabut rute, menu, dan endpoint |
+| KEPALA DINAS & ADMIN full akses | Role `DINAS` ada di kode tetapi tanpa user | Petakan DINAS = Kepala Dinas, akses penuh |
+| SUPERADMIN full akses + log aktivitas | `audit_logs` ada, tetapi belum semua aksi dicatat dan belum ada halaman | Halaman log + lengkapi pencatatan |
+| Peran khusus DASHBOARD MONITORING | Tidak ada | Peran baru, hanya baca dashboard |
+
+---
+
+## 2. Fase 1 — bisa dikerjakan tanpa keputusan tambahan
+
+1. Peran baru: `PENGAWAS`, `MONITORING` (migrasi data + middleware role + menu).
+   - `PENGAWAS`: melihat tugas regu, menambah/melepas anggota regu, tidak boleh menugaskan.
+   - `MONITORING`: hanya halaman baca (landing/dashboard/peta/statistik), tanpa aksi.
+2. `DINAS` diperlakukan sebagai Kepala Dinas: akses penuh seperti ADMIN pada portal web.
+3. Operator menolak laporan pada status `DISPATCHED` (tambah transisi + tombol).
+4. Operator menambah akun `PETUGAS` (form terbatas: nama, email, telepon; sandi awal `password`).
+5. Kategori 2: gabungkan PJU ke "Fasilitas Umum Lainnya".
+   - Migrasi: `complaints.category_id = 2 -> 3`, lalu nonaktifkan kategori 2 (jangan dihapus agar histori aman).
+   - Dampak: statistik landing (jalan/pju/fasilitas), peta, form mobile, skrip AI (kategori 1/2/3).
+6. Radius 20 m pada laporan: kolom `complaints.radius_m` default 20, dipakai cek duplikat
+   dan gambar lingkaran di peta.
+7. Notifikasi "aduan serupa sudah ada": saat lapor di dalam radius laporan aktif,
+   respons API mengembalikan daftar kandidat + tombol dukung.
+8. Hapus laporan kinerja: cabut rute, endpoint `/field/performance`, menu, dan cetak kinerja.
+9. Log aktivitas untuk SUPERADMIN: halaman daftar `audit_logs` (filter aktor/aksi/tanggal),
+   plus lengkapi pencatatan pada aksi yang belum menulis audit (start/finish/validate, user, regu, wilayah).
+
+---
+
+## 3. Fase 2 — menunggu keputusan (lihat pertanyaan di sesi)
+
+1. AI menggantikan verifikasi operator.
+   Rancangan: hasil AI disimpan di `ai_assessments` (sekarang tidak disimpan), status otomatis
+   `VERIFIED` bila keyakinan >= ambang; di bawah ambang tetap `SUBMITTED` agar operator menangani.
+   Perlu: ambang keyakinan dan perilaku saat AI gagal (mis. Python mati).
+2. AI menggantikan validasi hasil kerja.
+   Rancangan: deteksi kerusakan pada foto sesudah; bila tidak terdeteksi kerusakan berat ->
+   `COMPLETED`, selain itu `REVISION_REQUIRED`. Perlu: ambang dan siapa yang menangani keraguan.
+3. Pemetaan jalan provinsi dan kabupaten.
+   Repo hanya punya batas kabupaten. Butuh GeoJSON/Shapefile jaringan jalan + atribut status
+   (provinsi/kabupaten). Tanpa itu, fitur hanya bisa menampilkan peta dasar.
+4. Foto pengerjaan berbasis radius: perlu jarak maksimum (20 m sama dengan radius laporan?)
+   dan apa yang terjadi bila petugas memotret di luar radius (tolak atau tandai).
+
+---
+
+## 4. Perubahan skema database (ringkas)
+
+```
+users.role                      : + PENGAWAS, MONITORING (string, tidak perlu alter tipe)
+complaints.radius_m             : integer default 20
+complaints.verified_by_ai       : boolean default false
+complaints.ai_assessment_id     : nullable FK ke ai_assessments
+ai_assessments                  : dipakai kembali (kategori, keyakinan, berat/ringan, foto acuan)
+categories                      : kategori 2 dinonaktifkan, label 3 -> "Fasilitas Umum Lainnya"
+team_members.role               : + PENGAWAS
+```
+
+Migrasi kategori bersifat mengubah data 12 aduan yang ada; wajib backup sebelum dijalankan.
+
+---
+
+## 5. Berkas utama yang akan disentuh
+
+| Area | Berkas |
+| :--- | :--- |
+| Peran & akses | `app/Http/Middleware/EnsureUserHasRole.php`, `routes/web.php`, `routes/api.php`, `resources/views/layouts/app.blade.php` |
+| State machine | `app/Domain/Complaints/Services/ComplaintStateMachine.php` (DISPATCHED -> REJECTED) |
+| Laporan warga | `app/Http/Controllers/Api/v1/ComplaintController.php` (radius, duplikat, AI berat/ringan) |
+| AI | `app/Domain/AI/Services/AICVService.php`, `Scripts/ai_analyzer.py`, `app/Models/AiAssessment.php` |
+| Operator | `app/Http/Controllers/Web/WebOperatorController.php`, `resources/views/operator/dashboard.blade.php` |
+| Pengawas | controller + view baru, `app/Http/Controllers/Web/WebTeamController.php` |
+| Log aktivitas | controller + view baru, `app/Models/AuditLog.php` |
+| Kinerja (dihapus) | `WebReportController`, rute `petugas/performance/*`, `field/performance` |
+| Mobile | `features/complaints/presentation/create_complaint_screen.dart`, `features/field/*` |
+
+---
+
+## 6. Risiko
+
+- Migrasi kategori mengubah data aduan yang sudah ada; salah map membuat statistik dan AI meleset.
+- AI menggantikan verifikasi berarti laporan bisa masuk antrean penugasan tanpa manusia.
+  Tanpa ambang dan fallback yang jelas, laporan fiktif bisa lolos.
+- Menghapus laporan kinerja juga menghapus bukti evaluasi petugas; pastikan bukan kebutuhan audit.
+- Data jaringan jalan tidak ada di repo; fitur pemetaan tidak bisa "ditebak".

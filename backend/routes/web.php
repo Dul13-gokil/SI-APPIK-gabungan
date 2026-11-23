@@ -52,8 +52,8 @@ Route::get('/', function () {
 
     $categoryStats = [
         'jalan'     => (int) ($catCounts[1] ?? 0),
-        'pju'       => (int) ($catCounts[2] ?? 0),
-        'fasilitas' => (int) ($catCounts[3] ?? 0),
+        // Kategori "Fasilitas Umum Lainnya" menampung sisa kategori lama (PJU dsb.)
+        'fasilitas' => (int) $catCounts->sum() - (int) ($catCounts[1] ?? 0),
     ];
 
     return view('landing', compact('stats', 'districts', 'categoryStats'));
@@ -94,6 +94,9 @@ Route::prefix('admin')->middleware(['auth', 'active', 'role:SUPERADMIN,ADMIN'])-
     Route::post('/regions/{id}/coordinates', [WebSuperAdminController::class, 'updateCoordinates'])->name('admin.regions.coordinates');
     Route::post('/regions', [WebSuperAdminController::class, 'storeRegion'])->name('admin.regions.store');
     Route::match(['post', 'delete'], '/regions/{id}/delete', [WebSuperAdminController::class, 'deleteRegion'])->name('admin.regions.delete');
+
+    // Log aktivitas sistem (khusus Super Admin)
+    Route::get('/activity', [WebSuperAdminController::class, 'activityLog'])->name('admin.activity');
 });
 
 // 4. Pusat Kendali Operator Dinas
@@ -103,6 +106,10 @@ Route::prefix('operator')->middleware(['auth', 'active', 'role:OPERATOR,SUPERADM
     Route::post('/complaints/{id}/reject', [WebOperatorController::class, 'reject'])->name('operator.complaints.reject');
     Route::post('/complaints/{id}/validate', [WebOperatorController::class, 'validateCompletion'])->name('operator.complaints.validate');
     Route::post('/complaints/{id}/assign-team', [WebOperatorController::class, 'assignOrChangeTeam'])->name('operator.complaints.assign-team');
+
+    // Operator berhak menambah akun pekerja lapangan
+    Route::get('/petugas/baru', [WebOperatorController::class, 'createFieldWorker'])->name('operator.petugas.create');
+    Route::post('/petugas', [WebOperatorController::class, 'storeFieldWorker'])->name('operator.petugas.store');
 });
 
 // 5. Dashboard Eksekutif Kepala Daerah (Bupati)
@@ -110,8 +117,13 @@ Route::prefix('bupati')->middleware(['auth', 'active', 'role:KEPALA_DAERAH,BUPAT
     Route::get('/', [WebBupatiController::class, 'index'])->name('bupati.dashboard');
 });
 
+// 5b. Dashboard Monitoring (hanya baca) untuk role MONITORING
+Route::prefix('monitoring')->middleware(['auth', 'active', 'role:MONITORING,SUPERADMIN,ADMIN,DINAS'])->group(function () {
+    Route::get('/', [WebBupatiController::class, 'index'])->name('monitoring.dashboard');
+});
+
 // 6. Portal Petugas Lapangan
-Route::prefix('petugas')->middleware(['auth', 'active', 'role:PETUGAS,SUPERADMIN,ADMIN'])->group(function () {
+Route::prefix('petugas')->middleware(['auth', 'active', 'role:PETUGAS,PENGAWAS,SUPERADMIN,ADMIN'])->group(function () {
     Route::get('/', [WebPetugasController::class, 'index'])->name('petugas.dashboard');
     Route::post('/complaints/{id}/start', [WebPetugasController::class, 'startWork'])->name('petugas.complaints.start');
     Route::post('/complaints/{id}/finish', [WebPetugasController::class, 'finishWork'])->name('petugas.complaints.finish');

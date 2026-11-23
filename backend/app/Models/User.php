@@ -119,6 +119,24 @@ class User extends Authenticatable
         return $this->role === 'PETUGAS';
     }
 
+    /** Pengawas lapangan: berasal dari pekerja lapangan, boleh mengelola anggota regunya. */
+    public function isPengawas(): bool
+    {
+        return $this->role === 'PENGAWAS';
+    }
+
+    /** Akun khusus dashboard monitoring (hanya baca). */
+    public function isMonitoring(): bool
+    {
+        return $this->role === 'MONITORING';
+    }
+
+    /** Kepala Dinas memakai role DINAS dan berakses penuh seperti Admin. */
+    public function isKepalaDinas(): bool
+    {
+        return $this->role === 'DINAS';
+    }
+
     public function isDinas(): bool
     {
         return in_array($this->role, ['DINAS', 'OPERATOR', 'PETUGAS'], true);
@@ -144,7 +162,10 @@ class User extends Authenticatable
         }
 
         // Jika sandi masih berupa default 'password'
-        if (\Illuminate\Support\Facades\Hash::check('password', $this->password)) {
+        // Hash::check melempar RuntimeException untuk hash non-bcrypt (mis. data lama/seed),
+        // sehingga harus diveg lebih dahulu agar layout tidak error 500.
+        if (\Illuminate\Support\Facades\Hash::isHashed($this->password)
+            && \Illuminate\Support\Facades\Hash::check('password', $this->password)) {
             return true;
         }
 

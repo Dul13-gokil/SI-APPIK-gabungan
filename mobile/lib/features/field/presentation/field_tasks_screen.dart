@@ -200,8 +200,7 @@ class _FieldTasksScreenState extends State<FieldTasksScreen> {
   Map<int, String> get _activeCategoryMap {
     return const {
       1: 'Jalan & Jembatan',
-      2: 'Penerangan Jalan Umum (PJU)',
-      3: 'Fasilitas Umum',
+      3: 'Fasilitas Umum Lainnya',
     };
   }
 
