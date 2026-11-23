@@ -253,6 +253,16 @@ class WorkflowController extends Controller
                 'changed_by'   => $worker?->id,
             ]);
 
+            AuditLog::create([
+                'actor_id'    => $worker?->id,
+                'action'      => 'WORK_STARTED',
+                'entity_type' => Complaint::class,
+                'entity_id'   => $complaint->id,
+                'before_json' => ['status' => $oldStatus],
+                'after_json'  => ['status' => $newStatus, 'team_id' => $workerTeam?->id],
+                'ip'          => $request->ip(),
+            ]);
+
             $this->notifyComplaintOwner(
                 $complaint,
                 'COMPLAINT_IN_PROGRESS',
@@ -357,6 +367,21 @@ class WorkflowController extends Controller
                 'to_status'    => $newStatus,
                 'note'         => "Pekerjaan lapangan selesai: {$validated['note']}. Menunggu validasi akhir Operator.",
                 'changed_by'   => $request->user()?->id,
+            ]);
+
+            AuditLog::create([
+                'actor_id'    => $request->user()?->id,
+                'action'      => 'WORK_FINISHED',
+                'entity_type' => Complaint::class,
+                'entity_id'   => $complaint->id,
+                'before_json' => ['status' => $oldStatus],
+                'after_json'  => [
+                    'status'      => $newStatus,
+                    'photo_count' => count($photos),
+                    'latitude'    => $validated['latitude'] ?? null,
+                    'longitude'   => $validated['longitude'] ?? null,
+                ],
+                'ip'          => $request->ip(),
             ]);
 
             $this->notifyComplaintOwner(

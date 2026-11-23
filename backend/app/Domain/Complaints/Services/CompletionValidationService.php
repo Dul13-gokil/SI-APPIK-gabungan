@@ -4,20 +4,28 @@ namespace App\Domain\Complaints\Services;
 
 use App\Domain\AI\Services\AICVService;
 use App\Models\AiAssessment;
+use App\Models\AuditLog;
 use App\Models\Complaint;
 use App\Models\ComplaintStatusHistory;
 use App\Models\Notification;
+use App\Models\SystemSetting;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 /**
  * Keputusan rapat: validasi hasil kerja tidak lagi menunggu operator.
- * AI memeriksa foto sesudah; bila kerusakan sudah tidak terdeteksi (skor >= 80%)
+ * AI memeriksa foto sesudah; bila kerusakan sudah tidak terdeteksi (skor di atas ambang)
  * laporan langsung COMPLETED, selain itu tetap WAITING_VERIFICATION untuk operator.
  */
 class CompletionValidationService
 {
+    /** Ambang bawaan; bisa diubah lewat system_settings.ai_completion_threshold tanpa deploy. */
     public const COMPLETE_THRESHOLD = 0.80;
+
+    public function threshold(): float
+    {
+        return (float) SystemSetting::get('ai_completion_threshold', self::COMPLETE_THRESHOLD);
+    }
 
     public function __construct(private readonly AICVService $aiService) {}
 
@@ -63,7 +71,7 @@ class CompletionValidationService
             'confidence'   => $score,
         ]);
 
-        if ($score < self::COMPLETE_THRESHOLD) {
+        if ($score < $this->threshold()) {
             return false;
         }
 
@@ -76,6 +84,17 @@ class CompletionValidationService
         if ($complaint->latestDisposition) {
             $complaint->latestDisposition->status = 'COMPLETED';
         }
+
+        // Fitur "log aktivitas" Super Admin perlu jejak validasi AI, bukan hanya riwayat status.
+        AuditLog::create([
+            'actor_id'    => $actorId,
+            'action'      => 'COMPLETION_VALIDATED_BY_AI',
+            'entity_type' => Complaint::class,
+            'entity_id'   => $complaint->id,
+            'before_json' => ['status' => 'WAITING_VERIFICATION'],
+            'after_json'  => ['status' => 'COMPLETED', 'ai_score' => $score, 'threshold' => $this->threshold()],
+            'ip'          => request()->ip(),
+        ]);
 
         ComplaintStatusHistory::create([
             'complaint_id' => $complaint->id,

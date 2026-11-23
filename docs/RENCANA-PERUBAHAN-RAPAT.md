@@ -37,11 +37,16 @@ Sudah dikerjakan dan diuji:
 21. Peta jaringan jalan: `php artisan roads:import` mengunduh jalan dari Overpass OSM ke `public/geojson/roads_kolaka_utara.geojson`, mengklasifikasikan kewenangan lewat `RoadAuthorityClassifier`, dan portal Operator serta Petugas menampilkannya sebagai layer yang bisa dinyalakan/dimatikan (Jalan Nasional, Jalan Provinsi, Jalan Kabupaten, Kewenangan belum ditetapkan).
     Catatan penting: data OSM Kolaka Utara belum memuat tag kewenangan resmi (0 `ref`, 0 `network`; hanya 15 dari 146 ruas yang bernama), sehingga status nasional/provinsi/kabupaten adalah perkiraan dari kelas jalan. Koreksi manual per `osm_id` disediakan di `database/data/road_authority_overrides.json`.
 
+22. Log aktivitas kini mencatat aksi yang sebelumnya bolong: `COMPLAINT_CREATED` (beserta keyakinan AI dan ambang yang dipakai), `AI_CLASSIFICATION_FAILED`, `WORK_STARTED`, `WORK_FINISHED`, dan `COMPLETION_VALIDATED_BY_AI` beserta skor AI.
+23. Ambang AI dapat dikalibrasi tanpa deploy lewat `system_settings`: `ai_verify_threshold` (bawaan 0.80) dan `ai_completion_threshold` (bawaan 0.80). Kegagalan AI juga menulis `ai_last_failure_at` agar operator tahu model sedang bermasalah, bukan laporannya yang buruk.
+
 Belum dikerjakan:
 
 1. Rebuild APK mobile (kode sudah diubah; SDK Flutter tidak ada di mesin ini, jadi belum dikompilasi/diuji).
 2. Lingkaran radius pada peta web: pada zoom operasional (13-15) lingkaran 20 m hanya beberapa piksel sehingga belum digambar.
 3. Impor jalan perlu dijalankan ulang berkala; belum dijadwalkan otomatis (cron).
+4. Peringatan visual di dashboard operator saat `ai_last_failure_at` baru (penanda sudah ada di DB, belum ditampilkan).
+5. Anti-spam laporan anonim (mis. Cloudflare Turnstile) — butuh kredensial Cloudflare.
 
 ---
 

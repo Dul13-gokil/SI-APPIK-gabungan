@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\ApiResponse;
 use App\Http\Resources\ComplaintResource;
 use App\Models\AiAssessment;
+use App\Models\AuditLog;
 use App\Models\Category;
 use App\Models\Complaint;
 use App\Models\ComplaintPhoto;
@@ -340,13 +341,17 @@ class ComplaintController extends Controller
         }
 
         // Klasifikasi AI: berat/ringan dan kategori ditentukan model (keputusan rapat).
-        // Di bawah ambang 80% laporan tetap SUBMITTED dan masuk antrean operator.
+        // Di bawah ambang laporan tetap SUBMITTED dan masuk antrean operator.
         $aiResult = null;
+        $aiFailure = null;
         if (!empty($photoFiles)) {
             try {
                 $aiResult = $this->aiService->classifyMultipleImages($photoFiles);
             } catch (\Throwable $e) {
-                \Illuminate\Support\Facades\Log::warning('Klasifikasi AI gagal saat lapor: ' . $e->getMessage());
+                $aiFailure = $e->getMessage();
+                \Illuminate\Support\Facades\Log::warning('Klasifikasi AI gagal saat lapor: ' . $aiFailure);
+                // Tandai agar operator tahu AI sedang bermasalah, bukan laporan yang buruk.
+                \App\Models\SystemSetting::set('ai_last_failure_at', now()->toIso8601String(), 'string');
             }
         }
 
@@ -362,7 +367,9 @@ class ComplaintController extends Controller
             $damageType = ((int) ($aiResult['severity_level'] ?? 1) >= 3) ? 'major' : 'minor';
         }
 
-        $autoVerified = $aiValid && $aiConfidence >= 0.80;
+        // Ambang verifikasi otomatis bisa dikalibrasi tanpa deploy.
+        $verifyThreshold = (float) \App\Models\SystemSetting::get('ai_verify_threshold', 0.80);
+        $autoVerified = $aiValid && $aiConfidence >= $verifyThreshold;
         $initialStatus = $autoVerified ? 'VERIFIED' : 'SUBMITTED';
 
         $category = Category::findOrFail($validated['category_id']);
@@ -486,6 +493,38 @@ class ComplaintController extends Controller
 
             return $complaint;
         });
+
+        // Jejak audit: laporan masuk, hasil AI, dan kegagalan AI (untuk log aktivitas Super Admin).
+        AuditLog::create([
+            'actor_id'    => $userId,
+            'action'      => 'COMPLAINT_CREATED',
+            'entity_type' => Complaint::class,
+            'entity_id'   => $complaint->id,
+            'before_json' => null,
+            'after_json'  => [
+                'public_code'     => $complaint->public_code,
+                'status'          => $initialStatus,
+                'category_id'     => $complaint->category_id,
+                'damage_type'     => $damageType,
+                'verified_by_ai'  => $autoVerified,
+                'ai_confidence'   => $aiConfidence,
+                'ai_threshold'    => $verifyThreshold,
+                'radius_m'        => $complaint->radius_m,
+            ],
+            'ip'          => $request->ip(),
+        ]);
+
+        if ($aiFailure !== null) {
+            AuditLog::create([
+                'actor_id'    => $userId,
+                'action'      => 'AI_CLASSIFICATION_FAILED',
+                'entity_type' => Complaint::class,
+                'entity_id'   => $complaint->id,
+                'before_json' => null,
+                'after_json'  => ['status' => $initialStatus, 'error' => mb_substr($aiFailure, 0, 300)],
+                'ip'          => $request->ip(),
+            ]);
+        }
 
         // Simpan hasil klasifikasi AI dan catat verifikasi otomatis.
         if ($aiValid) {

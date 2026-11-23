@@ -291,6 +291,16 @@ class WebPetugasController extends Controller
                 'changed_by'   => auth()->id(),
             ]);
 
+            \App\Models\AuditLog::create([
+                'actor_id'    => auth()->id(),
+                'action'      => 'WORK_STARTED',
+                'entity_type' => Complaint::class,
+                'entity_id'   => $complaint->id,
+                'before_json' => ['status' => $oldStatus],
+                'after_json'  => ['status' => $newStatus, 'team_id' => $workerTeam?->id],
+                'ip'          => request()->ip(),
+            ]);
+
             // Kirim notifikasi ke pemilik laporan bahwa laporan telah diambil dan sedang dikerjakan
             if ($complaint->user_id) {
                 Notification::create([
@@ -384,6 +394,20 @@ class WebPetugasController extends Controller
                 'to_status'    => $newStatus,
                 'note'         => "Pekerjaan lapangan selesai: {$validated['note']}. Menunggu validasi Operator.",
                 'changed_by'   => auth()->id(),
+            ]);
+
+            \App\Models\AuditLog::create([
+                'actor_id'    => auth()->id(),
+                'action'      => 'WORK_FINISHED',
+                'entity_type' => Complaint::class,
+                'entity_id'   => $complaint->id,
+                'before_json' => ['status' => $oldStatus],
+                'after_json'  => [
+                    'status'   => $newStatus,
+                    'latitude' => $validated['latitude'] ?? null,
+                    'longitude' => $validated['longitude'] ?? null,
+                ],
+                'ip'          => request()->ip(),
             ]);
         });
 
