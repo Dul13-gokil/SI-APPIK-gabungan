@@ -1096,6 +1096,9 @@
                 attribution: '© OpenStreetMap | GIS Kabupaten'
             }).addTo(petugasMapInstance);
 
+            // Jaringan jalan OSM beserta perkiraan kewenangan (nasional/provinsi/kabupaten).
+            if (typeof attachRoadsLayer === 'function') attachRoadsLayer(petugasMapInstance);
+
             // Batas Administratif Resmi Wilayah Kabupaten (OpenStreetMap GeoJSON Polygon)
             fetch('{{ asset("geojson/kolaka_utara.geojson") }}')
                 .then(res => res.json())
@@ -2086,4 +2089,7 @@
         </div>
     </div>
 @endpush
+
+{{-- Lapisan jaringan jalan OSM (klasifikasi kewenangan perkiraan) --}}
+@include('partials.roads_layer_js')
 @endsection

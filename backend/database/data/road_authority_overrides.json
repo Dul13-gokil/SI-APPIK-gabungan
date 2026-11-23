@@ -1,0 +1,6 @@
+{
+    "_keterangan": "Koreksi kewenangan jalan per osm_id. OSM Kolaka Utara belum memuat tag kewenangan, jadi isi di sini setelah Dinas menetapkan status ruas. Contoh: \"123456789\": \"PROVINSI\"",
+    "_contoh": {
+        "123456789": "PROVINSI"
+    }
+}

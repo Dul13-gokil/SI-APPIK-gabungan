@@ -34,11 +34,14 @@ Sudah dikerjakan dan diuji:
 19. Foto bukti pengerjaan dijaga radius: `PhotoRadiusGuard` menolak foto di luar `radius_m` (toleransi akurasi GPS 25 m) di portal web maupun API. Petugas web mengirim lokasi perangkat lewat geolocation, mobile mengirim koordinat saat kirim bukti (termasuk antrean offline). Lokasi wajib hanya bila `photo_radius_require_location=true`; default longgar agar APK lama yang belum mengirim lokasi tidak berhenti bekerja.
 20. Aplikasi mobile menampilkan lingkaran radius 20 m pada peta pemilihan titik laporan.
 
+21. Peta jaringan jalan: `php artisan roads:import` mengunduh jalan dari Overpass OSM ke `public/geojson/roads_kolaka_utara.geojson`, mengklasifikasikan kewenangan lewat `RoadAuthorityClassifier`, dan portal Operator serta Petugas menampilkannya sebagai layer yang bisa dinyalakan/dimatikan (Jalan Nasional, Jalan Provinsi, Jalan Kabupaten, Kewenangan belum ditetapkan).
+    Catatan penting: data OSM Kolaka Utara belum memuat tag kewenangan resmi (0 `ref`, 0 `network`; hanya 15 dari 146 ruas yang bernama), sehingga status nasional/provinsi/kabupaten adalah perkiraan dari kelas jalan. Koreksi manual per `osm_id` disediakan di `database/data/road_authority_overrides.json`.
+
 Belum dikerjakan:
 
-1. Pemetaan jaringan jalan provinsi/kabupaten dari OSM.
-2. Rebuild APK mobile (kode sudah diubah; SDK Flutter tidak ada di mesin ini, jadi belum dikompilasi/diuji).
-3. Lingkaran radius pada peta web: pada zoom operasional (13-15) lingkaran 20 m hanya beberapa piksel sehingga belum digambar.
+1. Rebuild APK mobile (kode sudah diubah; SDK Flutter tidak ada di mesin ini, jadi belum dikompilasi/diuji).
+2. Lingkaran radius pada peta web: pada zoom operasional (13-15) lingkaran 20 m hanya beberapa piksel sehingga belum digambar.
+3. Impor jalan perlu dijalankan ulang berkala; belum dijadwalkan otomatis (cron).
 
 ---
 
