@@ -31,13 +31,14 @@ Sudah dikerjakan dan diuji:
 17. Laporan kinerja pekerja lapangan dicabut: tab di portal petugas, menu sidebar, tab "Laporan" di aplikasi mobile, dan endpoint `/api/v1/field/performance` dihapus. Panel monitoring Admin/Operator/Kepala Daerah tetap ada.
 18. Super Admin kini bisa membuat akun `PENGAWAS`, `DINAS`, dan `MONITORING` dari form tambah pengguna (sebelumnya validasinya menolak ketiga role itu). Ketiganya juga mendapat email undangan staf dan wajib ganti sandi saat login pertama.
 
+19. Foto bukti pengerjaan dijaga radius: `PhotoRadiusGuard` menolak foto di luar `radius_m` (toleransi akurasi GPS 25 m) di portal web maupun API. Petugas web mengirim lokasi perangkat lewat geolocation, mobile mengirim koordinat saat kirim bukti (termasuk antrean offline). Lokasi wajib hanya bila `photo_radius_require_location=true`; default longgar agar APK lama yang belum mengirim lokasi tidak berhenti bekerja.
+20. Aplikasi mobile menampilkan lingkaran radius 20 m pada peta pemilihan titik laporan.
+
 Belum dikerjakan:
 
-1. Lingkaran radius 20 m pada peta web dan mobile.
-2. Pemetaan jaringan jalan provinsi/kabupaten dari OSM.
-3. Penegakan radius 20 m saat petugas memotret bukti pengerjaan.
-4. Rebuild APK mobile (kode sudah diubah; SDK Flutter tidak ada di mesin ini, jadi belum dikompilasi/diuji).
-5. Radius 20 m dari sisi warga di mobile (input radius + peta lingkaran).
+1. Pemetaan jaringan jalan provinsi/kabupaten dari OSM.
+2. Rebuild APK mobile (kode sudah diubah; SDK Flutter tidak ada di mesin ini, jadi belum dikompilasi/diuji).
+3. Lingkaran radius pada peta web: pada zoom operasional (13-15) lingkaran 20 m hanya beberapa piksel sehingga belum digambar.
 
 ---
 

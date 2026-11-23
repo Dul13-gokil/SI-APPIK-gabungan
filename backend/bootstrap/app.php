@@ -37,6 +37,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->dontReport([
             \App\Domain\Complaints\Exceptions\InvalidStatusTransitionException::class,
             \App\Domain\Complaints\Exceptions\FieldTaskAuthorizationException::class,
+            \App\Domain\Complaints\Exceptions\PhotoRadiusException::class,
         ]);
 
         $exceptions->render(function (\Illuminate\Session\TokenMismatchException $e, Request $request) {
@@ -45,6 +46,20 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // Transisi status ilegal -> 422, bukan 500.
         $exceptions->render(function (\App\Domain\Complaints\Exceptions\InvalidStatusTransitionException $e, Request $request) {
+            if ($request->is('api/*') || $request->expectsJson()) {
+                return response()->json([
+                    'status'  => 'error',
+                    'message' => $e->getMessage(),
+                    'data'    => null,
+                    'meta'    => ['timestamp' => now()->toIso8601String()],
+                ], 422);
+            }
+
+            return back()->with('error', $e->getMessage());
+        });
+
+        // Foto bukti di luar radius lokasi aduan -> 422.
+        $exceptions->render(function (\App\Domain\Complaints\Exceptions\PhotoRadiusException $e, Request $request) {
             if ($request->is('api/*') || $request->expectsJson()) {
                 return response()->json([
                     'status'  => 'error',

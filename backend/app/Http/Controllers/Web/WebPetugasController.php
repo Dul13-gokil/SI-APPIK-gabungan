@@ -315,8 +315,10 @@ class WebPetugasController extends Controller
     public function finishWork(Request $request, int $id): RedirectResponse
     {
         $validated = $request->validate([
-            'note'     => 'required|string',
-            'photos.*' => 'nullable|file|image|max:10240',
+            'note'      => 'required|string',
+            'photos.*'  => 'nullable|file|image|max:10240',
+            'latitude'  => 'nullable|numeric|between:-90,90',
+            'longitude' => 'nullable|numeric|between:-180,180',
         ]);
 
         $complaint = Complaint::findOrFail($id);
@@ -326,6 +328,13 @@ class WebPetugasController extends Controller
         // Otorisasi lebih dulu: regu lain selalu 403, bukan bocor status 422.
         $user = auth()->user();
         app(\App\Domain\Complaints\Services\FieldTaskAuthorizer::class)->assertCanFinish($user, $complaint);
+
+        // Foto bukti wajib diambil di sekitar titik aduan (keputusan rapat: radius).
+        app(\App\Domain\Complaints\Services\PhotoRadiusGuard::class)->assertWithinRadius(
+            $complaint,
+            isset($validated['latitude']) ? (float) $validated['latitude'] : null,
+            isset($validated['longitude']) ? (float) $validated['longitude'] : null
+        );
 
         ComplaintStateMachine::validateTransition($oldStatus, $newStatus);
 

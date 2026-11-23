@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -924,6 +925,21 @@ class _FieldTasksScreenState extends State<FieldTasksScreen> {
 
     if (confirmed != true || !mounted) return;
 
+    // Radius foto pengerjaan: ambil titik GPS saat bukti dikirim agar server dapat
+    // memastikan foto diambil di lokasi aduan (berlaku untuk kirim online & antrean offline).
+    double? gpsLat;
+    double? gpsLon;
+    try {
+      final pos = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+        timeLimit: const Duration(seconds: 12),
+      );
+      gpsLat = pos.latitude;
+      gpsLon = pos.longitude;
+    } catch (_) {
+      // Biarkan server menolak dengan pesan yang jelas bila lokasi tidak tersedia.
+    }
+
     try {
       final fileName = photo.name.isNotEmpty ? photo.name : 'resolution.jpg';
       final formData = FormData();
@@ -931,6 +947,12 @@ class _FieldTasksScreenState extends State<FieldTasksScreen> {
         'note',
         noteController.text.isNotEmpty ? noteController.text : 'Pekerjaan perbaikan fisik telah diselesaikan di lapangan',
       ));
+
+      if (gpsLat != null && gpsLon != null) {
+        formData.fields.add(MapEntry('latitude', gpsLat.toStringAsFixed(6)));
+        formData.fields.add(MapEntry('longitude', gpsLon.toStringAsFixed(6)));
+      }
+
       formData.files.add(MapEntry(
         'photos[]',
         MultipartFile.fromBytes(photoBytes, filename: fileName),
@@ -962,6 +984,8 @@ class _FieldTasksScreenState extends State<FieldTasksScreen> {
             note: finalNote,
             photoPath: photo.path,
             queuedAt: DateTime.now().toIso8601String(),
+            latitude: gpsLat,
+            longitude: gpsLon,
           ),
         );
         final updatedQueue = await _offlineQueueService.getQueue();

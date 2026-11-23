@@ -1679,6 +1679,19 @@ class _CreateComplaintScreenState extends State<CreateComplaintScreen> {
                         ),
                       ],
                     ),
+                  // Radius laporan 20 m (keputusan rapat): warga melihat area cakupan titik.
+                  CircleLayer(
+                    circles: [
+                      CircleMarker(
+                        point: LatLng(_latitude, _longitude),
+                        radius: 20,
+                        useRadiusInMeter: true,
+                        color: const Color(0xFF2563EB).withValues(alpha: 0.12),
+                        borderColor: AppColors.primary,
+                        borderStrokeWidth: 2,
+                      ),
+                    ],
+                  ),
                   MarkerLayer(
                     markers: [
                       Marker(

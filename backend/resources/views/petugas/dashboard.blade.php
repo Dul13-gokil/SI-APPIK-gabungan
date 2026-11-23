@@ -1587,6 +1587,51 @@
         }
     }
 
+    // Radius foto pengerjaan: isi koordinat GPS perangkat saat modal dibuka.
+    function petugasFillGeo() {
+        const latEl = document.getElementById('finishLatitude');
+        const lonEl = document.getElementById('finishLongitude');
+        const statusEl = document.getElementById('finishGeoStatus');
+        if (!latEl || !lonEl) return;
+
+        if (!navigator.geolocation) {
+            if (statusEl) statusEl.innerHTML = '<span>Perangkat tidak mendukung lokasi. Gunakan aplikasi mobile untuk mengirim bukti.</span>';
+            return;
+        }
+
+        navigator.geolocation.getCurrentPosition(
+            (pos) => {
+                latEl.value = pos.coords.latitude.toFixed(6);
+                lonEl.value = pos.coords.longitude.toFixed(6);
+                if (statusEl) {
+                    statusEl.innerHTML = '<span>Lokasi terdeteksi (akurasi &plusmn;' + Math.round(pos.coords.accuracy) + ' m). Foto wajib dalam radius lokasi aduan.</span>';
+                }
+            },
+            () => {
+                latEl.value = '';
+                lonEl.value = '';
+                if (statusEl) {
+                    statusEl.innerHTML = '<span class="text-red-600">Izin lokasi ditolak. Aktifkan lokasi perangkat lalu muat ulang halaman.</span>';
+                }
+            },
+            { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
+        );
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const finishForm = document.getElementById('petugasFinishForm');
+        if (!finishForm) return;
+
+        finishForm.addEventListener('submit', function (e) {
+            const lat = document.getElementById('finishLatitude');
+            const lon = document.getElementById('finishLongitude');
+            if (!lat || !lon || !lat.value || !lon.value) {
+                e.preventDefault();
+                alert('Lokasi belum terdeteksi. Aktifkan izin lokasi (GPS) pada perangkat, lalu kirim ulang bukti.');
+            }
+        });
+    });
+
     function openPetugasFinishModal(id, code, title) {
         const item = (typeof petugasComplaintsMap !== 'undefined' && petugasComplaintsMap[id]) ? petugasComplaintsMap[id] : {};
         const form = document.getElementById('petugasFinishForm');
@@ -1629,6 +1674,7 @@
             modal.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
             if (window.lucide) lucide.createIcons({ root: modal });
+            petugasFillGeo();
         }
     }
 
@@ -2020,6 +2066,12 @@
                 <div>
                     <label class="block text-xs font-bold text-[#334155] mb-1.5">Catatan Teknis <span class="text-red-500">*</span></label>
                     <textarea name="note" rows="3" required placeholder="Contoh: Penambalan aspal selesai dan rata sesuai standar." class="w-full text-xs rounded-xl border border-[#CBD5E1] py-2.5 px-3 bg-white text-[#0F172A] focus:ring-2 focus:ring-[#2563EB] focus:border-[#2563EB] leading-relaxed"></textarea>
+                </div>
+                <input type="hidden" name="latitude" id="finishLatitude">
+                <input type="hidden" name="longitude" id="finishLongitude">
+                <div id="finishGeoStatus" class="flex items-start gap-1.5 text-[11px] text-[#64748B]">
+                    <i data-lucide="map-pin" class="w-3.5 h-3.5 shrink-0 mt-0.5"></i>
+                    <span>Mendeteksi lokasi Anda. Foto wajib diambil dalam radius lokasi aduan.</span>
                 </div>
                 <div class="flex items-center justify-end gap-2.5 pt-4 border-t border-[#E2E8F0]">
                     <button type="button" onclick="closePetugasFinishModal()" class="px-5 py-2.5 rounded-xl bg-[#F1F5F9] hover:bg-slate-200 text-[#334155] font-bold text-xs transition cursor-pointer">

@@ -12,6 +12,9 @@ class OfflineResolutionItem {
   final String note;
   final String photoPath;
   final String queuedAt;
+  /// Titik GPS saat foto diambil; dipakai server untuk memeriksa radius pengerjaan.
+  final double? latitude;
+  final double? longitude;
 
   OfflineResolutionItem({
     required this.complaintId,
@@ -20,6 +23,8 @@ class OfflineResolutionItem {
     required this.note,
     required this.photoPath,
     required this.queuedAt,
+    this.latitude,
+    this.longitude,
   });
 
   Map<String, dynamic> toJson() => {
@@ -29,6 +34,8 @@ class OfflineResolutionItem {
         'note': note,
         'photo_path': photoPath,
         'queued_at': queuedAt,
+        'latitude': latitude,
+        'longitude': longitude,
       };
 
   factory OfflineResolutionItem.fromJson(Map<String, dynamic> json) {
@@ -39,6 +46,8 @@ class OfflineResolutionItem {
       note: (json['note'] ?? '').toString(),
       photoPath: (json['photo_path'] ?? '').toString(),
       queuedAt: (json['queued_at'] ?? '').toString(),
+      latitude: (json['latitude'] as num?)?.toDouble(),
+      longitude: (json['longitude'] as num?)?.toDouble(),
     );
   }
 }
@@ -93,6 +102,10 @@ class OfflineResolutionQueueService {
       try {
         final formData = FormData();
         formData.fields.add(MapEntry('note', item.note));
+        if (item.latitude != null && item.longitude != null) {
+          formData.fields.add(MapEntry('latitude', item.latitude!.toStringAsFixed(6)));
+          formData.fields.add(MapEntry('longitude', item.longitude!.toStringAsFixed(6)));
+        }
         formData.files.add(MapEntry(
           'photos[]',
           await MultipartFile.fromFile(file.path, filename: 'resolution_offline.jpg'),

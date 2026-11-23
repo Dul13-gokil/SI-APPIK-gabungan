@@ -270,9 +270,11 @@ class WorkflowController extends Controller
     public function finishWork(Request $request, int $id): JsonResponse
     {
         $validated = $request->validate([
-            'note'     => 'required|string',
-            'photo'    => 'nullable|file|image|max:10240',
-            'photos.*' => 'nullable|file|image|max:10240',
+            'note'      => 'required|string',
+            'photo'     => 'nullable|file|image|max:10240',
+            'photos.*'  => 'nullable|file|image|max:10240',
+            'latitude'  => 'nullable|numeric|between:-90,90',
+            'longitude' => 'nullable|numeric|between:-180,180',
         ]);
 
         $complaint = Complaint::findOrFail($id);
@@ -282,6 +284,13 @@ class WorkflowController extends Controller
         // Otorisasi lebih dulu: regu lain selalu 403, bukan bocor status 422.
         $user = $request->user();
         app(FieldTaskAuthorizer::class)->assertCanFinish($user, $complaint);
+
+        // Foto bukti wajib diambil di sekitar titik aduan (keputusan rapat: radius).
+        app(\App\Domain\Complaints\Services\PhotoRadiusGuard::class)->assertWithinRadius(
+            $complaint,
+            isset($validated['latitude']) ? (float) $validated['latitude'] : null,
+            isset($validated['longitude']) ? (float) $validated['longitude'] : null
+        );
 
         ComplaintStateMachine::validateTransition($oldStatus, $newStatus);
 
