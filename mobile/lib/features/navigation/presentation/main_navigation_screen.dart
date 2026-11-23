@@ -8,7 +8,6 @@ import '../../../shared/widgets/v2_toast.dart';
 import '../../auth/presentation/login_screen.dart';
 import '../../chatbot/presentation/ai_assistant_screen.dart';
 import '../../complaints/presentation/create_complaint_screen.dart';
-import '../../field/presentation/field_performance_screen.dart';
 import '../../field/presentation/field_tasks_screen.dart';
 import '../../home/presentation/home_screen.dart';
 import '../../map/presentation/map_screen.dart';
@@ -1158,7 +1157,6 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     final screens = [
       const FieldTasksScreen(),
       const MapScreen(isPetugas: true),
-      const FieldPerformanceScreen(),
       AIAssistantScreen(isKeyboardOpen: isKeyboardOpen),
       ProfileScreen(key: ValueKey('profile_petugas_$_refreshKey')),
     ];
@@ -1166,7 +1164,6 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     final navItems = [
       {'icon': LucideIcons.clipboardList, 'label': 'Tugas'},
       {'icon': LucideIcons.map, 'label': 'Peta GIS'},
-      {'icon': LucideIcons.barChart3, 'label': 'Laporan'},
       {'icon': LucideIcons.bot, 'label': 'Asisten'},
       {'icon': LucideIcons.user, 'label': 'Profil'},
     ];

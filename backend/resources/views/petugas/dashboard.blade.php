@@ -236,10 +236,6 @@
         ])
     </div>
 
-    <!-- Tab Laporan Kinerja Pekerja Lapangan (Individu, Regu, & Responsivitas Operator) -->
-    <div id="petugasTabContent-performance" class="hidden space-y-5">
-        @include('partials.petugas_performance_report')
-    </div>
 
     <!-- Wadah Kartu Terpadu Daftar Tugas Lapangan (Seragam Admin & Kepala Daerah) -->
     <div id="petugasUnifiedCard" class="hidden card-white rounded-2xl p-5 sm:p-6 bg-white border border-[#E2E8F0] shadow-xs space-y-4">
@@ -860,7 +856,7 @@
 
     document.addEventListener('DOMContentLoaded', function() {
         const urlTab = new URLSearchParams(window.location.search).get('tab');
-        if (urlTab && ['spatial', 'assigned', 'tasks', 'validation', 'history', 'performance'].includes(urlTab)) {
+        if (urlTab && ['spatial', 'assigned', 'tasks', 'validation', 'history'].includes(urlTab)) {
             switchPetugasTab(urlTab);
         }
     });
@@ -898,7 +894,7 @@
         }
 
         // 2. Hide all contents
-        const panels = ['spatial', 'assigned', 'tasks', 'validation', 'history', 'performance'];
+        const panels = ['spatial', 'assigned', 'tasks', 'validation', 'history'];
         panels.forEach(p => {
             const el = document.getElementById('petugasTabContent-' + p);
             if (el) el.classList.add('hidden');
@@ -914,7 +910,7 @@
         const unifiedCard = document.getElementById('petugasUnifiedCard');
         const filterContainer = document.getElementById('petugasFilterContainer');
         const paginationBar = document.getElementById('petugasPaginationBar');
-        const hideListContainer = (tabName === 'spatial' || tabName === 'performance');
+        const hideListContainer = (tabName === 'spatial');
         if (unifiedCard) unifiedCard.classList.toggle('hidden', hideListContainer);
         if (filterContainer) filterContainer.classList.toggle('hidden', hideListContainer);
         if (paginationBar) paginationBar.classList.toggle('hidden', hideListContainer);

@@ -499,6 +499,9 @@
                             <select name="role" required class="w-full text-xs rounded-xl border border-[#E2E8F0] px-3 py-2 bg-[#F8FAFC] focus:bg-white focus:ring-2 focus:ring-[#2563EB]/15 focus:border-[#2563EB] transition">
                                 <option value="OPERATOR">Operator Verifikasi (Disposisi Web)</option>
                                 <option value="PETUGAS" selected>Pekerja Lapangan (Dinas PUPR)</option>
+                                <option value="PENGAWAS">Pengawas Lapangan (Kelola Regu)</option>
+                                <option value="DINAS">Kepala Dinas (Akses Penuh)</option>
+                                <option value="MONITORING">Dashboard Monitoring (Hanya Baca)</option>
                                 <option value="KEPALA_DAERAH" {{ $hasBupati ? 'disabled class=text-slate-400' : '' }}>
                                     Kepala Daerah Kabupaten {{ $hasBupati ? '(Terkunci)' : '' }}
                                 </option>
@@ -559,6 +562,9 @@
                         <option value="KEPALA_DAERAH">Kepala Daerah</option>
                         <option value="OPERATOR">Operator Verifikasi</option>
                         <option value="PETUGAS">Pekerja Lapangan</option>
+                        <option value="PENGAWAS">Pengawas Lapangan</option>
+                        <option value="DINAS">Kepala Dinas</option>
+                        <option value="MONITORING">Monitoring</option>
                         <option value="WARGA">Warga Masyarakat</option>
                     </select>
 
@@ -2330,6 +2336,9 @@
                                     <option value="KEPALA_DAERAH">Kepala Daerah Kabupaten</option>
                                     <option value="OPERATOR">Operator Verifikasi</option>
                                     <option value="PETUGAS">Pekerja Lapangan (PUPR)</option>
+                                    <option value="PENGAWAS">Pengawas Lapangan</option>
+                                    <option value="DINAS">Kepala Dinas</option>
+                                    <option value="MONITORING">Monitoring (Hanya Baca)</option>
                                     <option value="WARGA" id="editUserOptionWarga" class="hidden">Warga Terdaftar</option>
                                 </select>
                                 <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-slate-400">

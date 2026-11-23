@@ -27,15 +27,17 @@ Sudah dikerjakan dan diuji:
 14. Sidebar: menu Log Aktivitas (Super Admin), Tambah Pekerja Lapangan (Operator/Dinas), Dashboard Monitoring, dan portal Petugas kini tampil untuk PENGAWAS.
 15. Bug layout: `needsFirstLoginSetup()` memanggil `Hash::check` pada hash non-bcrypt dan membuat seluruh halaman 500; kini dijaga `Hash::isHashed`.
 
+16. PENGAWAS dapat mengelola anggota regunya sendiri di `/petugas/regu` (tambah dari pekerja lapangan tanpa regu, keluarkan anggota, maksimal 15 orang). Regu lain ditolak; petugas biasa mendapat 403.
+17. Laporan kinerja pekerja lapangan dicabut: tab di portal petugas, menu sidebar, tab "Laporan" di aplikasi mobile, dan endpoint `/api/v1/field/performance` dihapus. Panel monitoring Admin/Operator/Kepala Daerah tetap ada.
+18. Super Admin kini bisa membuat akun `PENGAWAS`, `DINAS`, dan `MONITORING` dari form tambah pengguna (sebelumnya validasinya menolak ketiga role itu). Ketiganya juga mendapat email undangan staf dan wajib ganti sandi saat login pertama.
+
 Belum dikerjakan:
 
-1. Antarmuka PENGAWAS untuk menambah/melepas anggota regu (backend belum dibuat).
-2. Pencabutan laporan kinerja dari menu/rute PETUGAS dan PENGAWAS.
-3. Lingkaran radius 20 m pada peta web dan mobile.
-4. Pemetaan jaringan jalan provinsi/kabupaten dari OSM.
-5. Penegakan radius 20 m saat petugas memotret bukti pengerjaan.
-6. Rebuild APK mobile (kode sudah diubah; SDK Flutter tidak ada di mesin ini, jadi belum dikompilasi/diuji).
-7. Radius 20 m dari sisi warga di mobile (input radius + peta lingkaran).
+1. Lingkaran radius 20 m pada peta web dan mobile.
+2. Pemetaan jaringan jalan provinsi/kabupaten dari OSM.
+3. Penegakan radius 20 m saat petugas memotret bukti pengerjaan.
+4. Rebuild APK mobile (kode sudah diubah; SDK Flutter tidak ada di mesin ini, jadi belum dikompilasi/diuji).
+5. Radius 20 m dari sisi warga di mobile (input radius + peta lingkaran).
 
 ---
 

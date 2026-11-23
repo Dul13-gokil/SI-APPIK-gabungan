@@ -3,6 +3,7 @@
 use App\Http\Controllers\Web\WebAuthController;
 use App\Http\Controllers\Web\WebBupatiController;
 use App\Http\Controllers\Web\WebOperatorController;
+use App\Http\Controllers\Web\WebPengawasController;
 use App\Http\Controllers\Web\WebPetugasController;
 use App\Http\Controllers\Web\WebSuperAdminController;
 use App\Http\Controllers\Web\WebTeamController;
@@ -128,6 +129,13 @@ Route::prefix('petugas')->middleware(['auth', 'active', 'role:PETUGAS,PENGAWAS,S
     Route::post('/complaints/{id}/start', [WebPetugasController::class, 'startWork'])->name('petugas.complaints.start');
     Route::post('/complaints/{id}/finish', [WebPetugasController::class, 'finishWork'])->name('petugas.complaints.finish');
     Route::post('/profile', [WebPetugasController::class, 'updateProfile'])->name('petugas.profile.update');
+
+    // Pengawas mengelola anggota regunya sendiri (keputusan rapat).
+    Route::middleware('role:PENGAWAS')->group(function () {
+        Route::get('/regu', [WebPengawasController::class, 'index'])->name('pengawas.team');
+        Route::post('/regu/anggota', [WebPengawasController::class, 'addMember'])->name('pengawas.team.members.add');
+        Route::post('/regu/anggota/{user}/keluarkan', [WebPengawasController::class, 'removeMember'])->name('pengawas.team.members.remove');
+    });
 });
 
 // 7. Fallback Permanen Media Foto Pengaduan dari PostgreSQL (Dilindungi Anti Path Traversal)
@@ -166,13 +174,12 @@ Route::middleware(['auth', 'role:SUPERADMIN,ADMIN,OPERATOR,DINAS,BUPATI,KEPALA_D
 });
 Route::middleware(['auth', 'role:SUPERADMIN,ADMIN,OPERATOR,DINAS,BUPATI,KEPALA_DAERAH,PETUGAS'])->group(function () {
     Route::get('/complaints/{id}/bap', [\App\Http\Controllers\Web\WebReportController::class, 'printBap'])->name('complaints.bap');
+    // Cetak laporan kinerja tetap ada karena dipakai panel monitoring Admin/Operator/Kepala Daerah.
     Route::get('/petugas/performance/print', [\App\Http\Controllers\Web\WebReportController::class, 'printPetugasPerformance'])->name('petugas.performance.print');
 });
 
 // Dokumen Cetak Resmi via Signed URL (30 menit, khusus akses aman dari Aplikasi Mobile)
 Route::middleware('signed')->group(function () {
-    Route::get('/mobile-print/petugas-performance/{user}', [\App\Http\Controllers\Web\WebReportController::class, 'printPetugasPerformanceSigned'])
-        ->name('mobile.petugas.performance.print');
     Route::get('/mobile-print/complaints/{id}/bap', [\App\Http\Controllers\Web\WebReportController::class, 'printBapSigned'])
         ->name('mobile.complaints.bap');
 });

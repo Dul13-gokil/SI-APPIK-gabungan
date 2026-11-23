@@ -310,7 +310,6 @@
                                         ['tab' => 'validation', 'label' => 'Validasi', 'icon' => 'shield-check'],
                                         ['tab' => 'history', 'label' => 'Tugas Selesai', 'icon' => 'check-circle'],
                                         ['tab' => 'spatial', 'label' => 'Peta Wilayah GIS', 'icon' => 'map-pin'],
-                                        ['tab' => 'performance', 'label' => 'Laporan Kinerja', 'icon' => 'bar-chart-3'],
                                     ];
                                 @endphp
                                 @foreach($petugasMenuItems as $item)
@@ -336,6 +335,9 @@
                                 : null,
                             auth()->user()->isOperator() || auth()->user()->isSuperAdmin()
                                 ? ['url' => route('operator.petugas.create'), 'label' => 'Tambah Pekerja Lapangan', 'icon' => 'user-plus']
+                                : null,
+                            auth()->user()->isPengawas()
+                                ? ['url' => route('pengawas.team'), 'label' => 'Kelola Anggota Regu', 'icon' => 'users']
                                 : null,
                         ]));
                     @endphp

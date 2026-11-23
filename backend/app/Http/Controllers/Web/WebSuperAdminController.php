@@ -356,7 +356,7 @@ class WebSuperAdminController extends Controller
             'name'     => 'required|string|max:255',
             'email'    => 'required|email|unique:users,email',
             'phone'    => 'nullable|string|max:20|unique:users,phone',
-            'role'     => 'required|in:ADMIN,SUPERADMIN,KEPALA_DAERAH,BUPATI,OPERATOR,PETUGAS,WARGA',
+            'role'     => 'required|in:ADMIN,SUPERADMIN,KEPALA_DAERAH,BUPATI,OPERATOR,PETUGAS,PENGAWAS,DINAS,MONITORING,WARGA',
         ], [
             'phone.unique' => 'Nomor handphone ini sudah terdaftar pada akun pengguna lain.',
         ]);
@@ -395,7 +395,7 @@ class WebSuperAdminController extends Controller
         ]);
 
         // Aturan 5: Kirim email pemberitahuan ke email pengguna jika ditambahkan sebagai PETUGAS atau OPERATOR
-        if (in_array($validated['role'], ['PETUGAS', 'OPERATOR', 'DINAS'])) {
+        if (in_array($validated['role'], ['PETUGAS', 'OPERATOR', 'DINAS', 'PENGAWAS', 'MONITORING'], true)) {
             try {
                 app(\App\Services\SecurityMailService::class)->sendStaffInvitationEmail($user, $validated['role'], $defaultPassword);
             } catch (\Throwable $e) {

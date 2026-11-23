@@ -157,7 +157,7 @@ class User extends Authenticatable
      */
     public function needsFirstLoginSetup(): bool
     {
-        if (!in_array($this->role, ['PETUGAS', 'OPERATOR', 'DINAS'])) {
+        if (!in_array($this->role, ['PETUGAS', 'OPERATOR', 'DINAS', 'PENGAWAS', 'MONITORING'], true)) {
             return false;
         }
 

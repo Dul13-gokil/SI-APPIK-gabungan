@@ -84,7 +84,6 @@ Route::prefix('v1')->group(function () {
 
         // D. Tugas & Laporan Kinerja Khusus Petugas Lapangan
         Route::get('/field-tasks', [ComplaintController::class, 'fieldTasks'])->middleware('role:PETUGAS,SUPERADMIN,ADMIN');
-        Route::get('/field/performance', [\App\Http\Controllers\Api\v1\FieldPerformanceController::class, 'show'])->middleware('role:PETUGAS,SUPERADMIN,ADMIN');
 
         // E. Alur Kerja Lapangan (Khusus Petugas Teknis Lapangan)
         Route::middleware('role:PETUGAS,SUPERADMIN,ADMIN')->group(function () {
