@@ -62,6 +62,9 @@ services:
     volumes:
       # Foto aduan & bukti pengerjaan bertahan walau container dibuat ulang.
       - app-storage:/var/www/html/storage/app
+      # GeoJSON jaringan jalan dibagi dengan container scheduler agar hasil impor
+      # bulanan langsung terbaca oleh aplikasi.
+      - geojson-data:/var/www/html/public/geojson
       # Opsional: impor data demo dari dump saat volume database masih kosong.
       - ./si-appik.sql:/var/www/html/database/si-appik.sql:ro
     ports:
@@ -75,6 +78,41 @@ services:
       timeout: 5s
       retries: 10
       start_period: 40s
+    restart: unless-stopped
+
+  # Penjadwal tugas Laravel (impor jalan OSM bulanan, dll).
+  # Memakai image app yang sama agar PHP & konfigurasi identik.
+  scheduler:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: ["php", "artisan", "schedule:work", "--verbose"]
+    environment:
+      APP_ENV: ${APP_ENV:-production}
+      APP_KEY: ${APP_KEY:?APP_KEY wajib diisi di file .env root}
+      APP_DEBUG: ${APP_DEBUG:-false}
+      APP_TIMEZONE: Asia/Makassar
+      APP_URL: ${APP_URL:-http://localhost:8080}
+      DB_CONNECTION: pgsql
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_DATABASE: ${DB_DATABASE:-sik}
+      DB_USERNAME: ${DB_USERNAME:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+      CACHE_STORE: database
+      QUEUE_CONNECTION: database
+      FILESYSTEM_DISK: public
+      AI_PYTHON_BINARY: /usr/bin/python3
+      AI_CV_PROVIDER: opencv
+    volumes:
+      # Berbagi folder storage & GeoJSON agar hasil impor jalan langsung terbaca aplikasi.
+      - app-storage:/var/www/html/storage/app
+      - geojson-data:/var/www/html/public/geojson
+    depends_on:
+      db:
+        condition: service_healthy
+      app:
+        condition: service_healthy
     restart: unless-stopped
 
   # Konektor Cloudflare Tunnel. Hanya aktif bila dijalankan dengan --profile tunnel
@@ -93,3 +131,4 @@ services:
 volumes:
   db-data:
   app-storage:
+  geojson-data:

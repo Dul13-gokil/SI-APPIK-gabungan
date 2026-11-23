@@ -50,6 +50,18 @@
         $currentTabMeta = $tabMetaPhp[$activeTab] ?? $tabMetaPhp['verify'];
     @endphp
 
+    @if(!empty($aiDegraded))
+        <div class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 flex items-start gap-3">
+            <i data-lucide="triangle-alert" class="w-4 h-4 text-amber-600 shrink-0 mt-0.5"></i>
+            <div class="text-[12px] text-amber-800 leading-relaxed">
+                <b>Klasifikasi AI sedang bermasalah.</b>
+                Percobaan terakhir gagal pada {{ $aiFailureAt }}.
+                Laporan baru tetap masuk sebagai &quot;Menunggu&quot; tanpa penilaian AI otomatis,
+                sehingga perlu diverifikasi manual sampai layanan AI pulih.
+            </div>
+        </div>
+    @endif
+
     <!-- Header Keterangan Section (Seragam Desain Admin) -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
         <div>

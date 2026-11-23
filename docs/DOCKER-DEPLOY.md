@@ -218,6 +218,29 @@ Port 8080 dan 5433 cukup diakses lokal VPS; jangan dibuka ke publik.
 | Hentikan + hapus data | `docker compose down -v` (DB dan foto hilang) |
 | Update kode | `git pull && docker compose build app && docker compose up -d` |
 
+### Penjadwal tugas (scheduler)
+
+Service `scheduler` menjalankan `php artisan schedule:work`, sehingga tugas terjadwal
+berjalan tanpa cron host:
+
+- Impor jaringan jalan OSM (`roads:import`) setiap tanggal 1 pukul 02.00 WITA.
+- Hasil impor ditulis ke volume `geojson-data` yang dipakai bersama oleh `app`,
+  jadi peta langsung memakai data terbaru tanpa rebuild image.
+
+Cek status dan jalankan manual:
+
+```bash
+docker compose ps scheduler
+docker compose exec scheduler php artisan schedule:list
+docker compose exec app php artisan roads:import   # impor manual kapan saja
+```
+
+Bila memakai VPS tanpa service scheduler (mis. hanya cron host), tambahkan satu baris cron:
+
+```
+* * * * * cd /path/ke/proyek && docker compose exec -T app php artisan schedule:run >> /dev/null 2>&1
+```
+
 ### Backup database
 
 ```bash

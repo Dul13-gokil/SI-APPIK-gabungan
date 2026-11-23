@@ -40,13 +40,18 @@ Sudah dikerjakan dan diuji:
 22. Log aktivitas kini mencatat aksi yang sebelumnya bolong: `COMPLAINT_CREATED` (beserta keyakinan AI dan ambang yang dipakai), `AI_CLASSIFICATION_FAILED`, `WORK_STARTED`, `WORK_FINISHED`, dan `COMPLETION_VALIDATED_BY_AI` beserta skor AI.
 23. Ambang AI dapat dikalibrasi tanpa deploy lewat `system_settings`: `ai_verify_threshold` (bawaan 0.80) dan `ai_completion_threshold` (bawaan 0.80). Kegagalan AI juga menulis `ai_last_failure_at` agar operator tahu model sedang bermasalah, bukan laporannya yang buruk.
 
+24. Panel `admin/settings` (Super Admin) untuk mengubah ambang verifikasi, ambang validasi hasil kerja, dan penegakan lokasi GPS foto; setiap perubahan dicatat sebagai `SETTINGS_UPDATED`.
+25. Portal operator menampilkan peringatan bila klasifikasi AI gagal dalam 24 jam terakhir.
+26. Impor jalan OSM dijadwalkan otomatis tiap tanggal 1 pukul 02.00 WITA lewat service `scheduler` di docker-compose; hasilnya ditulis ke volume `geojson-data` yang dipakai bersama `app`.
+
 Belum dikerjakan:
 
 1. Rebuild APK mobile (kode sudah diubah; SDK Flutter tidak ada di mesin ini, jadi belum dikompilasi/diuji).
 2. Lingkaran radius pada peta web: pada zoom operasional (13-15) lingkaran 20 m hanya beberapa piksel sehingga belum digambar.
-3. Impor jalan perlu dijalankan ulang berkala; belum dijadwalkan otomatis (cron).
-4. Peringatan visual di dashboard operator saat `ai_last_failure_at` baru (penanda sudah ada di DB, belum ditampilkan).
-5. Anti-spam laporan anonim (mis. Cloudflare Turnstile) — butuh kredensial Cloudflare.
+3. Anti-spam laporan anonim (mis. Cloudflare Turnstile) — butuh kredensial Cloudflare.
+4. Perbandingan foto sebelum-sesudah yang mengukur luas kerusakan (sekarang masih biner).
+5. Sampling review operator untuk laporan yang lolos AI otomatis.
+6. Penyeragaman nama aksi audit lama (`VERIFY`, `DISPOSITION`, `MERGE`).
 
 ---
 

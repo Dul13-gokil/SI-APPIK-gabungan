@@ -1,6 +1,12 @@
 #!/bin/sh
 set -e
 
+# Bila ada perintah eksplisit (mis. container scheduler menjalankan `php artisan schedule:work`),
+# jalankan itu saja tanpa menyalakan Apache.
+if [ "$#" -gt 0 ]; then
+    exec "$@"
+fi
+
 # Pastikan hanya satu MPM (mpm_prefork) yang aktif di Apache
 rm -f /etc/apache2/mods-enabled/mpm_event.* /etc/apache2/mods-enabled/mpm_worker.* || true
 a2enmod mpm_prefork rewrite deflate expires headers >/dev/null 2>&1 || true
@@ -50,6 +56,17 @@ fi
 
 # Buat ulang symlink storage dengan bersih dan pastikan permission dapat dibaca Apache
 mkdir -p /var/www/html/storage/app/public
+
+# Volume GeoJSON bersama (dipakai app & scheduler): isi dari seed bila masih kosong,
+# supaya peta jalan langsung tersedia sebelum impor pertama dijalankan.
+mkdir -p /var/www/html/public/geojson
+if [ -z "$(ls -A /var/www/html/public/geojson 2>/dev/null)" ] && [ -d /var/www/html/geo-seed ]; then
+    cp -a /var/www/html/geo-seed/. /var/www/html/public/geojson/ || true
+    echo "GeoJSON awal disalin dari seed."
+fi
+chown -R www-data:www-data /var/www/html/public/geojson || true
+chmod -R 775 /var/www/html/public/geojson || true
+
 rm -rf /var/www/html/public/storage || true
 php artisan storage:link --force || true
 chown -R www-data:www-data /var/www/html/storage || true

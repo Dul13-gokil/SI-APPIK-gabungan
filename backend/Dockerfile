@@ -59,6 +59,10 @@ COPY . /var/www/html
 # Salin hasil build Vite CSS/JS dari stage assets
 COPY --from=assets /app/public/build /var/www/html/public/build
 
+# Salinan awal GeoJSON di luar public/, dipakai entrypoint untuk mengisi volume bersama
+# (volume akan menutupi isi public/geojson milik image).
+RUN mkdir -p /var/www/html/geo-seed && cp -a /var/www/html/public/geojson/. /var/www/html/geo-seed/ 2>/dev/null || true
+
 # Install dependensi PHP tanpa dev packages
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
@@ -88,3 +92,4 @@ RUN sed -i 's/\r$//' /usr/local/bin/docker-entrypoint.sh \
 EXPOSE 80
 
 ENTRYPOINT ["docker-entrypoint.sh"]
+CMD []

@@ -333,6 +333,9 @@
                             auth()->user()->isSuperAdmin()
                                 ? ['url' => route('admin.activity'), 'label' => 'Log Aktivitas', 'icon' => 'scroll-text']
                                 : null,
+                            auth()->user()->isSuperAdmin()
+                                ? ['url' => route('admin.settings'), 'label' => 'Pengaturan Sistem', 'icon' => 'settings']
+                                : null,
                             auth()->user()->isOperator() || auth()->user()->isSuperAdmin()
                                 ? ['url' => route('operator.petugas.create'), 'label' => 'Tambah Pekerja Lapangan', 'icon' => 'user-plus']
                                 : null,

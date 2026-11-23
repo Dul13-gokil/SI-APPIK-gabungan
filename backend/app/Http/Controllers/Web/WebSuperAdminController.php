@@ -747,4 +747,59 @@ class WebSuperAdminController extends Controller
 
         return view('admin.activity_log', compact('logs'));
     }
+
+    /**
+     * Pengaturan ambang AI dan penegakan radius foto (bisa dikalibrasi tanpa deploy).
+     */
+    public function settings(): View
+    {
+        $settings = [
+            'ai_verify_threshold'          => (float) \App\Models\SystemSetting::get('ai_verify_threshold', 0.80),
+            'ai_completion_threshold'      => (float) \App\Models\SystemSetting::get('ai_completion_threshold', 0.80),
+            'photo_radius_require_location' => (bool) \App\Models\SystemSetting::get('photo_radius_require_location', false),
+            'ai_last_failure_at'           => \App\Models\SystemSetting::get('ai_last_failure_at'),
+        ];
+
+        return view('admin.settings', compact('settings'));
+    }
+
+    public function updateSettings(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'ai_verify_threshold'     => 'required|numeric|min:0.50|max:0.99',
+            'ai_completion_threshold' => 'required|numeric|min:0.50|max:0.99',
+            'photo_radius_require_location' => 'nullable|boolean',
+        ], [
+            'ai_verify_threshold.min' => 'Ambang verifikasi minimal 0,50 (50%).',
+            'ai_verify_threshold.max' => 'Ambang verifikasi maksimal 0,99 (99%).',
+            'ai_completion_threshold.min' => 'Ambang validasi hasil kerja minimal 0,50 (50%).',
+            'ai_completion_threshold.max' => 'Ambang validasi hasil kerja maksimal 0,99 (99%).',
+        ]);
+
+        $before = [
+            'ai_verify_threshold'     => (float) \App\Models\SystemSetting::get('ai_verify_threshold', 0.80),
+            'ai_completion_threshold' => (float) \App\Models\SystemSetting::get('ai_completion_threshold', 0.80),
+            'photo_radius_require_location' => (bool) \App\Models\SystemSetting::get('photo_radius_require_location', false),
+        ];
+
+        \App\Models\SystemSetting::set('ai_verify_threshold', (float) $validated['ai_verify_threshold'], 'float', 'Ambang keyakinan AI untuk verifikasi otomatis laporan.');
+        \App\Models\SystemSetting::set('ai_completion_threshold', (float) $validated['ai_completion_threshold'], 'float', 'Ambang skor AI untuk menyatakan pekerjaan selesai otomatis.');
+        \App\Models\SystemSetting::set('photo_radius_require_location', $request->boolean('photo_radius_require_location'), 'boolean', 'Wajibkan lokasi GPS saat petugas mengirim bukti pengerjaan.');
+
+        \App\Models\AuditLog::create([
+            'actor_id'    => auth()->id(),
+            'action'      => 'SETTINGS_UPDATED',
+            'entity_type' => \App\Models\SystemSetting::class,
+            'entity_id'   => null,
+            'before_json' => $before,
+            'after_json'  => [
+                'ai_verify_threshold'     => (float) $validated['ai_verify_threshold'],
+                'ai_completion_threshold' => (float) $validated['ai_completion_threshold'],
+                'photo_radius_require_location' => $request->boolean('photo_radius_require_location'),
+            ],
+            'ip'          => $request->ip(),
+        ]);
+
+        return back()->with('success', 'Pengaturan AI dan radius berhasil diperbarui.');
+    }
 }

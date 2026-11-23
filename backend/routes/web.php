@@ -98,6 +98,10 @@ Route::prefix('admin')->middleware(['auth', 'active', 'role:SUPERADMIN,ADMIN'])-
 
     // Log aktivitas sistem (khusus Super Admin)
     Route::get('/activity', [WebSuperAdminController::class, 'activityLog'])->name('admin.activity');
+
+    // Pengaturan ambang AI & radius foto (tanpa deploy)
+    Route::get('/settings', [WebSuperAdminController::class, 'settings'])->name('admin.settings');
+    Route::post('/settings', [WebSuperAdminController::class, 'updateSettings'])->name('admin.settings.update');
 });
 
 // 4. Pusat Kendali Operator Dinas

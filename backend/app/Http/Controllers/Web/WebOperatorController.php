@@ -204,6 +204,17 @@ class WebOperatorController extends Controller
     $teams = \App\Models\Team::where('is_active', true)->with(['leader', 'members.user', 'department'])->get();
     $dispatchMode = \App\Models\SystemSetting::get('dispatch_mode', 'HYBRID');
 
+    // Peringatan bila klasifikasi AI terakhir gagal dalam 24 jam terakhir.
+    $aiFailureAt = \App\Models\SystemSetting::get('ai_last_failure_at');
+    $aiDegraded = false;
+    if ($aiFailureAt) {
+        try {
+            $aiDegraded = \Illuminate\Support\Carbon::parse($aiFailureAt)->gt(now()->subDay());
+        } catch (\Throwable $e) {
+            $aiDegraded = false;
+        }
+    }
+
     return view('operator.dashboard', compact(
         'activeTab',
         'pendingVerification',
@@ -221,7 +232,9 @@ class WebOperatorController extends Controller
         'mapPoints',
         'districtStats',
         'avgPerformance',
-        'allComplaintsForReport'
+        'allComplaintsForReport',
+        'aiDegraded',
+        'aiFailureAt'
     ));
 }
 
