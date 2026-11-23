@@ -503,10 +503,10 @@
     <div class="relative z-10 max-w-[1280px] mx-auto px-5 sm:px-6 xl:px-0 pb-12 md:pb-[74px]">
         <div class="flex flex-col lg:flex-row items-stretch justify-between gap-8 lg:gap-[20px]">
             <!-- Kiri: Copy & 2 Pure White Store Buttons (Exact Width ~490px) -->
-            <div class="w-full lg:w-[500px] flex flex-col justify-between shrink-0 space-y-5">
-                <div class="space-y-4">
-                    <p class="text-[12.5px] sm:text-[13px] font-semibold text-[#C8DFDB]">
-                        <span class="sm:hidden">Aplikasi Resmi &bull; Android &amp; iOS</span>
+            <div class="w-full lg:w-[500px] flex flex-col justify-center shrink-0 space-y-6">
+                <div class="space-y-3.5">
+                    <p class="sm:hidden text-[12.5px] font-semibold text-[#C8DFDB]">
+                        Aplikasi Resmi &bull; Android &amp; iOS
                     </p>
                     <h2 class="font-outfit font-bold text-[30px] leading-[36px] sm:text-[42px] sm:leading-[50px] tracking-[-0.8px] text-white">
                         Laporkan Kerusakan<br>di Sekitar Anda
@@ -518,7 +518,7 @@
                 </div>
 
                 <!-- 2 Pure White Solid Store Buttons (Subtle 8px Rounded, Smooth Lift) -->
-                <div class="space-y-4 pt-1">
+                <div class="pt-1">
                     <div class="grid grid-cols-2 sm:flex sm:flex-row items-center gap-3 sm:gap-4">
                         <a href="{{ $landingApkUrl }}" download="SI-APPIK.APK"
                             class="flex items-center justify-center sm:justify-start gap-3.5 bg-white hover:bg-[#F2EFE7] hover:-translate-y-0.5 active:scale-[0.98] text-[#183654] px-4 sm:px-5 sm:w-[206px] h-[54px] rounded-[8px] transition-all duration-250 smooth-ease focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
@@ -648,6 +648,23 @@
     .custom-map-tooltip::before {
         border-top-color: #183654 !important;
     }
+    .landing-map-popup .leaflet-popup-content-wrapper {
+        background: #FFFFFF !important;
+        border-radius: 8px !important;
+        padding: 0 !important;
+        box-shadow: 0 16px 38px rgba(24, 54, 84, 0.22) !important;
+        overflow: hidden;
+        border: none !important;
+    }
+    .landing-map-popup .leaflet-popup-content {
+        margin: 0 !important;
+        width: 320px !important;
+        line-height: 1.4;
+    }
+    .landing-map-popup .leaflet-popup-tip {
+        background: #FFFFFF !important;
+        box-shadow: 0 6px 14px rgba(24, 54, 84, 0.16) !important;
+    }
 </style>
 
 <script>
@@ -702,6 +719,8 @@
         setupSearch();
 
         if (isReportsLoaded) {
+            window.landingComplaintsMap = {};
+            reportsData.forEach(r => { window.landingComplaintsMap[r.id] = r; });
             applyFilters(false);
             hideMapLoading();
         } else {
@@ -1083,6 +1102,53 @@
         container.innerHTML = html;
     }
 
+    function buildMapPopupHtml(item) {
+        const adm = parseAdministrativeAddress(item.address);
+        const districtText = getDistrictDisplayName(item.address);
+        const villageText = adm.village && adm.village !== 'Desa Wilayah'
+            ? adm.village.replace(/^Desa\/Kel\.\s*/i, 'Kel. ')
+            : (adm.road && adm.road !== 'Jalan / Area Kerusakan' ? adm.road : '');
+        const locParts = [];
+        if (villageText && villageText !== districtText) locParts.push(villageText);
+        if (districtText && districtText !== 'Kabupaten') locParts.push(districtText);
+        locParts.push('Kabupaten');
+
+        const badge = getSolidStatusMeta(item.status);
+        const safeCode = escapeHtml(item.public_code || 'ADU-0000');
+        const safeTitle = escapeHtml(item.title || 'Laporan Kerusakan');
+        const safeLoc = escapeHtml(locParts.join(', '));
+
+        const rawTeam = item.team_name || item.assigned_team_name || (item.assigned_team && item.assigned_team.name) || (item.team && item.team.name) || '';
+        const catId = Number(item.category_id || 0);
+        const fallbackUnit = catId === 1 ? 'Regu Jalan' : (catId === 2 ? 'Regu PJU' : (catId === 3 ? 'Regu Fasum' : 'Dinas PUPR'));
+        const safeTeam = escapeHtml(rawTeam || fallbackUnit);
+
+        return `
+            <div class="bg-white border-t-[3px] border-t-[#3368A0] px-5 py-4 text-left">
+                <div class="flex items-center justify-between gap-3">
+                    <span class="text-[12.5px] font-medium text-[#49637A] truncate">#${safeCode}</span>
+                    <span class="shrink-0 px-3 py-1 rounded-[4px] text-[11px] font-bold leading-none ${badge.bgClass}">
+                        ${badge.label}
+                    </span>
+                </div>
+                <h4 class="font-outfit font-bold text-[16px] text-[#183654] leading-[1.3] mt-2.5">
+                    ${safeTitle}
+                </h4>
+                <p class="text-[12.5px] text-[#49637A] leading-snug mt-3">
+                    ${safeLoc}
+                </p>
+                <div class="h-[1px] bg-[#E6E2D8] my-3"></div>
+                <div class="flex items-center justify-between gap-3">
+                    <span class="text-[12px] text-[#49637A] truncate">Pekerja Lapangan &middot; ${safeTeam}</span>
+                    <button type="button" onclick="openLandingDetailModal(${Number(item.id)})"
+                        class="shrink-0 text-[12.5px] font-bold text-[#3368A0] hover:text-[#183654] transition-colors cursor-pointer">
+                        Lihat Detail
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
     function focusReportOnMap(id) {
         selectedReportId = Number(id);
         const item = reportsData.find(r => Number(r.id) === Number(id));
@@ -1093,17 +1159,26 @@
         if (map && item.latitude && item.longitude) {
             map.flyTo([item.latitude, item.longitude], 16, {
                 animate: true,
-                duration: 0.85
+                duration: 0.75
             });
         }
 
-        setTimeout(() => {
+        const isMobileViewport = window.innerWidth < 768;
+        if (isMobileViewport) {
             if (typeof openLandingDetailModal === 'function') {
                 openLandingDetailModal(item);
             } else if (typeof openDetailModal === 'function') {
                 openDetailModal(item);
             }
-        }, 450);
+            return;
+        }
+
+        setTimeout(() => {
+            const targetMarker = markersMap[item.id];
+            if (targetMarker) {
+                targetMarker.openPopup();
+            }
+        }, 350);
     }
 
     function renderMarkers(items, shouldZoom = true) {
@@ -1146,6 +1221,14 @@
             const marker = L.marker(latLng, { icon: customIcon }).addTo(markersLayer);
             markersMap[item.id] = marker;
 
+            marker.bindPopup(buildMapPopupHtml(item), {
+                maxWidth: 340,
+                minWidth: 300,
+                closeButton: false,
+                className: 'landing-map-popup',
+                offset: [0, -10]
+            });
+
             if (item.damage_type === 'major' && item.end_latitude && item.end_longitude) {
                 let lineCoords = [latLng, [item.end_latitude, item.end_longitude]];
                 if (Array.isArray(item.route_coordinates) && item.route_coordinates.length > 1) {
@@ -1165,21 +1248,25 @@
                 });
 
                 polyline.on('click', () => {
-                    if (typeof openLandingDetailModal === 'function') openLandingDetailModal(item);
+                    selectedReportId = Number(item.id);
+                    if (window.innerWidth < 768) {
+                        if (typeof openLandingDetailModal === 'function') openLandingDetailModal(item);
+                    } else if (markersMap[item.id]) {
+                        markersMap[item.id].openPopup();
+                    }
                 });
 
                 bounds.push([item.end_latitude, item.end_longitude]);
             }
 
-            const shortTitle = item.title && item.title.length > 28 ? item.title.substring(0, 28) + '...' : (item.title || '');
-            marker.bindTooltip(`${escapeHtml(item.public_code)} · ${escapeHtml(shortTitle)} (${statusText})`, {
-                direction: 'top',
-                offset: [0, -12],
-                className: 'custom-map-tooltip'
-            });
-
             marker.on('click', () => {
-                if (typeof openLandingDetailModal === 'function') openLandingDetailModal(item);
+                selectedReportId = Number(item.id);
+                if (window.innerWidth < 768) {
+                    marker.closePopup();
+                    if (typeof openLandingDetailModal === 'function') openLandingDetailModal(item);
+                } else {
+                    marker.openPopup();
+                }
             });
         });
 

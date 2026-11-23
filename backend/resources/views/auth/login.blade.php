@@ -90,12 +90,108 @@
                 </div>
             </div>
 
-            <!-- Tombol Kembali ke Beranda (Khusus Desktop di Atas Kartu, Subtle 8px Rounded) -->
-            <div class="hidden lg:flex">
+            <!-- Baris Aksi Atas: Kembali ke Beranda + Ikon Pilih Cepat Akun Petugas (Sejajar) -->
+            <div class="flex items-center justify-between gap-3 relative z-30">
                 <a href="{{ url('/') }}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-[8px] bg-white hover:bg-[#E6E2D8] active:scale-[0.98] text-xs font-bold text-[#183654] transition-all duration-200 smooth-ease shadow-[0_4px_14px_rgba(24,54,84,0.06)]">
                     <i data-lucide="arrow-left" class="w-3.5 h-3.5 text-[#3368A0]"></i>
                     <span>Kembali ke Beranda</span>
                 </a>
+
+                @if(app()->environment('local', 'development'))
+                <div id="quickRolesAnchor" class="relative">
+                    <button type="button" id="quickRolesTriggerBtn" onclick="toggleQuickRolesPopover(event)"
+                        aria-haspopup="true" aria-expanded="false" aria-controls="quickRolesPopover"
+                        title="Pilih Cepat Akun Petugas"
+                        class="w-[40px] h-[40px] rounded-[8px] bg-white hover:bg-[#3368A0] text-[#3368A0] hover:text-white active:scale-[0.96] flex items-center justify-center transition-all duration-200 smooth-ease shadow-[0_4px_14px_rgba(24,54,84,0.06)] cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3368A0]">
+                        <i data-lucide="user" class="w-[18px] h-[18px]"></i>
+                    </button>
+
+                    <!-- Floating Popover Kartu Pilih Cepat Akun Petugas (Gaya Kartu Popup Blue & Cream) -->
+                    <div id="quickRolesPopover" role="dialog" aria-label="Pilih Cepat Akun Petugas"
+                        class="hidden opacity-0 -translate-y-1.5 transition-all duration-200 smooth-ease absolute right-0 top-[calc(100%+10px)] w-[312px] max-w-[calc(100vw-2.5rem)] bg-white rounded-[8px] border-t-[3px] border-t-[#3368A0] shadow-[0_18px_42px_rgba(24,54,84,0.18)] z-50 px-5 py-4">
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-[11.5px] font-medium text-[#49637A]">Akses Cepat Lokal</span>
+                            <span class="px-2.5 py-1 rounded-[4px] bg-[#3368A0] text-white text-[10.5px] font-bold leading-none">4 Peran</span>
+                        </div>
+                        <h3 class="font-outfit font-bold text-[15.5px] text-[#183654] leading-snug mt-2">
+                            Pilih Akun Petugas
+                        </h3>
+                        <p class="text-[11.5px] text-[#49637A] leading-snug mt-0.5">
+                            Klik peran untuk mengisi email dan sandi otomatis.
+                        </p>
+
+                        <div class="h-[1px] bg-[#E6E2D8] my-3"></div>
+
+                        <div class="space-y-1.5">
+                            <button type="button" onclick="selectRole('admin@kabupaten.go.id', 'password')"
+                                class="w-full flex items-center justify-between gap-3 px-2.5 py-2 rounded-[6px] hover:bg-[#F2EFE7] active:scale-[0.99] text-left transition-colors cursor-pointer group">
+                                <div class="flex items-center gap-2.5 min-w-0">
+                                    <div class="w-8 h-8 rounded-[6px] bg-[#F2EFE7] group-hover:bg-white flex items-center justify-center shrink-0 transition-colors">
+                                        <i data-lucide="shield" class="w-4 h-4 text-[#3368A0]"></i>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <span class="block text-[12.5px] font-bold text-[#183654] leading-tight truncate">Super Admin</span>
+                                        <span class="block text-[10.5px] text-[#49637A] truncate">Kendali Penuh Sistem</span>
+                                    </div>
+                                </div>
+                                <span class="text-[11.5px] font-bold text-[#3368A0] group-hover:text-[#183654] shrink-0">Pilih</span>
+                            </button>
+
+                            <button type="button" onclick="selectRole('operator@kabupaten.go.id', 'password')"
+                                class="w-full flex items-center justify-between gap-3 px-2.5 py-2 rounded-[6px] hover:bg-[#F2EFE7] active:scale-[0.99] text-left transition-colors cursor-pointer group">
+                                <div class="flex items-center gap-2.5 min-w-0">
+                                    <div class="w-8 h-8 rounded-[6px] bg-[#F2EFE7] group-hover:bg-white flex items-center justify-center shrink-0 transition-colors">
+                                        <i data-lucide="clipboard-check" class="w-4 h-4 text-[#3368A0]"></i>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <span class="block text-[12.5px] font-bold text-[#183654] leading-tight truncate">Operator</span>
+                                        <span class="block text-[10.5px] text-[#49637A] truncate">Verifikasi &amp; Disposisi</span>
+                                    </div>
+                                </div>
+                                <span class="text-[11.5px] font-bold text-[#3368A0] group-hover:text-[#183654] shrink-0">Pilih</span>
+                            </button>
+
+                            <button type="button" onclick="selectRole('bupati@kabupaten.go.id', 'password')"
+                                class="w-full flex items-center justify-between gap-3 px-2.5 py-2 rounded-[6px] hover:bg-[#F2EFE7] active:scale-[0.99] text-left transition-colors cursor-pointer group">
+                                <div class="flex items-center gap-2.5 min-w-0">
+                                    <div class="w-8 h-8 rounded-[6px] bg-[#F2EFE7] group-hover:bg-white flex items-center justify-center shrink-0 transition-colors">
+                                        <i data-lucide="landmark" class="w-4 h-4 text-[#3368A0]"></i>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <span class="block text-[12.5px] font-bold text-[#183654] leading-tight truncate">Kepala Daerah</span>
+                                        <span class="block text-[10.5px] text-[#49637A] truncate">Monitoring Eksekutif</span>
+                                    </div>
+                                </div>
+                                <span class="text-[11.5px] font-bold text-[#3368A0] group-hover:text-[#183654] shrink-0">Pilih</span>
+                            </button>
+
+                            <button type="button" onclick="selectRole('petugas@kabupaten.go.id', 'password')"
+                                class="w-full flex items-center justify-between gap-3 px-2.5 py-2 rounded-[6px] hover:bg-[#F2EFE7] active:scale-[0.99] text-left transition-colors cursor-pointer group">
+                                <div class="flex items-center gap-2.5 min-w-0">
+                                    <div class="w-8 h-8 rounded-[6px] bg-[#F2EFE7] group-hover:bg-white flex items-center justify-center shrink-0 transition-colors">
+                                        <i data-lucide="wrench" class="w-4 h-4 text-[#3368A0]"></i>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <span class="block text-[12.5px] font-bold text-[#183654] leading-tight truncate">Pekerja Lapangan</span>
+                                        <span class="block text-[10.5px] text-[#49637A] truncate">Pengerjaan Fisik Regu</span>
+                                    </div>
+                                </div>
+                                <span class="text-[11.5px] font-bold text-[#3368A0] group-hover:text-[#183654] shrink-0">Pilih</span>
+                            </button>
+                        </div>
+
+                        <div class="h-[1px] bg-[#E6E2D8] mt-3 mb-2.5"></div>
+
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-[11px] text-[#49637A]">Dinas PUPR &middot; Akun Uji</span>
+                            <button type="button" onclick="closeQuickRolesPopover()"
+                                class="text-[11.5px] font-bold text-[#3368A0] hover:text-[#183654] transition-colors cursor-pointer">
+                                Tutup
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                @endif
             </div>
 
             <!-- Kartu Login Utama (Subtle 12px Rounded, Top 3px #3368A0 Accent Bar) -->
@@ -108,63 +204,6 @@
                         Silakan masuk menggunakan akun Admin, Operator, Kepala Daerah, atau Pekerja Lapangan Dinas PUPR terdaftar.
                     </p>
                 </div>
-
-                @if(app()->environment('local', 'development'))
-                <!-- Kotak Pilih Cepat Akun Tugas (Hanya Aktif di Environment Lokal) -->
-                <div id="quickRolesWrapper" class="bg-[#F2EFE7] rounded-[8px] p-3.5 space-y-2.5">
-                    <div class="flex items-center justify-between gap-2">
-                        <div class="flex items-center gap-2">
-                            <span class="w-2 h-2 rounded-[2px] bg-[#3368A0] shrink-0"></span>
-                            <span class="text-[11px] font-bold tracking-tight text-[#183654]">Pilih Cepat Akun Tugas</span>
-                        </div>
-                        <button type="button" onclick="toggleQuickRoles()" id="toggleQuickRolesBtn"
-                            class="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#3368A0] hover:text-[#183654] bg-white px-2.5 py-1 rounded-[6px] transition-colors duration-200 cursor-pointer">
-                            <i id="toggleQuickRolesIcon" data-lucide="eye-off" class="w-3.5 h-3.5"></i>
-                            <span id="toggleQuickRolesText">Sembunyikan</span>
-                        </button>
-                    </div>
-
-                    <div id="quickRolesContent" class="space-y-2">
-                        <div class="grid grid-cols-2 gap-2">
-                            <button type="button" onclick="selectRole('admin@kabupaten.go.id', 'password', 'Super Admin')"
-                                class="role-btn p-2.5 rounded-[6px] bg-white hover:bg-[#183654] hover:text-white active:scale-[0.98] text-left transition-all duration-200 flex flex-col gap-0.5 cursor-pointer group">
-                                <div class="flex items-center gap-1.5 text-[#183654] group-hover:text-white font-bold text-xs">
-                                    <i data-lucide="shield" class="w-3.5 h-3.5 text-[#3368A0] group-hover:text-[#C8DFDB]"></i>
-                                    <span>Super Admin</span>
-                                </div>
-                                <span class="text-[10px] text-[#49637A] group-hover:text-[#C8DFDB]">Kendali Penuh</span>
-                            </button>
-
-                            <button type="button" onclick="selectRole('operator@kabupaten.go.id', 'password', 'Operator')"
-                                class="role-btn p-2.5 rounded-[6px] bg-white hover:bg-[#183654] hover:text-white active:scale-[0.98] text-left transition-all duration-200 flex flex-col gap-0.5 cursor-pointer group">
-                                <div class="flex items-center gap-1.5 text-[#183654] group-hover:text-white font-bold text-xs">
-                                    <i data-lucide="clipboard-check" class="w-3.5 h-3.5 text-[#3368A0] group-hover:text-[#C8DFDB]"></i>
-                                    <span>Operator</span>
-                                </div>
-                                <span class="text-[10px] text-[#49637A] group-hover:text-[#C8DFDB]">Verifikasi Laporan</span>
-                            </button>
-
-                            <button type="button" onclick="selectRole('bupati@kabupaten.go.id', 'password', 'Kepala Daerah')"
-                                class="role-btn p-2.5 rounded-[6px] bg-white hover:bg-[#183654] hover:text-white active:scale-[0.98] text-left transition-all duration-200 flex flex-col gap-0.5 cursor-pointer group">
-                                <div class="flex items-center gap-1.5 text-[#183654] group-hover:text-white font-bold text-xs">
-                                    <i data-lucide="landmark" class="w-3.5 h-3.5 text-[#3368A0] group-hover:text-[#C8DFDB]"></i>
-                                    <span>Kepala Daerah</span>
-                                </div>
-                                <span class="text-[10px] text-[#49637A] group-hover:text-[#C8DFDB]">Monitoring Eksekutif</span>
-                            </button>
-
-                            <button type="button" onclick="selectRole('petugas@kabupaten.go.id', 'password', 'Pekerja Lap.')"
-                                class="role-btn p-2.5 rounded-[6px] bg-white hover:bg-[#183654] hover:text-white active:scale-[0.98] text-left transition-all duration-200 flex flex-col gap-0.5 cursor-pointer group">
-                                <div class="flex items-center gap-1.5 text-[#183654] group-hover:text-white font-bold text-xs">
-                                    <i data-lucide="wrench" class="w-3.5 h-3.5 text-[#3368A0] group-hover:text-[#C8DFDB]"></i>
-                                    <span>Pekerja Lap.</span>
-                                </div>
-                                <span class="text-[10px] text-[#49637A] group-hover:text-[#C8DFDB]">Pengerjaan Fisik</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                @endif
 
                 <!-- Form Input Kredensial -->
                 <form id="loginForm" method="POST" action="{{ route('login') }}" onsubmit="handleLoginSubmit(event)" class="space-y-4">
@@ -257,15 +296,6 @@
                         class="w-full h-[48px] px-4 rounded-[8px] bg-[#3368A0] hover:bg-[#275485] active:scale-[0.99] text-white font-semibold text-[14.5px] transition-all duration-200 smooth-ease flex items-center justify-center gap-2 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3368A0]">
                         <span id="submitBtnText">Masuk</span>
                     </button>
-
-                    <!-- Tombol Beranda Khusus Mobile -->
-                    <div class="lg:hidden pt-1">
-                        <a href="{{ url('/') }}"
-                            class="w-full h-[46px] px-4 rounded-[8px] bg-[#F2EFE7] hover:bg-[#E6E2D8] active:scale-[0.99] text-[#183654] font-semibold text-xs transition-all duration-200 flex items-center justify-center gap-2">
-                            <i data-lucide="arrow-left" class="w-3.5 h-3.5 text-[#3368A0]"></i>
-                            <span>Kembali ke Beranda</span>
-                        </a>
-                    </div>
                 </form>
 
                 <!-- Callout Informasi Warga (Subtle 8px Rounded) -->
@@ -531,25 +561,39 @@
 </div>
 
 <script>
-    function toggleQuickRoles() {
-        const content = document.getElementById('quickRolesContent');
-        const btnText = document.getElementById('toggleQuickRolesText');
-        const icon = document.getElementById('toggleQuickRolesIcon');
-        if (!content) return;
+    function toggleQuickRolesPopover(event) {
+        if (event) event.stopPropagation();
+        const popover = document.getElementById('quickRolesPopover');
+        const trigger = document.getElementById('quickRolesTriggerBtn');
+        if (!popover) return;
 
-        const isHidden = content.classList.contains('hidden');
+        const isHidden = popover.classList.contains('hidden');
         if (isHidden) {
-            content.classList.remove('hidden');
-            if (btnText) btnText.textContent = 'Sembunyikan';
-            if (icon) icon.setAttribute('data-lucide', 'eye-off');
-            localStorage.setItem('aduan_dev_roles_hidden', 'false');
+            popover.classList.remove('hidden');
+            requestAnimationFrame(() => {
+                popover.classList.remove('opacity-0', '-translate-y-1.5');
+                popover.classList.add('opacity-100', 'translate-y-0');
+            });
+            if (trigger) trigger.setAttribute('aria-expanded', 'true');
+            if (window.lucide) lucide.createIcons({ root: popover });
         } else {
-            content.classList.add('hidden');
-            if (btnText) btnText.textContent = 'Tampilkan';
-            if (icon) icon.setAttribute('data-lucide', 'eye');
-            localStorage.setItem('aduan_dev_roles_hidden', 'true');
+            closeQuickRolesPopover();
         }
-        if (window.lucide) lucide.createIcons();
+    }
+
+    function closeQuickRolesPopover() {
+        const popover = document.getElementById('quickRolesPopover');
+        const trigger = document.getElementById('quickRolesTriggerBtn');
+        if (!popover || popover.classList.contains('hidden')) return;
+
+        popover.classList.remove('opacity-100', 'translate-y-0');
+        popover.classList.add('opacity-0', '-translate-y-1.5');
+        if (trigger) trigger.setAttribute('aria-expanded', 'false');
+        setTimeout(() => {
+            if (popover.classList.contains('opacity-0')) {
+                popover.classList.add('hidden');
+            }
+        }, 180);
     }
 
     function isUserOnMobile() {
@@ -869,8 +913,12 @@
     }
 
     function selectRole(email, password) {
-        document.getElementById('email').value = email;
-        document.getElementById('password').value = password;
+        const emailEl = document.getElementById('email');
+        const passEl = document.getElementById('password');
+        if (emailEl) emailEl.value = email;
+        if (passEl) passEl.value = password;
+        closeQuickRolesPopover();
+        if (typeof checkWargaLive === 'function') checkWargaLive(email);
     }
 
     let wargaCurrentDetectedName = 'Warga';
@@ -932,20 +980,18 @@
             if (emailInput.value) checkWargaLive(emailInput.value);
         }
 
-        if (localStorage.getItem('aduan_dev_roles_hidden') === 'true') {
-            const content = document.getElementById('quickRolesContent');
-            const btnText = document.getElementById('toggleQuickRolesText');
-            const icon = document.getElementById('toggleQuickRolesIcon');
-            if (content) {
-                content.classList.add('hidden');
-                if (btnText) btnText.textContent = 'Tampilkan';
-                if (icon) icon.setAttribute('data-lucide', 'eye');
-                if (window.lucide) lucide.createIcons();
+        document.addEventListener('click', function(e) {
+            const anchor = document.getElementById('quickRolesAnchor');
+            if (anchor && !anchor.contains(e.target)) {
+                closeQuickRolesPopover();
             }
-        }
+        });
 
         window.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') closeForgotPasswordModal();
+            if (e.key === 'Escape') {
+                closeForgotPasswordModal();
+                closeQuickRolesPopover();
+            }
         });
 
         const forgotModal = document.getElementById('forgotPasswordModal');
