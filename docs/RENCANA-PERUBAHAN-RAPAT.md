@@ -154,3 +154,44 @@ Migrasi kategori bersifat mengubah data 12 aduan yang ada; wajib backup sebelum 
   Tanpa ambang dan fallback yang jelas, laporan fiktif bisa lolos.
 - Menghapus laporan kinerja juga menghapus bukti evaluasi petugas; pastikan bukan kebutuhan audit.
 - Data jaringan jalan tidak ada di repo; fitur pemetaan tidak bisa "ditebak".
+
+---
+
+## 7. Keputusan lanjutan: verifikasi & validasi sepenuhnya oleh AI
+
+Rapat menetapkan verifikasi dan validasi manual operator dihapus, bukan sekadar
+dijadikan cadangan. Alasannya: foto laporan wajib diambil dari kamera (album ditutup)
+sehingga foto lama atau tangkapan layar tidak bisa dipakai, dan setiap foto dicap
+watermark berisi tanggal, jam, serta koordinat.
+
+Alur yang berlaku sekarang:
+
+| Tahap | Yang menentukan | Hasil |
+| :--- | :--- | :--- |
+| Laporan masuk | AI menilai foto | kerusakan infrastruktur -> `VERIFIED`; bukan kerusakan -> `REJECTED` otomatis |
+| AI tidak dapat dijalankan | — | laporan tetap `VERIFIED` dengan penanda `verified_by_ai = false`, kegagalan dicatat di audit dan `ai_last_failure_at` |
+| Pekerjaan selesai | AI + radius foto | lolos -> `COMPLETED`; gagal -> `REVISION_REQUIRED` otomatis |
+
+Konsekuensi yang disengaja:
+- Tab "Verifikasi Aduan" dan "Validasi Hasil" dihapus dari sidebar operator; tab
+  validasi di portal pekerja lapangan juga dihapus.
+- Status `WAITING_VERIFICATION` tidak lagi berhenti menunggu manusia; hanya menjadi
+  titik singgah singkat sebelum AI memutuskan.
+- `ai_verify_threshold` kini hanya menandai keyakinan AI (penanda "AI ragu"),
+  bukan penentu status.
+
+### Akses peran
+
+- **Kepala Dinas (role `DINAS`)**: akses penuh setara admin, termasuk menu admin,
+  log aktivitas, dan pengaturan sistem.
+- **Super Admin**: menu "Log Aktivitas" dan "Pengaturan Sistem" dipindah ke dalam
+  dropdown Super Admin, bukan lagi menu terpisah di sidebar.
+- **Monitoring**: layar pantau dibuka di `/monitoring` **tanpa login dan tanpa
+  sidebar**, dirancang untuk TV ruang kendali. Isinya agregat: aduan masuk, sedang
+  dikerjakan, selesai, tingkat tuntas, sebaran titik di peta, status penanganan,
+  tren tujuh hari, kecamatan terbanyak, dan aduan terbaru. Tidak ada nama, nomor HP,
+  atau surel pelapor. Data diperbarui otomatis tiap 30 detik.
+
+Catatan risiko: karena `/monitoring` tanpa login, siapa pun yang tahu alamatnya dapat
+melihat agregat tersebut. Isinya sengaja dibatasi pada data non-pribadi. Bila kelak
+perlu ditutup, tambahkan token akses di route group `monitoring`.

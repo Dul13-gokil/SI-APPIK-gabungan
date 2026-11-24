@@ -21,6 +21,14 @@ class ImageWatermarkService
             return false;
         }
 
+        // GD tanpa dukungan JPEG (imagejpeg tidak ada) membuat watermark gagal tanpa
+        // jejak. Catat sekali sebagai error agar tidak lolos diam-diam.
+        if (!function_exists('imagecreatefromjpeg') || !function_exists('imagejpeg')) {
+            Log::error('GD terpasang tanpa dukungan JPEG: watermark tanggal/koordinat tidak dapat diterapkan.');
+
+            return false;
+        }
+
         try {
             $info = @getimagesize($absolutePath);
             if (!$info || empty($info[0]) || empty($info[1])) {

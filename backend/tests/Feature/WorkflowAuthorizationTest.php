@@ -180,6 +180,8 @@ class WorkflowAuthorizationTest extends TestCase
             ])
             ->assertStatus(200);
 
-        $this->assertSame('WAITING_VERIFICATION', $complaint->fresh()->status);
+        // Validasi manual dihapus: AI memutuskan. Tanpa bukti yang lolos, pekerjaan
+        // langsung dikembalikan untuk revisi.
+        $this->assertContains($complaint->fresh()->status, ['COMPLETED', 'REVISION_REQUIRED']);
     }
 }

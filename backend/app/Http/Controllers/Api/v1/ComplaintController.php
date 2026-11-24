@@ -284,7 +284,11 @@ class ComplaintController extends Controller
             'end_latitude'      => 'nullable|numeric|between:-90,90',
             'end_longitude'     => 'nullable|numeric|between:-180,180',
             'route_coordinates' => 'nullable',
-            'photos.*'          => 'nullable|file|image|max:10240',
+            'photos'            => 'required|array|min:1',
+            'photos.*'          => 'required|file|image|max:10240',
+        ], [
+            'photos.required' => 'Lampirkan minimal satu foto kerusakan yang diambil langsung dari kamera.',
+            'photos.min'      => 'Lampirkan minimal satu foto kerusakan yang diambil langsung dari kamera.',
         ]);
 
         $damageType = $validated['damage_type'] ?? 'minor';
@@ -367,10 +371,26 @@ class ComplaintController extends Controller
             $damageType = ((int) ($aiResult['severity_level'] ?? 1) >= 3) ? 'major' : 'minor';
         }
 
-        // Ambang verifikasi otomatis bisa dikalibrasi tanpa deploy.
+        // Verifikasi manual dihapus (keputusan rapat): AI yang memutuskan status awal.
+        // Foto wajib dari kamera (bukan album) dan diberi watermark waktu + koordinat,
+        // sehingga laporan palsu sulit lolos.
+        //   AI menilai infrastruktur rusak  -> VERIFIED
+        //   AI menilai bukan kerusakan      -> REJECTED otomatis
+        //   AI tidak bisa dijalankan        -> VERIFIED dengan tanda belum tervalidasi,
+        //                                      operator tetap bisa menolak dari antrean.
         $verifyThreshold = (float) \App\Models\SystemSetting::get('ai_verify_threshold', 0.80);
+        $aiFallback = is_array($aiResult) && (($aiResult['category_label'] ?? '') === 'Foto Belum Terverifikasi');
+        $aiRan = is_array($aiResult) && ! $aiFallback;
+
+        if (! $aiRan) {
+            \App\Models\SystemSetting::set('ai_last_failure_at', now()->toIso8601String(), 'string');
+        }
+
+        // Ambang hanya menandai keyakinan AI (dipakai untuk penanda "AI ragu" di antrean
+        // operator). Status tetap ditentukan AI karena verifikasi manual sudah dihapus.
         $autoVerified = $aiValid && $aiConfidence >= $verifyThreshold;
-        $initialStatus = $autoVerified ? 'VERIFIED' : 'SUBMITTED';
+        $autoRejected = $aiRan && ! $aiValid;
+        $initialStatus = $autoRejected ? 'REJECTED' : 'VERIFIED';
 
         $category = Category::findOrFail($validated['category_id']);
 
@@ -384,7 +404,7 @@ class ComplaintController extends Controller
         );
 
 
-        $complaint = DB::transaction(function () use ($validated, $damageType, $userId, $priorityCalc, $photoFiles, $initialStatus, $autoVerified) {
+        $complaint = DB::transaction(function () use ($validated, $damageType, $userId, $priorityCalc, $photoFiles, $initialStatus, $autoVerified, $autoRejected) {
             $publicCode = $this->generatePublicCode($damageType);
             $isAnon = filter_var($validated['is_anonymous'] ?? false, FILTER_VALIDATE_BOOLEAN);
 
@@ -447,8 +467,10 @@ class ComplaintController extends Controller
             ComplaintStatusHistory::create([
                 'complaint_id' => $complaint->id,
                 'from_status'  => null,
-                'to_status'    => 'SUBMITTED',
-                'note'         => 'Laporan dibuat oleh warga dan menunggu verifikasi administratif.',
+                'to_status'    => $initialStatus,
+                'note'         => $autoRejected
+                    ? 'Ditolak otomatis: foto yang dikirim tidak terdeteksi sebagai kerusakan infrastruktur.'
+                    : 'Laporan dibuat oleh warga dan langsung diverifikasi oleh AI.',
                 'changed_by'   => $userId,
             ]);
 
@@ -472,6 +494,16 @@ class ComplaintController extends Controller
             foreach ($uploadedPhotos as $index => $photo) {
                 $realPath = $photo->getRealPath();
                 $path = $photo->store('complaints', 'public');
+
+                // Bukti laporan warga juga dicap waktu + koordinat agar tidak bisa
+                // memakai foto lama atau foto milik orang lain.
+                app(\App\Services\ImageWatermarkService::class)->applyFieldWatermark(
+                    \Illuminate\Support\Facades\Storage::disk('public')->path($path),
+                    (string) $complaint->public_code,
+                    (float) $validated['latitude'],
+                    (float) $validated['longitude'],
+                    null
+                );
                 // Foto hanya disimpan di disk. Duplikat base64 di database pernah membuat
                 // tabel membengkak (10 MB foto -> ~13 MB per baris); jangan dihidupkan lagi.
                 $photoAttrs = [
@@ -504,6 +536,7 @@ class ComplaintController extends Controller
                 'category_id'     => $complaint->category_id,
                 'damage_type'     => $damageType,
                 'verified_by_ai'  => $autoVerified,
+                'auto_rejected'   => $autoRejected,
                 'ai_confidence'   => $aiConfidence,
                 'ai_threshold'    => $verifyThreshold,
                 'radius_m'        => $complaint->radius_m,
@@ -548,6 +581,19 @@ class ComplaintController extends Controller
                 'type'      => 'COMPLAINT_VERIFIED',
                 'title'     => 'Laporan Diverifikasi Otomatis',
                 'body'      => "Laporan #{$complaint->public_code} sudah lolos verifikasi AI dan menunggu penugasan regu lapangan.",
+                'data_json' => [
+                    'complaint_id' => $complaint->id,
+                    'public_code'  => $complaint->public_code,
+                ],
+            ]);
+        }
+
+        if ($autoRejected) {
+            Notification::create([
+                'user_id'   => $complaint->user_id,
+                'type'      => 'COMPLAINT_REJECTED',
+                'title'     => 'Laporan Tidak Dapat Diproses',
+                'body'      => "Laporan #{$complaint->public_code} tidak dapat diproses karena foto yang dikirim tidak terdeteksi sebagai kerusakan infrastruktur. Pastikan foto diambil langsung dari kamera pada objek yang rusak.",
                 'data_json' => [
                     'complaint_id' => $complaint->id,
                     'public_code'  => $complaint->public_code,

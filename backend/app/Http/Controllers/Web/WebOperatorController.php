@@ -22,7 +22,7 @@ class WebOperatorController extends Controller
 {
     public function index(Request $request): View
     {
-        $activeTab = $request->input('tab', 'verify');
+        $activeTab = $request->input('tab', 'ready');
 
         // 1. Antrean Verifikasi Laporan Masuk
         $pendingVerification = Complaint::with(['category', 'user', 'citizen', 'photos', 'aiAssessments'])

@@ -175,7 +175,7 @@ class WorkflowController extends Controller
             new ComplaintResource($complaint->fresh()),
             $autoCompleted
                 ? 'Bukti diterima dan pekerjaan dinyatakan selesai otomatis oleh AI.'
-                : 'Bukti pengerjaan berhasil dikirim ke Operator untuk validasi akhir.'
+                : 'Bukti diterima, tetapi AI masih mendeteksi kerusakan. Perbaikan dikembalikan untuk diulang.'
         );
     }
 

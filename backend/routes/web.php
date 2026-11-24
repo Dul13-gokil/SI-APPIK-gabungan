@@ -122,9 +122,12 @@ Route::prefix('bupati')->middleware(['auth', 'active', 'role:KEPALA_DAERAH,BUPAT
     Route::get('/', [WebBupatiController::class, 'index'])->name('bupati.dashboard');
 });
 
-// 5b. Dashboard Monitoring (hanya baca) untuk role MONITORING
-Route::prefix('monitoring')->middleware(['auth', 'active', 'role:MONITORING,SUPERADMIN,ADMIN,DINAS'])->group(function () {
-    Route::get('/', [WebBupatiController::class, 'index'])->name('monitoring.dashboard');
+// 5b. Layar monitoring ruang kendali.
+// Sengaja tanpa login dan tanpa sidebar: perangkat dipasang di ruang kendali dan
+// dibuka sekali. Yang tampil hanya agregat + data publik aduan (tanpa identitas pelapor).
+Route::prefix('monitoring')->group(function () {
+    Route::get('/', [\App\Http\Controllers\Web\WebMonitoringController::class, 'index'])->name('monitoring.dashboard');
+    Route::get('/data', [\App\Http\Controllers\Web\WebMonitoringController::class, 'data'])->name('monitoring.data');
 });
 
 // 6. Portal Petugas Lapangan

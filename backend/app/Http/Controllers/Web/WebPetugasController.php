@@ -279,7 +279,7 @@ class WebPetugasController extends Controller
             'success',
             $autoCompleted
                 ? "Pekerjaan laporan #{$complaint->public_code} dinyatakan selesai otomatis oleh AI."
-                : "Bukti pengerjaan laporan #{$complaint->public_code} berhasil dikirim ke Operator untuk validasi akhir."
+                : "Bukti laporan #{$complaint->public_code} diterima, tetapi AI masih mendeteksi kerusakan. Perbaikan dikembalikan untuk diulang."
         );
     }
 

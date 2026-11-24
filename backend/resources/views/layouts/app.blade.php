@@ -164,7 +164,7 @@
                     $isOperatorRoute = request()->routeIs('operator.*');
                     $isBupatiRoute = request()->routeIs('bupati.*');
                     $isPetugasRoute = request()->routeIs('petugas.*');
-                    $currentQueryTab = request()->get('tab', $isAdminRoute ? 'overview' : ($isOperatorRoute ? 'verify' : ($isBupatiRoute ? 'executive' : ($isPetugasRoute ? 'spatial' : ''))));
+                    $currentQueryTab = request()->get('tab', $isAdminRoute ? 'overview' : ($isOperatorRoute ? 'ready' : ($isBupatiRoute ? 'executive' : ($isPetugasRoute ? 'spatial' : ''))));
                 @endphp
                 <nav class="p-3 space-y-1.5 flex-1 overflow-y-auto">
                     <div class="px-3 pt-1 pb-1 text-[10px] font-bold uppercase tracking-wider text-[#64748B]">
@@ -180,7 +180,7 @@
                         Portal Kerja &amp; Role
                     </div>
 
-                    @if(auth()->user()->isSuperAdmin())
+                    @if(auth()->user()->isSuperAdmin() || auth()->user()->isKepalaDinas())
                         <div class="role-accordion-group rounded-xl transition">
                             <button type="button" onclick="toggleRoleAccordion('admin')" aria-expanded="{{ $isAdminRoute ? 'true' : 'false' }}"
                                 class="w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl text-xs font-bold border {{ $isAdminRoute ? 'bg-[#EFF6FF] text-[#2563EB] border-[#BFDBFE]' : 'bg-white text-[#334155] border-[#E2E8F0] hover:bg-[#F8FAFC] hover:text-[#0F172A]' }} transition">
@@ -201,18 +201,22 @@
                                         ['tab' => 'teams-management', 'label' => 'Regu & Tugas', 'icon' => 'hard-hat'],
                                         ['tab' => 'regions-gis', 'label' => 'Peta Wilayah GIS', 'icon' => 'map-pin'],
                                         ['tab' => 'reporting', 'label' => 'Laporan Kinerja', 'icon' => 'bar-chart-3'],
+                                        ['url' => route('admin.activity'), 'label' => 'Log Aktivitas', 'icon' => 'scroll-text', 'active' => 'admin.activity'],
+                                        ['url' => route('admin.settings'), 'label' => 'Pengaturan Sistem', 'icon' => 'settings', 'active' => 'admin.settings'],
                                     ];
                                 @endphp
                                 @foreach($adminMenuItems as $item)
                                     @php
                                         $isSubActive = $isAdminRoute && (
-                                            $currentQueryTab === $item['tab'] ||
-                                            ($item['tab'] === 'users-management' && $currentQueryTab === 'users-list')
+                                            !empty($item['active'])
+                                                ? request()->routeIs($item['active'])
+                                                : ($currentQueryTab === ($item['tab'] ?? null) ||
+                                                   (($item['tab'] ?? null) === 'users-management' && $currentQueryTab === 'users-list'))
                                         );
                                     @endphp
-                                    <a href="{{ route('admin.dashboard', ['tab' => $item['tab']]) }}"
-                                       onclick="return handleSidebarTabClick(event, 'admin', '{{ $item['tab'] }}')"
-                                       data-sidebar-role="admin" data-sidebar-tab="{{ $item['tab'] }}"
+                                    <a href="{{ $item['url'] ?? route('admin.dashboard', ['tab' => $item['tab']]) }}"
+                                       @if(empty($item['url'])) onclick="return handleSidebarTabClick(event, 'admin', '{{ $item['tab'] }}')" @endif
+                                       data-sidebar-role="admin" @if(!empty($item['tab'])) data-sidebar-tab="{{ $item['tab'] }}" @endif
                                        class="sidebar-subitem flex items-center gap-2 px-3 py-2 rounded-xl text-[11px] font-semibold transition {{ $isSubActive ? 'bg-[#2563EB] text-white font-bold shadow-xs' : 'text-[#475569] hover:bg-[#F8FAFC] hover:text-[#0F172A]' }}">
                                         <i data-lucide="{{ $item['icon'] }}" class="w-3.5 h-3.5 shrink-0 {{ $isSubActive ? 'text-white' : 'text-[#64748B]' }}"></i>
                                         <span class="truncate">{{ $item['label'] }}</span>
@@ -234,12 +238,11 @@
                             </button>
                             <div id="accordionBody-operator" class="{{ $isOperatorRoute ? 'block' : 'hidden' }} py-1.5 px-1 space-y-1">
                                 @php
+                                    // Verifikasi & validasi manual dihapus: keduanya sudah ditangani AI.
                                     $operatorMenuItems = [
-                                        ['tab' => 'verify', 'label' => 'Verifikasi Aduan', 'icon' => 'filter'],
-                                        ['tab' => 'ready', 'label' => 'Siap Ditugaskan (AI)', 'icon' => 'sparkles'],
+                                        ['tab' => 'ready', 'label' => 'Siap Ditugaskan', 'icon' => 'sparkles'],
                                         ['tab' => 'dispatched', 'label' => 'Ditugaskan', 'icon' => 'send'],
                                         ['tab' => 'inprogress', 'label' => 'Dikerjakan', 'icon' => 'hammer'],
-                                        ['tab' => 'validation', 'label' => 'Validasi Hasil', 'icon' => 'check-square'],
                                         ['tab' => 'archive', 'label' => 'Arsip Aduan', 'icon' => 'archive'],
                                         ['url' => route('operator.petugas.create'), 'label' => 'Tambah Pekerja Lapangan', 'icon' => 'user-plus', 'active' => 'operator.petugas.create'],
                                         ['tab' => 'regions-gis', 'label' => 'Peta Wilayah GIS', 'icon' => 'map-pin'],
@@ -315,7 +318,6 @@
                                     $petugasMenuItems = [
                                         ['tab' => 'assigned', 'label' => 'Penugasan', 'icon' => 'send'],
                                         ['tab' => 'tasks', 'label' => 'Dikerjakan', 'icon' => 'hard-hat'],
-                                        ['tab' => 'validation', 'label' => 'Validasi', 'icon' => 'shield-check'],
                                         ['tab' => 'history', 'label' => 'Tugas Selesai', 'icon' => 'check-circle'],
                                         ['tab' => 'spatial', 'label' => 'Peta Wilayah GIS', 'icon' => 'map-pin'],
                                     ];
@@ -334,16 +336,9 @@
                         </div>
                     @endif
                     @php
+                        // Dashboard Monitoring tidak lagi di sidebar: layar monitoring dibuka
+                        // langsung tanpa login dan tanpa sidebar.
                         $extraMenuItems = array_values(array_filter([
-                            auth()->user()->isMonitoring() || auth()->user()->isSuperAdmin() || auth()->user()->isKepalaDinas()
-                                ? ['url' => route('monitoring.dashboard'), 'label' => 'Dashboard Monitoring', 'icon' => 'monitor-dot']
-                                : null,
-                            auth()->user()->isSuperAdmin()
-                                ? ['url' => route('admin.activity'), 'label' => 'Log Aktivitas', 'icon' => 'scroll-text']
-                                : null,
-                            auth()->user()->isSuperAdmin()
-                                ? ['url' => route('admin.settings'), 'label' => 'Pengaturan Sistem', 'icon' => 'settings']
-                                : null,
                             auth()->user()->isPengawas()
                                 ? ['url' => route('pengawas.team'), 'label' => 'Kelola Anggota Regu', 'icon' => 'users']
                                 : null,

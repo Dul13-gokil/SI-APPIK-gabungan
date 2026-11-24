@@ -501,7 +501,7 @@
                                 <option value="PETUGAS" selected>Pekerja Lapangan (Dinas PUPR)</option>
                                 <option value="PENGAWAS">Pengawas Lapangan (Kelola Regu)</option>
                                 <option value="DINAS">Kepala Dinas (Akses Penuh)</option>
-                                <option value="MONITORING">Dashboard Monitoring (Hanya Baca)</option>
+                                <option value="MONITORING">Monitoring (layar pantau, tanpa login)</option>
                                 <option value="KEPALA_DAERAH" {{ $hasBupati ? 'disabled class=text-slate-400' : '' }}>
                                     Kepala Daerah Kabupaten {{ $hasBupati ? '(Terkunci)' : '' }}
                                 </option>

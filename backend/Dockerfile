@@ -11,11 +11,15 @@ RUN npm run build
 # Stage 2: Production PHP 8.3 + Apache for Laravel 11/12 on Railway.app
 FROM php:8.3-apache
 
-# Install dependencies sistem, ekstensi PHP & Python pendukung AI
+# Install dependencies sistem, ekstensi PHP & Python pendukung AI.
+# GD dikonfigurasi dengan JPEG: tanpa itu imagejpeg() tidak tersedia dan watermark
+# tanggal/koordinat pada foto bukti gagal diterapkan tanpa pesan error.
 RUN apt-get update && apt-get install -y \
     git \
     curl \
     libpng-dev \
+    libjpeg62-turbo-dev \
+    libfreetype6-dev \
     libonig-dev \
     libxml2-dev \
     libzip-dev \
@@ -25,6 +29,7 @@ RUN apt-get update && apt-get install -y \
     unzip \
     python3 \
     python3-pip \
+    && docker-php-ext-configure gd --with-jpeg --with-freetype \
     && docker-php-ext-install pdo pdo_mysql pdo_pgsql mbstring exif pcntl bcmath gd zip opcache \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 

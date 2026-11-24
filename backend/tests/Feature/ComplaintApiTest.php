@@ -61,6 +61,8 @@ class ComplaintApiTest extends TestCase
             'latitude' => -3.5061,
             'longitude' => 120.8879,
             'is_anonymous' => false,
+            // Foto wajib: laporan tanpa foto tidak bisa dinilai AI.
+            'photos' => [\Illuminate\Http\UploadedFile::fake()->image('bukti.jpg', 800, 600)],
         ];
 
         $response = $this->actingAs($user)->postJson('/api/v1/complaints', $payload);
@@ -71,10 +73,10 @@ class ComplaintApiTest extends TestCase
                 'meta' => ['request_id']
             ]);
 
-        $this->assertDatabaseHas('complaints', [
-            'title' => 'Jembatan Retak',
-            'status' => 'SUBMITTED',
-        ]);
+        // Status awal ditentukan AI: VERIFIED bila foto dinilai kerusakan infrastruktur,
+        // REJECTED bila tidak. Tidak ada lagi status yang menunggu verifikasi manual.
+        $tersimpan = \App\Models\Complaint::where('title', 'Jembatan Retak')->firstOrFail();
+        $this->assertContains($tersimpan->status, ['VERIFIED', 'REJECTED']);
     }
 
     public function test_dashboard_summary_api(): void

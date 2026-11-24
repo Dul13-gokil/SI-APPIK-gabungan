@@ -103,14 +103,19 @@ class AiGovernanceTest extends TestCase
         ]);
     }
 
-    public function test_ai_threshold_can_be_raised_without_deploy(): void
+    public function test_ai_threshold_only_marks_confidence_not_status(): void
     {
+        // Verifikasi manual sudah dihapus: status tetap ditentukan AI. Ambang hanya
+        // menandai apakah keyakinan AI melewati batas (untuk penanda "AI ragu").
         SystemSetting::set('ai_verify_threshold', 0.95, 'float');
 
         $this->mockAi($this->aiResult(0.90));
         $reporter = $this->user('WARGA');
 
-        $this->submitReport($reporter)->assertStatus(201)->assertJsonPath('data.status', 'SUBMITTED');
+        $this->submitReport($reporter)
+            ->assertStatus(201)
+            ->assertJsonPath('data.status', 'VERIFIED')
+            ->assertJsonPath('data.verified_by_ai', false);
     }
 
     public function test_default_threshold_still_auto_verifies(): void
@@ -141,7 +146,12 @@ class AiGovernanceTest extends TestCase
         });
 
         $reporter = $this->user('WARGA');
-        $this->submitReport($reporter)->assertStatus(201)->assertJsonPath('data.status', 'SUBMITTED');
+        // AI gagal dijalankan: laporan tetap diterima (tidak ada verifikasi manual lagi),
+        // ditandai belum tervalidasi dan kegagalannya diaudit.
+        $this->submitReport($reporter)
+            ->assertStatus(201)
+            ->assertJsonPath('data.status', 'VERIFIED')
+            ->assertJsonPath('data.verified_by_ai', false);
 
         $this->assertDatabaseHas('audit_logs', ['action' => 'AI_CLASSIFICATION_FAILED']);
         $this->assertNotNull(SystemSetting::get('ai_last_failure_at'), 'Waktu kegagalan AI tidak dicatat');

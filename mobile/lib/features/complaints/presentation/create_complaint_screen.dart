@@ -529,27 +529,6 @@ class _CreateComplaintScreenState extends State<CreateComplaintScreen> {
     }
   }
 
-  Future<void> _pickGallery() async {
-    if (_selectedPhotos.length >= _maxPhotos) {
-      showV2Toast(
-        context,
-        message: 'Maksimal $_maxPhotos foto bukti kerusakan untuk tipe ini.',
-        type: V2ToastType.error,
-      );
-      return;
-    }
-    final photo = await _mediaService.pickFromGallery();
-    if (photo != null) {
-      final file = File(photo.path);
-      setState(() {
-        _selectedPhotos.add(file);
-      });
-      if (_useAi) {
-        _processPhotosAI(_selectedPhotos);
-      }
-    }
-  }
-
   void _removePhoto(int index) {
     setState(() {
       _selectedPhotos.removeAt(index);
@@ -569,50 +548,10 @@ class _CreateComplaintScreenState extends State<CreateComplaintScreen> {
     }
   }
 
+  /// Foto laporan wajib dari kamera. Album sengaja tidak ditawarkan: foto lama
+  /// atau tangkapan layar tidak membuktikan kerusakan ada di lokasi saat ini.
   void _showAddPhotoSheet() {
-    if (_selectedPhotos.length >= _maxPhotos) {
-      showV2Toast(
-        context,
-        message: 'Maksimal $_maxPhotos foto bukti kerusakan.',
-        type: V2ToastType.warning,
-      );
-      return;
-    }
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      builder: (ctx) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Tambah Foto Bukti (${_selectedPhotos.length + 1}/$_maxPhotos)',
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-              ),
-              const SizedBox(height: 16),
-              ListTile(
-                leading: const Icon(LucideIcons.camera, color: AppColors.primary),
-                title: const Text('Ambil dari Kamera'),
-                onTap: () {
-                  Navigator.pop(ctx);
-                  _takePhoto();
-                },
-              ),
-              ListTile(
-                leading: const Icon(LucideIcons.image, color: AppColors.secondary),
-                title: const Text('Pilih dari Galeri'),
-                onTap: () {
-                  Navigator.pop(ctx);
-                  _pickGallery();
-                },
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+    _takePhoto();
   }
 
   Future<void> _processPhotosAI(List<File> files) async {
@@ -2013,34 +1952,20 @@ class _CreateComplaintScreenState extends State<CreateComplaintScreen> {
           ),
           const SizedBox(height: 4),
           const Text(
-            'Ambil foto atau pilih foto kerusakan jalan dari galeri.',
+            'Foto wajib diambil langsung dari kamera saat berada di lokasi kerusakan.',
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
           ),
           const SizedBox(height: 14),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ElevatedButton.icon(
-                onPressed: _takePhoto,
-                icon: const Icon(LucideIcons.camera, size: 16),
-                label: const Text('Kamera', style: TextStyle(fontSize: 12)),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                ),
-              ),
-              const SizedBox(width: 12),
-              OutlinedButton.icon(
-                onPressed: _pickGallery,
-                icon: const Icon(LucideIcons.image, size: 16),
-                label: const Text('Galeri', style: TextStyle(fontSize: 12)),
-                style: OutlinedButton.styleFrom(
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                ),
-              ),
-            ],
+          ElevatedButton.icon(
+            onPressed: _takePhoto,
+            icon: const Icon(LucideIcons.camera, size: 16),
+            label: const Text('Buka Kamera', style: TextStyle(fontSize: 12)),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            ),
           ),
         ],
       ),

@@ -13,9 +13,15 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 /**
- * Keputusan rapat: validasi hasil kerja tidak lagi menunggu operator.
- * AI memeriksa foto sesudah; bila kerusakan sudah tidak terdeteksi (skor di atas ambang)
- * laporan langsung COMPLETED, selain itu tetap WAITING_VERIFICATION untuk operator.
+ * Validasi hasil kerja tanpa operator (keputusan rapat).
+ *
+ * Dua syarat wajib, keduanya harus lolos:
+ *  1. Foto bukti diambil di dalam radius aduan (ditegakkan PhotoRadiusGuard saat unggah)
+ *     dan sudah ber-watermark waktu + koordinat.
+ *  2. AI tidak lagi mendeteksi kerusakan pada foto tersebut.
+ *
+ * Lolos -> COMPLETED otomatis. Gagal -> REVISION_REQUIRED otomatis dan petugas diberi
+ * tahu. Tidak ada lagi status yang menunggu validasi manual operator.
  */
 class CompletionValidationService
 {
@@ -43,6 +49,8 @@ class CompletionValidationService
             ->all();
 
         if (empty($paths)) {
+            $this->markRevision($complaint, $actorId, 'foto bukti pengerjaan tidak ditemukan. Unggah ulang foto dari lokasi.');
+
             return false;
         }
 
@@ -50,11 +58,15 @@ class CompletionValidationService
             $result = $this->aiService->classifyMultipleImages($paths);
         } catch (\Throwable $e) {
             Log::warning('Validasi AI hasil kerja gagal: ' . $e->getMessage());
+            $this->markRevision($complaint, $actorId, 'pemeriksaan AI gagal dijalankan. Unggah ulang bukti pengerjaan.');
 
             return false;
         }
 
-        if (! is_array($result) || ! isset($result['category_id'])) {
+        $aiFallback = is_array($result) && (($result['category_label'] ?? '') === 'Foto Belum Terverifikasi');
+        if (! is_array($result) || $aiFallback || ! isset($result['category_id'])) {
+            $this->markRevision($complaint, $actorId, 'foto hasil kerja belum dapat dinilai AI. Unggah ulang bukti pengerjaan.');
+
             return false;
         }
 
@@ -72,6 +84,12 @@ class CompletionValidationService
         ]);
 
         if ($score < $this->threshold()) {
+            $this->markRevision(
+                $complaint,
+                $actorId,
+                'AI masih mendeteksi kerusakan pada foto hasil kerja. Perbaiki lalu ambil ulang foto di lokasi.'
+            );
+
             return false;
         }
 
@@ -92,7 +110,13 @@ class CompletionValidationService
             'entity_type' => Complaint::class,
             'entity_id'   => $complaint->id,
             'before_json' => ['status' => 'WAITING_VERIFICATION'],
-            'after_json'  => ['status' => 'COMPLETED', 'ai_score' => $score, 'threshold' => $this->threshold()],
+            'after_json'  => [
+                'status'          => 'COMPLETED',
+                'ai_score'        => $score,
+                'threshold'       => $this->threshold(),
+                'radius_m'        => $complaint->radius_m,
+                'photo_in_radius' => true,
+            ],
             'ip'          => request()->ip(),
         ]);
 
@@ -100,7 +124,7 @@ class CompletionValidationService
             'complaint_id' => $complaint->id,
             'from_status'  => 'WAITING_VERIFICATION',
             'to_status'    => 'COMPLETED',
-            'note'         => 'Divalidasi otomatis oleh AI: kerusakan tidak lagi terdeteksi pada foto hasil kerja.',
+            'note'         => 'Divalidasi otomatis: foto bukti berada dalam radius aduan dan AI tidak lagi mendeteksi kerusakan.',
             'changed_by'   => $actorId,
         ]);
 
@@ -116,5 +140,47 @@ class CompletionValidationService
         ]);
 
         return true;
+    }
+
+    /**
+     * Pekerjaan belum lolos: kembalikan langsung ke petugas tanpa menunggu operator.
+     */
+    private function markRevision(Complaint $complaint, ?int $actorId, string $reason): void
+    {
+        $complaint->update([
+            'status'                    => 'REVISION_REQUIRED',
+            'completion_verified_by_ai' => false,
+        ]);
+
+        $complaint->latestDisposition?->update(['status' => 'REVISION_REQUIRED']);
+
+        ComplaintStatusHistory::create([
+            'complaint_id' => $complaint->id,
+            'from_status'  => 'WAITING_VERIFICATION',
+            'to_status'    => 'REVISION_REQUIRED',
+            'note'         => 'Dikembalikan otomatis oleh sistem: ' . $reason,
+            'changed_by'   => $actorId,
+        ]);
+
+        AuditLog::create([
+            'actor_id'    => $actorId,
+            'action'      => 'COMPLETION_REJECTED_BY_AI',
+            'entity_type' => Complaint::class,
+            'entity_id'   => $complaint->id,
+            'before_json' => ['status' => 'WAITING_VERIFICATION'],
+            'after_json'  => ['status' => 'REVISION_REQUIRED', 'reason' => $reason],
+            'ip'          => request()->ip(),
+        ]);
+
+        $workerId = $complaint->latestDisposition?->assigned_to;
+        if ($workerId) {
+            Notification::create([
+                'user_id'   => $workerId,
+                'type'      => 'TASK_REVISION_REQUIRED',
+                'title'     => 'Perbaikan Perlu Diulang',
+                'body'      => "Laporan #{$complaint->public_code}: {$reason}",
+                'data_json' => ['complaint_id' => $complaint->id],
+            ]);
+        }
     }
 }

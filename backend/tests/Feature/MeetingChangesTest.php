@@ -125,7 +125,7 @@ class MeetingChangesTest extends TestCase
         ]);
     }
 
-    public function test_report_stays_submitted_when_ai_confidence_is_low(): void
+    public function test_low_confidence_still_verified_but_flagged(): void
     {
         $this->mockAi($this->aiResult(0.45, 2));
         $reporter = $this->user('WARGA');
@@ -141,7 +141,8 @@ class MeetingChangesTest extends TestCase
         ]);
 
         $response->assertStatus(201);
-        $response->assertJsonPath('data.status', 'SUBMITTED');
+        // Verifikasi manual dihapus: laporan tetap diterima, hanya ditandai AI ragu.
+        $response->assertJsonPath('data.status', 'VERIFIED');
         $response->assertJsonPath('data.verified_by_ai', false);
     }
 
