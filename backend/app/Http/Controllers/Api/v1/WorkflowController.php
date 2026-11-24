@@ -54,9 +54,8 @@ class WorkflowController extends Controller
 
         ComplaintStateMachine::validateTransition($oldStatus, $newStatus);
 
-        $hasFileDataCol = ComplaintPhoto::ensureFileDataColumnExists();
 
-        DB::transaction(function () use ($complaint, $validated, $oldStatus, $newStatus, $request, $hasFileDataCol) {
+        DB::transaction(function () use ($complaint, $validated, $oldStatus, $newStatus, $request) {
             $updateData = ['status' => $newStatus];
             if (!empty($validated['corrected_category_id'])) {
                 $updateData['category_id'] = $validated['corrected_category_id'];
@@ -121,9 +120,8 @@ class WorkflowController extends Controller
 
         ComplaintStateMachine::validateTransition($oldStatus, $newStatus);
 
-        $hasFileDataCol = ComplaintPhoto::ensureFileDataColumnExists();
 
-        DB::transaction(function () use ($complaint, $validated, $oldStatus, $newStatus, $request, $hasFileDataCol) {
+        DB::transaction(function () use ($complaint, $validated, $oldStatus, $newStatus, $request) {
             $complaint->update(['status' => $newStatus]);
 
             $team = !empty($validated['team_id']) ? \App\Models\Team::with('members.user')->find($validated['team_id']) : null;
@@ -304,9 +302,8 @@ class WorkflowController extends Controller
 
         ComplaintStateMachine::validateTransition($oldStatus, $newStatus);
 
-        $hasFileDataCol = ComplaintPhoto::ensureFileDataColumnExists();
 
-        DB::transaction(function () use ($complaint, $validated, $oldStatus, $newStatus, $request, $hasFileDataCol, $user) {
+        DB::transaction(function () use ($complaint, $validated, $oldStatus, $newStatus, $request, $user) {
             $complaint->update(['status' => $newStatus]);
 
             if ($complaint->latestDisposition) {
@@ -343,7 +340,7 @@ class WorkflowController extends Controller
                     \Illuminate\Support\Facades\Log::warning('Gagal menerapkan watermark pada foto bukti selesai: ' . $e->getMessage());
                 }
                 $realPath = is_file($storedAbsPath) ? $storedAbsPath : $photo->getRealPath();
-                $fileData = ($hasFileDataCol && $realPath && file_exists($realPath)) ? base64_encode(file_get_contents($realPath)) : null;
+                // Foto hanya disimpan di disk; jangan menyalin base64 ke database lagi.
                 $photoAttrs = [
                     'complaint_id' => $complaint->id,
                     'storage_key'  => $path,
@@ -355,9 +352,6 @@ class WorkflowController extends Controller
                     'checksum'     => $realPath ? md5_file($realPath) : null,
                     'captured_at'  => now(),
                 ];
-                if ($hasFileDataCol) {
-                    $photoAttrs['file_data'] = $fileData;
-                }
                 ComplaintPhoto::create($photoAttrs);
             }
 
@@ -421,9 +415,8 @@ class WorkflowController extends Controller
 
         ComplaintStateMachine::validateTransition($oldStatus, $newStatus);
 
-        $hasFileDataCol = ComplaintPhoto::ensureFileDataColumnExists();
 
-        DB::transaction(function () use ($complaint, $validated, $oldStatus, $newStatus, $request, $hasFileDataCol) {
+        DB::transaction(function () use ($complaint, $validated, $oldStatus, $newStatus, $request) {
             $complaint->update(['status' => $newStatus]);
 
             if ($complaint->latestDisposition) {
@@ -488,9 +481,8 @@ class WorkflowController extends Controller
 
         ComplaintStateMachine::validateTransition($oldStatus, $newStatus);
 
-        $hasFileDataCol = ComplaintPhoto::ensureFileDataColumnExists();
 
-        DB::transaction(function () use ($complaint, $validated, $oldStatus, $newStatus, $request, $hasFileDataCol) {
+        DB::transaction(function () use ($complaint, $validated, $oldStatus, $newStatus, $request) {
             $complaint->update(['status' => $newStatus]);
 
             ComplaintStatusHistory::create([

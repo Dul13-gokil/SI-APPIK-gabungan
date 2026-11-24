@@ -383,9 +383,8 @@ class ComplaintController extends Controller
             duplicateCount:    0
         );
 
-        $hasFileDataCol = ComplaintPhoto::ensureFileDataColumnExists();
 
-        $complaint = DB::transaction(function () use ($validated, $damageType, $userId, $priorityCalc, $photoFiles, $hasFileDataCol, $initialStatus, $autoVerified) {
+        $complaint = DB::transaction(function () use ($validated, $damageType, $userId, $priorityCalc, $photoFiles, $initialStatus, $autoVerified) {
             $publicCode = $this->generatePublicCode($damageType);
             $isAnon = filter_var($validated['is_anonymous'] ?? false, FILTER_VALIDATE_BOOLEAN);
 
@@ -472,8 +471,9 @@ class ComplaintController extends Controller
 
             foreach ($uploadedPhotos as $index => $photo) {
                 $realPath = $photo->getRealPath();
-                $fileData = ($hasFileDataCol && $realPath && file_exists($realPath)) ? base64_encode(file_get_contents($realPath)) : null;
                 $path = $photo->store('complaints', 'public');
+                // Foto hanya disimpan di disk. Duplikat base64 di database pernah membuat
+                // tabel membengkak (10 MB foto -> ~13 MB per baris); jangan dihidupkan lagi.
                 $photoAttrs = [
                     'complaint_id' => $complaint->id,
                     'storage_key'  => $path,
@@ -485,9 +485,6 @@ class ComplaintController extends Controller
                     'checksum'     => $realPath ? md5_file($realPath) : null,
                     'captured_at'  => now(),
                 ];
-                if ($hasFileDataCol) {
-                    $photoAttrs['file_data'] = $fileData;
-                }
                 ComplaintPhoto::create($photoAttrs);
             }
 

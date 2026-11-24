@@ -348,9 +348,8 @@ class WebPetugasController extends Controller
 
         ComplaintStateMachine::validateTransition($oldStatus, $newStatus);
 
-        $hasFileDataCol = ComplaintPhoto::ensureFileDataColumnExists();
 
-        DB::transaction(function () use ($complaint, $validated, $oldStatus, $newStatus, $request, $hasFileDataCol) {
+        DB::transaction(function () use ($complaint, $validated, $oldStatus, $newStatus, $request) {
             $complaint->update(['status' => $newStatus]);
 
             if ($complaint->latestDisposition) {
@@ -369,7 +368,7 @@ class WebPetugasController extends Controller
                         auth()->user()?->name
                     );
                     $realPath = is_file($storedAbsPath) ? $storedAbsPath : $photo->getRealPath();
-                    $fileData = ($hasFileDataCol && $realPath && file_exists($realPath)) ? base64_encode(file_get_contents($realPath)) : null;
+                    // Foto hanya disimpan di disk; jangan menyalin base64 ke database lagi.
                     $photoAttrs = [
                         'complaint_id' => $complaint->id,
                         'storage_key'  => $path,
@@ -381,9 +380,6 @@ class WebPetugasController extends Controller
                         'checksum'     => $realPath ? md5_file($realPath) : null,
                         'captured_at'  => now(),
                     ];
-                    if ($hasFileDataCol) {
-                        $photoAttrs['file_data'] = $fileData;
-                    }
                     ComplaintPhoto::create($photoAttrs);
                 }
             }

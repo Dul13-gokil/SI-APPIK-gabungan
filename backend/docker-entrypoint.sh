@@ -80,5 +80,12 @@ php artisan optimize || true
 echo "Menjalankan migrasi database..."
 php artisan migrate --force || true
 
+# Perintah artisan di atas berjalan sebagai root dan bisa membuat storage/logs/laravel.log
+# milik root. Akibatnya Apache (www-data) gagal menulis log dan error produksi tidak tercatat.
+# Pastikan kepemilikan dikembalikan sebelum Apache dijalankan.
+mkdir -p /var/www/html/storage/logs
+chown -R www-data:www-data /var/www/html/storage/logs || true
+chmod -R 775 /var/www/html/storage/logs || true
+
 echo "Aplikasi Laravel siap melayani request di port $PORT..."
 exec apache2-foreground

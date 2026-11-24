@@ -265,12 +265,27 @@ docker run --rm -v si-appik_app-storage:/data -v "$PWD":/backup alpine \
 ## 6. Menghubungkan aplikasi mobile
 
 Aplikasi tidak perlu di-build ulang. Di aplikasi: **Profil -> Alamat Server API**,
-isi `https://aduan.kolakautara.go.id` (aplikasi menambahkan `/api/v1` sendiri).
-Untuk build baru, ubah juga default di `mobile/lib/core/config/app_config.dart`.
+isi alamat server (aplikasi menambahkan `/api/v1` sendiri). Alamat bawaan saat ini
+`https://aduan.aispektra.com`; untuk build baru ubah `mobile/lib/core/config/app_config.dart`.
 
 ---
 
-## 7. Troubleshooting
+## 7. Log dan penyimpanan bukti foto
+
+- Log ditulis ke `storage/logs/laravel.log` **dan** ke stderr container
+  (`LOG_STACK=single,stderr`), sehingga error terlihat lewat `docker compose logs -f app`
+  tanpa perlu masuk ke dalam container.
+- Entrypoint mengembalikan kepemilikan `storage/logs` ke `www-data` setiap start.
+  Tanpa itu, `php artisan migrate` yang berjalan sebagai root meninggalkan
+  `laravel.log` milik root dan Apache gagal menulis log (error produksi tidak tercatat).
+- Bukti foto hanya disimpan sebagai berkas di disk (`storage/app/public/complaints`).
+  Kolom `complaint_photos.file_data` tidak lagi diisi karena duplikat base64 membuat
+  tabel dan backup membengkak. Kolomnya tetap ada agar foto lama masih bisa disajikan
+  bila berkasnya hilang. Dijaga oleh `tests/Feature/PhotoStorageTest.php`.
+
+---
+
+## 8. Troubleshooting
 
 | Gejala | Penyebab dan solusi |
 | :--- | :--- |
@@ -285,7 +300,7 @@ Untuk build baru, ubah juga default di `mobile/lib/core/config/app_config.dart`.
 
 ---
 
-## 8. Hasil uji di mesin ini
+## 9. Hasil uji di mesin ini
 
 ```
 docker compose ps          app healthy (8080), db healthy (5433)

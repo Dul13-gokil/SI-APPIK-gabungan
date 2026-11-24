@@ -49,6 +49,9 @@ services:
       CACHE_STORE: database
       QUEUE_CONNECTION: database
       FILESYSTEM_DISK: public
+      # Log ditulis ke berkas sekaligus stderr, agar error terlihat di `docker compose logs`.
+      LOG_CHANNEL: stack
+      LOG_STACK: "single,stderr"
 
       MAIL_MAILER: ${MAIL_MAILER:-log}
       MAIL_FROM_ADDRESS: "no-reply@kabupaten.go.id"
