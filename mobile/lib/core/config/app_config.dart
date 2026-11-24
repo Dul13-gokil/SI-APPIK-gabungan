@@ -4,10 +4,10 @@ class AppConfig {
   static const String appName = 'Aduan Jalan';
   static const String appVersion = '1.0.0';
 
-  // Default Server API Production Railway:
-  // https://si-appik-production.up.railway.app/api/v1
-  static String get defaultBaseUrl => 'https://si-appik-production.up.railway.app';
-  static String activeOrigin = 'https://si-appik-production.up.railway.app';
+  // Default Server API Production (Cloudflare Tunnel ke server ini).
+  // Railway lama (si-appik-production.up.railway.app) sudah mati (404), jangan dipakai lagi.
+  static String get defaultBaseUrl => 'https://aduan.aispektra.com';
+  static String activeOrigin = 'https://aduan.aispektra.com';
   static String get baseUrl => normalizeUrl(defaultBaseUrl);
   
   static const int connectTimeout = 15000;
