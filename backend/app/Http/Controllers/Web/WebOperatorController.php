@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class WebOperatorController extends Controller
@@ -472,11 +473,15 @@ class WebOperatorController extends Controller
             'phone.unique' => 'Nomor HP tersebut sudah terdaftar.',
         ]);
 
+        // Sandi sementara unik per akun. Dulu semua akun baru memakai 'password',
+        // sehingga siapa pun yang tahu alamat email dapat masuk sebelum pemiliknya.
+        $sandiSementara = Str::password(10, symbols: false);
+
         $user = User::create([
             'name'     => $validated['name'],
             'email'    => $validated['email'],
             'phone'    => $validated['phone'] ?? null,
-            'password' => Hash::make('password'),
+            'password' => Hash::make($sandiSementara),
             'role'     => 'PETUGAS',
         ]);
 
@@ -503,6 +508,6 @@ class WebOperatorController extends Controller
         ]);
 
         return redirect()->route('operator.dashboard')
-            ->with('success', "Akun pekerja lapangan {$user->name} dibuat. Sandi awal: password (wajib diganti saat login pertama).");
+            ->with('success', "Akun {$user->name} dibuat. Sandi sementara: {$sandiSementara} — catat dan berikan ke petugas, wajib diganti saat login pertama.");
     }
 }

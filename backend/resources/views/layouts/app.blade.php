@@ -241,15 +241,23 @@
                                         ['tab' => 'inprogress', 'label' => 'Dikerjakan', 'icon' => 'hammer'],
                                         ['tab' => 'validation', 'label' => 'Validasi Hasil', 'icon' => 'check-square'],
                                         ['tab' => 'archive', 'label' => 'Arsip Aduan', 'icon' => 'archive'],
+                                        ['url' => route('operator.petugas.create'), 'label' => 'Tambah Pekerja Lapangan', 'icon' => 'user-plus', 'active' => 'operator.petugas.create'],
                                         ['tab' => 'regions-gis', 'label' => 'Peta Wilayah GIS', 'icon' => 'map-pin'],
                                         ['tab' => 'monitoring', 'label' => 'Laporan Kinerja', 'icon' => 'bar-chart-3'],
                                     ];
                                 @endphp
                                 @foreach($operatorMenuItems as $item)
-                                    @php $isSubActive = $isOperatorRoute && $currentQueryTab === $item['tab']; @endphp
-                                    <a href="{{ route('operator.dashboard', ['tab' => $item['tab']]) }}"
-                                       onclick="return handleSidebarTabClick(event, 'operator', '{{ $item['tab'] }}')"
-                                       data-sidebar-role="operator" data-sidebar-tab="{{ $item['tab'] }}"
+                                    @php
+                                        $isSubActive = $isOperatorRoute && (
+                                            !empty($item['active'])
+                                                ? request()->routeIs($item['active'])
+                                                : $currentQueryTab === ($item['tab'] ?? null)
+                                        );
+                                        $itemUrl = $item['url'] ?? route('operator.dashboard', ['tab' => $item['tab']]);
+                                    @endphp
+                                    <a href="{{ $itemUrl }}"
+                                       @if(empty($item['url'])) onclick="return handleSidebarTabClick(event, 'operator', '{{ $item['tab'] }}')" @endif
+                                       data-sidebar-role="operator" @if(!empty($item['tab'])) data-sidebar-tab="{{ $item['tab'] }}" @endif
                                        class="sidebar-subitem flex items-center gap-2 px-3 py-2 rounded-xl text-[11px] font-semibold transition {{ $isSubActive ? 'bg-[#2563EB] text-white font-bold shadow-xs' : 'text-[#475569] hover:bg-[#F8FAFC] hover:text-[#0F172A]' }}">
                                         <i data-lucide="{{ $item['icon'] }}" class="w-3.5 h-3.5 shrink-0 {{ $isSubActive ? 'text-white' : 'text-[#64748B]' }}"></i>
                                         <span class="truncate">{{ $item['label'] }}</span>
@@ -335,9 +343,6 @@
                                 : null,
                             auth()->user()->isSuperAdmin()
                                 ? ['url' => route('admin.settings'), 'label' => 'Pengaturan Sistem', 'icon' => 'settings']
-                                : null,
-                            auth()->user()->isOperator() || auth()->user()->isSuperAdmin()
-                                ? ['url' => route('operator.petugas.create'), 'label' => 'Tambah Pekerja Lapangan', 'icon' => 'user-plus']
                                 : null,
                             auth()->user()->isPengawas()
                                 ? ['url' => route('pengawas.team'), 'label' => 'Kelola Anggota Regu', 'icon' => 'users']

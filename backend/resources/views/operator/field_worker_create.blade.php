@@ -47,6 +47,10 @@
                 @endforeach
             </select>
         </div>
+        <div class="rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] px-3 py-2.5 text-[12px] text-[#475569] leading-relaxed">
+            Sandi sementara dibuat otomatis dan ditampilkan sekali setelah akun disimpan.
+            Catat lalu berikan ke petugas; ia wajib menggantinya saat login pertama.
+        </div>
         <div class="flex items-center gap-2 pt-1">
             <button type="submit"
                     class="rounded-xl bg-[#1E3A8A] px-4 py-2 text-[13px] font-semibold text-white hover:bg-[#172554]">

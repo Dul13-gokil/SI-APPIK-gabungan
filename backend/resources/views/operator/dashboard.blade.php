@@ -178,7 +178,7 @@
         <!-- 7. Rasio Sukses -->
         <div class="col-span-3 sm:col-span-1 p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
             <div class="flex items-center justify-between gap-1.5">
-                <span class="text-[8.5px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-normal sm:tracking-wider leading-tight">Rasio Sukses</span>
+                <span class="text-[8.5px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-normal sm:tracking-wider leading-tight">Tingkat Tuntas</span>
                 <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-blue-50 text-[#2563EB] border border-blue-200 flex items-center justify-center shrink-0">
                     <i data-lucide="trending-up" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                 </div>
@@ -187,81 +187,9 @@
                 <div class="font-outfit text-xl sm:text-2xl font-bold text-[#0F172A] leading-tight">
                     {{ $summary['completion_rate'] }}%
                 </div>
-                <span class="hidden sm:block text-[11px] text-[#475569] font-medium mt-0.5">Tingkat tuntas</span>
+                <span class="hidden sm:block text-[11px] text-[#475569] font-medium mt-0.5">Aduan selesai dari total</span>
             </div>
         </div>
-    </div>
-
-    <!-- Sub Menu Tab Navigation (Dipindahkan ke Sidebar Accordion) -->
-    <div class="hidden grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-2.5 w-full">
-        <!-- 1. Verifikasi -->
-        <button type="button" onclick="switchTab('verify')" id="tabBtn-verify"
-            class="tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'verify' ? 'bg-[#2563EB] text-white border-[#2563EB]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
-            <i data-lucide="filter" class="w-4 h-4 shrink-0 text-current"></i>
-            <div class="min-w-0 flex-1">
-                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Verifikasi</span>
-            </div>
-            <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'verify' ? 'bg-white text-[#2563EB]' : 'bg-blue-50 text-[#2563EB] border border-blue-200' }}">
-                {{ $pendingVerification->count() }}
-            </span>
-        </button>
-
-        <!-- 2. Ditugaskan -->
-        <button type="button" onclick="switchTab('dispatched')" id="tabBtn-dispatched"
-            class="tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'dispatched' ? 'bg-[#2563EB] text-white border-[#2563EB]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
-            <i data-lucide="send" class="w-4 h-4 shrink-0 text-current"></i>
-            <div class="min-w-0 flex-1">
-                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Ditugaskan</span>
-            </div>
-            <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'dispatched' ? 'bg-white text-[#2563EB]' : 'bg-blue-50 text-[#2563EB] border border-blue-200' }}">
-                {{ $dispatched->count() }}
-            </span>
-        </button>
-
-        <!-- 3. Dikerjakan -->
-        <button type="button" onclick="switchTab('inprogress')" id="tabBtn-inprogress"
-            class="tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'inprogress' ? 'bg-[#2563EB] text-white border-[#2563EB]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
-            <i data-lucide="hard-hat" class="w-4 h-4 shrink-0 text-current"></i>
-            <div class="min-w-0 flex-1">
-                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Dikerjakan</span>
-            </div>
-            <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'inprogress' ? 'bg-white text-[#2563EB]' : 'bg-blue-50 text-[#2563EB] border border-blue-200' }}">
-                {{ $inProgress->count() }}
-            </span>
-        </button>
-
-        <!-- 4. Validasi -->
-        <button type="button" onclick="switchTab('validation')" id="tabBtn-validation"
-            class="tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'validation' ? 'bg-[#2563EB] text-white border-[#2563EB]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
-            <i data-lucide="check-square" class="w-4 h-4 shrink-0 text-current"></i>
-            <div class="min-w-0 flex-1">
-                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Validasi</span>
-            </div>
-            <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'validation' ? 'bg-white text-[#2563EB]' : 'bg-blue-50 text-[#2563EB] border border-blue-200' }}">
-                {{ $waitingValidation->count() }}
-            </span>
-        </button>
-
-        <!-- 5. Arsip Aduan -->
-        <button type="button" onclick="switchTab('archive')" id="tabBtn-archive"
-            class="tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'archive' ? 'bg-[#2563EB] text-white border-[#2563EB]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
-            <i data-lucide="archive" class="w-4 h-4 shrink-0 text-current"></i>
-            <div class="min-w-0 flex-1">
-                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Arsip Aduan</span>
-            </div>
-            <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'archive' ? 'bg-white text-[#2563EB]' : 'bg-blue-50 text-[#2563EB] border border-blue-200' }}">
-                {{ $completed->count() }}
-            </span>
-        </button>
-
-        <!-- 6. Laporan Kinerja -->
-        <button type="button" onclick="switchTab('monitoring')" id="tabBtn-monitoring"
-            class="tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'monitoring' ? 'bg-[#2563EB] text-white border-[#2563EB]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
-            <i data-lucide="bar-chart-2" class="w-4 h-4 shrink-0 text-current"></i>
-            <div class="min-w-0 flex-1">
-                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Laporan Kinerja</span>
-            </div>
-        </button>
     </div>
 
     <!-- Wadah Kartu Terpadu Operator (Seragam Daftar Pengguna & Daftar Aduan) -->

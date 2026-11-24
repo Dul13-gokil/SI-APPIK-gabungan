@@ -102,7 +102,7 @@
                         Masuk ke Akun
                     </h2>
                     <p class="text-[13px] text-[#475569] leading-relaxed">
-                        Silakan masuk menggunakan akun Admin, Operator, Kepala Daerah, atau Pekerja Lapangan Dinas PUPR terdaftar
+                        Masuk dengan akun dinas Anda. Gunakan email atau nomor HP yang terdaftar.
                     </p>
                 </div>
 
@@ -187,7 +187,7 @@
 
                     <div class="space-y-2">
                         <label for="email" class="block text-[13px] font-semibold text-[#0F172A]">
-                            Email atau Username
+                            Email atau Nomor HP
                         </label>
                         <div class="relative group">
                             <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[#64748B] group-focus-within:text-[#2563EB] transition-colors">
