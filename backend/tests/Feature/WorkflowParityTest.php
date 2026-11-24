@@ -232,4 +232,44 @@ class WorkflowParityTest extends TestCase
             'type' => 'COMPLAINT_REJECTED',
         ]);
     }
+
+    public function test_ubah_status_lewat_api_meninggalkan_jejak_audit(): void
+    {
+        $reporter = $this->user('WARGA');
+        $admin = $this->user('SUPERADMIN');
+        $complaint = $this->complaint($reporter, 'SUBMITTED');
+
+        $this->actingAs($admin, 'sanctum')
+            ->postJson("/api/v1/complaints/{$complaint->id}/status", [
+                'status' => 'VERIFIED',
+                'note' => 'Diperiksa langsung di kantor.',
+            ])
+            ->assertStatus(200);
+
+        $this->assertSame('VERIFIED', $complaint->fresh()->status);
+        $this->assertDatabaseHas('audit_logs', [
+            'action' => 'STATUS_UPDATED',
+            'entity_id' => $complaint->id,
+            'actor_id' => $admin->id,
+        ]);
+    }
+
+    public function test_ubah_regu_lewat_web_meninggalkan_jejak_audit(): void
+    {
+        $reporter = $this->user('WARGA');
+        $operator = $this->user('OPERATOR');
+        $complaint = $this->complaint($reporter, 'DISPATCHED');
+
+        $this->actingAs($operator)
+            ->post(route('operator.complaints.assign-team', $complaint->id), [
+                'team_id' => $this->team->id,
+            ])
+            ->assertRedirect();
+
+        $this->assertDatabaseHas('audit_logs', [
+            'action' => 'TEAM_ASSIGNED',
+            'entity_id' => $complaint->id,
+            'actor_id' => $operator->id,
+        ]);
+    }
 }

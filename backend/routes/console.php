@@ -14,3 +14,9 @@ Schedule::command('roads:import')
     ->monthlyOn(1, '02:00')
     ->timezone('Asia/Makassar')
     ->withoutOverlapping();
+
+// Cadangan harian: satu-satunya perlindungan bila volume database rusak atau terhapus.
+Schedule::command('db:backup --keep=7')
+    ->dailyAt('01:00')
+    ->timezone('Asia/Makassar')
+    ->withoutOverlapping();

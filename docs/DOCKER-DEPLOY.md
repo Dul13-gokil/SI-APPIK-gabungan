@@ -224,8 +224,50 @@ Service `scheduler` menjalankan `php artisan schedule:work`, sehingga tugas terj
 berjalan tanpa cron host:
 
 - Impor jaringan jalan OSM (`roads:import`) setiap tanggal 1 pukul 02.00 WITA.
+- Cadangan database + foto (`db:backup`) setiap hari pukul 01.00 WITA.
 - Hasil impor ditulis ke volume `geojson-data` yang dipakai bersama oleh `app`,
   jadi peta langsung memakai data terbaru tanpa rebuild image.
+
+### Cadangan (backup) dan pemulihan
+
+Cadangan disimpan di `storage/app/backups` (volume `app-storage`) dan terdiri dari
+dua berkas berpasangan untuk setiap kali jalan:
+
+- `db-YYYYmmdd-HHMMSS.sql.gz` — dump PostgreSQL
+- `foto-YYYYmmdd-HHMMSS.tar.gz` — folder `complaints/` dan `resolutions/`
+
+Dump database saja tidak cukup: foto hidup di volume terpisah, sehingga laporan akan
+kehilangan gambarnya bila hanya DB yang dipulihkan. Retensi bawaan 7 hari.
+
+```bash
+docker compose exec app php artisan db:backup                    # cadangkan sekarang
+docker compose exec app php artisan db:backup --out=/mnt/usb     # ke drive eksternal
+docker compose exec app php artisan db:restore storage/app/backups/db-20261124-010000.sql.gz
+docker compose exec app php artisan db:restore <berkas> --force   # tanpa konfirmasi
+```
+
+**Cadangan di volume yang sama tidak melindungi dari kerusakan disk.** Untuk produksi,
+jalankan `db:backup --out=/path/di-luar-server` (drive eksternal atau folder yang
+disinkronkan) atau salin folder `storage/app/backups` ke mesin lain secara berkala.
+
+Memulihkan foto (hanya bila berkasnya benar-benar hilang — aplikasi tidak pernah
+menimpanya):
+
+```bash
+docker compose exec app tar -xzf storage/app/backups/foto-20261124-010000.tar.gz -C storage/app/public
+```
+
+`db:restore` selalu memulihkan ke database yang dikonfigurasi di `.env`. Konfigurasi
+Laravel di-cache saat container start, jadi `docker compose exec -e DB_DATABASE=nama_lain`
+**tidak** mengubah sasaran restore. Untuk mencoba dump ke database lain (mis. uji coba
+pemulihan), pakai `psql` langsung:
+
+```bash
+docker compose exec db createdb -U postgres sik_uji
+docker compose exec app sh -c 'cat storage/app/backups/db-*.sql.gz' \
+  | docker compose exec -T db sh -c 'gunzip -c | psql -U postgres -d sik_uji -v ON_ERROR_STOP=1'
+docker compose exec db dropdb -U postgres sik_uji
+```
 
 Cek status dan jalankan manual:
 

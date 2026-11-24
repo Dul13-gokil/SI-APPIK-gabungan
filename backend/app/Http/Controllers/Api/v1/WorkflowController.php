@@ -237,6 +237,17 @@ class WorkflowController extends Controller
                 'note'         => $validated['note'] ?? "Status diperbarui menjadi {$newStatus}.",
                 'changed_by'   => $request->user()?->id,
             ]);
+
+            // Aturan repo: setiap mutasi status wajib berjejak di audit_logs.
+            AuditLog::create([
+                'actor_id'    => $request->user()?->id,
+                'action'      => 'STATUS_UPDATED',
+                'entity_type' => Complaint::class,
+                'entity_id'   => $complaint->id,
+                'before_json' => ['status' => $oldStatus],
+                'after_json'  => ['status' => $newStatus, 'note' => $validated['note'] ?? null],
+                'ip'          => $request->ip(),
+            ]);
         });
 
         return ApiResponse::success(new ComplaintResource($complaint->fresh()), 'Status berhasil diperbarui');

@@ -366,6 +366,7 @@ class WebOperatorController extends Controller
         DB::transaction(function () use ($complaint, $validated) {
             $team = !empty($validated['team_id']) ? \App\Models\Team::with('members.user')->find($validated['team_id']) : null;
             $assignedTo = $team?->leader_id ?? null;
+            $previousTeamId = $complaint->latestDisposition?->team_id;
             $instruction = !empty($validated['instruction']) ? $validated['instruction'] : ($complaint->latestDisposition?->instruction ?? 'Lakukan penanganan fisik infrastruktur sesuai standar teknis.');
 
             $deadline = !empty($validated['deadline_days'])
@@ -411,6 +412,17 @@ class WebOperatorController extends Controller
                 'to_status'    => $complaint->status,
                 'note'         => "Operator menempatkan/mengubah penugasan ke {$targetName}",
                 'changed_by'   => auth()->id(),
+            ]);
+
+            // Aturan repo: mutasi penugasan wajib berjejak di audit_logs.
+            \App\Models\AuditLog::create([
+                'actor_id'    => auth()->id(),
+                'action'      => 'TEAM_ASSIGNED',
+                'entity_type' => Complaint::class,
+                'entity_id'   => $complaint->id,
+                'before_json' => ['team_id' => $previousTeamId],
+                'after_json'  => ['team_id' => $team?->id, 'assigned_to' => $assignedTo],
+                'ip'          => request()->ip(),
             ]);
 
             // Notifikasi ke seluruh personil dalam tim yang ditugaskan
