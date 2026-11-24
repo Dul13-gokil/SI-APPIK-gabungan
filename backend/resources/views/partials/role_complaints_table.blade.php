@@ -138,6 +138,12 @@
                                             <span>{{ $dispItem?->team_id ? 'Ubah Regu' : 'Tempatkan Regu' }}</span>
                                         </button>
                                     @endif
+                                    {{-- Keputusan rapat: operator tetap bisa menolak laporan yang sudah ditugaskan. --}}
+                                    <button type="button" onclick="confirmRejectComplaint({{ $item->id }}, '{{ $item->public_code }}')"
+                                        class="px-2.5 py-1.5 rounded-lg bg-white hover:bg-red-50 text-red-600 border border-red-200 font-semibold text-[11px] inline-flex items-center gap-1 transition cursor-pointer whitespace-nowrap">
+                                        <i data-lucide="x" class="w-3 h-3"></i>
+                                        <span>Tolak</span>
+                                    </button>
                                 @elseif($mode === 'operator-validation')
                                     <button type="button" onclick="openValidationModal({{ $item->id }})"
                                         class="px-2.5 py-1.5 rounded-lg bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-semibold text-[11px] inline-flex items-center gap-1 transition cursor-pointer">

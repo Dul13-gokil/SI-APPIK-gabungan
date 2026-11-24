@@ -83,4 +83,49 @@ class OperatorUxTest extends TestCase
         $this->assertNotEmpty($cocok[1] ?? null);
         $this->assertTrue(Hash::check($cocok[1], $petugas->password));
     }
+
+    public function test_operator_bisa_menolak_laporan_yang_sudah_ditugaskan(): void
+    {
+        $operator = $this->operator();
+        $reporter = User::create([
+            'name' => 'Warga Uji',
+            'email' => 'warga.tolak@example.test',
+            'phone' => '081299970003',
+            'password' => 'Password123',
+            'role' => 'WARGA',
+            'is_active' => true,
+        ]);
+        $category = \App\Models\Category::create([
+            'name' => 'Jalan & Jembatan',
+            'department_id' => $operator->department_id ?? \App\Models\Department::query()->value('id'),
+            'severity_default' => 3,
+        ]);
+
+        $complaint = \App\Models\Complaint::create([
+            'public_code' => 'UJI-TOLAK-1',
+            'user_id' => $reporter->id,
+            'category_id' => $category->id,
+            'title' => 'Jalan berlubang',
+            'description' => 'Lubang di badan jalan.',
+            'address' => 'Jl. Poros Lasusua',
+            'latitude' => -3.5060,
+            'longitude' => 120.8878,
+            'radius_m' => 20,
+            'status' => 'DISPATCHED',
+            'priority_score' => 10,
+            'priority_level' => 'LOW',
+        ]);
+
+        $this->actingAs($operator)
+            ->post(route('operator.complaints.reject', $complaint->id), [
+                'reason' => 'Bukti lapangan tidak sesuai.',
+            ])
+            ->assertRedirect();
+
+        $this->assertSame('REJECTED', $complaint->fresh()->status);
+        $this->assertDatabaseHas('audit_logs', [
+            'action' => 'REJECTED',
+            'entity_id' => $complaint->id,
+        ]);
+    }
 }
