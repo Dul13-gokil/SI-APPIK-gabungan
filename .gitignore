@@ -69,3 +69,7 @@ __pycache__/
 *.pyc
 *.pyo
 backend/app/Domain/AI/Scripts/__pycache__/
+
+# Artefak build Gradle & lockfile npm root
+mobile/android/build/
+/package-lock.json
