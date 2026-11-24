@@ -379,6 +379,20 @@ docker run --rm -v si-appik_app-storage:/data -v "$PWD":/backup alpine \
 
 ---
 
+## 5c. Layar monitoring ruang kendali
+
+`/monitoring` dibuka tanpa login dan tanpa sidebar, untuk TV/monitor besar di ruang
+kendali. Isinya agregat (tanpa nama, nomor HP, atau surel pelapor) dan diperbarui
+otomatis tiap 30 detik:
+
+- `/monitoring` — halaman layar penuh
+- `/monitoring/data` — JSON sumber pembaruan
+
+Bila perlu dibatasi, tambahkan middleware/token pada route group `monitoring` di
+`routes/web.php`.
+
+---
+
 ## 6. Menghubungkan aplikasi mobile
 
 Aplikasi tidak perlu di-build ulang. Di aplikasi: **Profil -> Alamat Server API**,
