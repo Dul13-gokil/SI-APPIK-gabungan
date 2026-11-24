@@ -7,9 +7,12 @@ use App\Models\AuditLog;
 use App\Models\Complaint;
 use App\Models\ComplaintPhoto;
 use App\Models\ComplaintStatusHistory;
+use App\Models\Disposition;
 use App\Models\Notification;
+use App\Models\Team;
 use App\Models\User;
 use App\Services\ImageWatermarkService;
+use Carbon\CarbonInterface;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
@@ -201,6 +204,217 @@ class WorkflowService
         // Keputusan rapat: AI memvalidasi hasil kerja. Bila kerusakan tidak lagi terdeteksi,
         // laporan langsung COMPLETED; bila ragu tetap WAITING_VERIFICATION untuk operator.
         return app(CompletionValidationService::class)->validate($complaint->fresh(), $worker?->id);
+    }
+
+    /**
+     * Operator menugaskan laporan ke dinas/regu/petugas.
+     */
+    public function dispatch(
+        Complaint $complaint,
+        ?User $actor,
+        int $departmentId,
+        ?int $teamId,
+        ?int $assignedTo,
+        string $instruction,
+        ?CarbonInterface $deadline = null,
+        ?string $ip = null
+    ): void {
+        $oldStatus = $complaint->status;
+        $newStatus = 'DISPATCHED';
+
+        ComplaintStateMachine::validateTransition($oldStatus, $newStatus);
+
+        $deadline ??= now()->addDays(3);
+
+        DB::transaction(function () use ($complaint, $actor, $departmentId, $teamId, $assignedTo, $instruction, $deadline, $oldStatus, $newStatus, $ip) {
+            $complaint->update(['status' => $newStatus]);
+
+            $team = $teamId ? Team::with('members.user')->find($teamId) : null;
+            $assignee = $assignedTo ?? $team?->leader_id;
+            $dueText = $deadline->translatedFormat('d F Y H:i');
+
+            Disposition::create([
+                'complaint_id'  => $complaint->id,
+                'department_id' => $departmentId,
+                'team_id'       => $team?->id,
+                'assigned_by'   => $actor?->id,
+                'assigned_to'   => $assignee,
+                'instruction'   => $instruction,
+                'deadline'      => $deadline,
+                'status'        => 'PENDING',
+            ]);
+
+            $targetName = $team
+                ? "Regu {$team->name}"
+                : ($assignee ? ('Petugas ' . (User::find($assignee)?->name ?? $assignee)) : 'terbuka untuk klaim regu lapangan');
+
+            ComplaintStatusHistory::create([
+                'complaint_id' => $complaint->id,
+                'from_status'  => $oldStatus,
+                'to_status'    => $newStatus,
+                'note'         => "Laporan diverifikasi valid dan ditugaskan ke {$targetName} dengan tenggat {$dueText}. Instruksi: {$instruction}",
+                'changed_by'   => $actor?->id,
+            ]);
+
+            AuditLog::create([
+                'actor_id'    => $actor?->id,
+                'action'      => 'DISPOSITION',
+                'entity_type' => Complaint::class,
+                'entity_id'   => $complaint->id,
+                'before_json' => ['status' => $oldStatus],
+                'after_json'  => ['status' => $newStatus, 'department_id' => $departmentId, 'team_id' => $team?->id],
+                'ip'          => $ip,
+            ]);
+
+            $teamInfo = $team ? " ({$team->name})" : '';
+            $this->notifyOwner(
+                $complaint,
+                'COMPLAINT_DISPATCHED',
+                'Laporan Diverifikasi & Ditugaskan',
+                "Laporan #{$complaint->public_code} telah diverifikasi oleh Operator dan ditugaskan ke tim teknis lapangan{$teamInfo} dengan estimasi selesai {$deadline->diffForHumans()}."
+            );
+
+            // Penerima tugas: seluruh anggota regu, petugas tunggal, atau semua petugas
+            // ketika penugasan terbuka untuk klaim (mode CLAIM). Dulu jalur API tidak
+            // menyiarkan tugas klaim sehingga tidak ada petugas yang diberi tahu.
+            $recipients = $team && $team->members->isNotEmpty()
+                ? $team->members->pluck('user_id')->all()
+                : ($assignee ? [$assignee] : User::where('role', 'PETUGAS')->pluck('id')->all());
+
+            foreach (array_unique($recipients) as $userId) {
+                Notification::create([
+                    'user_id'   => $userId,
+                    'type'      => 'FIELD_TASK_ASSIGNED',
+                    'title'     => $team ? 'Tugas Lapangan untuk ' . $team->name : 'Tugas Lapangan Baru',
+                    'body'      => "Laporan #{$complaint->public_code} (\"{$complaint->title}\") ditugaskan dengan batas waktu hingga {$dueText} ({$deadline->diffForHumans()}).",
+                    'data_json' => [
+                        'complaint_id'    => $complaint->id,
+                        'public_code'     => $complaint->public_code,
+                        'complaint_title' => $complaint->title,
+                        'address'         => $complaint->address,
+                        'instruction'     => $instruction,
+                        'team_id'         => $team?->id,
+                        'team_name'       => $team?->name,
+                        'deadline'        => $deadline->toIso8601String(),
+                    ],
+                ]);
+            }
+        });
+    }
+
+    /**
+     * Operator menolak laporan (tidak valid / hoax).
+     */
+    public function reject(Complaint $complaint, ?User $actor, string $reason, ?string $ip = null): void
+    {
+        $oldStatus = $complaint->status;
+        $newStatus = 'REJECTED';
+
+        ComplaintStateMachine::validateTransition($oldStatus, $newStatus);
+
+        DB::transaction(function () use ($complaint, $actor, $reason, $oldStatus, $newStatus, $ip) {
+            $complaint->update(['status' => $newStatus]);
+
+            ComplaintStatusHistory::create([
+                'complaint_id' => $complaint->id,
+                'from_status'  => $oldStatus,
+                'to_status'    => $newStatus,
+                'note'         => "Laporan ditolak oleh Operator: {$reason}",
+                'changed_by'   => $actor?->id,
+            ]);
+
+            // Aturan audit: seluruh mutasi status wajib berjejak. Jalur web sebelumnya
+            // tidak menulis audit sama sekali untuk penolakan.
+            AuditLog::create([
+                'actor_id'    => $actor?->id,
+                'action'      => 'REJECTED',
+                'entity_type' => Complaint::class,
+                'entity_id'   => $complaint->id,
+                'before_json' => ['status' => $oldStatus],
+                'after_json'  => ['status' => $newStatus, 'reason' => $reason],
+                'ip'          => $ip,
+            ]);
+
+            $this->notifyOwner(
+                $complaint,
+                'COMPLAINT_REJECTED',
+                'Laporan Tidak Dapat Diproses',
+                "Laporan #{$complaint->public_code} \"{$complaint->title}\" tidak dapat diproses. Alasan: {$reason}"
+            );
+        });
+    }
+
+    /**
+     * Operator memvalidasi hasil kerja lapangan: selesai atau minta revisi.
+     */
+    public function decideCompletion(Complaint $complaint, ?User $actor, string $decision, ?string $notes = null, ?string $ip = null): void
+    {
+        $oldStatus = $complaint->status;
+        $newStatus = $decision;
+
+        ComplaintStateMachine::validateTransition($oldStatus, $newStatus);
+
+        DB::transaction(function () use ($complaint, $actor, $decision, $notes, $oldStatus, $newStatus, $ip) {
+            $complaint->update(['status' => $newStatus]);
+
+            $complaint->latestDisposition?->update([
+                'status' => $newStatus === 'COMPLETED' ? 'COMPLETED' : 'REVISION_REQUIRED',
+            ]);
+
+            $note = $notes ?? ($newStatus === 'COMPLETED'
+                ? 'Operator memvalidasi pekerjaan lapangan telah selesai dan sesuai standar kelayakan teknis.'
+                : 'Pekerjaan belum memenuhi standar dan dikembalikan ke petugas untuk revisi.');
+
+            ComplaintStatusHistory::create([
+                'complaint_id' => $complaint->id,
+                'from_status'  => $oldStatus,
+                'to_status'    => $newStatus,
+                'note'         => $note,
+                'changed_by'   => $actor?->id,
+            ]);
+
+            AuditLog::create([
+                'actor_id'    => $actor?->id,
+                'action'      => 'COMPLETION_DECIDED',
+                'entity_type' => Complaint::class,
+                'entity_id'   => $complaint->id,
+                'before_json' => ['status' => $oldStatus],
+                'after_json'  => ['status' => $newStatus, 'note' => $note],
+                'ip'          => $ip,
+            ]);
+
+            if ($newStatus === 'COMPLETED') {
+                $this->notifyOwner(
+                    $complaint,
+                    'COMPLAINT_COMPLETED',
+                    'Laporan Anda Telah Selesai Ditangani!',
+                    "Laporan #{$complaint->public_code} \"{$complaint->title}\" telah selesai dikerjakan dan diverifikasi tuntas oleh Operator Dinas. Terima kasih atas kepedulian Anda!"
+                );
+
+                return;
+            }
+
+            // Revisi: pelapor tetap diberi tahu, dan petugas pemegang tugas WAJIB diberi tahu
+            // karena hanya dia yang bisa memperbaiki. Jalur API dulu hanya memberi tahu pelapor,
+            // sehingga petugas di aplikasi mobile tidak pernah tahu pekerjaannya dikembalikan.
+            $this->notifyOwner(
+                $complaint,
+                'COMPLAINT_REVISION',
+                'Proses Perbaikan Memerlukan Revisi',
+                "Operator meminta revisi perbaikan untuk laporan #{$complaint->public_code}: {$note}"
+            );
+
+            $workerId = $complaint->latestDisposition?->assigned_to;
+            if ($workerId) {
+                Notification::create([
+                    'user_id'   => $workerId,
+                    'type'      => 'TASK_REVISION_REQUIRED',
+                    'title'     => 'Perbaikan Memerlukan Revisi',
+                    'body'      => "Operator meminta revisi perbaikan untuk laporan #{$complaint->public_code}: {$note}",
+                    'data_json' => ['complaint_id' => $complaint->id],
+                ]);
+            }
+        });
     }
 
     /**

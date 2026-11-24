@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Web;
 
-use App\Domain\Complaints\Services\ComplaintStateMachine;
+use App\Domain\Complaints\Services\WorkflowService;
 use App\Http\Controllers\Controller;
 use App\Models\Complaint;
 use App\Models\ComplaintStatusHistory;
@@ -276,98 +276,20 @@ class WebOperatorController extends Controller
                 ->with('error', "Laporan #{$complaint->public_code} tidak dapat ditugaskan karena {$statusLabel}. Silakan refresh halaman.");
         }
 
-        ComplaintStateMachine::validateTransition($oldStatus, $newStatus);
-
         $deadline = !empty($validated['deadline_date'])
             ? Carbon::parse($validated['deadline_date'])
             : now()->addDays((int) ($validated['deadline_days'] ?? 3));
 
-        DB::transaction(function () use ($complaint, $validated, $oldStatus, $newStatus, $deadline, $request) {
-            $complaint->update(['status' => $newStatus]);
-
-            $team = !empty($validated['team_id']) ? \App\Models\Team::with('members.user')->find($validated['team_id']) : null;
-            $assignedTo = $validated['assigned_to'] ?? ($team?->leader_id ?? null);
-
-            Disposition::create([
-                'complaint_id'  => $complaint->id,
-                'department_id' => $validated['department_id'],
-                'team_id'       => $team?->id ?? null,
-                'assigned_by'   => auth()->id(),
-                'assigned_to'   => $assignedTo,
-                'instruction'   => $validated['instruction'],
-                'deadline'      => $deadline,
-                'status'        => 'PENDING',
-            ]);
-
-            $targetName = $team ? "ke Regu {$team->name}" : ($assignedTo ? "ke Petugas " . (User::find($assignedTo)?->name ?? '') : "terbuka untuk klaim regu lapangan");
-            ComplaintStatusHistory::create([
-                'complaint_id' => $complaint->id,
-                'from_status'  => $oldStatus,
-                'to_status'    => $newStatus,
-                'note'         => "Laporan diverifikasi valid oleh Operator & ditugaskan {$targetName} dengan tenggat: " . $deadline->translatedFormat('d F Y H:i') . ". Instruksi: {$validated['instruction']}",
-                'changed_by'   => auth()->id(),
-            ]);
-
-            // Notifikasi ke seluruh personil dalam tim
-            if ($team && $team->members->isNotEmpty()) {
-                foreach ($team->members as $member) {
-                    Notification::create([
-                        'user_id'   => $member->user_id,
-                        'type'      => 'FIELD_TASK_ASSIGNED',
-                        'title'     => 'Tugas Lapangan untuk ' . $team->name,
-                        'body'      => "Laporan #{$complaint->public_code} (\"{$complaint->title}\") ditugaskan ke regu Anda dengan batas waktu penanganan hingga " . $deadline->translatedFormat('d F Y, H:i') . " ({$deadline->diffForHumans()}).",
-                        'data_json' => [
-                            'complaint_id' => $complaint->id,
-                            'public_code'  => $complaint->public_code,
-                            'team_id'      => $team->id,
-                            'team_name'    => $team->name,
-                            'deadline'     => $deadline->toIso8601String(),
-                        ],
-                    ]);
-                }
-            } elseif (!empty($assignedTo)) {
-                // Notifikasi ke Pekerja Lapangan individual
-                Notification::create([
-                    'user_id'   => $assignedTo,
-                    'type'      => 'FIELD_TASK_ASSIGNED',
-                    'title'     => 'Tugas Lapangan Baru',
-                    'body'      => "Laporan #{$complaint->public_code} (\"{$complaint->title}\") telah ditugaskan. Silakan mengambil dan mengerjakan laporan ini dengan batas waktu penanganan hingga " . $deadline->translatedFormat('d F Y, H:i') . " ({$deadline->diffForHumans()}).",
-                    'data_json' => [
-                        'complaint_id' => $complaint->id,
-                        'public_code'  => $complaint->public_code,
-                        'deadline'     => $deadline->toIso8601String(),
-                    ],
-                ]);
-            } else {
-                // Open claim: notifikasi ke semua pekerja lapangan
-                $allPetugas = User::where('role', 'PETUGAS')->get();
-                foreach ($allPetugas as $p) {
-                    Notification::create([
-                        'user_id'   => $p->id,
-                        'type'      => 'FIELD_TASK_ASSIGNED',
-                        'title'     => 'Tugas Baru Tersedia untuk Regu',
-                        'body'      => "Laporan baru #{$complaint->public_code} di {$complaint->address} terbuka untuk diambil oleh regu lapangan yang siap.",
-                        'data_json' => [
-                            'complaint_id' => $complaint->id,
-                            'public_code'  => $complaint->public_code,
-                            'deadline'     => $deadline->toIso8601String(),
-                        ],
-                    ]);
-                }
-            }
-
-            // Notifikasi ke Pelapor
-            if ($complaint->user_id) {
-                $teamInfo = $team ? " ({$team->name})" : "";
-                Notification::create([
-                    'user_id'   => $complaint->user_id,
-                    'type'      => 'COMPLAINT_DISPATCHED',
-                    'title'     => 'Laporan Diverifikasi & Ditugaskan',
-                    'body'      => "Laporan #{$complaint->public_code} telah diverifikasi oleh Operator dan ditugaskan ke tim teknis lapangan{$teamInfo} dengan estimasi selesai {$deadline->diffForHumans()}.",
-                    'data_json' => ['complaint_id' => $complaint->id],
-                ]);
-            }
-        });
+        app(WorkflowService::class)->dispatch(
+            $complaint,
+            auth()->user(),
+            (int) $validated['department_id'],
+            isset($validated['team_id']) ? (int) $validated['team_id'] : null,
+            isset($validated['assigned_to']) ? (int) $validated['assigned_to'] : null,
+            $validated['instruction'],
+            $deadline,
+            $request->ip()
+        );
 
         return redirect()->route('operator.dashboard', ['tab' => 'inprogress'])
             ->with('success', "Laporan #{$complaint->public_code} berhasil diverifikasi dan ditugaskan dengan deadline {$deadline->diffForHumans()}!");
@@ -383,32 +305,8 @@ class WebOperatorController extends Controller
         ]);
 
         $complaint = Complaint::findOrFail($id);
-        $oldStatus = $complaint->status;
-        $newStatus = 'REJECTED';
 
-        ComplaintStateMachine::validateTransition($oldStatus, $newStatus);
-
-        DB::transaction(function () use ($complaint, $validated, $oldStatus, $newStatus) {
-            $complaint->update(['status' => $newStatus]);
-
-            ComplaintStatusHistory::create([
-                'complaint_id' => $complaint->id,
-                'from_status'  => $oldStatus,
-                'to_status'    => $newStatus,
-                'note'         => "Laporan ditolak oleh Operator: {$validated['reason']}",
-                'changed_by'   => auth()->id(),
-            ]);
-
-            if ($complaint->user_id) {
-                Notification::create([
-                    'user_id'   => $complaint->user_id,
-                    'type'      => 'COMPLAINT_REJECTED',
-                    'title'     => 'Laporan Ditolak Operator',
-                    'body'      => "Laporan #{$complaint->public_code} tidak dapat diproses. Alasan: {$validated['reason']}",
-                    'data_json' => ['complaint_id' => $complaint->id],
-                ]);
-            }
-        });
+        app(WorkflowService::class)->reject($complaint, auth()->user(), $validated['reason'], $request->ip());
 
         return redirect()->route('operator.dashboard', ['tab' => 'archive'])
             ->with('success', "Laporan #{$complaint->public_code} berhasil ditolak dan dipindahkan ke Arsip.");
@@ -425,58 +323,16 @@ class WebOperatorController extends Controller
         ]);
 
         $complaint = Complaint::findOrFail($id);
-        $oldStatus = $complaint->status;
-        $newStatus = $validated['decision'];
 
-        ComplaintStateMachine::validateTransition($oldStatus, $newStatus);
+        app(WorkflowService::class)->decideCompletion(
+            $complaint,
+            auth()->user(),
+            $validated['decision'],
+            $validated['notes'] ?? null,
+            $request->ip()
+        );
 
-        DB::transaction(function () use ($complaint, $validated, $oldStatus, $newStatus) {
-            $complaint->update(['status' => $newStatus]);
-
-            if ($complaint->latestDisposition) {
-                $complaint->latestDisposition->update([
-                    'status' => $newStatus === 'COMPLETED' ? 'COMPLETED' : 'REVISION_REQUIRED',
-                ]);
-            }
-
-            $note = $validated['notes'] ?? ($newStatus === 'COMPLETED'
-                ? 'Operator memvalidasi pekerjaan lapangan telah selesai dan sesuai standar kelayakan teknis.'
-                : 'Pekerjaan belum memenuhi standar dan dikembalikan ke petugas untuk revisi.');
-
-            ComplaintStatusHistory::create([
-                'complaint_id' => $complaint->id,
-                'from_status'  => $oldStatus,
-                'to_status'    => $newStatus,
-                'note'         => $note,
-                'changed_by'   => auth()->id(),
-            ]);
-
-            // Notifikasi ke Pelapor
-            if ($complaint->user_id) {
-                if ($newStatus === 'COMPLETED') {
-                    Notification::create([
-                        'user_id'   => $complaint->user_id,
-                        'type'      => 'COMPLAINT_COMPLETED',
-                        'title'     => 'Laporan Anda Telah SELESAI!',
-                        'body'      => "Laporan #{$complaint->public_code} \"{$complaint->title}\" telah selesai ditangani dan diverifikasi tuntas oleh Operator Dinas.",
-                        'data_json' => ['complaint_id' => $complaint->id],
-                    ]);
-                }
-            }
-
-            // Notifikasi ke Pekerja Lapangan jika butuh revisi
-            if ($newStatus === 'REVISION_REQUIRED' && $complaint->latestDisposition?->assigned_to) {
-                Notification::create([
-                    'user_id'   => $complaint->latestDisposition->assigned_to,
-                    'type'      => 'TASK_REVISION_REQUIRED',
-                    'title'     => 'Perbaikan Memerlukan Revisi',
-                    'body'      => "Operator meminta revisi perbaikan untuk laporan #{$complaint->public_code}: {$note}",
-                    'data_json' => ['complaint_id' => $complaint->id],
-                ]);
-            }
-        });
-
-        $msg = $newStatus === 'COMPLETED'
+        $msg = $validated['decision'] === 'COMPLETED'
             ? "Laporan #{$complaint->public_code} berhasil divalidasi dan dinyatakan SELESAI!"
             : "Laporan #{$complaint->public_code} dikembalikan ke Pekerja Lapangan untuk REVISI.";
 

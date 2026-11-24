@@ -14,6 +14,7 @@ use App\Models\Disposition;
 use App\Models\Notification;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class WorkflowController extends Controller
@@ -48,6 +49,18 @@ class WorkflowController extends Controller
         ]);
 
         $complaint = Complaint::findOrFail($id);
+
+        if ($validated['decision'] === 'REJECTED') {
+            app(WorkflowService::class)->reject(
+                $complaint,
+                $request->user(),
+                $validated['notes'] ?? 'Tidak memenuhi kriteria verifikasi.',
+                $request->ip()
+            );
+
+            return ApiResponse::success(new ComplaintResource($complaint->fresh()), 'Verifikasi berhasil disimpan');
+        }
+
         $oldStatus = $complaint->status;
         $newStatus = $validated['decision'];
 
@@ -79,22 +92,13 @@ class WorkflowController extends Controller
                 'ip'          => $request->ip(),
             ]);
 
-            // Kirim notifikasi ke pemilik laporan
-            if ($newStatus === 'VERIFIED') {
-                $this->notifyComplaintOwner(
-                    $complaint,
-                    'COMPLAINT_VERIFIED',
-                    'Laporan Anda Terverifikasi!',
-                    "Laporan #{$complaint->public_code} \"{$complaint->title}\" telah diverifikasi dan akan segera ditindaklanjuti oleh tim teknis."
-                );
-            } elseif ($newStatus === 'REJECTED') {
-                $this->notifyComplaintOwner(
-                    $complaint,
-                    'COMPLAINT_REJECTED',
-                    'Laporan Tidak Dapat Diproses',
-                    "Laporan #{$complaint->public_code} \"{$complaint->title}\" tidak dapat diproses. Alasan: " . ($validated['notes'] ?? 'Tidak memenuhi kriteria verifikasi.')
-                );
-            }
+            // Penolakan ditangani WorkflowService::reject(); di sini hanya VERIFIED.
+            $this->notifyComplaintOwner(
+                $complaint,
+                'COMPLAINT_VERIFIED',
+                'Laporan Anda Terverifikasi!',
+                "Laporan #{$complaint->public_code} \"{$complaint->title}\" telah diverifikasi dan akan segera ditindaklanjuti oleh tim teknis."
+            );
         });
 
         return ApiResponse::success(new ComplaintResource($complaint->fresh()), 'Verifikasi berhasil disimpan');
@@ -114,92 +118,17 @@ class WorkflowController extends Controller
         ]);
 
         $complaint = Complaint::findOrFail($id);
-        $oldStatus = $complaint->status;
-        $newStatus = 'DISPATCHED';
 
-        ComplaintStateMachine::validateTransition($oldStatus, $newStatus);
-
-
-        DB::transaction(function () use ($complaint, $validated, $oldStatus, $newStatus, $request) {
-            $complaint->update(['status' => $newStatus]);
-
-            $team = !empty($validated['team_id']) ? \App\Models\Team::with('members.user')->find($validated['team_id']) : null;
-            $assignedTo = $validated['assigned_to'] ?? ($team?->leader_id ?? null);
-
-            Disposition::create([
-                'complaint_id'  => $complaint->id,
-                'department_id' => $validated['department_id'],
-                'team_id'       => $team?->id ?? null,
-                'assigned_by'   => $request->user()?->id,
-                'assigned_to'   => $assignedTo,
-                'instruction'   => $validated['instruction'],
-                'deadline'      => $validated['deadline'] ?? now()->addDays(3),
-                'status'        => 'PENDING',
-            ]);
-
-            $targetName = $team ? "Regu {$team->name}" : ($assignedTo ? "Petugas ID: {$assignedTo}" : "Terbuka untuk Klaim Mandiri Regu");
-            ComplaintStatusHistory::create([
-                'complaint_id' => $complaint->id,
-                'from_status'  => $oldStatus,
-                'to_status'    => $newStatus,
-                'note'         => "Laporan ditugaskan ke {$targetName}: {$validated['instruction']}",
-                'changed_by'   => $request->user()?->id,
-            ]);
-
-            AuditLog::create([
-                'actor_id'    => $request->user()?->id,
-                'action'      => 'DISPOSITION',
-                'entity_type' => Complaint::class,
-                'entity_id'   => $complaint->id,
-                'before_json' => ['status' => $oldStatus],
-                'after_json'  => ['status' => $newStatus, 'department_id' => $validated['department_id'], 'team_id' => $team?->id],
-                'ip'          => $request->ip(),
-            ]);
-
-            // Notifikasi ke pemilik laporan bahwa sudah diteruskan ke tim teknis
-            $teamInfo = $team ? " ({$team->name})" : "";
-            $this->notifyComplaintOwner(
-                $complaint,
-                'COMPLAINT_DISPATCHED',
-                'Laporan Sedang Dalam Penanganan',
-                "Laporan #{$complaint->public_code} \"{$complaint->title}\" telah diteruskan ke tim teknis lapangan{$teamInfo} dan segera dilakukan perbaikan fisik."
-            );
-
-            // Notifikasi ke seluruh personil dalam tim yang ditugaskan
-            if ($team && $team->members->isNotEmpty()) {
-                foreach ($team->members as $member) {
-                    Notification::create([
-                        'user_id'   => $member->user_id,
-                        'type'      => 'FIELD_TASK_ASSIGNED',
-                        'title'     => 'Tugas Baru untuk ' . $team->name,
-                        'body'      => "Laporan #{$complaint->public_code} (\"{$complaint->title}\") telah ditugaskan ke regu Anda. Silakan koordinasikan dan kerjakan di lapangan.",
-                        'data_json' => [
-                            'complaint_id'    => $complaint->id,
-                            'public_code'     => $complaint->public_code,
-                            'complaint_title' => $complaint->title,
-                            'team_id'         => $team->id,
-                            'team_name'       => $team->name,
-                            'address'         => $complaint->address,
-                            'instruction'     => $validated['instruction'],
-                        ],
-                    ]);
-                }
-            } elseif (!empty($assignedTo)) {
-                Notification::create([
-                    'user_id'   => $assignedTo,
-                    'type'      => 'FIELD_TASK_ASSIGNED',
-                    'title'     => 'Tugas Lapangan Baru',
-                    'body'      => "Laporan #{$complaint->public_code} (\"{$complaint->title}\") telah ditugaskan. Silakan mengambil dan mengerjakan laporan ini dengan batas waktu penanganan yang telah ditentukan.",
-                    'data_json' => [
-                        'complaint_id'    => $complaint->id,
-                        'public_code'     => $complaint->public_code,
-                        'complaint_title' => $complaint->title,
-                        'address'         => $complaint->address,
-                        'instruction'     => $validated['instruction'],
-                    ],
-                ]);
-            }
-        });
+        app(WorkflowService::class)->dispatch(
+            $complaint,
+            $request->user(),
+            (int) $validated['department_id'],
+            isset($validated['team_id']) ? (int) $validated['team_id'] : null,
+            isset($validated['assigned_to']) ? (int) $validated['assigned_to'] : null,
+            $validated['instruction'],
+            isset($validated['deadline']) ? Carbon::parse($validated['deadline']) : null,
+            $request->ip()
+        );
 
         return ApiResponse::success(new ComplaintResource($complaint->fresh()), 'Laporan berhasil ditugaskan');
     }
@@ -261,49 +190,14 @@ class WorkflowController extends Controller
         ]);
 
         $complaint = Complaint::findOrFail($id);
-        $oldStatus = $complaint->status;
-        $newStatus = $validated['decision'];
 
-        ComplaintStateMachine::validateTransition($oldStatus, $newStatus);
-
-
-        DB::transaction(function () use ($complaint, $validated, $oldStatus, $newStatus, $request) {
-            $complaint->update(['status' => $newStatus]);
-
-            if ($complaint->latestDisposition) {
-                $complaint->latestDisposition->update([
-                    'status' => $newStatus === 'COMPLETED' ? 'COMPLETED' : 'REVISION_REQUIRED',
-                ]);
-            }
-
-            $note = $validated['notes'] ?? ($newStatus === 'COMPLETED'
-                ? 'Operator telah memvalidasi bahwa pekerjaan perbaikan lapangan telah tuntas dan sesuai standar.'
-                : 'Pekerjaan belum memenuhi standar teknis dan perlu revisi.');
-
-            ComplaintStatusHistory::create([
-                'complaint_id' => $complaint->id,
-                'from_status'  => $oldStatus,
-                'to_status'    => $newStatus,
-                'note'         => $note,
-                'changed_by'   => $request->user()?->id,
-            ]);
-
-            if ($newStatus === 'COMPLETED') {
-                $this->notifyComplaintOwner(
-                    $complaint,
-                    'COMPLAINT_COMPLETED',
-                    'Laporan Anda Telah Selesai Ditangani!',
-                    "Laporan #{$complaint->public_code} \"{$complaint->title}\" telah selesai dikerjakan dan diverifikasi tuntas oleh Operator Dinas. Terima kasih atas kepedulian Anda!"
-                );
-            } else {
-                $this->notifyComplaintOwner(
-                    $complaint,
-                    'COMPLAINT_REVISION',
-                    'Proses Perbaikan Memerlukan Revisi',
-                    "Operator meminta revisi perbaikan untuk laporan #{$complaint->public_code}: {$note}"
-                );
-            }
-        });
+        app(WorkflowService::class)->decideCompletion(
+            $complaint,
+            $request->user(),
+            $validated['decision'],
+            $validated['notes'] ?? null,
+            $request->ip()
+        );
 
         return ApiResponse::success(new ComplaintResource($complaint->fresh()), 'Validasi akhir berhasil disimpan');
     }

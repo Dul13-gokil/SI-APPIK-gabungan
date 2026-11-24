@@ -155,4 +155,81 @@ class WorkflowParityTest extends TestCase
             'actor_id' => $worker->id,
         ]);
     }
+
+    public function test_revisi_lewat_api_memberi_tahu_petugas_dan_pelapor(): void
+    {
+        $reporter = $this->user('WARGA');
+        $worker = $this->user('PETUGAS');
+        $operator = $this->user('OPERATOR');
+        $complaint = $this->complaint($reporter, 'WAITING_VERIFICATION', $worker->id);
+
+        $this->actingAs($operator, 'sanctum')
+            ->postJson("/api/v1/complaints/{$complaint->id}/validate-resolution", [
+                'decision' => 'REVISION_REQUIRED',
+                'notes' => 'Tambalan belum rata.',
+            ])
+            ->assertStatus(200);
+
+        $this->assertSame('REVISION_REQUIRED', $complaint->fresh()->status);
+
+        // Petugas pemegang tugas hanya bisa memperbaiki bila diberi tahu.
+        $this->assertDatabaseHas('notifications', [
+            'user_id' => $worker->id,
+            'type' => 'TASK_REVISION_REQUIRED',
+        ]);
+        $this->assertDatabaseHas('notifications', [
+            'user_id' => $reporter->id,
+            'type' => 'COMPLAINT_REVISION',
+        ]);
+    }
+
+    public function test_penugasan_terbuka_lewat_api_menyiarkan_tugas_ke_semua_petugas(): void
+    {
+        $reporter = $this->user('WARGA');
+        $operator = $this->user('OPERATOR');
+        $petugasA = $this->user('PETUGAS');
+        $petugasB = $this->user('PETUGAS');
+        $complaint = $this->complaint($reporter, 'VERIFIED');
+
+        $this->actingAs($operator, 'sanctum')
+            ->postJson("/api/v1/complaints/{$complaint->id}/dispositions", [
+                'department_id' => $this->department->id,
+                'instruction' => 'Tambal lubang.',
+            ])
+            ->assertStatus(200);
+
+        $this->assertSame('DISPATCHED', $complaint->fresh()->status);
+
+        // Mode klaim: tanpa regu dan tanpa petugas tunggal, semua petugas harus tahu.
+        foreach ([$petugasA, $petugasB] as $petugas) {
+            $this->assertDatabaseHas('notifications', [
+                'user_id' => $petugas->id,
+                'type' => 'FIELD_TASK_ASSIGNED',
+            ]);
+        }
+    }
+
+    public function test_penolakan_lewat_web_meninggalkan_jejak_audit(): void
+    {
+        $reporter = $this->user('WARGA');
+        $operator = $this->user('OPERATOR');
+        $complaint = $this->complaint($reporter, 'SUBMITTED');
+
+        $this->actingAs($operator)
+            ->post(route('operator.complaints.reject', $complaint->id), [
+                'reason' => 'Foto bukan kerusakan jalan.',
+            ])
+            ->assertRedirect();
+
+        $this->assertSame('REJECTED', $complaint->fresh()->status);
+        $this->assertDatabaseHas('audit_logs', [
+            'action' => 'REJECTED',
+            'entity_id' => $complaint->id,
+            'actor_id' => $operator->id,
+        ]);
+        $this->assertDatabaseHas('notifications', [
+            'user_id' => $reporter->id,
+            'type' => 'COMPLAINT_REJECTED',
+        ]);
+    }
 }
