@@ -102,93 +102,168 @@ docker compose exec app php artisan db:seed --force
 
 ## 3. Deploy ke VPS (domain + HTTPS)
 
-Contoh VPS Ubuntu 24.04, domain `aduan.kolakautara.go.id`.
+Panduan ini memindahkan layanan dari komputer lokal ke VPS Linux sehingga aplikasi
+tidak lagi bergantung pada PC yang harus selalu menyala.
 
-### 3.1 Pasang Docker
+Contoh: VPS Ubuntu 24.04, IP publik `203.0.113.10`, domain `aduan.aispektra.com`.
+Ganti IP, domain, dan nama pengguna sesuai milik Anda.
+
+### 3.0 Persiapan yang harus ada
+
+| Kebutuhan | Keterangan |
+| :--- | :--- |
+| VPS | Ubuntu 22.04/24.04, minimal 2 vCPU / 2 GB RAM / 25 GB disk |
+| Akses DNS | Panel Cloudflare domain `aispektra.com` |
+| Akses SSH | `ssh root@IP_VPS` |
+
+### 3.1 Pasang Docker di VPS
 
 ```bash
+ssh root@IP_VPS
 curl -fsSL https://get.docker.com | sh
-sudo usermod -aG docker $USER   # logout/login sekali
-docker compose version
+docker compose version          # harus muncul versi, bukan error
 ```
 
-### 3.2 Ambil kode dan konfigurasi
+### 3.2 Ambil kode
+
+Pekerjaan terbaru ada di branch `ugga`. Deploy branch itu, bukan `main`.
 
 ```bash
-git clone https://github.com/Dul13-gokil/SI-APPIK.git
-cd SI-APPIK
-cp docker-compose.yml docker-compose.yml.bak   # opsional
-nano .env
+cd /opt
+git clone -b ugga https://github.com/Dul13-gokil/SI-APPIK-gabungan.git
+cd SI-APPIK-gabungan
 ```
 
-Isi `.env` produksi:
-
-```dotenv
-APP_ENV=production
-APP_DEBUG=false
-APP_URL=https://aduan.kolakautara.go.id
-APP_PORT=8080
-APP_KEY=base64:...            # generate baru, jangan pakai kunci lokal
-DB_DATABASE=sik
-DB_USERNAME=postgres
-DB_PASSWORD=...               # kuat, simpan di password manager
-MAIL_MAILER=smtp              # isi MAIL_HOST/USERNAME/PASSWORD bila email aktif
-```
-
-### 3.3 Jalankan
+### 3.3 Buat berkas .env produksi
 
 ```bash
-docker compose build
+cp .env.production.example .env
+# hasilkan kunci aplikasi
+echo "APP_KEY=base64:$(openssl rand -base64 32)"
+# hasilkan kata sandi database
+echo "DB_PASSWORD=$(openssl rand -base64 24)"
+```
+
+Buka `nano .env`, tempel kedua nilai di atas, dan isi `APP_URL=https://aduan.aispektra.com`.
+Simpan `DB_PASSWORD` di password manager: nilai ini juga dipakai saat memulihkan cadangan.
+
+### 3.4 Jalankan layanan
+
+```bash
+docker compose build            # membangun app dan scheduler
 docker compose up -d
-docker compose ps
+docker compose ps               # app dan db harus "healthy"
+curl -s -o /dev/null -w "%{http_code}
+" http://127.0.0.1:8080/up   # harus 200
 ```
 
-### 3.4 HTTPS dengan Caddy (paling singkat, sertifikat otomatis)
+### 3.5 Pindahkan data yang sudah ada di komputer lokal
 
-`/etc/caddy/Caddyfile`:
+Jangan mulai dari nol: aduan, pengguna, dan foto saat ini ada di mesin lokal.
+Di **komputer lokal** (Windows, dari folder repo):
 
+```bash
+docker compose exec app php artisan db:backup
+docker compose cp app:/var/www/html/storage/app/backups ./vps-backup
+ls vps-backup                    # ada db-*.sql.gz dan foto-*.tar.gz
 ```
-aduan.kolakautara.go.id {
-    reverse_proxy 127.0.0.1:8080
-}
+
+Salin ke VPS (ganti `root` dan IP bila berbeda):
+
+```bash
+scp -r vps-backup root@203.0.113.10:/opt/SI-APPIK-gabungan/
 ```
+
+Di **VPS**, pulihkan. Tabel hasil migrasi otomatis harus dikosongkan dulu, karena
+dump sudah membawa strukturnya sendiri:
+
+```bash
+cd /opt/SI-APPIK-gabungan
+docker compose exec db psql -U postgres -d sik -c 'DROP SCHEMA public CASCADE; CREATE SCHEMA public;'
+docker compose cp vps-backup app:/tmp/vps-backup
+docker compose exec app sh -c 'gunzip -c /tmp/vps-backup/db-*.sql.gz | PGPASSWORD="$DB_PASSWORD" psql -h db -U postgres -d sik -v ON_ERROR_STOP=1' | tail -3
+docker compose exec app sh -c 'tar -xzf /tmp/vps-backup/foto-*.tar.gz -C storage/app/public && ls storage/app/public/complaints | wc -l'
+docker compose restart app scheduler
+```
+
+Periksa jumlahnya cocok dengan sumber (saat panduan ini ditulis: 12 aduan, 20 pengguna,
+16 foto, 7 berkas di `complaints/`).
+
+### 3.6 HTTPS dengan Caddy
+
+Tanpa proxy, aplikasi tetap HTTP. Caddy mengurus sertifikat Let's Encrypt otomatis.
 
 ```bash
 sudo apt install -y caddy
+sudo tee /etc/caddy/Caddyfile > /dev/null <<'EOF'
+aduan.aispektra.com {
+    reverse_proxy 127.0.0.1:8080
+    request_body {
+        max_size 64MB
+    }
+}
+EOF
 sudo systemctl reload caddy
 ```
 
-Caddy mengurus sertifikat Let's Encrypt selama DNS A record domain sudah menunjuk ke IP VPS
-dan port 80/443 terbuka.
+`max_size 64MB` wajib: tanpa itu unggahan foto 10 MB ditolak sebelum sampai ke aplikasi.
 
-Alternatif Nginx:
+### 3.7 Arahkan domain ke VPS
 
-```nginx
-server {
-    listen 80;
-    server_name aduan.kolakautara.go.id;
-    client_max_body_size 64m;
+Saat ini `aduan.aispektra.com` dilayani Cloudflare Tunnel dari PC lokal. Ganti rutenya:
 
-    location / {
-        proxy_pass http://127.0.0.1:8080;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
-}
-```
+1. Buka Cloudflare Dashboard -> DNS -> Records.
+2. Hapus record CNAME yang menunjuk ke `<id-tunnel>.cfargotunnel.com`.
+3. Tambah record: tipe `A`, name `aduan`, IPv4 `203.0.113.10`.
+4. Untuk penerbitan sertifikat pertama, matikan proxy (ikon awan abu-abu).
+   Setelah `https://aduan.aispektra.com` melayani dengan sertifikat sah, proxy boleh
+   dinyalakan lagi.
+5. Hapus juga rute publik tunnel di Zero Trust -> Networks -> Tunnels agar tidak
+   ada dua jalur yang berebut domain.
 
-Catatan: `client_max_body_size` wajib dinaikkan, kalau tidak unggahan foto 10 MB ditolak proxy.
-
-### 3.5 Firewall
+### 3.8 Firewall
 
 ```bash
-sudo ufw allow 22,80,443/tcp
+sudo ufw allow OpenSSH
+sudo ufw allow 80,443/tcp
 sudo ufw enable
+sudo ufw status
 ```
 
-Port 8080 dan 5433 cukup diakses lokal VPS; jangan dibuka ke publik.
+Port 8080 dan 5433 sengaja tidak dibuka. Dengan `APP_BIND=127.0.0.1` di `.env`,
+keduanya hanya bisa diakses dari dalam VPS.
+
+### 3.9 Verifikasi setelah pindah
+
+```bash
+curl -s -o /dev/null -w "%{http_code}
+" https://aduan.aispektra.com/up          # 200
+curl -s -o /dev/null -w "%{http_code}
+" https://aduan.aispektra.com/login       # 200
+docker compose exec app php artisan schedule:list                                 # impor jalan + cadangan
+docker compose exec app php artisan db:backup                                     # berjalan tanpa error
+```
+
+Lalu periksa lewat browser: masuk sebagai operator, buka satu aduan, dan pastikan
+foto lama tetap tampil. Terakhir, login aplikasi mobile memakai domain ini.
+
+### 3.10 Matikan mesin lokal (setelah VPS terbukti baik)
+
+Jangan langsung dimatikan. Jalankan keduanya beberapa hari, lalu:
+
+```bash
+# di komputer lokal
+docker compose --profile tunnel down
+```
+
+Volume `db-data` dan `app-storage` tetap ada, jadi data lokal masih bisa dipakai
+sebagai cadangan terakhir.
+
+### 3.11 Bila terjadi masalah (rollback)
+
+1. Kembalikan DNS ke CNAME tunnel lama dan nyalakan lagi tunnel di PC:
+   `docker compose --profile tunnel up -d`.
+2. Data di VPS tidak hilang; perbaiki di sana lalu ulangi 3.7.
 
 ---
 

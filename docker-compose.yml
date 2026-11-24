@@ -71,7 +71,8 @@ services:
       # Opsional: impor data demo dari dump saat volume database masih kosong.
       - ./si-appik.sql:/var/www/html/database/si-appik.sql:ro
     ports:
-      - "${APP_PORT:-8080}:80"
+      # APP_BIND=127.0.0.1 saat di belakang reverse proxy (VPS), 0.0.0.0 untuk akses LAN.
+      - "${APP_BIND:-0.0.0.0}:${APP_PORT:-8080}:80"
     depends_on:
       db:
         condition: service_healthy
