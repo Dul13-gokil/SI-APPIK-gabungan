@@ -109,7 +109,16 @@ class WebSuperAdminController extends Controller
             ->get();
         $regions = \App\Models\Region::withCount('complaints')->orderBy('district')->get();
 
-        $allComplaintsForStats = Complaint::select('id', 'region_id', 'address', 'status')->get();
+        $allComplaintsForStats = Complaint::select('id', 'region_id', 'address', 'status')->get()
+            // Alamat dinormalkan sekali; sebelumnya strtolower dipanggil ulang untuk setiap
+            // pasangan wilayah x aduan sehingga biayanya tumbuh kuadratik.
+            ->map(fn ($c) => [
+                'region_id' => $c->region_id,
+                'address'   => strtolower($c->address ?? ''),
+                'status'    => $c->status,
+            ])
+            ->all();
+
         $districtStats = [];
         foreach ($regions as $r) {
             $distName = strtolower(str_replace(['kecamatan ', 'kec. '], '', $r->district));
@@ -124,18 +133,18 @@ class WebSuperAdminController extends Controller
             $rejected = 0;
 
             foreach ($allComplaintsForStats as $cmp) {
-                $addr = strtolower($cmp->address ?? '');
-                if ($cmp->region_id === $r->id || str_contains($addr, $distName) || str_contains($addr, $villName)) {
+                $addr = $cmp['address'];
+                if ($cmp['region_id'] === $r->id || str_contains($addr, $distName) || str_contains($addr, $villName)) {
                     $total++;
-                    if (in_array($cmp->status, ['COMPLETED', 'CLOSED'], true)) {
+                    if (in_array($cmp['status'], ['COMPLETED', 'CLOSED'], true)) {
                         $completed++;
-                    } elseif (in_array($cmp->status, ['IN_PROGRESS', 'REVISION_REQUIRED'], true)) {
+                    } elseif (in_array($cmp['status'], ['IN_PROGRESS', 'REVISION_REQUIRED'], true)) {
                         $inProgress++;
-                    } elseif ($cmp->status === 'WAITING_VERIFICATION') {
+                    } elseif ($cmp['status'] === 'WAITING_VERIFICATION') {
                         $waitingVerification++;
-                    } elseif ($cmp->status === 'DISPATCHED') {
+                    } elseif ($cmp['status'] === 'DISPATCHED') {
                         $dispatched++;
-                    } elseif ($cmp->status === 'REJECTED') {
+                    } elseif ($cmp['status'] === 'REJECTED') {
                         $rejected++;
                     } else {
                         $pending++; // SUBMITTED, VERIFICATION, VERIFIED

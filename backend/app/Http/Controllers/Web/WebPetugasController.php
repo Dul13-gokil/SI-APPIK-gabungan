@@ -2,17 +2,13 @@
 
 namespace App\Http\Controllers\Web;
 
-use App\Domain\Complaints\Services\ComplaintStateMachine;
+use App\Domain\Complaints\Services\WorkflowService;
 use App\Http\Controllers\Controller;
 use App\Models\Complaint;
-use App\Models\ComplaintPhoto;
-use App\Models\ComplaintStatusHistory;
 use App\Models\Disposition;
-use App\Models\Notification;
 use App\Models\Region;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class WebPetugasController extends Controller
@@ -251,73 +247,8 @@ class WebPetugasController extends Controller
     public function startWork(int $id): RedirectResponse
     {
         $complaint = Complaint::findOrFail($id);
-        $oldStatus = $complaint->status;
 
-        if (!in_array($oldStatus, ['VERIFIED', 'DISPATCHED', 'REVISION_REQUIRED'], true)) {
-            return back()->with('error', "Pekerjaan belum dapat dimulai. Status saat ini: {$oldStatus} (Menunggu verifikasi operator).");
-        }
-
-        $worker = auth()->user();
-
-        // Team shield + kuota tugas aktif, aturan yang sama dengan API.
-        app(\App\Domain\Complaints\Services\FieldTaskAuthorizer::class)->assertCanStart($worker, $complaint);
-
-        $newStatus = 'IN_PROGRESS';
-        ComplaintStateMachine::validateTransition($oldStatus, $newStatus);
-
-        DB::transaction(function () use ($complaint, $oldStatus, $newStatus) {
-            $complaint->update(['status' => $newStatus]);
-            $worker = auth()->user();
-            $workerName = $worker?->name ?? 'Pekerja Lapangan';
-            $workerTeam = $worker?->currentTeam();
-
-            if ($complaint->latestDisposition) {
-                $dispUpdate = ['status' => 'IN_PROGRESS'];
-                if (!$complaint->latestDisposition->assigned_to && $worker) {
-                    $dispUpdate['assigned_to'] = $worker->id;
-                }
-                if (!$complaint->latestDisposition->team_id && $workerTeam) {
-                    $dispUpdate['team_id'] = $workerTeam->id;
-                }
-                $complaint->latestDisposition->update($dispUpdate);
-            }
-
-            $teamStr = $workerTeam ? " dari {$workerTeam->name}" : "";
-            ComplaintStatusHistory::create([
-                'complaint_id' => $complaint->id,
-                'from_status'  => $oldStatus,
-                'to_status'    => $newStatus,
-                'note'         => "Pekerja lapangan {$workerName}{$teamStr} telah mengambil laporan dan memulai proses penanganan fisik di lokasi.",
-                'changed_by'   => auth()->id(),
-            ]);
-
-            \App\Models\AuditLog::create([
-                'actor_id'    => auth()->id(),
-                'action'      => 'WORK_STARTED',
-                'entity_type' => Complaint::class,
-                'entity_id'   => $complaint->id,
-                'before_json' => ['status' => $oldStatus],
-                'after_json'  => ['status' => $newStatus, 'team_id' => $workerTeam?->id],
-                'ip'          => request()->ip(),
-            ]);
-
-            // Kirim notifikasi ke pemilik laporan bahwa laporan telah diambil dan sedang dikerjakan
-            if ($complaint->user_id) {
-                Notification::create([
-                    'user_id'   => $complaint->user_id,
-                    'type'      => 'COMPLAINT_IN_PROGRESS',
-                    'title'     => 'Laporan Sedang Dikerjakan',
-                    'body'      => "Pekerja Lapangan {$workerName}{$teamStr} telah mengambil laporan Anda (#{$complaint->public_code}: \"{$complaint->title}\") dan saat ini berstatus Dikerjakan untuk segera dilakukan perbaikan fisik di lokasi.",
-                    'data_json' => [
-                        'complaint_id'   => $complaint->id,
-                        'public_code'    => $complaint->public_code,
-                        'worker_name'    => $workerName,
-                        'team_name'      => $workerTeam?->name,
-                        'status'         => 'IN_PROGRESS',
-                    ],
-                ]);
-            }
-        });
+        app(WorkflowService::class)->startWork($complaint, auth()->user(), request()->ip());
 
         return back()->with('success', "Pekerjaan untuk laporan #{$complaint->public_code} resmi DIMULAI.");
     }
@@ -326,89 +257,23 @@ class WebPetugasController extends Controller
     {
         $validated = $request->validate([
             'note'      => 'required|string',
+            'photo'     => 'nullable|file|image|max:10240',
             'photos.*'  => 'nullable|file|image|max:10240',
             'latitude'  => 'nullable|numeric|between:-90,90',
             'longitude' => 'nullable|numeric|between:-180,180',
         ]);
 
         $complaint = Complaint::findOrFail($id);
-        $oldStatus = $complaint->status;
-        $newStatus = 'WAITING_VERIFICATION';
 
-        // Otorisasi lebih dulu: regu lain selalu 403, bukan bocor status 422.
-        $user = auth()->user();
-        app(\App\Domain\Complaints\Services\FieldTaskAuthorizer::class)->assertCanFinish($user, $complaint);
-
-        // Foto bukti wajib diambil di sekitar titik aduan (keputusan rapat: radius).
-        app(\App\Domain\Complaints\Services\PhotoRadiusGuard::class)->assertWithinRadius(
+        $autoCompleted = app(WorkflowService::class)->finishWork(
             $complaint,
+            auth()->user(),
+            $validated['note'],
+            WorkflowService::photosFrom($request),
             isset($validated['latitude']) ? (float) $validated['latitude'] : null,
-            isset($validated['longitude']) ? (float) $validated['longitude'] : null
+            isset($validated['longitude']) ? (float) $validated['longitude'] : null,
+            $request->ip()
         );
-
-        ComplaintStateMachine::validateTransition($oldStatus, $newStatus);
-
-
-        DB::transaction(function () use ($complaint, $validated, $oldStatus, $newStatus, $request) {
-            $complaint->update(['status' => $newStatus]);
-
-            if ($complaint->latestDisposition) {
-                $complaint->latestDisposition->update(['status' => 'WAITING_VERIFICATION']);
-            }
-
-            if ($request->hasFile('photos')) {
-                foreach ($request->file('photos') as $photo) {
-                    $path = $photo->store('resolutions', 'public');
-                    $storedAbsPath = \Illuminate\Support\Facades\Storage::disk('public')->path($path);
-                    app(\App\Services\ImageWatermarkService::class)->applyFieldWatermark(
-                        $storedAbsPath,
-                        (string) $complaint->public_code,
-                        $complaint->latitude ? (float) $complaint->latitude : null,
-                        $complaint->longitude ? (float) $complaint->longitude : null,
-                        auth()->user()?->name
-                    );
-                    $realPath = is_file($storedAbsPath) ? $storedAbsPath : $photo->getRealPath();
-                    // Foto hanya disimpan di disk; jangan menyalin base64 ke database lagi.
-                    $photoAttrs = [
-                        'complaint_id' => $complaint->id,
-                        'storage_key'  => $path,
-                        'url'          => null,
-                        'caption'      => 'Bukti Penyelesaian Lapangan',
-                        'type'         => 'resolution_after',
-                        'mime'         => $photo->getClientMimeType(),
-                        'size'         => $photo->getSize(),
-                        'checksum'     => $realPath ? md5_file($realPath) : null,
-                        'captured_at'  => now(),
-                    ];
-                    ComplaintPhoto::create($photoAttrs);
-                }
-            }
-
-            ComplaintStatusHistory::create([
-                'complaint_id' => $complaint->id,
-                'from_status'  => $oldStatus,
-                'to_status'    => $newStatus,
-                'note'         => "Pekerjaan lapangan selesai: {$validated['note']}. Menunggu validasi Operator.",
-                'changed_by'   => auth()->id(),
-            ]);
-
-            \App\Models\AuditLog::create([
-                'actor_id'    => auth()->id(),
-                'action'      => 'WORK_FINISHED',
-                'entity_type' => Complaint::class,
-                'entity_id'   => $complaint->id,
-                'before_json' => ['status' => $oldStatus],
-                'after_json'  => [
-                    'status'   => $newStatus,
-                    'latitude' => $validated['latitude'] ?? null,
-                    'longitude' => $validated['longitude'] ?? null,
-                ],
-                'ip'          => request()->ip(),
-            ]);
-        });
-
-        $autoCompleted = app(\App\Domain\Complaints\Services\CompletionValidationService::class)
-            ->validate($complaint->fresh(), auth()->id());
 
         return back()->with(
             'success',
