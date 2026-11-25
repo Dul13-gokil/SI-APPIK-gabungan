@@ -854,7 +854,7 @@
     </script>
     @endif
 
-    @if(session('success') || session('info') || session('error'))
+    @if(session('success') || session('info') || session('error') || (isset($errors) && $errors->any()))
     <!-- Floating Bottom-Right Toast Notification (Auto-Dismiss 4s) -->
     <div id="globalToastStack" class="fixed bottom-5 right-5 z-[999999] flex flex-col gap-2.5 max-w-sm w-[calc(100vw-2.5rem)] pointer-events-none">
         @if(session('success'))
@@ -880,6 +880,25 @@
             <div class="flex-1 min-w-0">
                 <p class="text-xs font-bold text-[#0F172A]">Informasi</p>
                 <p class="text-[11px] text-[#475569] mt-0.5 leading-snug">{{ session('info') }}</p>
+            </div>
+            <button type="button" onclick="this.closest('.global-toast').remove()" class="w-6 h-6 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center shrink-0 cursor-pointer" aria-label="Tutup">
+                <i data-lucide="x" class="w-3.5 h-3.5"></i>
+            </button>
+        </div>
+        @endif
+
+        @if(isset($errors) && $errors->any() && !session('error'))
+        <div class="global-toast pointer-events-auto flex items-start gap-3 bg-white border border-red-200 shadow-lg rounded-2xl px-4 py-3 transition-all duration-300">
+            <div class="w-8 h-8 rounded-xl bg-red-50 text-red-600 border border-red-100 flex items-center justify-center shrink-0">
+                <i data-lucide="alert-circle" class="w-4 h-4"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+                <p class="text-xs font-bold text-red-700">Data belum bisa disimpan</p>
+                <ul class="text-[11px] text-[#475569] mt-0.5 leading-snug list-disc list-inside space-y-0.5">
+                    @foreach($errors->all() as $err)
+                        <li>{{ $err }}</li>
+                    @endforeach
+                </ul>
             </div>
             <button type="button" onclick="this.closest('.global-toast').remove()" class="w-6 h-6 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center shrink-0 cursor-pointer" aria-label="Tutup">
                 <i data-lucide="x" class="w-3.5 h-3.5"></i>

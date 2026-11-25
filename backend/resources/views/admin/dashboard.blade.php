@@ -2431,6 +2431,7 @@
                             oninput="validateDeactivateForm()"
                             placeholder="Tuliskan alasan logis penonaktifan (minimal 10 karakter)..."
                             class="w-full text-xs px-3 py-2.5 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] focus:bg-white focus:border-red-600 focus:ring-2 focus:ring-red-600/15 transition"></textarea>
+                        <p class="mt-1 text-[11px] text-[#64748B]">Minimal 10 karakter, misalnya: "Mutasi jabatan ke provinsi".</p>
                     </div>
 
                     <div id="deactivateLeaderPasswordWrap" class="hidden">
@@ -2450,6 +2451,8 @@
                             placeholder="Ketik pernyataan konfirmasi di atas"
                             class="w-full text-xs font-mono px-3 py-2.5 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] focus:bg-white focus:border-red-600 focus:ring-2 focus:ring-red-600/15 transition">
                     </div>
+
+                    <p id="deactivateBlockedHint" class="text-[11px] text-amber-700"></p>
 
                     <div class="flex items-center justify-end gap-2.5 pt-3 border-t border-[#E2E8F0]">
                         <button type="button" onclick="closeDeactivateUserModal()"
@@ -4190,6 +4193,16 @@
         const passOk = !deactivateRequiresLeaderPass || adminPass.length > 0;
         if (btn) {
             btn.disabled = !(reason.length >= 10 && match && passOk);
+        }
+
+        // Tombol yang terkunci tanpa penjelasan membuat pengguna mengira tidak bisa.
+        const hint = document.getElementById('deactivateBlockedHint');
+        if (hint) {
+            const kurang = [];
+            if (reason.length < 10) kurang.push(`alasan minimal 10 karakter (baru ${reason.length})`);
+            if (!match) kurang.push('pernyataan konfirmasi belum sama persis');
+            if (!passOk) kurang.push('kata sandi Super Admin wajib diisi');
+            hint.textContent = kurang.length ? 'Belum bisa disimpan: ' + kurang.join(', ') + '.' : '';
         }
     }
 
