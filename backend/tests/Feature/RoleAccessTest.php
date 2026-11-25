@@ -133,4 +133,28 @@ class RoleAccessTest extends TestCase
         $this->assertLessThan($posisi['operator'], $posisi['bupati'], 'Kepala Daerah harus di atas Operator PUPR.');
         $this->assertLessThan($posisi['petugas'], $posisi['operator'], 'Operator PUPR harus di atas Pengawas Lapangan.');
     }
+
+    public function test_admin_mengisi_identitas_personil_di_regu_dan_tugas(): void
+    {
+        $sa = $this->buat('SUPERADMIN', 'sa3@example.test');
+        $team = \App\Models\Team::create(['name' => 'Regu Admin', 'code' => 'RADM']);
+
+        $this->actingAs($sa)->post("/admin/teams/{$team->id}/anggota-baru", [
+            'name'  => 'Personil Admin',
+            'email' => 'personil.admin@example.test',
+            'phone' => '081234567891',
+        ])->assertRedirect();
+
+        $personil = User::where('email', 'personil.admin@example.test')->firstOrFail();
+        $this->assertSame('PETUGAS', $personil->role);
+        $this->assertDatabaseHas('team_members', ['team_id' => $team->id, 'user_id' => $personil->id]);
+    }
+
+    public function test_layar_pantau_menyediakan_keluar_sesi(): void
+    {
+        $monitoring = $this->buat('MONITORING', 'mon2@example.test');
+        $html = $this->actingAs($monitoring)->get('/monitoring')->assertOk()->getContent();
+
+        $this->assertStringContainsString('action="' . route('logout') . '"', $html);
+    }
 }

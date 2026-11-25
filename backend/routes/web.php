@@ -88,6 +88,8 @@ Route::prefix('admin')->middleware(['auth', 'active', 'role:SUPERADMIN,ADMIN,KEP
     Route::match(['post', 'put'], '/teams/{team}', [WebTeamController::class, 'update'])->name('admin.teams.update');
     Route::match(['post', 'delete'], '/teams/{team}/delete', [WebTeamController::class, 'destroy'])->name('admin.teams.destroy');
     Route::post('/teams/{team}/members', [WebTeamController::class, 'addMember'])->name('admin.teams.members.add');
+    // Identitas personil baru langsung diisi di sini, sama seperti di portal Operator.
+    Route::post('/teams/{team}/anggota-baru', [WebTeamController::class, 'storeMemberIdentity'])->name('admin.teams.members.create');
     Route::match(['post', 'delete'], '/teams/{team}/members/{user}', [WebTeamController::class, 'removeMember'])->name('admin.teams.members.remove');
     Route::post('/teams/{team}/leader/{user}', [WebTeamController::class, 'setLeader'])->name('admin.teams.leader.set');
 

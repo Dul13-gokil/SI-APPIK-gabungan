@@ -127,6 +127,11 @@
             <div id="tanggal">-</div>
         </div>
         <span class="hidup"><span class="titik berdenyut"></span> langsung</span>
+        {{-- Layar pantau kini di balik login, jadi perlu jalan keluar sesi. --}}
+        <form method="POST" action="{{ route('logout') }}" style="margin:0">
+            @csrf
+            <button type="submit" class="hidup" style="background:none;border:1px solid rgba(255,255,255,.25);color:inherit;font:inherit;cursor:pointer;padding:4px 10px;border-radius:6px">keluar</button>
+        </form>
     </div>
 </header>
 

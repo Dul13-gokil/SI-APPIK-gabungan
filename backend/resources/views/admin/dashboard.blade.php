@@ -1734,6 +1734,15 @@
                                 <span>Tambah Personil</span>
                             </button>
                         </form>
+
+                        <!-- Identitas personil baru: akunnya dibuat di sini, tidak lewat Kelola Akun -->
+                        <form method="POST" action="{{ route('admin.teams.members.create', $team->id) }}" class="p-3 rounded-2xl bg-white border border-dashed border-slate-300 grid grid-cols-1 sm:grid-cols-4 gap-2">
+                            @csrf
+                            <input type="text" name="name" required placeholder="Nama lengkap" class="text-xs rounded-xl border border-slate-300 p-2">
+                            <input type="email" name="email" required placeholder="Email akun" class="text-xs rounded-xl border border-slate-300 p-2">
+                            <input type="text" name="phone" placeholder="08xxxxxxxxxx" class="text-xs rounded-xl border border-slate-300 p-2">
+                            <button type="submit" class="px-3 py-2 rounded-xl bg-[#1E3A8A] hover:bg-[#172554] text-white font-bold text-xs">Buat Identitas</button>
+                        </form>
                     </div>
 
                     <!-- Footer Kartu Regu (Aksi Edit & Hapus) -->
