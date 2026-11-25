@@ -125,6 +125,15 @@ class User extends Authenticatable
         return $this->role === 'PENGAWAS';
     }
 
+    /**
+     * Ketua regu menurut team.leader_id, walau peran akunnya masih anggota.
+     * Dipakai agar penunjukan ketua tidak memaksa perubahan role.
+     */
+    public function leadsTeam(): bool
+    {
+        return Team::where('leader_id', $this->id)->exists();
+    }
+
     /** Akun khusus dashboard monitoring (hanya baca). */
     public function isMonitoring(): bool
     {

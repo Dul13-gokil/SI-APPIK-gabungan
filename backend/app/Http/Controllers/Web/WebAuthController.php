@@ -272,8 +272,10 @@ class WebAuthController extends Controller
             return redirect()->intended('/operator');
         }
 
+        // Kepala Daerah bekerja dari panel admin (fitur Super Admin minus log & pengaturan);
+        // portal /bupati tetap ada bila dibuka langsung.
         if ($user->isBupati()) {
-            return redirect()->intended('/bupati');
+            return redirect()->intended('/admin');
         }
 
         if ($user->isPetugas()) {

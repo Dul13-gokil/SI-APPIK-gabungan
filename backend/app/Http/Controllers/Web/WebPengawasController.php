@@ -22,7 +22,8 @@ class WebPengawasController extends Controller
     public function index(): View
     {
         $user = auth()->user();
-        $team = $user->currentTeam();
+        $team = $this->ownTeamOrFail();
+        $this->assertMayManage($team);
 
         $members = $team
             ? $team->users()->orderBy('name')->get()
@@ -40,6 +41,7 @@ class WebPengawasController extends Controller
     public function addMember(Request $request): RedirectResponse
     {
         $team = $this->ownTeamOrFail();
+        $this->assertMayManage($team);
 
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
@@ -87,6 +89,7 @@ class WebPengawasController extends Controller
     public function removeMember(Request $request, int $user): RedirectResponse
     {
         $team = $this->ownTeamOrFail();
+        $this->assertMayManage($team);
         $member = User::findOrFail($user);
 
         if ((int) $member->id === (int) auth()->id()) {
@@ -119,6 +122,21 @@ class WebPengawasController extends Controller
     /**
      * Pengawas tanpa regu tidak boleh mengelola apa pun.
      */
+    /**
+     * Hanya ketua regu (team.leader_id) atau akun berperan PENGAWAS yang boleh
+     * mengubah susunan anggota. Anggota biasa tetap 403.
+     */
+    private function assertMayManage(Team $team): void
+    {
+        $user = auth()->user();
+
+        abort_unless(
+            $user->isPengawas() || (int) $team->leader_id === (int) $user->id,
+            403,
+            'Hanya ketua regu yang dapat mengelola anggota regu.'
+        );
+    }
+
     private function ownTeamOrFail(): Team
     {
         $team = auth()->user()->currentTeam();

@@ -144,8 +144,10 @@ Route::prefix('petugas')->middleware(['auth', 'active', 'role:PETUGAS,PENGAWAS,S
     Route::post('/complaints/{id}/finish', [WebPetugasController::class, 'finishWork'])->name('petugas.complaints.finish');
     Route::post('/profile', [WebPetugasController::class, 'updateProfile'])->name('petugas.profile.update');
 
-    // Pengawas mengelola anggota regunya sendiri (keputusan rapat).
-    Route::middleware('role:PENGAWAS')->group(function () {
+    // Pengawas dan ketua regu mengelola anggota regunya sendiri (keputusan rapat).
+    // Ketua regu ditunjuk lewat team.leader_id, jadi perannya boleh tetap anggota;
+    // penjagaan sebenarnya ada di WebPengawasController::assertMayManage().
+    Route::middleware('role:PENGAWAS,PETUGAS')->group(function () {
         Route::get('/regu', [WebPengawasController::class, 'index'])->name('pengawas.team');
         Route::post('/regu/anggota', [WebPengawasController::class, 'addMember'])->name('pengawas.team.members.add');
         Route::post('/regu/{team}/anggota/baru', [WebTeamController::class, 'storeMemberIdentity'])->name('pengawas.team.members.create');

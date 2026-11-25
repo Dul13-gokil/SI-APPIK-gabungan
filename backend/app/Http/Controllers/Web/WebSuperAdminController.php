@@ -293,7 +293,7 @@ class WebSuperAdminController extends Controller
             ->merge(\App\Models\Team::whereNotNull('leader_id')->pluck('leader_id'))
             ->unique();
         $availableOfficers = User::where('role', 'PETUGAS')->orderBy('name')->get();
-        $unassignedOfficers = User::where('role', 'PETUGAS')->whereNotIn('id', $assignedOfficerIds)->orderBy('name')->get();
+        $unassignedOfficers = User::whereIn('role', ['PETUGAS', 'PENGAWAS'])->whereNotIn('id', $assignedOfficerIds)->orderBy('name')->get();
 
         // Daftar 15 kecamatan resmi Kabupaten terdaftar
         $districts = $regions->pluck('district')->filter()->unique()->sort()->values();

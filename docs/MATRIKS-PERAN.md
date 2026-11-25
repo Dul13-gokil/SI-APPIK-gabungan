@@ -24,7 +24,7 @@ Berlaku untuk portal web (Blade) dan API v1. Sumber kebenaran pembatasan adalah
 | Dashboard admin, kelola akun, kategori, wilayah | ya | ya | ya | – | – | – | – |
 | Log Aktivitas & Pengaturan Sistem | ya | tidak | tidak | – | – | – | – |
 | Verifikasi, penugasan, penolakan aduan | ya | ya | ya | ya | – | – | – |
-| Regu & Anggota (buat regu, isi identitas personil) | ya | ya | ya | ya | regu sendiri | – | – |
+| Regu & Anggota (buat regu, isi identitas personil) | ya | ya | ya | ya | regu yang dipimpin | – | – |
 | Pengerjaan tugas lapangan | – | – | – | – | regu sendiri | regu sendiri | – |
 | Layar pantau `/monitoring` | ya | ya | ya | – | – | – | ya |
 | Buat akun peran apa pun | ya | ya | ya | – | – | – | – |
@@ -42,17 +42,22 @@ Catatan:
    (nama, email, nomor HP) diisi pada menu **Regu & Anggota** oleh Operator PUPR atau oleh
    Ketua Regu untuk regunya sendiri. Sistem membuat sandi sementara acak yang ditampilkan
    sekali dan wajib diganti saat login pertama.
-5. **Monitoring wajib login** dengan email dan sandi; setelah masuk, layar pantau tampil
-   tanpa sidebar agar cocok untuk layar besar di ruang kendali.
-6. **Batas personil 15 orang per regu** dan **maksimal 3 tugas aktif per regu** dijaga di
+5. **Ketua regu ditunjuk lewat `teams.leader_id`, bukan lewat peran.** Ketua regu boleh
+   berperan `PENGAWAS` maupun tetap `PETUGAS`; keduanya dapat membuka **Kelola Anggota Regu**
+   untuk regunya sendiri. Anggota biasa yang bukan ketua mendapat 403.
+6. **Monitoring wajib login** dengan email dan sandi; setelah masuk, layar pantau tampil
+   tanpa sidebar agar cocok untuk layar besar di ruang kendali, dengan tombol keluar di header.
+7. **Batas personil 15 orang per regu** dan **maksimal 3 tugas aktif per regu** dijaga di
    `WorkflowService` serta `FieldTaskAuthorizer`, berlaku untuk web maupun API.
 
 ## Urutan menu sidebar
 
 1. Super Admin
-2. Kepala Daerah
-3. Operator PUPR
-4. Pengawas Lapangan
+2. Operator PUPR
+3. Pengawas Lapangan
+
+Kepala Daerah tidak punya accordion sendiri: ia masuk ke panel admin dan bekerja dari sana.
+Portal `/bupati` tetap ada bila dibuka langsung, tetapi tidak ditampilkan di sidebar.
 
 Urutan ini dikunci oleh `tests/Feature/RoleAccessTest.php`
 (`test_urutan_accordion_sidebar_mengikuti_hierarki_peran`).

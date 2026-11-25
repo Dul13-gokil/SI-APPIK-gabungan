@@ -124,14 +124,16 @@ class RoleAccessTest extends TestCase
         $html = $this->actingAs($sa)->get('/admin')->assertOk()->getContent();
 
         $posisi = [];
-        foreach (['admin', 'bupati', 'operator', 'petugas'] as $kunci) {
+        foreach (['admin', 'operator', 'petugas'] as $kunci) {
             $posisi[$kunci] = strpos($html, "accordionBody-{$kunci}");
             $this->assertNotFalse($posisi[$kunci], "Accordion {$kunci} tidak ditemukan.");
         }
 
-        $this->assertLessThan($posisi['bupati'], $posisi['admin'], 'Super Admin harus di atas Kepala Daerah.');
-        $this->assertLessThan($posisi['operator'], $posisi['bupati'], 'Kepala Daerah harus di atas Operator PUPR.');
+        $this->assertLessThan($posisi['operator'], $posisi['admin'], 'Super Admin harus di atas Operator PUPR.');
         $this->assertLessThan($posisi['petugas'], $posisi['operator'], 'Operator PUPR harus di atas Pengawas Lapangan.');
+
+        // Kepala Daerah memakai panel admin, jadi tidak ada accordion terpisah untuknya.
+        $this->assertStringNotContainsString('accordionBody-bupati', $html);
     }
 
     public function test_admin_mengisi_identitas_personil_di_regu_dan_tugas(): void
@@ -156,5 +158,44 @@ class RoleAccessTest extends TestCase
         $html = $this->actingAs($monitoring)->get('/monitoring')->assertOk()->getContent();
 
         $this->assertStringContainsString('action="' . route('logout') . '"', $html);
+    }
+
+    public function test_ketua_regu_berperan_anggota_tetap_boleh_kelola_anggotanya(): void
+    {
+        $team = \App\Models\Team::create(['name' => 'Regu Ketua', 'code' => 'RKT']);
+        $ketua = $this->buat('PETUGAS', 'ketua@example.test');
+        \App\Models\TeamMember::create(['team_id' => $team->id, 'user_id' => $ketua->id, 'role' => 'MEMBER']);
+        $team->update(['leader_id' => $ketua->id]);
+
+        $this->actingAs($ketua)->get('/petugas/regu')->assertOk();
+
+        $this->actingAs($ketua)->post("/petugas/regu/{$team->id}/anggota/baru", [
+            'name'  => 'Anggota Ketua',
+            'email' => 'anggota.ketua@example.test',
+        ])->assertRedirect();
+
+        $this->assertDatabaseHas('users', ['email' => 'anggota.ketua@example.test', 'role' => 'PETUGAS']);
+    }
+
+    public function test_anggota_biasa_tidak_boleh_mengelola_anggota_regu(): void
+    {
+        $team = \App\Models\Team::create(['name' => 'Regu Anggota', 'code' => 'RAG']);
+        $anggota = $this->buat('PETUGAS', 'anggota@example.test');
+        \App\Models\TeamMember::create(['team_id' => $team->id, 'user_id' => $anggota->id, 'role' => 'MEMBER']);
+
+        $this->actingAs($anggota)->get('/petugas/regu')->assertStatus(403);
+        $this->actingAs($anggota)->post("/petugas/regu/{$team->id}/anggota/baru", [
+            'name'  => 'Tidak Boleh',
+            'email' => 'tidak.boleh@example.test',
+        ])->assertStatus(403);
+        $this->assertDatabaseMissing('users', ['email' => 'tidak.boleh@example.test']);
+    }
+
+    public function test_kepala_daerah_masuk_lewat_panel_admin(): void
+    {
+        $kd = $this->buat('KEPALA_DAERAH', 'kd.landing@example.test');
+
+        $this->post('/login', ['email' => 'kd.landing@example.test', 'password' => 'Password123'])
+            ->assertRedirect('/admin');
     }
 }

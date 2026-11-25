@@ -93,8 +93,13 @@ class WebTeamController extends Controller
             return;
         }
 
+        // Ketua regu ditunjuk lewat team.leader_id; anggota biasa tidak boleh menambah personil.
         $teamId = $user->currentTeam()?->id;
-        abort_unless($teamId === $team->id, 403, 'Anda hanya dapat mengelola anggota regu Anda sendiri.');
+        abort_unless(
+            $teamId === $team->id && ($user->isPengawas() || (int) $team->leader_id === (int) $user->id),
+            403,
+            'Hanya ketua regu yang dapat mengelola anggota regu ini.'
+        );
     }
 
     /**

@@ -83,10 +83,10 @@ Route::prefix('v1')->group(function () {
         Route::post('/notifications/clear-all', [NotificationController::class, 'clearAll']);
 
         // D. Tugas & Laporan Kinerja Khusus Petugas Lapangan
-        Route::get('/field-tasks', [ComplaintController::class, 'fieldTasks'])->middleware('role:PETUGAS,SUPERADMIN,ADMIN');
+        Route::get('/field-tasks', [ComplaintController::class, 'fieldTasks'])->middleware('role:PETUGAS,PENGAWAS,SUPERADMIN,ADMIN');
 
         // E. Alur Kerja Lapangan (Khusus Petugas Teknis Lapangan)
-        Route::middleware('role:PETUGAS,SUPERADMIN,ADMIN')->group(function () {
+        Route::middleware('role:PETUGAS,PENGAWAS,SUPERADMIN,ADMIN')->group(function () {
             Route::post('/complaints/{id}/start-work',  [WorkflowController::class, 'startWork']);
             Route::post('/complaints/{id}/finish-work', [WorkflowController::class, 'finishWork']);
             Route::post('/complaints/{id}/resolution',  [WorkflowController::class, 'submitResolution']);
@@ -102,6 +102,6 @@ Route::prefix('v1')->group(function () {
 
         // G. Mutasi Status State Machine Terkendali
         Route::post('/complaints/{id}/status', [WorkflowController::class, 'updateStatus'])
-            ->middleware('role:OPERATOR,PETUGAS,SUPERADMIN,ADMIN');
+            ->middleware('role:OPERATOR,PETUGAS,PENGAWAS,SUPERADMIN,ADMIN');
     });
 });
