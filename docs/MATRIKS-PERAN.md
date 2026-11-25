@@ -59,9 +59,13 @@ Catatan:
 3. Operator PUPR
 4. Pengawas Lapangan
 
-Menu **Kepala Daerah** berisi satu pintu: *Dasbor Eksekutif* (portal `/bupati`). Menu
-operasionalnya tidak diduplikasi di situ karena sudah tersedia di panel admin yang sama.
-Kepala Daerah tetap mendarat di `/admin` setelah login.
+Menu **Kepala Daerah** memuat daftar yang sama persis dengan menu Super Admin —
+*Dashboard Admin, Kelola Akun & Pengguna, Daftar Aduan, Regu & Tugas, Peta Wilayah GIS,
+Laporan Kinerja* — hanya tanpa *Log Aktivitas* dan *Pengaturan Sistem*. Keduanya membaca
+satu daftar yang sama di `layouts/app.blade.php` (`$menuPanelAdmin`), dirender lewat
+`partials/sidebar_menu_items.blade.php`, jadi menu baru otomatis ikut muncul di keduanya.
+Kepala Daerah tetap mendarat di `/admin` setelah login; portal `/bupati` masih bisa dibuka
+langsung lewat URL.
 
 Urutan ini dikunci oleh `tests/Feature/RoleAccessTest.php`
 (`test_urutan_accordion_sidebar_mengikuti_hierarki_peran`).
