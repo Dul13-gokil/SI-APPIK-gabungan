@@ -33,11 +33,11 @@ class ChatbotService
 
             if ($found) {
                 $statusMap = [
-                    'SUBMITTED' => '⏳ Menunggu Verifikasi Operator Dinas',
+                    'SUBMITTED' => '⏳ Menunggu Pemeriksaan Otomatis (AI)',
                     'VERIFIED' => '✅ Terverifikasi, Menunggu Disposisi Pengawas Lapangan',
                     'DISPATCHED' => '🚚 Ditugaskan ke Pengawas Lapangan PUPR/Dishub',
                     'IN_PROGRESS' => '🛠️ Sedang Dikerjakan Secara Fisik di Lokasi',
-                    'WAITING_VERIFICATION' => '🔍 Pekerjaan Selesai, Menunggu Validasi Operator',
+                    'WAITING_VERIFICATION' => '🔍 Pekerjaan Selesai, Sedang Diperiksa AI',
                     'COMPLETED' => '🎉 SELESAI TUNTAS (Pekerjaan Telah Tervalidasi)',
                     'REJECTED' => '❌ Laporan Ditolak (Tidak Memenuhi Kriteria / Duplikat)',
                 ];
@@ -396,7 +396,7 @@ class ChatbotService
                     . "   • **Jembatan Darurat/Kritis:** Pasang rambu pengaman segera, lakukan perbaikan darurat lantai/gelagar (Prioritas Utama < 24 jam).\n"
                     . "   • **Lampu Jalan PJU:** Periksa grounding, kabel tiang, dan ganti armature LED/konektor rusak (Maksimal 72 jam).\n"
                     . "4. **Upload Bukti Selesai:** Ambil foto hasil perbaikan di lokasi yang sama dari sudut yang jelas dan sertakan catatan teknis penyelesaian.\n"
-                    . "5. **Validasi Operator:** Status berubah menjadi `WAITING_VERIFICATION`. Setelah operator memverifikasi mutu fisik, tiket otomatis berpindah ke tab *Riwayat Selesai* (`COMPLETED`).",
+                    . "5. **Dinilai AI:** Foto hasil kerja diperiksa otomatis. Bila sesuai, tiket berpindah ke *Riwayat Selesai* (`COMPLETED`); bila belum, kembali dengan status perlu diperbaiki.",
                 'draft' => [],
                 'is_complete' => false,
             ];

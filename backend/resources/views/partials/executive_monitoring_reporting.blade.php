@@ -488,7 +488,6 @@
                                         <th class="border border-slate-400 py-1.5 px-1 sm:px-2 text-center">Verifikasi</th>
                                         <th class="border border-slate-400 py-1.5 px-1 sm:px-2 text-center">Ditugaskan</th>
                                         <th class="border border-slate-400 py-1.5 px-1 sm:px-2 text-center">Dikerjakan</th>
-                                        <th class="border border-slate-400 py-1.5 px-1 sm:px-2 text-center">Validasi</th>
                                         <th class="border border-slate-400 py-1.5 px-1 sm:px-2 text-center">Selesai</th>
                                         <th class="border border-slate-400 py-1.5 px-1 sm:px-2 text-center">Ditolak</th>
                                     </tr>
@@ -499,7 +498,6 @@
                                         <td class="border border-slate-400 py-2 px-1 sm:px-2 text-center font-semibold">{{ $summary['pending'] }}</td>
                                         <td class="border border-slate-400 py-2 px-1 sm:px-2 text-center font-semibold">{{ $summary['dispatched'] }}</td>
                                         <td class="border border-slate-400 py-2 px-1 sm:px-2 text-center font-semibold">{{ $summary['in_progress'] }}</td>
-                                        <td class="border border-slate-400 py-2 px-1 sm:px-2 text-center font-semibold">{{ $summary['waiting_verification'] ?? 0 }}</td>
                                         <td class="border border-slate-400 py-2 px-1 sm:px-2 text-center font-bold">{{ $summary['completed'] }} ({{ $summary['completion_rate'] }}%)</td>
                                         <td class="border border-slate-400 py-2 px-1 sm:px-2 text-center font-semibold">{{ $summary['rejected'] ?? 0 }}</td>
                                     </tr>

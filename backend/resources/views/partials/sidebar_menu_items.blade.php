@@ -1,6 +1,6 @@
 @foreach($items as $item)
     @php
-        $isSubActive = request()->routeIs($activeRoute . '.*') && (
+        $isSubActive = ($highlight ?? true) && request()->routeIs($activeRoute . '.*') && (
             !empty($item['active'])
                 ? request()->routeIs($item['active'])
                 : ($currentQueryTab === ($item['tab'] ?? null) ||

@@ -224,7 +224,7 @@
                                 <i data-lucide="chevron-down" id="accordionChevron-bupati" class="w-3.5 h-3.5 shrink-0 transition-transform duration-200 {{ $isAdminRoute ? 'rotate-180 text-[#2563EB]' : 'text-[#64748B]' }}"></i>
                             </button>
                             <div id="accordionBody-bupati" class="{{ $isAdminRoute ? 'block' : 'hidden' }} py-1.5 px-1 space-y-1">
-                                @include('partials.sidebar_menu_items', ['items' => $menuKepalaDaerah, 'role' => 'admin', 'activeRoute' => 'admin'])
+                                @include('partials.sidebar_menu_items', ['items' => $menuKepalaDaerah, 'role' => 'admin', 'activeRoute' => 'admin', 'highlight' => !auth()->user()->isSuperAdmin()])
                             </div>
                         </div>
                     @endif

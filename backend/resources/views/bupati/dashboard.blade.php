@@ -26,17 +26,12 @@
     </div>
 
     <!-- 2. RINGKASAN KPI EKSEKUTIF (Flat Bordered Seragam Admin) -->
-    <div class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-7 gap-2 sm:gap-3">
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-px bg-[#E2E8F0] border border-[#E2E8F0] rounded-xl overflow-hidden">
         <!-- 1. Total Aduan -->
-        <div class="p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
-            <div class="flex items-center justify-between gap-1.5">
-                <span class="text-[8.5px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-normal sm:tracking-wider leading-tight">Total Aduan</span>
-                <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-blue-50 text-[#2563EB] border border-blue-200 flex items-center justify-center shrink-0">
-                    <i data-lucide="inbox" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
-                </div>
-            </div>
+        <div class="bg-white px-3 py-3 sm:px-4 sm:py-3.5 min-w-0">
+            <span class="text-[11px] sm:text-xs font-semibold text-[#475569] leading-tight">Total Aduan</span>
             <div class="mt-1.5 sm:mt-2">
-                <div class="font-outfit text-xl sm:text-2xl font-bold text-[#0F172A] leading-tight">
+                <div class="font-outfit text-2xl sm:text-[26px] font-bold text-[#0F172A] leading-none tabular-nums">
                     {{ $summary['total'] }}
                 </div>
                 <span class="hidden sm:block text-[11px] text-[#475569] font-medium mt-0.5">Laporan masuk</span>
@@ -44,31 +39,21 @@
         </div>
 
         <!-- 2. Menunggu -->
-        <div class="p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
-            <div class="flex items-center justify-between gap-1.5">
-                <span class="text-[8.5px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-normal sm:tracking-wider leading-tight">Menunggu</span>
-                <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-red-50 text-[#EF4444] border border-red-200 flex items-center justify-center shrink-0">
-                    <i data-lucide="clock" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
-                </div>
-            </div>
+        <div class="bg-white px-3 py-3 sm:px-4 sm:py-3.5 min-w-0">
+            <span class="text-[11px] sm:text-xs font-semibold text-[#475569] leading-tight">Baru Masuk</span>
             <div class="mt-1.5 sm:mt-2">
-                <div class="font-outfit text-xl sm:text-2xl font-bold text-[#0F172A] leading-tight">
+                <div class="font-outfit text-2xl sm:text-[26px] font-bold text-[#0F172A] leading-none tabular-nums">
                     {{ $summary['pending'] }}
                 </div>
-                <span class="hidden sm:block text-[11px] text-[#475569] font-medium mt-0.5">Perlu verifikasi</span>
+                <span class="hidden sm:block text-[11px] text-[#475569] font-medium mt-0.5">Menunggu pemeriksaan AI</span>
             </div>
         </div>
 
         <!-- 3. Ditugaskan -->
-        <div class="p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
-            <div class="flex items-center justify-between gap-1.5">
-                <span class="text-[8.5px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-normal sm:tracking-wider leading-tight">Ditugaskan</span>
-                <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-blue-50 text-[#2563EB] border border-blue-200 flex items-center justify-center shrink-0">
-                    <i data-lucide="send" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
-                </div>
-            </div>
+        <div class="bg-white px-3 py-3 sm:px-4 sm:py-3.5 min-w-0">
+            <span class="text-[11px] sm:text-xs font-semibold text-[#475569] leading-tight">Ditugaskan</span>
             <div class="mt-1.5 sm:mt-2">
-                <div class="font-outfit text-xl sm:text-2xl font-bold text-[#0F172A] leading-tight">
+                <div class="font-outfit text-2xl sm:text-[26px] font-bold text-[#0F172A] leading-none tabular-nums">
                     {{ $summary['dispatched'] }}
                 </div>
                 <span class="hidden sm:block text-[11px] text-[#475569] font-medium mt-0.5">Ke regu lapangan</span>
@@ -76,47 +61,21 @@
         </div>
 
         <!-- 4. Dikerjakan -->
-        <div class="p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
-            <div class="flex items-center justify-between gap-1.5">
-                <span class="text-[8.5px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-normal sm:tracking-wider leading-tight">Dikerjakan</span>
-                <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-amber-50 text-[#D97706] border border-amber-200 flex items-center justify-center shrink-0">
-                    <i data-lucide="hard-hat" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
-                </div>
-            </div>
+        <div class="bg-white px-3 py-3 sm:px-4 sm:py-3.5 min-w-0">
+            <span class="text-[11px] sm:text-xs font-semibold text-[#475569] leading-tight">Dikerjakan</span>
             <div class="mt-1.5 sm:mt-2">
-                <div class="font-outfit text-xl sm:text-2xl font-bold text-[#0F172A] leading-tight">
+                <div class="font-outfit text-2xl sm:text-[26px] font-bold text-[#0F172A] leading-none tabular-nums">
                     {{ $summary['in_progress'] }}
                 </div>
                 <span class="hidden sm:block text-[11px] text-[#475569] font-medium mt-0.5">Sedang ditangani</span>
             </div>
         </div>
 
-        <!-- 5. Menunggu Validasi -->
-        <div class="p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
-            <div class="flex items-center justify-between gap-1.5">
-                <span class="text-[8.5px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-normal sm:tracking-wider leading-tight">Validasi</span>
-                <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-amber-50 text-[#D97706] border border-amber-200 flex items-center justify-center shrink-0">
-                    <i data-lucide="clock-3" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
-                </div>
-            </div>
-            <div class="mt-1.5 sm:mt-2">
-                <div class="font-outfit text-xl sm:text-2xl font-bold text-[#0F172A] leading-tight">
-                    {{ $summary['waiting_verification'] ?? 0 }}
-                </div>
-                <span class="hidden sm:block text-[11px] text-[#475569] font-medium mt-0.5">Uji hasil kerja</span>
-            </div>
-        </div>
-
         <!-- 6. Selesai -->
-        <div class="p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
-            <div class="flex items-center justify-between gap-1.5">
-                <span class="text-[8.5px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-normal sm:tracking-wider leading-tight">Selesai</span>
-                <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-emerald-50 text-[#10B981] border border-emerald-200 flex items-center justify-center shrink-0">
-                    <i data-lucide="check-circle-2" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
-                </div>
-            </div>
+        <div class="bg-white px-3 py-3 sm:px-4 sm:py-3.5 min-w-0">
+            <span class="text-[11px] sm:text-xs font-semibold text-[#475569] leading-tight">Selesai</span>
             <div class="mt-1.5 sm:mt-2">
-                <div class="font-outfit text-xl sm:text-2xl font-bold text-[#0F172A] leading-tight">
+                <div class="font-outfit text-2xl sm:text-[26px] font-bold text-[#0F172A] leading-none tabular-nums">
                     {{ $summary['completed'] }}
                 </div>
                 <span class="hidden sm:block text-[11px] text-[#475569] font-medium mt-0.5">Tuntas diperbaiki</span>
@@ -125,14 +84,9 @@
 
         <!-- 7. Ditolak -->
         <div class="col-span-3 sm:col-span-1 p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
-            <div class="flex items-center justify-between gap-1.5">
-                <span class="text-[8.5px] sm:text-[11px] text-[#475569] font-bold uppercase tracking-normal sm:tracking-wider leading-tight">Ditolak</span>
-                <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-red-50 text-[#DC2626] border border-red-200 flex items-center justify-center shrink-0">
-                    <i data-lucide="x-circle" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
-                </div>
-            </div>
+            <span class="text-[11px] sm:text-xs font-semibold text-[#475569] leading-tight">Ditolak</span>
             <div class="mt-1.5 sm:mt-2">
-                <div class="font-outfit text-xl sm:text-2xl font-bold text-[#0F172A] leading-tight">
+                <div class="font-outfit text-2xl sm:text-[26px] font-bold text-[#0F172A] leading-none tabular-nums">
                     {{ $summary['rejected'] }}
                 </div>
                 <span class="hidden sm:block text-[11px] text-[#475569] font-medium mt-0.5">Tidak memenuhi syarat</span>
@@ -230,7 +184,6 @@
                         <option value="SUBMITTED">Verifikasi</option>
                         <option value="DISPATCHED">Ditugaskan</option>
                         <option value="IN_PROGRESS">Dikerjakan</option>
-                        <option value="WAITING_VERIFICATION">Validasi</option>
                         <option value="COMPLETED">Selesai</option>
                         <option value="REJECTED">Ditolak</option>
                     </select>

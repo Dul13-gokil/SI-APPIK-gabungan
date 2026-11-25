@@ -22,6 +22,11 @@ class WebOperatorController extends Controller
     {
         $activeTab = $request->input('tab', 'ready');
 
+        // Tab Validasi dihapus: validasi hasil kerja dilakukan AI saat pekerjaan selesai.
+        if ($activeTab === 'validation') {
+            $activeTab = 'inprogress';
+        }
+
         // 1. Antrean Verifikasi Laporan Masuk
         $pendingVerification = Complaint::with(['category', 'user', 'citizen', 'photos', 'aiAssessments'])
             ->whereIn('status', ['SUBMITTED', 'VERIFICATION'])

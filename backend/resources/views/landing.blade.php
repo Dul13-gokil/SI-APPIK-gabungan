@@ -342,9 +342,9 @@
                 <!-- Tahap 04 -->
                 <div data-reveal style="transition-delay: 300ms;" class="bg-white rounded-[24px] border border-[#A7F3D0] shadow-[0_6px_18px_rgba(15,23,42,0.04)] p-5 sm:p-6 space-y-2.5">
                     <span class="font-outfit font-bold text-3xl text-[#10B981] block leading-none">04</span>
-                    <h3 class="font-outfit font-bold text-base text-[#0F172A]">Uji Mutu &amp; Penutupan</h3>
+                    <h3 class="font-outfit font-bold text-base text-[#0F172A]">Pemeriksaan Otomatis &amp; Penutupan</h3>
                     <p class="text-xs sm:text-sm text-[#475569] leading-relaxed">
-                        Operator memvalidasi hasil pekerjaan fisik hingga tuntas dan memperbarui peta publik.
+                        Foto hasil pekerjaan diperiksa otomatis; bila sesuai, laporan dinyatakan tuntas dan peta publik ikut diperbarui.
                     </p>
                 </div>
             </div>
@@ -1004,7 +1004,7 @@
                     </svg>
                 `;
             } else if (item.status === 'WAITING_VERIFICATION') {
-                pinColor = '#F59E0B'; // Validasi (Kuning / Amber)
+                pinColor = '#F59E0B'; // Diproses (Kuning / Amber)
                 statusText = 'VALIDASI';
                 iconSvg = `
                     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -1195,7 +1195,7 @@
                 case 'IN_PROGRESS':
                 case 'REVISION_REQUIRED':
                 case 'WAITING_VERIFICATION':
-                    return '<span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-50 text-[#B45309] border border-[#FDE68A] shrink-0">Validasi</span>';
+                    return '<span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-50 text-[#B45309] border border-[#FDE68A] shrink-0">Diproses</span>';
                 case 'COMPLETED':
                 case 'RESOLVED':
                 case 'CLOSED':
