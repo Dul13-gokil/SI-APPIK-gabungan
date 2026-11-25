@@ -42,14 +42,21 @@ Catatan:
    Pengaturan Sistem juga berlaku.
 4. **Akun anggota regu (`PETUGAS`) tidak dibuat dari menu Kelola Akun.** Identitas personil
    (nama, email, nomor HP) diisi pada menu **Regu & Anggota** oleh Operator PUPR atau oleh
-   Ketua Regu untuk regunya sendiri. Sistem membuat sandi sementara acak yang ditampilkan
-   sekali dan wajib diganti saat login pertama.
-5. **Ketua regu ditunjuk lewat `teams.leader_id`, bukan lewat peran.** Ketua regu boleh
+   Ketua Regu untuk regunya sendiri.
+5. **Sandi awal selalu acak, bukan `password`.** Akun yang dibuat Super Admin memakai sandi
+   sementara 10 karakter yang ditampilkan sekali (dan dikirim di email undangan). Kolom
+   `users.must_change_password` menandainya, sehingga modal aktivasi login pertama muncul dan
+   pengguna wajib mengganti sandi. Reset sandi cepat juga menghasilkan sandi sementara baru.
+6. **Peran akun dapat diperbarui** lewat tombol pensil di Daftar Pengguna. Penjaga: peran akun
+   sendiri tidak bisa diubah, tidak boleh ada Super Admin atau Kepala Daerah kedua, peran Warga
+   tidak bisa ditetapkan dari portal, dan akun yang beralih ke peran non-lapangan otomatis
+   dikeluarkan dari regu. Setiap perubahan dicatat di audit dan email keamanan.
+7. **Ketua regu ditunjuk lewat `teams.leader_id`, bukan lewat peran.** Ketua regu boleh
    berperan `PENGAWAS` maupun tetap `PETUGAS`; keduanya dapat membuka **Kelola Anggota Regu**
    untuk regunya sendiri. Anggota biasa yang bukan ketua mendapat 403.
-6. **Monitoring wajib login** dengan email dan sandi; setelah masuk, layar pantau tampil
+8. **Monitoring wajib login** dengan email dan sandi; setelah masuk, layar pantau tampil
    tanpa sidebar agar cocok untuk layar besar di ruang kendali, dengan tombol keluar di header.
-7. **Batas personil 15 orang per regu** dan **maksimal 3 tugas aktif per regu** dijaga di
+9. **Batas personil 15 orang per regu** dan **maksimal 3 tugas aktif per regu** dijaga di
    `WorkflowService` serta `FieldTaskAuthorizer`, berlaku untuk web maupun API.
 
 ## Urutan menu sidebar
