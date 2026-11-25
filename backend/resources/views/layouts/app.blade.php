@@ -858,7 +858,8 @@
     <!-- Floating Bottom-Right Toast Notification (Auto-Dismiss 4s) -->
     <div id="globalToastStack" class="fixed bottom-5 right-5 z-[999999] flex flex-col gap-2.5 max-w-sm w-[calc(100vw-2.5rem)] pointer-events-none">
         @if(session('success'))
-        <div class="global-toast pointer-events-auto flex items-start gap-3 bg-white border border-emerald-200 shadow-lg rounded-2xl px-4 py-3 transition-all duration-300">
+        <div class="global-toast pointer-events-auto flex items-start gap-3 bg-white border border-emerald-200 shadow-lg rounded-2xl px-4 py-3 transition-all duration-300"
+             @if(str_contains((string) session('success'), 'Sandi sementara:')) data-persist="1" @endif>
             <div class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center shrink-0">
                 <i data-lucide="check-circle-2" class="w-4 h-4"></i>
             </div>
@@ -923,7 +924,8 @@
     </div>
     <script>
         setTimeout(() => {
-            document.querySelectorAll('#globalToastStack .global-toast').forEach(el => {
+            // Toast berisi sandi sementara sengaja dibiarkan agar admin sempat mencatatnya.
+            document.querySelectorAll('#globalToastStack .global-toast:not([data-persist])').forEach(el => {
                 el.style.opacity = '0';
                 el.style.transform = 'translateY(8px)';
                 setTimeout(() => el.remove(), 300);

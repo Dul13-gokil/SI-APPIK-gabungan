@@ -480,15 +480,8 @@ class WebSuperAdminController extends Controller
         $user->email = $validated['email'];
         $user->phone = $newPhone;
 
-        // Zero Knowledge: Super Admin TIDAK BISA mengetik sandi baru sepihak.
-        // Opsi reset menghasilkan sandi sementara acak yang wajib diganti pengguna.
-        $sandiSementara = null;
-        if ($request->boolean('reset_default')) {
-            $sandiSementara = Str::password(10, symbols: false);
-            $user->password = Hash::make($sandiSementara);
-            $user->must_change_password = true;
-            $changes['Kata Sandi'] = 'Direset ke sandi sementara. Pengguna diwajibkan mengganti kata sandi saat masuk kembali.';
-        }
+        // Sandi tidak diubah di sini: reset sandi hanya lewat tombol kunci pada daftar
+        // pengguna, supaya hanya ada satu jalur dan tidak ada perubahan tak sengaja.
 
         $user->save();
 
@@ -505,11 +498,7 @@ class WebSuperAdminController extends Controller
             }
         }
 
-        $catatanSandi = $sandiSementara
-            ? " Sandi sementara: {$sandiSementara} — catat dan berikan ke yang bersangkutan; wajib diganti saat login pertama."
-            : '';
-
-        return back()->with('success', "Data profil akun {$user->name} berhasil diperbarui oleh Super Admin. Notifikasi keamanan telah dikirimkan ke email terkait.{$catatanSandi}");
+        return back()->with('success', "Data profil akun {$user->name} berhasil diperbarui oleh Super Admin. Notifikasi keamanan telah dikirimkan ke email terkait.");
     }
 
     /**

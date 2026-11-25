@@ -151,4 +151,31 @@ class AdminUserManagementTest extends TestCase
         $this->assertTrue($user->must_change_password);
         $this->assertStringContainsString('Sandi sementara:', (string) session('success'));
     }
+
+    public function test_reset_sandi_hanya_lewat_tombol_kunci_dan_sandinya_tetap_terlihat(): void
+    {
+        $user = User::create([
+            'name'      => 'Operator Uji Reset',
+            'email'     => 'operator.reset@example.test',
+            'phone'     => '081200000207',
+            'password'  => Hash::make('Rahasia123'),
+            'role'      => 'OPERATOR',
+            'is_active' => true,
+        ]);
+
+        $admin = $this->admin();
+
+        // Modal edit tidak lagi memuat opsi reset (satu jalur saja).
+        $html = $this->actingAs($admin)->get('/admin?tab=users-management')->assertOk()->getContent();
+        $this->assertStringNotContainsString('reset_default', $html);
+
+        $response = $this->actingAs($admin)
+            ->followingRedirects()
+            ->post("/admin/users/{$user->id}/reset")
+            ->assertOk();
+
+        // Sandi sementara tampil di toast yang tidak hilang sendiri.
+        $response->assertSee('Sandi sementara:');
+        $response->assertSee('data-persist="1"', false);
+    }
 }

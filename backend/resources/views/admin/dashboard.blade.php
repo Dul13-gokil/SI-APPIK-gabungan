@@ -2335,16 +2335,6 @@
                             </p>
                         </div>
 
-                        <!-- Reset Kata Sandi Default -->
-                        <div class="pt-3 border-t border-slate-100">
-                            <label class="flex items-center gap-2.5 p-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100/80 transition cursor-pointer select-none">
-                                <input type="checkbox" id="editUserResetDefault" name="reset_default" value="1"
-                                    class="w-4 h-4 rounded text-[#2563EB] focus:ring-[#2563EB] border-slate-300">
-                                <span class="text-xs text-slate-800 font-bold block">
-                                    Reset ke Sandi Sementara (acak, ditampilkan sekali setelah disimpan)
-                                </span>
-                            </label>
-                        </div>
                     </div>
 
                     <div class="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100">
@@ -4080,10 +4070,6 @@
         }
         const roleVal = user.role || 'PETUGAS';
         document.getElementById('editUserRole').value = roleVal;
-        const resetDefaultBox = document.getElementById('editUserResetDefault');
-        if (resetDefaultBox) {
-            resetDefaultBox.checked = false;
-        }
 
         form.action = '{{ url("/admin/users") }}/' + user.id;
 
