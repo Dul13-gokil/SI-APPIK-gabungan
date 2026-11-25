@@ -124,16 +124,14 @@ class RoleAccessTest extends TestCase
         $html = $this->actingAs($sa)->get('/admin')->assertOk()->getContent();
 
         $posisi = [];
-        foreach (['admin', 'operator', 'petugas'] as $kunci) {
+        foreach (['admin', 'bupati', 'operator', 'petugas'] as $kunci) {
             $posisi[$kunci] = strpos($html, "accordionBody-{$kunci}");
             $this->assertNotFalse($posisi[$kunci], "Accordion {$kunci} tidak ditemukan.");
         }
 
-        $this->assertLessThan($posisi['operator'], $posisi['admin'], 'Super Admin harus di atas Operator PUPR.');
+        $this->assertLessThan($posisi['bupati'], $posisi['admin'], 'Super Admin harus di atas Kepala Daerah.');
+        $this->assertLessThan($posisi['operator'], $posisi['bupati'], 'Kepala Daerah harus di atas Operator PUPR.');
         $this->assertLessThan($posisi['petugas'], $posisi['operator'], 'Operator PUPR harus di atas Pengawas Lapangan.');
-
-        // Kepala Daerah memakai panel admin, jadi tidak ada accordion terpisah untuknya.
-        $this->assertStringNotContainsString('accordionBody-bupati', $html);
     }
 
     public function test_admin_mengisi_identitas_personil_di_regu_dan_tugas(): void

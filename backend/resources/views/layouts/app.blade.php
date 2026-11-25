@@ -229,6 +229,35 @@
                         </div>
                     @endif
 
+                    @if(auth()->user()->isBupati() || auth()->user()->isSuperAdmin())
+                        <div class="role-accordion-group rounded-xl transition">
+                            <button type="button" onclick="toggleRoleAccordion('bupati')" aria-expanded="{{ $isBupatiRoute ? 'true' : 'false' }}"
+                                class="w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl text-xs font-bold border {{ $isBupatiRoute ? 'bg-[#EFF6FF] text-[#2563EB] border-[#BFDBFE]' : 'bg-white text-[#334155] border-[#E2E8F0] hover:bg-[#F8FAFC] hover:text-[#0F172A]' }} transition">
+                                <span class="flex items-center gap-2.5 min-w-0">
+                                    <i data-lucide="landmark" class="w-4 h-4 shrink-0 {{ $isBupatiRoute ? 'text-[#2563EB]' : 'text-[#64748B]' }}"></i>
+                                    <span class="truncate">Kepala Daerah</span>
+                                </span>
+                                <i data-lucide="chevron-down" id="accordionChevron-bupati" class="w-3.5 h-3.5 shrink-0 transition-transform duration-200 {{ $isBupatiRoute ? 'rotate-180 text-[#2563EB]' : 'text-[#64748B]' }}"></i>
+                            </button>
+                            <div id="accordionBody-bupati" class="{{ $isBupatiRoute ? 'block' : 'hidden' }} py-1.5 px-1 space-y-1">
+                                @php
+                                    // Satu pintu ke portal eksekutif; menu operasionalnya sudah ada di panel admin.
+                                    $bupatiMenuItems = [
+                                        ['url' => route('bupati.dashboard'), 'label' => 'Dasbor Eksekutif', 'icon' => 'landmark'],
+                                    ];
+                                @endphp
+                                @foreach($bupatiMenuItems as $item)
+                                    <a href="{{ $item['url'] }}"
+                                       data-sidebar-role="bupati"
+                                       class="sidebar-subitem flex items-center gap-2 px-3 py-2 rounded-xl text-[11px] font-semibold transition {{ $isBupatiRoute ? 'bg-[#2563EB] text-white font-bold shadow-xs' : 'text-[#475569] hover:bg-[#F8FAFC] hover:text-[#0F172A]' }}">
+                                        <i data-lucide="{{ $item['icon'] }}" class="w-3.5 h-3.5 shrink-0 {{ $isBupatiRoute ? 'text-white' : 'text-[#64748B]' }}"></i>
+                                        <span class="truncate">{{ $item['label'] }}</span>
+                                    </a>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+
                     @if(auth()->user()->isOperator() || auth()->user()->isSuperAdmin() || auth()->user()->isKepalaDaerah())
                         <div class="role-accordion-group rounded-xl transition">
                             <button type="button" onclick="toggleRoleAccordion('operator')" aria-expanded="{{ $isOperatorRoute ? 'true' : 'false' }}"
