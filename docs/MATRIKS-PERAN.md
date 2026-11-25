@@ -55,11 +55,13 @@ Catatan:
 ## Urutan menu sidebar
 
 1. Super Admin
-2. Operator PUPR
-3. Pengawas Lapangan
+2. Kepala Daerah
+3. Operator PUPR
+4. Pengawas Lapangan
 
-Kepala Daerah tidak punya accordion sendiri: ia masuk ke panel admin dan bekerja dari sana.
-Portal `/bupati` tetap ada bila dibuka langsung, tetapi tidak ditampilkan di sidebar.
+Menu **Kepala Daerah** berisi satu pintu: *Dasbor Eksekutif* (portal `/bupati`). Menu
+operasionalnya tidak diduplikasi di situ karena sudah tersedia di panel admin yang sama.
+Kepala Daerah tetap mendarat di `/admin` setelah login.
 
 Urutan ini dikunci oleh `tests/Feature/RoleAccessTest.php`
 (`test_urutan_accordion_sidebar_mengikuti_hierarki_peran`).
