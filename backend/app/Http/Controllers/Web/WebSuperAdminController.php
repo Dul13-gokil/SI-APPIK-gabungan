@@ -303,7 +303,7 @@ class WebSuperAdminController extends Controller
         $hasSuperAdmin = User::whereIn('role', ['SUPERADMIN', 'ADMIN'])->exists();
 
         return view('admin.dashboard', compact(
-            'summary', 'complaints', 'users', 'bupati', 'categories', 'departments', 
+            'summary', 'complaints', 'users', 'categories', 'departments', 
             'activeTab', 'regions', 'districtStats', 'mapPoints', 'complaintsDetailMap',
             'teams', 'dispatchMode', 'availableOfficers', 'unassignedOfficers', 'districts',
             'avgPerformance', 'allComplaintsForReport', 'hasBupati', 'hasSuperAdmin',
@@ -482,44 +482,6 @@ class WebSuperAdminController extends Controller
         }
 
         return back()->with('success', "Data profil akun {$user->name} berhasil diperbarui oleh Super Admin. Notifikasi keamanan telah dikirimkan ke email terkait.");
-    }
-
-    public function updateBupati(Request $request): RedirectResponse
-    {
-        $validated = $request->validate([
-            'name'     => 'required|string|max:255',
-            'email'    => 'required|email',
-            'phone'    => 'nullable|string|max:20',
-            'password' => ['nullable', 'string', 'min:8', 'regex:/[A-Z]/', 'regex:/[a-z]/', 'regex:/[0-9]/'],
-        ], [
-            'password.min'   => 'Kata sandi minimal 8 karakter.',
-            'password.regex' => 'Kata sandi harus mengandung kombinasi huruf besar, huruf kecil, dan angka.',
-        ]);
-
-        $bupati = User::whereIn('role', ['KEPALA_DAERAH', 'BUPATI'])->first();
-
-        if ($bupati) {
-            $bupati->name  = $validated['name'];
-            $bupati->email = $validated['email'];
-            $bupati->role  = 'KEPALA_DAERAH';
-            if (!empty($validated['phone'])) {
-                $bupati->phone = $validated['phone'];
-            }
-            if (!empty($validated['password'])) {
-                $bupati->password = Hash::make($validated['password']);
-            }
-            $bupati->save();
-        } else {
-            User::create([
-                'name'     => $validated['name'],
-                'email'    => $validated['email'],
-                'phone'    => $validated['phone'] ?? null,
-                'password' => Hash::make($validated['password'] ?? 'password'),
-                'role'     => 'KEPALA_DAERAH',
-            ]);
-        }
-
-        return back()->with('success', 'Data Kepala Daerah Kabupaten berhasil diperbarui!');
     }
 
     public function deactivateUser(Request $request, int $id): RedirectResponse

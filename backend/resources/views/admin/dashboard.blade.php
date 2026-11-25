@@ -13,11 +13,11 @@
         ],
         'users-management' => [
             'title' => 'Kelola Akun & Daftar Pengguna',
-            'subtitle' => 'Perbarui akun Kepala Daerah, daftarkan akun baru, dan kelola kata sandi pengguna dalam satu halaman.',
+            'subtitle' => 'Daftarkan akun baru; perbarui nama, email, nomor HP, dan kata sandi lewat tombol pada daftar pengguna.',
         ],
         'users-list' => [
             'title' => 'Kelola Akun & Daftar Pengguna',
-            'subtitle' => 'Perbarui akun Kepala Daerah, daftarkan akun baru, dan kelola kata sandi pengguna dalam satu halaman.',
+            'subtitle' => 'Daftarkan akun baru; perbarui nama, email, nomor HP, dan kata sandi lewat tombol pada daftar pengguna.',
         ],
         'complaints-list' => [
             'title' => 'Daftar Seluruh Pengaduan Infrastruktur',
@@ -443,41 +443,10 @@
 
     <!-- Tab Panel 1: Manajemen Akun (Bupati & Petugas) — Digabung dengan Daftar Pengguna -->
     <div id="tabPanel-users-management" class="admin-tab-panel {{ in_array($activeTab, ['users-management', 'users-list']) ? '' : 'hidden' }} space-y-5">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 gap-6">
 
-            <!-- Card 1: Perbarui Akun / Ganti Kepala Daerah (Bupati) -->
-            <div class="card-white rounded-2xl p-5 bg-white border border-[#E2E8F0] shadow-xs flex flex-col justify-between">
-                <div class="space-y-3">
-                    <div class="flex items-center gap-2">
-                        <i data-lucide="landmark" class="w-4 h-4 text-[#475569] shrink-0"></i>
-                        <h3 class="font-outfit font-bold text-sm text-[#0F172A] leading-tight">
-                            Perbarui Akun Kepala Daerah Kabupaten
-                        </h3>
-                    </div>
-
-                    <form method="POST" action="{{ route('admin.bupati.update') }}" class="space-y-2.5">
-                        @csrf
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                            <input type="text" name="name" value="{{ $bupati->name ?? 'Kepala Daerah Kabupaten' }}" required placeholder="Nama Lengkap Kepala Daerah"
-                                class="w-full text-xs rounded-xl border border-[#E2E8F0] px-3 py-2 bg-[#F8FAFC] focus:bg-white focus:ring-2 focus:ring-[#2563EB]/15 focus:border-[#2563EB] transition">
-                            <input type="email" name="email" value="{{ $bupati->email ?? 'bupati@kabupaten.go.id' }}" required placeholder="Email Resmi"
-                                class="w-full text-xs rounded-xl border border-[#E2E8F0] px-3 py-2 bg-[#F8FAFC] focus:bg-white focus:ring-2 focus:ring-[#2563EB]/15 focus:border-[#2563EB] transition">
-                        </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                            <input type="text" name="phone" value="{{ $bupati->phone ?? '081234567890' }}" placeholder="Nomor Handphone / WA"
-                                class="w-full text-xs rounded-xl border border-[#E2E8F0] px-3 py-2 bg-[#F8FAFC] focus:bg-white focus:ring-2 focus:ring-[#2563EB]/15 focus:border-[#2563EB] transition">
-                            <input type="password" name="password" placeholder="Password Baru (opsional)"
-                                class="w-full text-xs rounded-xl border border-[#E2E8F0] px-3 py-2 bg-[#F8FAFC] focus:bg-white focus:ring-2 focus:ring-[#2563EB]/15 focus:border-[#2563EB] transition">
-                        </div>
-
-                        <button type="submit" class="w-full py-2.5 px-4 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold text-xs shadow-xs transition flex items-center justify-center gap-2 cursor-pointer">
-                            <span>Simpan Perubahan Akun Kepala Daerah</span>
-                        </button>
-                    </form>
-                </div>
-            </div>
-
+            {{-- Satu form saja: pembuatan akun. Perubahan data akun dilakukan lewat
+                 tombol pensil pada Daftar Pengguna di bawah, termasuk akun Kepala Daerah. --}}
             <!-- Card 2: Penambahan Akun Baru (semua peran sistem) -->
             {{-- Akun anggota regu tidak dibuat di sini: identitas personil diisi lewat
                  menu Regu & Anggota oleh Operator PUPR atau Ketua Regu. --}}
@@ -487,7 +456,7 @@
                         <div class="flex items-center gap-2">
                             <i data-lucide="user-plus" class="w-4 h-4 text-[#475569] shrink-0"></i>
                             <h3 class="font-outfit font-bold text-sm text-[#0F172A] leading-tight">
-                                + Penambahan Akun Petugas &amp; Operator Baru
+                                + Tambah Akun Baru
                             </h3>
                         </div>
                         <span class="text-[10.5px] font-medium text-[#64748B] shrink-0">Sandi awal: <code class="font-mono font-bold text-[#334155]">password</code></span>
@@ -524,6 +493,11 @@
                             <span>Daftarkan Akun &amp; Kirim Undangan Email</span>
                         </button>
                     </form>
+
+                    <p class="text-[11px] text-[#64748B] leading-snug">
+                        Untuk memperbarui nama, email, nomor HP, atau mereset sandi, gunakan tombol
+                        pensil dan kunci pada baris akun di <strong>Daftar Pengguna</strong> di bawah.
+                    </p>
                 </div>
             </div>
 
@@ -2999,11 +2973,11 @@
         },
         'users-management': {
             title: 'Kelola Akun & Daftar Pengguna',
-            subtitle: 'Perbarui akun Kepala Daerah, daftarkan akun baru, dan kelola kata sandi pengguna dalam satu halaman.'
+            subtitle: 'Daftarkan akun baru; perbarui nama, email, nomor HP, dan kata sandi lewat tombol pada daftar pengguna.'
         },
         'users-list': {
             title: 'Kelola Akun & Daftar Pengguna',
-            subtitle: 'Perbarui akun Kepala Daerah, daftarkan akun baru, dan kelola kata sandi pengguna dalam satu halaman.'
+            subtitle: 'Daftarkan akun baru; perbarui nama, email, nomor HP, dan kata sandi lewat tombol pada daftar pengguna.'
         },
         'complaints-list': {
             title: 'Daftar Seluruh Pengaduan Infrastruktur',

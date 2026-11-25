@@ -74,7 +74,6 @@ Route::get('/download-apk', [WebAuthController::class, 'downloadApk'])->name('do
 // 3. Panel Super Admin
 Route::prefix('admin')->middleware(['auth', 'active', 'role:SUPERADMIN,ADMIN,KEPALA_DAERAH,DINAS'])->group(function () {
     Route::get('/', [WebSuperAdminController::class, 'index'])->name('admin.dashboard');
-    Route::match(['post', 'put'], '/bupati', [WebSuperAdminController::class, 'updateBupati'])->name('admin.bupati.update');
     Route::post('/users', [WebSuperAdminController::class, 'storeUser'])->name('admin.users.store');
     Route::match(['post', 'put'], '/users/{id}', [WebSuperAdminController::class, 'updateUser'])->name('admin.users.update');
     Route::post('/users/{id}/reset', [WebSuperAdminController::class, 'resetUserPassword'])->name('admin.users.reset');
