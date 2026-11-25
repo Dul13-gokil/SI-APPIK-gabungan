@@ -366,7 +366,7 @@
                                         <div class="font-semibold text-slate-800 text-xs leading-snug truncate max-w-[160px]">{{ $c->latestDisposition?->department?->name ?? 'Dinas Teknis' }}</div>
                                         <div class="text-[10.5px] text-slate-500 mt-0.5 flex items-center gap-1">
                                             <i data-lucide="hard-hat" class="w-3 h-3 text-slate-400 shrink-0"></i>
-                                            <span class="truncate max-w-[140px]">{{ $c->latestDisposition?->assignee?->name ?? 'Pekerja Lapangan' }}</span>
+                                            <span class="truncate max-w-[140px]">{{ $c->latestDisposition?->assignee?->name ?? 'Pengawas Lapangan' }}</span>
                                         </div>
                                     @else
                                         <span class="text-[11px] text-slate-400 font-medium italic">Belum diambil</span>
@@ -1498,7 +1498,7 @@
 
                 // Ketua Regu & Nomor Telepon
                 const showOfficerIdentity = ['IN_PROGRESS', 'WAITING_VERIFICATION', 'COMPLETED', 'CLOSED'].includes(item.status);
-                const leaderName = item.team_leader || item.officer_name || item.assignee_name || 'Pekerja Lapangan';
+                const leaderName = item.team_leader || item.officer_name || item.assignee_name || 'Pengawas Lapangan';
                 const leaderPhone = item.team_leader_phone || item.officer_phone || item.assignee_phone || '-';
 
                 if (teamLeaderEl) {
@@ -1593,7 +1593,7 @@
             }
         }
 
-        // 8b. Foto Bukti Penanganan Pekerja Lapangan & Galeri
+        // 8b. Foto Bukti Penanganan Pengawas Lapangan & Galeri
         const photoAfter = document.getElementById('bmPhotoAfter');
         const photoAfterContainer = document.getElementById('bmPhotoAfterContainer');
         const officerGallery = document.getElementById('bmPhotoOfficerGallery');

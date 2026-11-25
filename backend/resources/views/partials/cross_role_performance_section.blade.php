@@ -73,9 +73,9 @@
     $avgOffScore = $totalOff > 0 ? round(array_sum(array_column($fieldOfficerMetrics, 'score')) / $totalOff, 1) : 0;
 @endphp
 
-<!-- Pemantauan Kinerja Lintas Role (Pekerja Lapangan per Regu/Individu & Operator PUPR) -->
+<!-- Pemantauan Kinerja Lintas Role (Pengawas Lapangan per Regu/Individu & Operator PUPR) -->
 <div class="space-y-5 mt-5">
-    <!-- 1. Header Responsif Kinerja Pekerja Lapangan (Rapi di Mobile & 1 Baris di Desktop) -->
+    <!-- 1. Header Responsif Kinerja Pengawas Lapangan (Rapi di Mobile & 1 Baris di Desktop) -->
     <div class="card-white rounded-2xl p-4 sm:p-5 bg-white border border-[#E2E8F0] shadow-xs space-y-3 xl:space-y-0">
         <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-3">
             <div class="flex items-center justify-between gap-2.5 shrink-0">
@@ -84,7 +84,7 @@
                         <i data-lucide="hard-hat" class="w-4 h-4"></i>
                     </div>
                     <div class="min-w-0">
-                        <h3 class="font-outfit font-bold text-sm sm:text-base text-[#0F172A] truncate">Kinerja Pekerja Lapangan</h3>
+                        <h3 class="font-outfit font-bold text-sm sm:text-base text-[#0F172A] truncate">Kinerja Pengawas Lapangan</h3>
                         <p class="text-[11px] font-semibold text-[#64748B]">Periode: {{ $selectedPeriodLabel }}</p>
                     </div>
                 </div>
@@ -98,7 +98,7 @@
                         <i data-lucide="calendar" class="w-3.5 h-3.5 text-[#2563EB] shrink-0"></i>
                         <select id="execFieldPerfPeriod" onchange="changeExecPerfPeriod(this.value, 'field')"
                             class="bg-transparent text-xs font-bold text-[#0F172A] focus:outline-none cursor-pointer pr-1 w-full sm:w-auto"
-                            aria-label="Pilih Periode Kinerja Pekerja Lapangan">
+                            aria-label="Pilih Periode Kinerja Pengawas Lapangan">
                             @foreach($availablePeriods as $per)
                                 <option value="{{ $per['value'] }}" {{ $selectedPeriod === $per['value'] ? 'selected' : '' }}>
                                     {{ $per['label'] }}
@@ -379,7 +379,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="7" class="py-6 text-center text-[#64748B]">Belum ada data pekerja lapangan.</td>
+                                <td colspan="7" class="py-6 text-center text-[#64748B]">Belum ada data pengawas lapangan.</td>
                             </tr>
                             @endforelse
                         </tbody>
@@ -417,7 +417,7 @@
                         </div>
                     </div>
                     @empty
-                    <p class="py-6 text-center text-xs text-[#64748B] col-span-full">Belum ada data pekerja lapangan.</p>
+                    <p class="py-6 text-center text-xs text-[#64748B] col-span-full">Belum ada data pengawas lapangan.</p>
                     @endforelse
                 </div>
 

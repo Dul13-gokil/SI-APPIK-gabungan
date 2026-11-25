@@ -5,28 +5,28 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
 
-return Application::configure(basePath: dirname(__DIR__))
-    ->withRouting(
-        web: __DIR__.'/../routes/web.php',
-        api: __DIR__.'/../routes/api.php',
-        commands: __DIR__.'/../routes/console.php',
-        health: '/up',
-    )
-    ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->trustProxies(at: '*');
-        $middleware->alias([
-            'role'   => \App\Http\Middleware\EnsureUserHasRole::class,
-            'active' => \App\Http\Middleware\EnsureUserIsActive::class,
-        ]);
-        $middleware->web(append: [
-            \App\Http\Middleware\SecurityHeadersMiddleware::class,
-        ]);
-        $middleware->api(append: [
-            \App\Http\Middleware\SecurityHeadersMiddleware::class,
-        ]);
-        $middleware->validateCsrfTokens(except: [
-            'api/*',
-        ]);
+$app = Application::configure(basePath: dirname(__DIR__))
+        ->withRouting(
+            web: __DIR__.'/../routes/web.php',
+            api: __DIR__.'/../routes/api.php',
+            commands: __DIR__.'/../routes/console.php',
+            health: '/up',
+        )
+        ->withMiddleware(function (Middleware $middleware): void {
+            $middleware->trustProxies(at: '*');
+            $middleware->alias([
+                'role'   => \App\Http\Middleware\EnsureUserHasRole::class,
+                'active' => \App\Http\Middleware\EnsureUserIsActive::class,
+            ]);
+            $middleware->web(append: [
+                \App\Http\Middleware\SecurityHeadersMiddleware::class,
+            ]);
+            $middleware->api(append: [
+                \App\Http\Middleware\SecurityHeadersMiddleware::class,
+            ]);
+            $middleware->validateCsrfTokens(except: [
+                'api/*',
+            ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
@@ -86,3 +86,13 @@ return Application::configure(basePath: dirname(__DIR__))
             return back()->with('error', $e->getMessage());
         });
     })->create();
+
+// Satu berkas .env untuk seluruh proyek: <root repo>/.env, bukan backend/.env.
+// Path diarahkan sebelum environment dimuat, jadi artisan/tinker di host dan container
+// memakai nilai yang sama.
+$rootEnv = dirname(__DIR__, 2) . '/.env';
+if (is_file($rootEnv)) {
+    $app->useEnvironmentPath(dirname($rootEnv));
+}
+
+return $app;

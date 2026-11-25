@@ -176,7 +176,7 @@ HTML;
     }
 
     /**
-     * Kirim email aktivasi / undangan akun baru untuk Pekerja Lapangan atau Operator.
+     * Kirim email aktivasi / undangan akun baru untuk Pengawas Lapangan atau Operator.
      */
     public function sendStaffInvitationEmail(User $user, string $role, string $defaultPassword = 'password'): bool
     {
@@ -187,7 +187,7 @@ HTML;
 
         $loginUrl = url('/login');
         $isOperator = in_array(strtoupper($role), ['OPERATOR', 'DINAS']);
-        $roleTitle = $isOperator ? 'Operator Verifikasi Sistem' : 'Pekerja Lapangan (Tim Teknis PUPR)';
+        $roleTitle = $isOperator ? 'Operator Verifikasi Sistem' : 'Pengawas Lapangan (Tim Teknis PUPR)';
         $portalDescription = $isOperator 
             ? 'Portal Web Resmi SI-APPIK Kabupaten' 
             : 'Aplikasi Mobile SI-APPIK & Web Portal Petugas';

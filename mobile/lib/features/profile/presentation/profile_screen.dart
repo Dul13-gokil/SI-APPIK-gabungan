@@ -227,7 +227,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               const SizedBox(height: 4),
               Text(
-                _user?.role == 'PETUGAS' ? 'Pekerja Lapangan Dinas PUPR' : (isGuest ? 'Warga Tamu (Anonim)' : 'Warga Terdaftar'),
+                _user?.role == 'PETUGAS' ? 'Pengawas Lapangan Dinas PUPR' : (isGuest ? 'Warga Tamu (Anonim)' : 'Warga Terdaftar'),
                 style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
               ),
               const SizedBox(height: 20),
@@ -400,7 +400,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
                           ),
                           Text(
-                            _user?.role == 'PETUGAS' ? 'Perbarui data akun Pekerja Lapangan' : 'Perbarui identitas Warga Terdaftar Anda',
+                            _user?.role == 'PETUGAS' ? 'Perbarui data akun Pengawas Lapangan' : 'Perbarui identitas Warga Terdaftar Anda',
                             style: const TextStyle(fontSize: 11, color: AppColors.textSecondary),
                           ),
                         ],
@@ -958,7 +958,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                _user?.name ?? (isPetugas ? 'Pekerja Lapangan' : 'Warga Kabupaten'),
+                                _user?.name ?? (isPetugas ? 'Pengawas Lapangan' : 'Warga Kabupaten'),
                                 style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
                               ),
                               const SizedBox(height: 4),
@@ -1012,7 +1012,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               const Text('Peran Akun', style: TextStyle(color: Colors.white60, fontSize: 10)),
                               const SizedBox(height: 2),
                               Text(
-                                isPetugas ? 'Pekerja Lapangan' : (isGuest ? 'Mode Tamu' : 'Warga Terdaftar'),
+                                isPetugas ? 'Pengawas Lapangan' : (isGuest ? 'Mode Tamu' : 'Warga Terdaftar'),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 textAlign: TextAlign.end,
@@ -1298,7 +1298,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
               if (members.isNotEmpty)
                 ...members.map((m) {
-                  final name = m['name'] ?? 'Pekerja Lapangan';
+                  final name = m['name'] ?? 'Pengawas Lapangan';
                   final role = m['role'] ?? 'Anggota Regu';
                   final isLeader = m['is_leader'] == true || role == 'Ketua Regu';
                   final phone = m['phone'] ?? '-';
@@ -1487,7 +1487,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          isPetugas ? 'Panduan Teknis Pekerja Lapangan' : 'Panduan Penggunaan Aplikasi',
+                          isPetugas ? 'Panduan Teknis Pengawas Lapangan' : 'Panduan Penggunaan Aplikasi',
                           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
                         ),
                         Text(
@@ -1606,7 +1606,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   color: AppColors.primary,
                   content:
                       '• Operator memverifikasi data laporan dalam **< 2 jam kerja**.\n'
-                      '• Pekerja lapangan Dinas PUPR menyelesaikan lubang jalan maksimal **48 jam** dan jembatan kritis maksimal **24 jam**.\n'
+                      '• Pengawas lapangan Dinas PUPR menyelesaikan lubang jalan maksimal **48 jam** dan jembatan kritis maksimal **24 jam**.\n'
                       '• Anda akan menerima notifikasi status secara berkala: **Dikerjakan**, **Menunggu Validasi**, hingga **Tuntas**.',
                 ),
                 const SizedBox(height: 12),
@@ -2147,7 +2147,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           children: [
             V2FloatingHeader(
               title: 'Profil & Akun',
-              subtitle: isPetugas ? 'Pekerja Lapangan Dinas PUPR' : 'Pengguna SI-APPIK Kabupaten',
+              subtitle: isPetugas ? 'Pengawas Lapangan Dinas PUPR' : 'Pengguna SI-APPIK Kabupaten',
               leading: Container(
                 width: 36,
                 height: 36,
@@ -2202,7 +2202,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        _user?.name ?? (isPetugas ? 'Pekerja Lapangan' : 'Warga Tamu'),
+                        _user?.name ?? (isPetugas ? 'Pengawas Lapangan' : 'Warga Tamu'),
                         style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
                       ),
                       const SizedBox(height: 4),
@@ -2235,7 +2235,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             const SizedBox(width: 4),
                             Text(
                               isPetugas
-                                  ? 'Pekerja Lapangan Terdaftar'
+                                  ? 'Pengawas Lapangan Terdaftar'
                                   : (isGuest ? 'Mode Tamu / Anonim' : 'Warga Terdaftar'),
                               style: TextStyle(
                                 fontSize: 11,
@@ -2281,7 +2281,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     title: const Text('Preview Akun', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
                     subtitle: Text(
-                      isPetugas ? 'Lihat kartu identitas Pekerja Lapangan' : 'Lihat kartu identitas Warga Terdaftar',
+                      isPetugas ? 'Lihat kartu identitas Pengawas Lapangan' : 'Lihat kartu identitas Warga Terdaftar',
                       style: const TextStyle(fontSize: 11, color: AppColors.textSecondary),
                     ),
                     trailing: const Icon(LucideIcons.chevronRight, size: 18),

@@ -743,7 +743,7 @@ class _ComplaintDetailScreenState extends State<ComplaintDetailScreen> {
     );
   }
 
-  /// Foto Bukti Penanganan Pekerja Lapangan (Bagian Bawah)
+  /// Foto Bukti Penanganan Pengawas Lapangan (Bagian Bawah)
   Widget _buildAfterPhotoSection(ComplaintModel c) {
     if (c.completionPhotos.isEmpty) {
       if (c.status == 'WAITING_VERIFICATION') {
@@ -761,7 +761,7 @@ class _ComplaintDetailScreenState extends State<ComplaintDetailScreen> {
               SizedBox(width: 10),
               Expanded(
                 child: Text(
-                  'Pekerjaan fisik telah selesai dikerjakan oleh pekerja lapangan dan saat ini sedang dalam tahap inspeksi mutu oleh operator dinas sebelum ditutup tuntas.',
+                  'Pekerjaan fisik telah selesai dikerjakan oleh pengawas lapangan dan saat ini sedang dalam tahap inspeksi mutu oleh operator dinas sebelum ditutup tuntas.',
                   style: TextStyle(fontSize: 12, color: Color(0xFF92400E), height: 1.4, fontWeight: FontWeight.w500),
                 ),
               ),
@@ -1146,7 +1146,7 @@ class _ComplaintDetailScreenState extends State<ComplaintDetailScreen> {
 
   /// Regu Lapangan Pelaksana & Koordinator Lapangan
   Widget _buildTeamCard(ComplaintModel c) {
-    final leaderName = c.teamLeaderName ?? c.assigneeName ?? 'Pekerja Lapangan';
+    final leaderName = c.teamLeaderName ?? c.assigneeName ?? 'Pengawas Lapangan';
     final leaderPhone = c.teamLeaderPhone ?? c.effectiveAssigneePhone;
     final teamName = c.teamName ?? 'Regu Lapangan PUPR';
 

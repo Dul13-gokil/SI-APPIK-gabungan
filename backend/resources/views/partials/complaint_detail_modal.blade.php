@@ -155,7 +155,7 @@
                         </div>
                         <div class="min-w-0">
                             <span class="text-[10px] text-[#64748B] font-bold block leading-none">Ketua Regu:</span>
-                            <span id="sharedModalTeamLeader" class="font-bold text-[#0F172A] break-words block mt-0.5 text-xs">Pekerja Lapangan</span>
+                            <span id="sharedModalTeamLeader" class="font-bold text-[#0F172A] break-words block mt-0.5 text-xs">Pengawas Lapangan</span>
                         </div>
                     </div>
                     <a id="sharedModalOfficerPhone" href="#" class="px-2.5 py-1 rounded-lg bg-[#EFF6FF] hover:bg-[#DBEAFE] text-[#2563EB] font-bold font-mono text-xs flex items-center gap-1.5 transition shrink-0">

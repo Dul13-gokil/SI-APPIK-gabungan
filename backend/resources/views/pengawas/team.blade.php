@@ -70,20 +70,40 @@
             @endif
         </div>
 
-        <div class="rounded-2xl border border-[#E2E8F0] bg-white p-5 space-y-4 shadow-sm">
+        <div class="rounded-2xl border border-[#E2E8F0] bg-white p-5 space-y-4">
             <h3 class="font-outfit font-bold text-sm text-[#0F172A]">Tambah Anggota</h3>
             <p class="text-[12px] text-[#475569]">
-                Hanya pekerja lapangan yang belum tergabung di regu mana pun yang dapat ditambahkan.
-                Akun pekerja lapangan baru dibuat oleh Operator.
+                Isi identitas anggota baru, atau pilih pengawas lapangan yang sudah punya akun
+                tetapi belum masuk regu mana pun.
             </p>
 
+            @if($team && $team->members()->count() < 15)
+                <form method="POST" action="{{ route('pengawas.team.members.create', $team->id) }}"
+                      class="rounded-xl border border-dashed border-[#CBD5E1] p-3 space-y-2">
+                    @csrf
+                    <div class="text-[12px] font-semibold text-[#0F172A]">Identitas anggota baru</div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                        <input type="text" name="name" required placeholder="Nama lengkap"
+                               class="rounded-lg border border-[#E2E8F0] px-2.5 py-1.5 text-[12px]">
+                        <input type="email" name="email" required placeholder="Email akun"
+                               class="rounded-lg border border-[#E2E8F0] px-2.5 py-1.5 text-[12px]">
+                        <input type="text" name="phone" placeholder="08xxxxxxxxxx"
+                               class="rounded-lg border border-[#E2E8F0] px-2.5 py-1.5 text-[12px]">
+                    </div>
+                    <button type="submit"
+                            class="rounded-lg bg-[#1E3A8A] px-3 py-1.5 text-[12px] font-semibold text-white hover:bg-[#172554]">
+                        Buat &amp; Tambahkan
+                    </button>
+                </form>
+            @endif
+
             @if($candidates->isEmpty())
-                <p class="text-[13px] text-[#475569]">Tidak ada pekerja lapangan yang belum masuk regu.</p>
+                <p class="text-[13px] text-[#475569]">Tidak ada pengawas lapangan yang belum masuk regu.</p>
             @else
                 <form method="POST" action="{{ route('pengawas.team.members.add') }}" class="flex flex-col sm:flex-row gap-2">
                     @csrf
                     <select name="user_id" required class="flex-1 rounded-xl border border-[#E2E8F0] px-3 py-2 text-[13px]">
-                        <option value="">Pilih pekerja lapangan</option>
+                        <option value="">Pilih pengawas lapangan yang sudah punya akun</option>
                         @foreach($candidates as $candidate)
                             <option value="{{ $candidate->id }}">{{ $candidate->name }} &mdash; {{ $candidate->email }}</option>
                         @endforeach

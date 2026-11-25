@@ -408,7 +408,7 @@
         @endif
     </div>
 
-    <!-- TAB 2: LAPORAN DITUGASKAN (MENUNGGU PEKERJA LAPANGAN MULAI BEKERJA) -->
+    <!-- TAB 2: LAPORAN DITUGASKAN (MENUNGGU PENGAWAS LAPANGAN MULAI BEKERJA) -->
     <div id="tabPanel-dispatched" class="tab-panel {{ $activeTab === 'dispatched' ? '' : 'hidden' }} space-y-4">
         <div class="space-y-4">
             @if($dispatched->isEmpty())
@@ -1865,7 +1865,7 @@
                     Instruksi Revisi Lapangan
                 </h3>
                 <p class="text-xs text-slate-500 leading-relaxed">
-                    Kirimkan instruksi perbaikan kepada pekerja lapangan untuk menyempurnakan hasil pekerjaan fisik.
+                    Kirimkan instruksi perbaikan kepada pengawas lapangan untuk menyempurnakan hasil pekerjaan fisik.
                 </p>
             </div>
         </div>
@@ -2506,7 +2506,7 @@
 
                 // Ketua Regu & Nomor Telepon (hanya tampil setelah diambil/dikerjakan)
                 const showOfficerIdentity = ['IN_PROGRESS', 'WAITING_VERIFICATION', 'COMPLETED', 'CLOSED'].includes(item.status);
-                const leaderName = item.team_leader_name || item.officer_name || 'Pekerja Lapangan';
+                const leaderName = item.team_leader_name || item.officer_name || 'Pengawas Lapangan';
                 const leaderPhone = item.team_leader_phone || item.officer_phone || '-';
 
                 if (teamLeaderEl) {
@@ -2598,7 +2598,7 @@
             citizenPhotoSection.classList.add('hidden');
         }
 
-        // 2. Foto Bukti Penanganan Pekerja Lapangan (Selalu tampil berdampingan)
+        // 2. Foto Bukti Penanganan Pengawas Lapangan (Selalu tampil berdampingan)
         const officerPhotoSection = document.getElementById('opModalOfficerPhotoSection');
         const officerPhotoImg = document.getElementById('opModalOfficerPhoto');
         const officerPlaceholder = document.getElementById('opModalOfficerPlaceholder');
@@ -2810,7 +2810,7 @@
             citizenPhotoSection.classList.add('hidden');
         }
 
-        // 2. Foto Bukti Penanganan Pekerja Lapangan (Bawah)
+        // 2. Foto Bukti Penanganan Pengawas Lapangan (Bawah)
         const officerPhotoSection = document.getElementById('valModalOfficerPhotoSection');
         const officerPhotoImg = document.getElementById('valModalOfficerPhoto');
         const officerGallery = document.getElementById('valModalOfficerGallery');
@@ -2877,7 +2877,7 @@
         if (valTeamNameEl) valTeamNameEl.innerText = teamDisplayName;
         if (valOfficerDeptEl) valOfficerDeptEl.innerText = item.department_name || 'Dinas Terkait (PUPR / PRKP)';
 
-        const leaderName = item.team_leader_name || item.officer_name || 'Pekerja Lapangan';
+        const leaderName = item.team_leader_name || item.officer_name || 'Pengawas Lapangan';
         const leaderPhone = item.team_leader_phone || item.officer_phone || '-';
 
         if (valTeamLeaderEl) valTeamLeaderEl.innerText = leaderName;
@@ -3494,7 +3494,7 @@
         }
     }
 
-    // Modal Konfirmasi Minta Revisi Pekerja Lapangan
+    // Modal Konfirmasi Minta Revisi Pengawas Lapangan
     let currentRevisionForm = null;
 
     function openRevisionModal(formElement, code) {

@@ -134,7 +134,7 @@ class WorkflowController extends Controller
     }
 
     /**
-     * Pekerja Lapangan mulai pengerjaan laporan.
+     * Pengawas Lapangan mulai pengerjaan laporan.
      * Hanya diizinkan jika status sudah VERIFIED atau DISPATCHED.
      */
     public function startWork(Request $request, int $id): JsonResponse
@@ -147,7 +147,7 @@ class WorkflowController extends Controller
     }
 
     /**
-     * Pekerja Lapangan menyelesaikan pekerjaan dan mengunggah bukti selesai.
+     * Pengawas Lapangan menyelesaikan pekerjaan dan mengunggah bukti selesai.
      */
     public function finishWork(Request $request, int $id): JsonResponse
     {
@@ -180,7 +180,7 @@ class WorkflowController extends Controller
     }
 
     /**
-     * Operator melakukan validasi akhir atas hasil kerja pekerja lapangan.
+     * Operator melakukan validasi akhir atas hasil kerja pengawas lapangan.
      */
     public function validateResolution(Request $request, int $id): JsonResponse
     {

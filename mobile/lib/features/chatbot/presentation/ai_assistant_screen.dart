@@ -167,11 +167,11 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
   String _getSmartOfflineResponse(String input) {
     final lower = input.toLowerCase();
 
-    // ─── Respon Khusus Pekerja Lapangan ──────────────────────────────
+    // ─── Respon Khusus Pengawas Lapangan ──────────────────────────────
     if (_isPetugas) {
-      if (lower.contains('apa itu petugas') || lower.contains('pekerja lapangan') || lower.contains('peran petugas') || lower.contains('tugas petugas') || lower.contains('siapa petugas')) {
-        return '👷‍♂️ **Mengenal Peran Pekerja Lapangan (Dinas PUPR & PRKP):**\n\n'
-            'Pekerja Lapangan adalah **tim teknis operasional resmi** Pemerintah Kabupaten yang bertugas langsung di lokasi kejadian untuk menangani perbaikan fisik infrastruktur publik berdasarkan Surat Perintah Kerja (SPK) dari Operator Dinas.\n\n'
+      if (lower.contains('apa itu petugas') || lower.contains('pengawas lapangan') || lower.contains('peran petugas') || lower.contains('tugas petugas') || lower.contains('siapa petugas')) {
+        return '👷‍♂️ **Mengenal Peran Pengawas Lapangan (Dinas PUPR & PRKP):**\n\n'
+            'Pengawas Lapangan adalah **tim teknis operasional resmi** Pemerintah Kabupaten yang bertugas langsung di lokasi kejadian untuk menangani perbaikan fisik infrastruktur publik berdasarkan Surat Perintah Kerja (SPK) dari Operator Dinas.\n\n'
             '🔑 **Wewenang & Fitur Khusus di Aplikasi Mobile:**\n'
             '1. **Menerima Disposisi Tugas:** Memantau SPK penugasan pada tab *Tugas Aktif* lengkap dengan data koordinat GPS satelit dan foto laporan warga.\n'
             '2. **Navigasi Rute Nyata GIS (OSRM):** Menghubungkan langsung ke rute jalan nyata menuju titik kerusakan.\n'
@@ -185,7 +185,7 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
       }
 
       if (lower.contains('otp') || lower.contains('kode otp') || lower.contains('verifikasi otp') || lower.contains('cara otp')) {
-        return '✉️ **Panduan Kode OTP untuk Pekerja Lapangan:**\n\n'
+        return '✉️ **Panduan Kode OTP untuk Pengawas Lapangan:**\n\n'
             'Kode OTP (*One-Time Password*) adalah 6 digit kode keamanan rahasia yang dikirimkan ke email resmi akun petugas Anda.\n\n'
             '1. **Fungsi OTP Petugas:** Digunakan untuk verifikasi identitas saat melakukan **Reset / Lupa Kata Sandi** secara mandiri di aplikasi mobile.\n'
             '2. **Cara Menggunakan:**\n'
@@ -211,7 +211,7 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
       }
 
       if (lower.contains('tentang aplikasi') || lower.contains('apa itu aplikasi') || lower.contains('info aplikasi')) {
-        return '📱 **Tentang Aplikasi Pekerja Lapangan Kabupaten:**\n\n'
+        return '📱 **Tentang Aplikasi Pengawas Lapangan Kabupaten:**\n\n'
             'Aplikasi ini adalah modul kerja terpadu untuk tim teknis lapangan Dinas PUPR & PRKP Kabupaten.\n\n'
             '🌟 **Kemampuan Sistem:**\n'
             '• **Penerimaan SPK Real-Time:** Notifikasi penugasan langsung dari Operator Dinas.\n'
@@ -230,7 +230,7 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
       }
 
       if (lower.contains('pakai') || lower.contains('aplikasi') || lower.contains('panduan') || lower.contains('cara kerja')) {
-        return '📱 **Panduan Penggunaan Aplikasi Pekerja Lapangan:**\n\n'
+        return '📱 **Panduan Penggunaan Aplikasi Pengawas Lapangan:**\n\n'
             '1. **Pantau SPK:** Tab Tugas Aktif menampilkan ringkasan tugas: Total Aduan, Menunggu Verifikasi, Ditugaskan, Dikerjakan, Menunggu Validasi, dan Tuntas.\n'
             '2. **Tab Semua Tugas vs Tugas Saya:** Gunakan tab untuk beralih antara melihat seluruh tugas tim atau penugasan khusus akun Anda.\n'
             '3. **Navigasi GIS:** Tekan kartu tugas untuk melihat rute jalan nyata (OSRM) menuju lokasi koordinat satelit.\n'
@@ -249,7 +249,7 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
 
       if (lower.contains('3') || lower.contains('maksimal') || lower.contains('batas tugas') || lower.contains('kuota')) {
         return '⚠️ **Ketentuan Batas Maksimal 3 Tugas Lapangan:**\n\n'
-            '• Setiap pekerja lapangan hanya dapat memiliki maksimal **3 tugas berstatus "Sedang Dikerjakan"** secara bersamaan.\n'
+            '• Setiap pengawas lapangan hanya dapat memiliki maksimal **3 tugas berstatus "Sedang Dikerjakan"** secara bersamaan.\n'
             '• Aturan ini diterapkan oleh Dinas PUPR agar waktu penanganan (SLA) tetap terjamin dan kualitas fisik maksimal.\n'
             '• Jika Anda telah mencapai kuota 3 tugas, selesaikan dan kirimkan bukti salah satu tugas terlebih dahulu sebelum memulai tugas baru.';
       }
@@ -301,7 +301,7 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
       }
 
       if (lower.contains('k3') || lower.contains('helm') || lower.contains('rompi') || lower.contains('safety')) {
-        return '🛡️ **Standar K3 Pekerja Lapangan PUPR:**\n\n'
+        return '🛡️ **Standar K3 Pengawas Lapangan PUPR:**\n\n'
             '1. **APD Wajib:** Rompi reflektif, helm proyek, sarung tangan, & safety boots.\n'
             '2. **Rambu Pengaman:** Pasang traffic cone minimal 50m sebelum titik kerja.\n'
             '3. **Flagman:** Siagakan 1 petugas pengatur buka-tutup jalur.\n'
@@ -354,10 +354,10 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
           '   • Masukkan kode OTP di aplikasi mobile dan masukkan kata sandi baru Anda.';
     }
 
-    // Tanya Mengenai Pekerja Lapangan (Dari Sudut Pandang Warga)
-    if (lower.contains('apa itu petugas') || lower.contains('pekerja lapangan') || lower.contains('siapa yang perbaiki') || lower.contains('siapa petugas')) {
-      return '👷‍♂️ **Siapa Itu Pekerja Lapangan?**\n\n'
-          'Pekerja Lapangan adalah **tim teknis operasional resmi** dari Dinas PUPR & PRKP Kabupaten yang diterjunkan ke lokasi untuk melakukan perbaikan fisik infrastruktur.\n\n'
+    // Tanya Mengenai Pengawas Lapangan (Dari Sudut Pandang Warga)
+    if (lower.contains('apa itu petugas') || lower.contains('pengawas lapangan') || lower.contains('siapa yang perbaiki') || lower.contains('siapa petugas')) {
+      return '👷‍♂️ **Siapa Itu Pengawas Lapangan?**\n\n'
+          'Pengawas Lapangan adalah **tim teknis operasional resmi** dari Dinas PUPR & PRKP Kabupaten yang diterjunkan ke lokasi untuk melakukan perbaikan fisik infrastruktur.\n\n'
           '• **Menerima SPK:** Mendapat perintah kerja resmi setelah laporan Anda diverifikasi oleh Operator Dinas.\n'
           '• **Navigasi Langsung:** Datang ke lokasi titik kerusakan berpandukan koordinat GPS di aplikasi.\n'
           '• **Pengerjaan Fisik:** Melakukan penambalan jalan aspal, penggantian lampu PJU, atau perbaikan darurat jembatan.\n'
@@ -369,7 +369,7 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
       return '🔒 **Kebijakan Privasi Nomor Telepon Pelapor:**\n\n'
           '• **Untuk Warga Lain:** Nomor HP pelapor disamarkan (contoh: *******890) dan dikunci dengan gembok privasi.\n'
           '• **Untuk Pelapor Sendiri:** Anda dapat melihat nomor telepon Anda sendiri pada detail laporan Anda.\n'
-          '• **Untuk Pekerja Lapangan & Operator:** Nomor telepon pelapor dapat dilihat secara utuh agar petugas dapat menghubungi Anda jika membutuhkan konfirmasi patokan lokasi di lapangan.';
+          '• **Untuk Pengawas Lapangan & Operator:** Nomor telepon pelapor dapat dilihat secara utuh agar petugas dapat menghubungi Anda jika membutuhkan konfirmasi patokan lokasi di lapangan.';
     }
 
     if (lower.contains('beda') || lower.contains('ruas') || lower.contains('titik') || lower.contains('500') || lower.contains('panjang') || lower.contains('ringan') || lower.contains('berat')) {
@@ -430,9 +430,9 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
     }
 
     return _isPetugas
-        ? 'Halo Rekan Pekerja Lapangan Dinas PUPR! 👷‍♂️\n'
+        ? 'Halo Rekan Pengawas Lapangan Dinas PUPR! 👷‍♂️\n'
             'Saya **Asisten Teknis SI-APPIK** Kabupaten. Anda dapat menanyakan seputar operasional aplikasi:\n\n'
-            '• 👷‍♂️ **Apa Itu Pekerja Lapangan** (peran, tugas & wewenang)\n'
+            '• 👷‍♂️ **Apa Itu Pengawas Lapangan** (peran, tugas & wewenang)\n'
             '• 📋 **Cara Mengambil Tugas** (panduan ambil & mulai tugas SPK)\n'
             '• 📱 **Tentang Aplikasi** (fitur aplikasi & navigasi GIS)\n'
             '• ✉️ **Verifikasi OTP** (panduan OTP & keamanan akun)\n'
@@ -503,7 +503,7 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
               child: Row(
                 children: _isPetugas
                     ? [
-                        _buildQuickChip('Apa Itu Pekerja Lapangan'),
+                        _buildQuickChip('Apa Itu Pengawas Lapangan'),
                         _buildQuickChip('Cara Mengambil Tugas'),
                         _buildQuickChip('Tentang Aplikasi'),
                         _buildQuickChip('Verifikasi OTP'),

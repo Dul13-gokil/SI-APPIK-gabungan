@@ -273,7 +273,7 @@
                 if (offNameEl) offNameEl.innerText = teamNameStr;
 
                 if (offDeptEl) offDeptEl.innerText = item.department_name || 'Dinas Pekerjaan Umum dan Penataan Ruang (PUPR)';
-                if (leaderEl) leaderEl.innerText = item.team_leader || item.assignee_name || item.officer_name || 'Pekerja Lapangan';
+                if (leaderEl) leaderEl.innerText = item.team_leader || item.assignee_name || item.officer_name || 'Pengawas Lapangan';
 
                 const teamPhone = item.team_leader_phone || item.officer_phone || item.assignee_phone || '081100000004';
                 if (teamPhoneText) teamPhoneText.innerText = teamPhone;

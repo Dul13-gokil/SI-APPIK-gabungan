@@ -78,7 +78,7 @@ class AuthController extends Controller
         // Hanya WARGA dan PETUGAS yang diizinkan menerima OTP reset sandi via mobile
         if (!in_array($role, ['WARGA', 'PETUGAS'], true)) {
             return ApiResponse::error(
-                'Pengiriman OTP hanya diizinkan untuk akun Warga dan Pekerja Lapangan. Akun pimpinan atau dinas tidak diizinkan melalui aplikasi mobile.',
+                'Pengiriman OTP hanya diizinkan untuk akun Warga dan Pengawas Lapangan. Akun pimpinan atau dinas tidak diizinkan melalui aplikasi mobile.',
                 [],
                 403
             );

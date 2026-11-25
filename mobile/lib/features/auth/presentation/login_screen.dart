@@ -301,7 +301,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'Aplikasi mobile dikhususkan untuk Warga Masyarakat dan Pekerja Lapangan PUPR.',
+                      'Aplikasi mobile dikhususkan untuk Warga Masyarakat dan Pengawas Lapangan PUPR.',
                       style: TextStyle(fontSize: 12, color: Colors.blue.shade900),
                     ),
                   ),

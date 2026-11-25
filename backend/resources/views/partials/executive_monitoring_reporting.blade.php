@@ -112,7 +112,7 @@
         class="px-2 sm:px-4 py-2 rounded-xl text-[11px] sm:text-xs transition cursor-pointer inline-flex items-center justify-center gap-1.5 sm:gap-2 whitespace-nowrap {{ $activeExecSubtab === 'field' ? 'font-bold bg-[#2563EB] text-white' : 'font-semibold bg-white text-[#475569] border border-[#E2E8F0] hover:text-[#0F172A]' }}">
         <i data-lucide="hard-hat" class="w-3.5 h-3.5 shrink-0"></i>
         <span class="sm:hidden truncate">Pekerja Lap.</span>
-        <span class="hidden sm:inline">Kinerja Pekerja Lapangan</span>
+        <span class="hidden sm:inline">Kinerja Pengawas Lapangan</span>
     </button>
     <button type="button" id="execPerfTabBtn-operator" onclick="switchExecPerfTab('operator')"
         class="px-2 sm:px-4 py-2 rounded-xl text-[11px] sm:text-xs transition cursor-pointer inline-flex items-center justify-center gap-1.5 sm:gap-2 whitespace-nowrap {{ $activeExecSubtab === 'operator' ? 'font-bold bg-[#2563EB] text-white' : 'font-semibold bg-white text-[#475569] border border-[#E2E8F0] hover:text-[#0F172A]' }}">
@@ -539,7 +539,7 @@
                             <table class="w-full text-left border-collapse border border-slate-400 text-[11px]">
                                 <tbody>
                                     <tr>
-                                        <td class="border border-slate-400 py-1.5 px-2.5 font-semibold">Pekerja Lapangan (Tindakan Fisik)</td>
+                                        <td class="border border-slate-400 py-1.5 px-2.5 font-semibold">Pengawas Lapangan (Tindakan Fisik)</td>
                                         <td class="border border-slate-400 py-1.5 px-2.5 text-right font-bold">{{ $fieldCount }} Tindakan ({{ $fieldPercent }}%)</td>
                                     </tr>
                                     <tr>
@@ -772,7 +772,7 @@
                         <div class="text-[11px] space-y-0.5">
                             <div>- Kinerja Dinas PUPR (Tepat Waktu SLA): {{ $totalOnTime }} Laporan</div>
                             <div>- Kinerja Dinas PUPR (Terlambat Lewat SLA): {{ $totalLate }} Laporan</div>
-                            <div>- Kontribusi Pekerja Lapangan: {{ $fieldCount }} Tindakan Fisik ({{ $fieldPercent }}%)</div>
+                            <div>- Kontribusi Pengawas Lapangan: {{ $fieldCount }} Tindakan Fisik ({{ $fieldPercent }}%)</div>
                             <div>- Kontribusi Operator Verifikasi: {{ $operatorCount }} Telaah Laporan ({{ $operatorPercent }}%)</div>
                             <div>- Kontribusi Dinas PUPR: {{ $deptCount }} Penyelesaian Akhir ({{ $deptPercent }}%)</div>
                         </div>

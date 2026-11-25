@@ -119,7 +119,7 @@ class User extends Authenticatable
         return $this->role === 'PETUGAS';
     }
 
-    /** Pengawas lapangan: berasal dari pekerja lapangan, boleh mengelola anggota regunya. */
+    /** Pengawas lapangan: berasal dari pengawas lapangan, boleh mengelola anggota regunya. */
     public function isPengawas(): bool
     {
         return $this->role === 'PENGAWAS';

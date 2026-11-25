@@ -42,8 +42,10 @@ class EnsureUserHasRole
             }
         }
 
-        // SUPERADMIN, ADMIN, dan KEPALA DINAS (role DINAS) berakses penuh ke seluruh portal internal.
-        if (in_array($userRole, ['SUPERADMIN', 'ADMIN', 'DINAS'], true)) {
+        // Super Admin adalah peran tertinggi: boleh masuk semua portal.
+        // Peran lain (termasuk Kepala Daerah & Kepala Dinas) harus disebut eksplisit
+        // pada rute, supaya pembatasan seperti log aktivitas & pengaturan sistem berlaku.
+        if ($userRole === 'SUPERADMIN') {
             return $next($request);
         }
 

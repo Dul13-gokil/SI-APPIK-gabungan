@@ -142,21 +142,22 @@ class AutoVerificationTest extends TestCase
         $this->assertStringContainsString('Siap Ditugaskan', $sidebar);
     }
 
-    public function test_layar_monitoring_dapat_dibuka_tanpa_login(): void
+    public function test_layar_monitoring_wajib_login(): void
     {
-        $this->mockAi([
-            'is_valid_infrastructure' => true,
-            'is_damaged' => true,
-            'category_id' => 1,
-            'category_label' => 'Jalan & Jembatan',
-            'confidence' => 0.9,
-            'severity_level' => 3,
-        ]);
-        $this->kirim()->assertStatus(201);
+        // Diperiksa lebih dulu, sebelum ada sesi login lain di test ini.
+        $this->get('/monitoring')->assertRedirect('/login');
 
-        // Tanpa actingAs: perangkat ruang kendali membuka langsung tanpa login.
-        $this->get('/monitoring')->assertOk()->assertSee('Pusat Pantau Aduan');
-        $this->getJson('/monitoring/data')->assertOk()->assertJsonStructure([
+        $monitoring = User::create([
+            'name' => 'Petugas Monitoring',
+            'email' => 'monitoring.auto@example.test',
+            'phone' => '081277770004',
+            'password' => 'Password123',
+            'role' => 'MONITORING',
+            'is_active' => true,
+        ]);
+
+        $this->actingAs($monitoring)->get('/monitoring')->assertOk()->assertSee('Pusat Pantau Aduan');
+        $this->actingAs($monitoring)->getJson('/monitoring/data')->assertOk()->assertJsonStructure([
             'total', 'selesai', 'dikerjakan', 'rasio', 'tren', 'kecamatan', 'peta', 'terbaru',
         ]);
     }
@@ -173,6 +174,9 @@ class AutoVerificationTest extends TestCase
         ]);
 
         $this->actingAs($dinas)->get('/admin')->assertOk();
-        $this->actingAs($dinas)->get('/admin/activity')->assertOk();
+
+        // Log aktivitas & pengaturan sistem khusus Super Admin.
+        $this->actingAs($dinas)->get('/admin/activity')->assertStatus(403);
+        $this->actingAs($dinas)->get('/admin/settings')->assertStatus(403);
     }
 }

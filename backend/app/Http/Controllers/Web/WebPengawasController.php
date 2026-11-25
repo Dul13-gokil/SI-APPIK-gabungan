@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 /**
- * Pengawas lapangan (berasal dari pekerja lapangan) mengelola anggota regunya sendiri.
+ * Pengawas lapangan (berasal dari pengawas lapangan) mengelola anggota regunya sendiri.
  * Batas wewenang: hanya regu tempat ia terdaftar. Regu lain tetap 403 (Aturan 3.2).
  */
 class WebPengawasController extends Controller
@@ -28,7 +28,7 @@ class WebPengawasController extends Controller
             ? $team->users()->orderBy('name')->get()
             : collect();
 
-        // Kandidat: pekerja lapangan yang belum tergabung di regu mana pun.
+        // Kandidat: pengawas lapangan yang belum tergabung di regu mana pun.
         $candidates = User::whereIn('role', ['PETUGAS', 'PENGAWAS'])
             ->whereNotIn('id', TeamMember::query()->select('user_id'))
             ->orderBy('name')
@@ -44,14 +44,14 @@ class WebPengawasController extends Controller
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
         ], [
-            'user_id.required' => 'Pilih pekerja lapangan yang akan ditambahkan.',
-            'user_id.exists'   => 'Akun pekerja lapangan tersebut tidak ditemukan.',
+            'user_id.required' => 'Pilih pengawas lapangan yang akan ditambahkan.',
+            'user_id.exists'   => 'Akun pengawas lapangan tersebut tidak ditemukan.',
         ]);
 
         $user = User::findOrFail($validated['user_id']);
 
         if (! in_array(strtoupper((string) $user->role), ['PETUGAS', 'PENGAWAS'], true)) {
-            return back()->with('error', 'Hanya akun pekerja lapangan yang dapat ditambahkan ke regu.');
+            return back()->with('error', 'Hanya akun pengawas lapangan yang dapat ditambahkan ke regu.');
         }
 
         if ($team->members()->count() >= self::MAX_MEMBERS) {

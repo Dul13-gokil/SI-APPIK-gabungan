@@ -45,7 +45,7 @@ class _FieldTasksScreenState extends State<FieldTasksScreen> {
   String _taskScope = 'ALL'; // 'ALL' = Semua Tugas, 'MY' = Tugas Regu Saya
   String _searchQuery = '';
 
-  // Status KPI Pekerja Lapangan
+  // Status KPI Pengawas Lapangan
   int _totalTasks = 0;
   int _dispatchedCount = 0;
   int _inProgressCount = 0;
@@ -1165,11 +1165,11 @@ class _FieldTasksScreenState extends State<FieldTasksScreen> {
               ),
             ],
 
-            // Hero Banner Sambutan Pekerja Lapangan
+            // Hero Banner Sambutan Pengawas Lapangan
             _buildWelcomeCard(),
             const SizedBox(height: 14),
 
-            // 4 Top KPI Cards for Pekerja Lapangan
+            // 4 Top KPI Cards for Pengawas Lapangan
             _buildKpiSection(),
             const SizedBox(height: 14),
 
@@ -1381,7 +1381,7 @@ class _FieldTasksScreenState extends State<FieldTasksScreen> {
 
   Widget _buildWelcomeCard() {
     final fullName = (_currentUser?.name ?? '').trim();
-    final userName = fullName.isNotEmpty ? fullName : 'Pekerja Lapangan';
+    final userName = fullName.isNotEmpty ? fullName : 'Pengawas Lapangan';
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(

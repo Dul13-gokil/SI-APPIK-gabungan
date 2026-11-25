@@ -158,7 +158,7 @@
                     <p class="font-bold text-slate-900">Ketua / Pelaksana Regu Lapangan</p>
                 </div>
                 <div class="border-t border-slate-400 pt-1 mx-6">
-                    <p class="font-bold text-slate-800">{{ $complaint->latestDisposition?->team?->leader?->name ?? $complaint->latestDisposition?->team?->name ?? 'Pekerja Lapangan' }}</p>
+                    <p class="font-bold text-slate-800">{{ $complaint->latestDisposition?->team?->leader?->name ?? $complaint->latestDisposition?->team?->name ?? 'Pengawas Lapangan' }}</p>
                 </div>
             </div>
         </div>

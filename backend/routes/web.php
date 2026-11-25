@@ -72,7 +72,7 @@ Route::post('/profile/first-login-setup', [WebAuthController::class, 'completeFi
 Route::get('/download-apk', [WebAuthController::class, 'downloadApk'])->name('download.apk');
 
 // 3. Panel Super Admin
-Route::prefix('admin')->middleware(['auth', 'active', 'role:SUPERADMIN,ADMIN'])->group(function () {
+Route::prefix('admin')->middleware(['auth', 'active', 'role:SUPERADMIN,ADMIN,KEPALA_DAERAH,DINAS'])->group(function () {
     Route::get('/', [WebSuperAdminController::class, 'index'])->name('admin.dashboard');
     Route::match(['post', 'put'], '/bupati', [WebSuperAdminController::class, 'updateBupati'])->name('admin.bupati.update');
     Route::post('/users', [WebSuperAdminController::class, 'storeUser'])->name('admin.users.store');
@@ -96,42 +96,47 @@ Route::prefix('admin')->middleware(['auth', 'active', 'role:SUPERADMIN,ADMIN'])-
     Route::post('/regions', [WebSuperAdminController::class, 'storeRegion'])->name('admin.regions.store');
     Route::match(['post', 'delete'], '/regions/{id}/delete', [WebSuperAdminController::class, 'deleteRegion'])->name('admin.regions.delete');
 
-    // Log aktivitas sistem (khusus Super Admin)
-    Route::get('/activity', [WebSuperAdminController::class, 'activityLog'])->name('admin.activity');
-
-    // Pengaturan ambang AI & radius foto (tanpa deploy)
-    Route::get('/settings', [WebSuperAdminController::class, 'settings'])->name('admin.settings');
-    Route::post('/settings', [WebSuperAdminController::class, 'updateSettings'])->name('admin.settings.update');
+    // Log aktivitas & pengaturan sistem: hanya Super Admin (Kepala Daerah tidak).
+    Route::middleware('role:SUPERADMIN,ADMIN')->group(function () {
+        Route::get('/activity', [WebSuperAdminController::class, 'activityLog'])->name('admin.activity');
+        Route::get('/settings', [WebSuperAdminController::class, 'settings'])->name('admin.settings');
+        Route::post('/settings', [WebSuperAdminController::class, 'updateSettings'])->name('admin.settings.update');
+    });
 });
 
 // 4. Pusat Kendali Operator Dinas
-Route::prefix('operator')->middleware(['auth', 'active', 'role:OPERATOR,SUPERADMIN,ADMIN'])->group(function () {
+Route::prefix('operator')->middleware(['auth', 'active', 'role:OPERATOR,SUPERADMIN,ADMIN,KEPALA_DAERAH,DINAS'])->group(function () {
     Route::get('/', [WebOperatorController::class, 'index'])->name('operator.dashboard');
     Route::post('/complaints/{id}/verify-dispatch', [WebOperatorController::class, 'verifyAndDispatch'])->name('operator.complaints.dispatch');
     Route::post('/complaints/{id}/reject', [WebOperatorController::class, 'reject'])->name('operator.complaints.reject');
     Route::post('/complaints/{id}/validate', [WebOperatorController::class, 'validateCompletion'])->name('operator.complaints.validate');
     Route::post('/complaints/{id}/assign-team', [WebOperatorController::class, 'assignOrChangeTeam'])->name('operator.complaints.assign-team');
 
-    // Operator berhak menambah akun pekerja lapangan
-    Route::get('/petugas/baru', [WebOperatorController::class, 'createFieldWorker'])->name('operator.petugas.create');
-    Route::post('/petugas', [WebOperatorController::class, 'storeFieldWorker'])->name('operator.petugas.store');
+    // Regu & anggota: identitas personil diisi di sini (tanpa menu Kelola Akun).
+    Route::get('/regu', [WebOperatorController::class, 'teams'])->name('operator.teams');
+    Route::post('/regu', [WebTeamController::class, 'store'])->name('operator.teams.store');
+    Route::post('/regu/{team}/anggota', [WebTeamController::class, 'storeMemberIdentity'])->name('operator.teams.members.create');
+    Route::delete('/regu/{team}/anggota/{user}', [WebTeamController::class, 'removeMember'])->name('operator.teams.members.remove');
+    Route::post('/regu/{team}/ketua/{user}', [WebTeamController::class, 'setLeader'])->name('operator.teams.leader');
 });
 
 // 5. Dashboard Eksekutif Kepala Daerah (Bupati)
-Route::prefix('bupati')->middleware(['auth', 'active', 'role:KEPALA_DAERAH,BUPATI,SUPERADMIN,ADMIN'])->group(function () {
+Route::prefix('bupati')->middleware(['auth', 'active', 'role:KEPALA_DAERAH,BUPATI,SUPERADMIN,ADMIN,DINAS'])->group(function () {
     Route::get('/', [WebBupatiController::class, 'index'])->name('bupati.dashboard');
 });
 
 // 5b. Layar monitoring ruang kendali.
 // Sengaja tanpa login dan tanpa sidebar: perangkat dipasang di ruang kendali dan
 // dibuka sekali. Yang tampil hanya agregat + data publik aduan (tanpa identitas pelapor).
-Route::prefix('monitoring')->group(function () {
-    Route::get('/', [\App\Http\Controllers\Web\WebMonitoringController::class, 'index'])->name('monitoring.dashboard');
-    Route::get('/data', [\App\Http\Controllers\Web\WebMonitoringController::class, 'data'])->name('monitoring.data');
-});
+Route::prefix('monitoring')
+    ->middleware(['auth', 'active', 'role:MONITORING,SUPERADMIN,ADMIN,KEPALA_DAERAH,DINAS'])
+    ->group(function () {
+        Route::get('/', [\App\Http\Controllers\Web\WebMonitoringController::class, 'index'])->name('monitoring.dashboard');
+        Route::get('/data', [\App\Http\Controllers\Web\WebMonitoringController::class, 'data'])->name('monitoring.data');
+    });
 
 // 6. Portal Petugas Lapangan
-Route::prefix('petugas')->middleware(['auth', 'active', 'role:PETUGAS,PENGAWAS,SUPERADMIN,ADMIN'])->group(function () {
+Route::prefix('petugas')->middleware(['auth', 'active', 'role:PETUGAS,PENGAWAS,SUPERADMIN,ADMIN,KEPALA_DAERAH,DINAS'])->group(function () {
     Route::get('/', [WebPetugasController::class, 'index'])->name('petugas.dashboard');
     Route::post('/complaints/{id}/start', [WebPetugasController::class, 'startWork'])->name('petugas.complaints.start');
     Route::post('/complaints/{id}/finish', [WebPetugasController::class, 'finishWork'])->name('petugas.complaints.finish');
@@ -141,6 +146,7 @@ Route::prefix('petugas')->middleware(['auth', 'active', 'role:PETUGAS,PENGAWAS,S
     Route::middleware('role:PENGAWAS')->group(function () {
         Route::get('/regu', [WebPengawasController::class, 'index'])->name('pengawas.team');
         Route::post('/regu/anggota', [WebPengawasController::class, 'addMember'])->name('pengawas.team.members.add');
+        Route::post('/regu/{team}/anggota/baru', [WebTeamController::class, 'storeMemberIdentity'])->name('pengawas.team.members.create');
         Route::post('/regu/anggota/{user}/keluarkan', [WebPengawasController::class, 'removeMember'])->name('pengawas.team.members.remove');
     });
 });

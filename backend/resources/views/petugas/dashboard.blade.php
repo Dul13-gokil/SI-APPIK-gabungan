@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Pusat Kendali Pekerja Lapangan - Sistem Pengaduan')
-@section('header_title', 'Pusat Kendali Pekerja Lapangan')
+@section('title', 'Pusat Kendali Pengawas Lapangan - Sistem Pengaduan')
+@section('header_title', 'Pusat Kendali Pengawas Lapangan')
 
 @section('content')
 @php
@@ -10,7 +10,7 @@
 
 <div class="py-4 sm:py-6 space-y-5">
 
-    <!-- Header Pekerja Lapangan (Seragam Desain Admin) -->
+    <!-- Header Pengawas Lapangan (Seragam Desain Admin) -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
         <div>
             <h2 class="font-outfit font-bold text-lg sm:text-xl text-[#0F172A] leading-tight">
@@ -58,7 +58,7 @@
         </div>
     @endif
 
-    <!-- Ringkasan KPI Pekerja Lapangan (Flat Bordered Seragam Admin) -->
+    <!-- Ringkasan KPI Pengawas Lapangan (Flat Bordered Seragam Admin) -->
     <div class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-7 gap-2 sm:gap-3">
         <!-- 1. Total Aduan -->
         <div class="p-2.5 sm:p-3.5 rounded-xl bg-white border border-[#E2E8F0] flex flex-col justify-between min-w-0">
@@ -821,7 +821,7 @@
         @endif
     </div>
 
-    <!-- Pagination Bar Pekerja Lapangan (5 / 10 / 50 per halaman, default 10) -->
+    <!-- Pagination Bar Pengawas Lapangan (5 / 10 / 50 per halaman, default 10) -->
     <div id="petugasPaginationBar" class="hidden pt-3 border-t border-[#E2E8F0] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
         <div class="flex flex-wrap items-center gap-3 text-[#475569]">
             <div class="flex items-center gap-2">
@@ -1400,7 +1400,7 @@
             }
         }
 
-        // 2b. Foto Bukti Penanganan Pekerja Lapangan (Selalu tampil berdampingan)
+        // 2b. Foto Bukti Penanganan Pengawas Lapangan (Selalu tampil berdampingan)
         const photoAfter = document.getElementById('pmPhotoAfter');
         const photoAfterContainer = document.getElementById('pmPhotoAfterContainer');
         const photoAfterPlaceholder = document.getElementById('pmPhotoAfterPlaceholder');
@@ -1495,7 +1495,7 @@
         }
         const pmTeamLeaderEl = document.getElementById('pmTeamLeader');
         if (pmTeamLeaderEl) {
-            pmTeamLeaderEl.innerText = item.team_leader || item.assignee_name || 'Pekerja Lapangan';
+            pmTeamLeaderEl.innerText = item.team_leader || item.assignee_name || 'Pengawas Lapangan';
         }
         const pmTeamPhoneEl = document.getElementById('pmTeamPhone');
         const pmTeamPhoneTextEl = document.getElementById('pmTeamPhoneText');
@@ -1718,7 +1718,7 @@
 </script>
 
 @push('modals')
-    <!-- MODAL DETAIL LENGKAP PENGADUAN PEKERJA LAPANGAN (Desain 1:1 Landing & Admin SI-APPIK V2 — 760px Desktop & Mobile Bottom Sheet) -->
+    <!-- MODAL DETAIL LENGKAP PENGADUAN PENGAWAS LAPANGAN (Desain 1:1 Landing & Admin SI-APPIK V2 — 760px Desktop & Mobile Bottom Sheet) -->
     <div id="petugasDetailModal" class="hidden fixed inset-0 z-50 bg-slate-900/65 flex items-end sm:items-center justify-center p-3.5 sm:p-5 overscroll-contain">
         <div class="bg-white rounded-[24px] border border-[#E2E8F0] shadow-[0_20px_50px_rgba(15,23,42,0.22)] sm:max-w-[760px] w-full max-h-[86vh] sm:max-h-[90vh] overflow-hidden flex flex-col relative">
 
@@ -1945,7 +1945,7 @@
         </div>
     </div>
 
-    <!-- MODAL EDIT PROFIL PEKERJA LAPANGAN -->
+    <!-- MODAL EDIT PROFIL PENGAWAS LAPANGAN -->
     <div id="petugasProfileModal" class="fixed inset-0 z-[99999] hidden items-center justify-center p-4 bg-slate-900/65 transition-opacity duration-200">
         <div class="bg-white rounded-3xl max-w-md w-full shadow-2xl border border-slate-100 overflow-hidden transform transition-all scale-95 opacity-0 duration-200" id="petugasProfileModalContent">
             <div class="p-6 space-y-4">
@@ -1956,7 +1956,7 @@
                         </div>
                         <div>
                             <h3 class="font-outfit font-extrabold text-base text-slate-900">
-                                Profil Pekerja Lapangan
+                                Profil Pengawas Lapangan
                             </h3>
                             <p class="text-xs text-slate-400">
                                 Perbarui identitas diri, nomor kontak, & kata sandi

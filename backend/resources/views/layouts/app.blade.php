@@ -180,7 +180,7 @@
                         Portal Kerja &amp; Role
                     </div>
 
-                    @if(auth()->user()->isSuperAdmin() || auth()->user()->isKepalaDinas())
+                    @if(auth()->user()->isSuperAdmin() || auth()->user()->isKepalaDinas() || auth()->user()->isKepalaDaerah())
                         <div class="role-accordion-group rounded-xl transition">
                             <button type="button" onclick="toggleRoleAccordion('admin')" aria-expanded="{{ $isAdminRoute ? 'true' : 'false' }}"
                                 class="w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl text-xs font-bold border {{ $isAdminRoute ? 'bg-[#EFF6FF] text-[#2563EB] border-[#BFDBFE]' : 'bg-white text-[#334155] border-[#E2E8F0] hover:bg-[#F8FAFC] hover:text-[#0F172A]' }} transition">
@@ -195,14 +195,17 @@
                                     $adminMenuItems = [
                                         ['tab' => 'overview', 'label' => 'Dashboard Admin', 'icon' => 'layout-dashboard'],
                                         ['tab' => 'users-management', 'label' => 'Kelola Akun & Pengguna', 'icon' => 'users'],
+                                        // Daftar Aduan sudah memuat semua status (termasuk arsip & ditolak),
+                                        // jadi tab terpisah untuk keduanya dihapus.
                                         ['tab' => 'complaints-list', 'label' => 'Daftar Aduan', 'icon' => 'layers'],
-                                        ['tab' => 'archive', 'label' => 'Arsip Aduan', 'icon' => 'archive'],
-                                        ['tab' => 'admin-rejected', 'label' => 'Aduan Ditolak', 'icon' => 'archive-x'],
                                         ['tab' => 'teams-management', 'label' => 'Regu & Tugas', 'icon' => 'hard-hat'],
                                         ['tab' => 'regions-gis', 'label' => 'Peta Wilayah GIS', 'icon' => 'map-pin'],
                                         ['tab' => 'reporting', 'label' => 'Laporan Kinerja', 'icon' => 'bar-chart-3'],
-                                        ['url' => route('admin.activity'), 'label' => 'Log Aktivitas', 'icon' => 'scroll-text', 'active' => 'admin.activity'],
-                                        ['url' => route('admin.settings'), 'label' => 'Pengaturan Sistem', 'icon' => 'settings', 'active' => 'admin.settings'],
+                                        // Log Aktivitas & Pengaturan Sistem hanya untuk Super Admin.
+                                        ...(auth()->user()->isSuperAdmin() ? [
+                                            ['url' => route('admin.activity'), 'label' => 'Log Aktivitas', 'icon' => 'scroll-text', 'active' => 'admin.activity'],
+                                            ['url' => route('admin.settings'), 'label' => 'Pengaturan Sistem', 'icon' => 'settings', 'active' => 'admin.settings'],
+                                        ] : []),
                                     ];
                                 @endphp
                                 @foreach($adminMenuItems as $item)
@@ -217,50 +220,6 @@
                                     <a href="{{ $item['url'] ?? route('admin.dashboard', ['tab' => $item['tab']]) }}"
                                        @if(empty($item['url'])) onclick="return handleSidebarTabClick(event, 'admin', '{{ $item['tab'] }}')" @endif
                                        data-sidebar-role="admin" @if(!empty($item['tab'])) data-sidebar-tab="{{ $item['tab'] }}" @endif
-                                       class="sidebar-subitem flex items-center gap-2 px-3 py-2 rounded-xl text-[11px] font-semibold transition {{ $isSubActive ? 'bg-[#2563EB] text-white font-bold shadow-xs' : 'text-[#475569] hover:bg-[#F8FAFC] hover:text-[#0F172A]' }}">
-                                        <i data-lucide="{{ $item['icon'] }}" class="w-3.5 h-3.5 shrink-0 {{ $isSubActive ? 'text-white' : 'text-[#64748B]' }}"></i>
-                                        <span class="truncate">{{ $item['label'] }}</span>
-                                    </a>
-                                @endforeach
-                            </div>
-                        </div>
-                    @endif
-
-                    @if(auth()->user()->isOperator() || auth()->user()->isSuperAdmin())
-                        <div class="role-accordion-group rounded-xl transition">
-                            <button type="button" onclick="toggleRoleAccordion('operator')" aria-expanded="{{ $isOperatorRoute ? 'true' : 'false' }}"
-                                class="w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl text-xs font-bold border {{ $isOperatorRoute ? 'bg-[#EFF6FF] text-[#2563EB] border-[#BFDBFE]' : 'bg-white text-[#334155] border-[#E2E8F0] hover:bg-[#F8FAFC] hover:text-[#0F172A]' }} transition">
-                                <span class="flex items-center gap-2.5 min-w-0">
-                                    <i data-lucide="clipboard-check" class="w-4 h-4 shrink-0 {{ $isOperatorRoute ? 'text-[#2563EB]' : 'text-[#64748B]' }}"></i>
-                                    <span class="truncate">Operator PUPR</span>
-                                </span>
-                                <i data-lucide="chevron-down" id="accordionChevron-operator" class="w-3.5 h-3.5 shrink-0 transition-transform duration-200 {{ $isOperatorRoute ? 'rotate-180 text-[#2563EB]' : 'text-[#64748B]' }}"></i>
-                            </button>
-                            <div id="accordionBody-operator" class="{{ $isOperatorRoute ? 'block' : 'hidden' }} py-1.5 px-1 space-y-1">
-                                @php
-                                    // Verifikasi & validasi manual dihapus: keduanya sudah ditangani AI.
-                                    $operatorMenuItems = [
-                                        ['tab' => 'ready', 'label' => 'Siap Ditugaskan', 'icon' => 'sparkles'],
-                                        ['tab' => 'dispatched', 'label' => 'Ditugaskan', 'icon' => 'send'],
-                                        ['tab' => 'inprogress', 'label' => 'Dikerjakan', 'icon' => 'hammer'],
-                                        ['tab' => 'archive', 'label' => 'Arsip Aduan', 'icon' => 'archive'],
-                                        ['url' => route('operator.petugas.create'), 'label' => 'Tambah Pekerja Lapangan', 'icon' => 'user-plus', 'active' => 'operator.petugas.create'],
-                                        ['tab' => 'regions-gis', 'label' => 'Peta Wilayah GIS', 'icon' => 'map-pin'],
-                                        ['tab' => 'monitoring', 'label' => 'Laporan Kinerja', 'icon' => 'bar-chart-3'],
-                                    ];
-                                @endphp
-                                @foreach($operatorMenuItems as $item)
-                                    @php
-                                        $isSubActive = $isOperatorRoute && (
-                                            !empty($item['active'])
-                                                ? request()->routeIs($item['active'])
-                                                : $currentQueryTab === ($item['tab'] ?? null)
-                                        );
-                                        $itemUrl = $item['url'] ?? route('operator.dashboard', ['tab' => $item['tab']]);
-                                    @endphp
-                                    <a href="{{ $itemUrl }}"
-                                       @if(empty($item['url'])) onclick="return handleSidebarTabClick(event, 'operator', '{{ $item['tab'] }}')" @endif
-                                       data-sidebar-role="operator" @if(!empty($item['tab'])) data-sidebar-tab="{{ $item['tab'] }}" @endif
                                        class="sidebar-subitem flex items-center gap-2 px-3 py-2 rounded-xl text-[11px] font-semibold transition {{ $isSubActive ? 'bg-[#2563EB] text-white font-bold shadow-xs' : 'text-[#475569] hover:bg-[#F8FAFC] hover:text-[#0F172A]' }}">
                                         <i data-lucide="{{ $item['icon'] }}" class="w-3.5 h-3.5 shrink-0 {{ $isSubActive ? 'text-white' : 'text-[#64748B]' }}"></i>
                                         <span class="truncate">{{ $item['label'] }}</span>
@@ -303,13 +262,57 @@
                         </div>
                     @endif
 
-                    @if(auth()->user()->isPetugas() || auth()->user()->isPengawas() || auth()->user()->isSuperAdmin())
+                    @if(auth()->user()->isOperator() || auth()->user()->isSuperAdmin() || auth()->user()->isKepalaDaerah())
+                        <div class="role-accordion-group rounded-xl transition">
+                            <button type="button" onclick="toggleRoleAccordion('operator')" aria-expanded="{{ $isOperatorRoute ? 'true' : 'false' }}"
+                                class="w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl text-xs font-bold border {{ $isOperatorRoute ? 'bg-[#EFF6FF] text-[#2563EB] border-[#BFDBFE]' : 'bg-white text-[#334155] border-[#E2E8F0] hover:bg-[#F8FAFC] hover:text-[#0F172A]' }} transition">
+                                <span class="flex items-center gap-2.5 min-w-0">
+                                    <i data-lucide="clipboard-check" class="w-4 h-4 shrink-0 {{ $isOperatorRoute ? 'text-[#2563EB]' : 'text-[#64748B]' }}"></i>
+                                    <span class="truncate">Operator PUPR</span>
+                                </span>
+                                <i data-lucide="chevron-down" id="accordionChevron-operator" class="w-3.5 h-3.5 shrink-0 transition-transform duration-200 {{ $isOperatorRoute ? 'rotate-180 text-[#2563EB]' : 'text-[#64748B]' }}"></i>
+                            </button>
+                            <div id="accordionBody-operator" class="{{ $isOperatorRoute ? 'block' : 'hidden' }} py-1.5 px-1 space-y-1">
+                                @php
+                                    // Verifikasi & validasi manual dihapus: keduanya sudah ditangani AI.
+                                    $operatorMenuItems = [
+                                        ['tab' => 'ready', 'label' => 'Siap Ditugaskan', 'icon' => 'sparkles'],
+                                        ['tab' => 'dispatched', 'label' => 'Ditugaskan', 'icon' => 'send'],
+                                        ['tab' => 'inprogress', 'label' => 'Dikerjakan', 'icon' => 'hammer'],
+                                        ['tab' => 'archive', 'label' => 'Arsip Aduan', 'icon' => 'archive'],
+                                        ['url' => route('operator.teams'), 'label' => 'Regu & Anggota', 'icon' => 'users', 'active' => 'operator.teams'],
+                                        ['tab' => 'regions-gis', 'label' => 'Peta Wilayah GIS', 'icon' => 'map-pin'],
+                                        ['tab' => 'monitoring', 'label' => 'Laporan Kinerja', 'icon' => 'bar-chart-3'],
+                                    ];
+                                @endphp
+                                @foreach($operatorMenuItems as $item)
+                                    @php
+                                        $isSubActive = $isOperatorRoute && (
+                                            !empty($item['active'])
+                                                ? request()->routeIs($item['active'])
+                                                : $currentQueryTab === ($item['tab'] ?? null)
+                                        );
+                                        $itemUrl = $item['url'] ?? route('operator.dashboard', ['tab' => $item['tab']]);
+                                    @endphp
+                                    <a href="{{ $itemUrl }}"
+                                       @if(empty($item['url'])) onclick="return handleSidebarTabClick(event, 'operator', '{{ $item['tab'] }}')" @endif
+                                       data-sidebar-role="operator" @if(!empty($item['tab'])) data-sidebar-tab="{{ $item['tab'] }}" @endif
+                                       class="sidebar-subitem flex items-center gap-2 px-3 py-2 rounded-xl text-[11px] font-semibold transition {{ $isSubActive ? 'bg-[#2563EB] text-white font-bold shadow-xs' : 'text-[#475569] hover:bg-[#F8FAFC] hover:text-[#0F172A]' }}">
+                                        <i data-lucide="{{ $item['icon'] }}" class="w-3.5 h-3.5 shrink-0 {{ $isSubActive ? 'text-white' : 'text-[#64748B]' }}"></i>
+                                        <span class="truncate">{{ $item['label'] }}</span>
+                                    </a>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+
+                    @if(auth()->user()->isPetugas() || auth()->user()->isPengawas() || auth()->user()->isSuperAdmin() || auth()->user()->isKepalaDaerah())
                         <div class="role-accordion-group rounded-xl transition">
                             <button type="button" onclick="toggleRoleAccordion('petugas')" aria-expanded="{{ $isPetugasRoute ? 'true' : 'false' }}"
                                 class="w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl text-xs font-bold border {{ $isPetugasRoute ? 'bg-[#EFF6FF] text-[#2563EB] border-[#BFDBFE]' : 'bg-white text-[#334155] border-[#E2E8F0] hover:bg-[#F8FAFC] hover:text-[#0F172A]' }} transition">
                                 <span class="flex items-center gap-2.5 min-w-0">
                                     <i data-lucide="wrench" class="w-4 h-4 shrink-0 {{ $isPetugasRoute ? 'text-[#2563EB]' : 'text-[#64748B]' }}"></i>
-                                    <span class="truncate">Pekerja Lapangan</span>
+                                    <span class="truncate">Pengawas Lapangan</span>
                                 </span>
                                 <i data-lucide="chevron-down" id="accordionChevron-petugas" class="w-3.5 h-3.5 shrink-0 transition-transform duration-200 {{ $isPetugasRoute ? 'rotate-180 text-[#2563EB]' : 'text-[#64748B]' }}"></i>
                             </button>

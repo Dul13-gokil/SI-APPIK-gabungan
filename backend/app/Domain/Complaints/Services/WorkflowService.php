@@ -36,7 +36,7 @@ class WorkflowService
     }
 
     /**
-     * Pekerja lapangan mengambil tugas dan mulai mengerjakan.
+     * Pengawas lapangan mengambil tugas dan mulai mengerjakan.
      */
     public function startWork(Complaint $complaint, ?User $worker, ?string $ip = null): void
     {
@@ -57,7 +57,7 @@ class WorkflowService
         DB::transaction(function () use ($complaint, $worker, $oldStatus, $newStatus, $ip) {
             $complaint->update(['status' => $newStatus]);
 
-            $workerName = $worker?->name ?? 'Pekerja Lapangan';
+            $workerName = $worker?->name ?? 'Pengawas Lapangan';
             $workerTeam = $worker?->currentTeam();
 
             if ($complaint->latestDisposition) {
@@ -76,7 +76,7 @@ class WorkflowService
                 'complaint_id' => $complaint->id,
                 'from_status'  => $oldStatus,
                 'to_status'    => $newStatus,
-                'note'         => "Pekerja lapangan {$workerName}{$teamStr} telah mengambil laporan dan memulai proses perbaikan fisik di lokasi.",
+                'note'         => "Pengawas lapangan {$workerName}{$teamStr} telah mengambil laporan dan memulai proses perbaikan fisik di lokasi.",
                 'changed_by'   => $worker?->id,
             ]);
 
@@ -94,13 +94,13 @@ class WorkflowService
                 $complaint,
                 'COMPLAINT_IN_PROGRESS',
                 'Laporan Sedang Dikerjakan',
-                "Pekerja Lapangan {$workerName}{$teamStr} telah mengambil laporan Anda (#{$complaint->public_code}: \"{$complaint->title}\") dan saat ini berstatus Dikerjakan untuk segera dilakukan perbaikan fisik di lokasi."
+                "Pengawas Lapangan {$workerName}{$teamStr} telah mengambil laporan Anda (#{$complaint->public_code}: \"{$complaint->title}\") dan saat ini berstatus Dikerjakan untuk segera dilakukan perbaikan fisik di lokasi."
             );
         });
     }
 
     /**
-     * Pekerja lapangan menyelesaikan pekerjaan dan mengunggah bukti.
+     * Pengawas lapangan menyelesaikan pekerjaan dan mengunggah bukti.
      *
      * @param  array<int, UploadedFile>  $photos
      * @return bool  true bila AI menyatakan pekerjaan langsung selesai.
@@ -160,7 +160,7 @@ class WorkflowService
                     'complaint_id' => $complaint->id,
                     'storage_key'  => $path,
                     'url'          => null,
-                    'caption'      => 'Bukti Pekerjaan Selesai (Pekerja Lapangan)',
+                    'caption'      => 'Bukti Pekerjaan Selesai (Pengawas Lapangan)',
                     'type'         => 'resolution_after',
                     'mime'         => $photo->getClientMimeType(),
                     'size'         => $photo->getSize(),
@@ -197,7 +197,7 @@ class WorkflowService
                 $complaint,
                 'COMPLAINT_WAITING_VERIFICATION',
                 'Pekerjaan Lapangan Selesai!',
-                "Pekerja lapangan telah menyelesaikan perbaikan untuk laporan #{$complaint->public_code}. Saat ini menunggu verifikasi & validasi akhir oleh Operator."
+                "Pengawas lapangan telah menyelesaikan perbaikan untuk laporan #{$complaint->public_code}. Saat ini menunggu verifikasi & validasi akhir oleh Operator."
             );
         });
 

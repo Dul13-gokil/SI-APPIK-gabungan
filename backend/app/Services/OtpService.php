@@ -58,7 +58,7 @@ class OtpService
                     . "Kode verifikasi ini digunakan untuk {$purposeLabel}.\n"
                     . "Masa berlaku: {$validMinutes} Menit.\n\n"
                     . "PERHATIAN KEAMANAN:\n"
-                    . "JANGAN PERNAH memberikan kode OTP ini kepada siapa pun, termasuk pihak yang mengaku sebagai admin, pekerja lapangan, atau operator dinas.\n\n"
+                    . "JANGAN PERNAH memberikan kode OTP ini kepada siapa pun, termasuk pihak yang mengaku sebagai admin, pengawas lapangan, atau operator dinas.\n\n"
                     . "Dinas Pekerjaan Umum & Penataan Ruang (PUPR)\n"
                     . "Pemerintah Kabupaten";
 

@@ -3,16 +3,100 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Models\AuditLog;
 use App\Models\SystemSetting;
 use App\Models\Team;
 use App\Models\TeamMember;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class WebTeamController extends Controller
 {
+    /**
+     * Tambahkan anggota regu sekaligus membuat identitas akunnya.
+     *
+     * Operator PUPR dan Pengawas Lapangan tidak punya akses ke menu Kelola Akun,
+     * jadi identitas personil regu (nama, email, nomor HP) diisi di sini. Sandi
+     * sementara dibuat acak dan ditampilkan sekali agar tidak ada akun bersandi
+     * bawaan yang bisa dipakai orang lain.
+     */
+    public function storeMemberIdentity(Request $request, Team $team): RedirectResponse
+    {
+        $validated = $request->validate([
+            'name'  => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users,email',
+            'phone' => ['nullable', 'string', 'max:20', 'unique:users,phone'],
+            'role'  => 'nullable|in:LEADER,MEMBER',
+        ], [
+            'email.unique' => 'Email tersebut sudah dipakai akun lain.',
+            'phone.unique' => 'Nomor HP tersebut sudah terdaftar.',
+        ]);
+
+        $this->authorizeTeam($team);
+
+        if ($team->members()->count() >= 15) {
+            return back()->with('error', 'Regu sudah mencapai batas maksimum personil (15 orang).');
+        }
+
+        $sandi = Str::password(10, symbols: false);
+
+        $user = User::create([
+            'name'     => $validated['name'],
+            'email'    => $validated['email'],
+            'phone'    => $validated['phone'] ?? null,
+            'password' => Hash::make($sandi),
+            'role'     => 'PETUGAS',
+        ]);
+
+        $peran = $validated['role'] ?? 'MEMBER';
+        TeamMember::create([
+            'team_id' => $team->id,
+            'user_id' => $user->id,
+            'role'    => $peran,
+        ]);
+
+        if ($peran === 'LEADER') {
+            $team->update(['leader_id' => $user->id]);
+        }
+
+        AuditLog::create([
+            'actor_id'    => auth()->id(),
+            'action'      => 'TEAM_MEMBER_CREATED',
+            'entity_type' => User::class,
+            'entity_id'   => $user->id,
+            'before_json' => null,
+            'after_json'  => [
+                'email'   => $user->email,
+                'team_id' => $team->id,
+                'role'    => $peran,
+            ],
+            'ip'          => $request->ip(),
+        ]);
+
+        return back()->with(
+            'success',
+            "Anggota {$user->name} ditambahkan ke {$team->name}. Sandi sementara: {$sandi} — catat dan berikan ke yang bersangkutan, wajib diganti saat login pertama."
+        );
+    }
+
+    /**
+     * Pengawas hanya boleh mengubah regunya sendiri; operator dan admin semua regu.
+     */
+    private function authorizeTeam(Team $team): void
+    {
+        $user = auth()->user();
+
+        if ($user->isOperator() || $user->isAdmin() || $user->isKepalaDaerah()) {
+            return;
+        }
+
+        $teamId = $user->currentTeam()?->id;
+        abort_unless($teamId === $team->id, 403, 'Anda hanya dapat mengelola anggota regu Anda sendiri.');
+    }
+
     /**
      * Simpan regu / tim baru
      */

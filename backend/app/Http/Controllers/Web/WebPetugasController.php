@@ -40,7 +40,7 @@ class WebPetugasController extends Controller
                 ->take(15)
                 ->get();
         } else {
-            // Pekerja lapangan: ambil tugas yang di-disposisi ke dirinya atau ke regunya
+            // Pengawas lapangan: ambil tugas yang di-disposisi ke dirinya atau ke regunya
             $myTeam = $user->currentTeam();
             $teamId = $myTeam?->id;
 
@@ -183,7 +183,7 @@ class WebPetugasController extends Controller
                     'deadline'             => $disp?->deadline ? $disp->deadline->translatedFormat('d M Y') : null,
                     'instruction'          => $disp?->instruction ?? 'Lakukan penanganan fisik sesuai standar teknis.',
                     'department_name'      => $disp?->department?->name ?? 'Dinas Teknis',
-                    'assignee_name'        => $disp?->assignee?->name ?? 'Pekerja Lapangan',
+                    'assignee_name'        => $disp?->assignee?->name ?? 'Pengawas Lapangan',
                     'assignee_phone'       => $disp?->assignee?->phone ?? null,
                     'ai_repair_estimate'   => $c->ai_repair_estimate,
                     'photo_url'            => $photo,

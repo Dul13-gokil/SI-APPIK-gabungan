@@ -84,7 +84,7 @@ class PerformanceMetricsService
     }
 
     /**
-     * Metrik kinerja per Individu Pekerja Lapangan.
+     * Metrik kinerja per Individu Pengawas Lapangan.
      */
     public function getFieldOfficerMetrics(?string $from = null, ?string $to = null, ?int $teamId = null, ?int $onlyUserId = null): array
     {
@@ -239,7 +239,7 @@ class PerformanceMetricsService
     }
 
     /**
-     * Panel Transparansi & Responsivitas Operator (khusus dilihat oleh Pekerja Lapangan).
+     * Panel Transparansi & Responsivitas Operator (khusus dilihat oleh Pengawas Lapangan).
      */
     public function getOperatorResponsivenessForTeam(?int $teamId, ?int $userId, ?string $from = null, ?string $to = null): array
     {

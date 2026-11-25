@@ -53,6 +53,17 @@ MAIL_MAILER=log
 
 `.env` sudah masuk `.gitignore`, jadi tidak akan ter-commit.
 
+Sejak konsolidasi, **hanya ada satu berkas `.env`** untuk seluruh proyek, yaitu di root
+repo (`D:/Servers AIS/SI-APPIK/.env`). `backend/.env` tidak dipakai lagi dan tidak
+perlu dibuat:
+
+- `backend/bootstrap/app.php` mengarahkan Laravel ke `.env` root bila berkas itu ada,
+  sehingga `php artisan ...` di host dan aplikasi di container memakai nilai yang sama.
+- Di container, variabel dari `docker-compose.yml` (`environment:`) tetap menang atas isi
+  berkas, jadi `DB_HOST=db` tidak tertimpa oleh `DB_HOST=127.0.0.1` yang dipakai di host.
+- `DB_HOST=127.0.0.1` dan `DB_PORT=5433` di `.env` root hanya untuk menjalankan artisan
+  di komputer host (port 5433 adalah port Postgres yang dibuka container ke host).
+
 ### 2.2 Build image
 
 ```bash

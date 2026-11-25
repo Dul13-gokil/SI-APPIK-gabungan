@@ -14,8 +14,6 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class WebOperatorController extends Controller
@@ -145,7 +143,7 @@ class WebOperatorController extends Controller
                     'photo_url'        => $photo ? ($photo->url ?? asset('storage/' . $photo->storage_key)) : null,
                     'photo_after_url'  => $afterPhoto && $afterPhoto->id !== ($photo?->id) ? ($afterPhoto->url ?? asset('storage/' . $afterPhoto->storage_key)) : null,
                     'department_name'  => $c->latestDisposition?->department?->name ?? 'Dinas Terkait',
-                    'assignee_name'    => $c->latestDisposition?->assignee?->name ?? 'Pekerja Lapangan',
+                    'assignee_name'    => $c->latestDisposition?->assignee?->name ?? 'Pengawas Lapangan',
                     'instruction'      => $c->latestDisposition?->instruction ?? '-',
                 ];
             });
@@ -240,7 +238,7 @@ class WebOperatorController extends Controller
 }
 
     /**
-     * Operator melakukan verifikasi awal dan mendisposisikan ke pekerja lapangan / regu dengan deadline.
+     * Operator melakukan verifikasi awal dan mendisposisikan ke pengawas lapangan / regu dengan deadline.
      */
     public function verifyAndDispatch(Request $request, int $id): RedirectResponse
     {
@@ -314,7 +312,7 @@ class WebOperatorController extends Controller
     }
 
     /**
-     * Operator melakukan validasi akhir setelah pekerja lapangan menyelesaikan pekerjaan.
+     * Operator melakukan validasi akhir setelah pengawas lapangan menyelesaikan pekerjaan.
      */
     public function validateCompletion(Request $request, int $id): RedirectResponse
     {
@@ -335,7 +333,7 @@ class WebOperatorController extends Controller
 
         $msg = $validated['decision'] === 'COMPLETED'
             ? "Laporan #{$complaint->public_code} berhasil divalidasi dan dinyatakan SELESAI!"
-            : "Laporan #{$complaint->public_code} dikembalikan ke Pekerja Lapangan untuk REVISI.";
+            : "Laporan #{$complaint->public_code} dikembalikan ke Pengawas Lapangan untuk REVISI.";
 
         return back()->with('success', $msg);
     }
@@ -449,65 +447,23 @@ class WebOperatorController extends Controller
     }
 
     /**
-     * Form tambah akun pekerja lapangan (khusus Operator).
+     * Form tambah akun pengawas lapangan (khusus Operator).
      */
-    public function createFieldWorker(): View
-    {
-        $teams = \App\Models\Team::where('is_active', true)->orderBy('name')->get();
-
-        return view('operator.field_worker_create', compact('teams'));
-    }
-
     /**
-     * Simpan akun pekerja lapangan baru. Role dikunci PETUGAS; sandi awal "password".
+     * Operator PUPR mengelola regu beserta identitas personilnya.
      */
-    public function storeFieldWorker(Request $request): RedirectResponse
+    public function teams(): View
     {
-        $validated = $request->validate([
-            'name'    => 'required|string|max:255',
-            'email'   => 'required|email|max:255|unique:users,email',
-            'phone'   => ['nullable', 'string', 'max:20', 'unique:users,phone'],
-            'team_id' => 'nullable|exists:teams,id',
-        ], [
-            'email.unique' => 'Email tersebut sudah dipakai akun lain.',
-            'phone.unique' => 'Nomor HP tersebut sudah terdaftar.',
-        ]);
+        $teams = \App\Models\Team::with(['leader', 'members.user', 'department'])
+            ->withCount('members')
+            ->orderBy('name')
+            ->get();
 
-        // Sandi sementara unik per akun. Dulu semua akun baru memakai 'password',
-        // sehingga siapa pun yang tahu alamat email dapat masuk sebelum pemiliknya.
-        $sandiSementara = Str::password(10, symbols: false);
+        $petugasTanpaRegu = User::whereIn('role', ['PETUGAS', 'PENGAWAS'])
+            ->whereNotIn('id', \App\Models\TeamMember::query()->select('user_id'))
+            ->orderBy('name')
+            ->get();
 
-        $user = User::create([
-            'name'     => $validated['name'],
-            'email'    => $validated['email'],
-            'phone'    => $validated['phone'] ?? null,
-            'password' => Hash::make($sandiSementara),
-            'role'     => 'PETUGAS',
-        ]);
-
-        if (! empty($validated['team_id'])) {
-            \App\Models\TeamMember::create([
-                'team_id' => $validated['team_id'],
-                'user_id' => $user->id,
-                'role'    => 'MEMBER',
-            ]);
-        }
-
-        \App\Models\AuditLog::create([
-            'actor_id'    => auth()->id(),
-            'action'      => 'USER_CREATED_BY_OPERATOR',
-            'entity_type' => User::class,
-            'entity_id'   => $user->id,
-            'before_json' => null,
-            'after_json'  => [
-                'email'   => $user->email,
-                'role'    => 'PETUGAS',
-                'team_id' => $validated['team_id'] ?? null,
-            ],
-            'ip'          => $request->ip(),
-        ]);
-
-        return redirect()->route('operator.dashboard')
-            ->with('success', "Akun {$user->name} dibuat. Sandi sementara: {$sandiSementara} — catat dan berikan ke petugas, wajib diganti saat login pertama.");
+        return view('operator.teams', compact('teams', 'petugasTanpaRegu'));
     }
 }

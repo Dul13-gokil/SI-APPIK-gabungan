@@ -150,10 +150,10 @@
                         </div>
                         <div class="min-w-0">
                             <span class="text-[10px] text-[#64748B] font-bold block leading-none">Ketua Regu:</span>
-                            <span id="landingModalTeamLeader" class="font-bold text-[#0F172A] break-words block mt-0.5">Pekerja Lapangan</span>
+                            <span id="landingModalTeamLeader" class="font-bold text-[#0F172A] break-words block mt-0.5">Pengawas Lapangan</span>
                         </div>
                     </div>
-                    <a id="landingModalOfficerPhone" href="#" class="px-2.5 py-1 rounded-lg bg-[#EFF6FF] hover:bg-[#DBEAFE] text-[#2563EB] font-bold font-mono text-xs flex items-center gap-1.5 transition shrink-0" title="Hubungi Pekerja Lapangan">
+                    <a id="landingModalOfficerPhone" href="#" class="px-2.5 py-1 rounded-lg bg-[#EFF6FF] hover:bg-[#DBEAFE] text-[#2563EB] font-bold font-mono text-xs flex items-center gap-1.5 transition shrink-0" title="Hubungi Pengawas Lapangan">
                         <i data-lucide="phone-call" class="w-3 h-3"></i>
                         <span id="landingModalOfficerPhoneText">081100000004</span>
                     </a>
@@ -333,7 +333,7 @@
             photoContainer.classList.add('hidden');
         }
 
-        // 5. Foto Pengerjaan Pekerja Lapangan (Selalu tampil 2 kolom sejajar; fallback placeholder bila belum selesai)
+        // 5. Foto Pengerjaan Pengawas Lapangan (Selalu tampil 2 kolom sejajar; fallback placeholder bila belum selesai)
         const compContainer = document.getElementById('landingModalCompletionPhotoContainer');
         const compImg = document.getElementById('landingModalCompletionPhoto');
         const compPlaceholder = document.getElementById('landingModalCompletionPlaceholder');
@@ -417,7 +417,7 @@
                     : (item.assignee_name || 'Regu Lapangan PUPR');
                 if (offNameEl) offNameEl.innerText = teamNameStr;
                 if (offDeptEl) offDeptEl.innerText = item.department_name || 'Dinas Pekerjaan Umum dan Penataan Ruang (PUPR)';
-                if (leaderEl) leaderEl.innerText = item.team_leader || item.assignee_name || item.officer_name || 'Pekerja Lapangan';
+                if (leaderEl) leaderEl.innerText = item.team_leader || item.assignee_name || item.officer_name || 'Pengawas Lapangan';
 
                 const teamPhone = item.team_leader_phone || item.officer_phone || item.assignee_phone || '081100000004';
                 if (teamPhoneText) teamPhoneText.innerText = teamPhone;

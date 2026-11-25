@@ -399,7 +399,7 @@
                             <span class="font-bold text-[#0F172A]">{{ $countOperator }} akun</span>
                         </div>
                         <div class="py-2 flex items-center justify-between">
-                            <span class="text-[#475569]">Pekerja Lapangan</span>
+                            <span class="text-[#475569]">Pengawas Lapangan</span>
                             <span class="font-bold text-[#0F172A]">{{ $countPetugas }} akun</span>
                         </div>
                         <div class="py-2 flex items-center justify-between">
@@ -478,7 +478,9 @@
                 </div>
             </div>
 
-            <!-- Card 2: Penambahan Akun Baru (Operator & Pekerja Lapangan) -->
+            <!-- Card 2: Penambahan Akun Baru (semua peran sistem) -->
+            {{-- Akun anggota regu tidak dibuat di sini: identitas personil diisi lewat
+                 menu Regu & Anggota oleh Operator PUPR atau Ketua Regu. --}}
             <div class="card-white rounded-2xl p-5 bg-white border border-[#E2E8F0] shadow-xs flex flex-col justify-between">
                 <div class="space-y-3">
                     <div class="flex items-center justify-between gap-2">
@@ -497,11 +499,10 @@
                             <input type="text" name="name" required placeholder="Nama Lengkap"
                                 class="w-full text-xs rounded-xl border border-[#E2E8F0] px-3 py-2 bg-[#F8FAFC] focus:bg-white focus:ring-2 focus:ring-[#2563EB]/15 focus:border-[#2563EB] transition">
                             <select name="role" required class="w-full text-xs rounded-xl border border-[#E2E8F0] px-3 py-2 bg-[#F8FAFC] focus:bg-white focus:ring-2 focus:ring-[#2563EB]/15 focus:border-[#2563EB] transition">
-                                <option value="OPERATOR">Operator Verifikasi (Disposisi Web)</option>
-                                <option value="PETUGAS" selected>Pekerja Lapangan (Dinas PUPR)</option>
-                                <option value="PENGAWAS">Pengawas Lapangan (Kelola Regu)</option>
-                                <option value="DINAS">Kepala Dinas (Akses Penuh)</option>
-                                <option value="MONITORING">Monitoring (layar pantau, tanpa login)</option>
+                                <option value="OPERATOR">Operator PUPR</option>
+                                <option value="PENGAWAS">Pengawas Lapangan (Ketua Regu)</option>
+                                <option value="DINAS">Kepala Dinas (akses penuh, tanpa log &amp; pengaturan)</option>
+                                <option value="MONITORING">Monitoring (layar pantau, wajib login)</option>
                                 <option value="KEPALA_DAERAH" {{ $hasBupati ? 'disabled class=text-slate-400' : '' }}>
                                     Kepala Daerah Kabupaten {{ $hasBupati ? '(Terkunci)' : '' }}
                                 </option>
@@ -561,7 +562,7 @@
                         <option value="ADMIN">Administrator</option>
                         <option value="KEPALA_DAERAH">Kepala Daerah</option>
                         <option value="OPERATOR">Operator Verifikasi</option>
-                        <option value="PETUGAS">Pekerja Lapangan</option>
+                        <option value="PETUGAS">Pengawas Lapangan</option>
                         <option value="PENGAWAS">Pengawas Lapangan</option>
                         <option value="DINAS">Kepala Dinas</option>
                         <option value="MONITORING">Monitoring</option>
@@ -1720,7 +1721,7 @@
                                     @if($unassignedOfficers->isEmpty())
                                         <option value="" disabled selected>Semua Petugas Sudah Masuk Regu</option>
                                     @else
-                                        <option value="" disabled selected>Pilih Pekerja Lapangan (Belum Ada Regu)...</option>
+                                        <option value="" disabled selected>Pilih Pengawas Lapangan (Belum Ada Regu)...</option>
                                         @foreach($unassignedOfficers as $officer)
                                             <option value="{{ $officer->id }}">{{ $officer->name }} ({{ $officer->phone ?? 'Tanpa No. HP' }})</option>
                                         @endforeach
@@ -2335,7 +2336,7 @@
                                     <option value="ADMIN">Administrator (Super Admin)</option>
                                     <option value="KEPALA_DAERAH">Kepala Daerah Kabupaten</option>
                                     <option value="OPERATOR">Operator Verifikasi</option>
-                                    <option value="PETUGAS">Pekerja Lapangan (PUPR)</option>
+                                    <option value="PETUGAS">Pengawas Lapangan (PUPR)</option>
                                     <option value="PENGAWAS">Pengawas Lapangan</option>
                                     <option value="DINAS">Kepala Dinas</option>
                                     <option value="MONITORING">Monitoring (Hanya Baca)</option>
@@ -2955,7 +2956,7 @@
                 <div class="p-3.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] text-[#475569] text-xs flex items-start gap-2.5">
                     <i data-lucide="info" class="w-4 h-4 text-[#2563EB] shrink-0 mt-0.5"></i>
                     <span class="leading-relaxed">
-                        Perubahan mode tugas ini akan <strong class="text-[#0F172A]">langsung disinkronkan</strong> ke Pusat Kendali Operator serta aplikasi mobile Pekerja Lapangan.
+                        Perubahan mode tugas ini akan <strong class="text-[#0F172A]">langsung disinkronkan</strong> ke Pusat Kendali Operator serta aplikasi mobile Pengawas Lapangan.
                     </span>
                 </div>
 
@@ -4435,7 +4436,7 @@
 
                 // Ketua Regu & Nomor Telepon
                 const showOfficerIdentity = ['IN_PROGRESS', 'WAITING_VERIFICATION', 'COMPLETED', 'CLOSED'].includes(item.status);
-                const leaderName = item.team_leader || item.officer_name || 'Pekerja Lapangan';
+                const leaderName = item.team_leader || item.officer_name || 'Pengawas Lapangan';
                 const leaderPhone = item.team_leader_phone || item.officer_phone || '-';
 
                 if (teamLeaderEl) {
@@ -4547,7 +4548,7 @@
             }
         }
 
-        // 2. Foto Bukti Penanganan Pekerja Lapangan & Galeri Foto (Selalu tampil berdampingan)
+        // 2. Foto Bukti Penanganan Pengawas Lapangan & Galeri Foto (Selalu tampil berdampingan)
         const compContainer = document.getElementById('admModalCompletionPhotoContainer');
         const compImg = document.getElementById('admModalCompletionPhoto');
         const compPlaceholder = document.getElementById('admModalCompletionPlaceholder');

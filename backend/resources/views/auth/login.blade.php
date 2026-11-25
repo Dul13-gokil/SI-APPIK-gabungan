@@ -715,7 +715,7 @@
                 switchForgotStep(2);
                 showForgotAlert(data.message, true);
             } else if (data.is_warga) {
-                showForgotAlert(data.message || 'Portal website ini khusus untuk Operator, Pekerja Lapangan, dan Kepala Daerah. Akun Warga Masyarakat silakan gunakan Aplikasi Mobile SI-APPIK.');
+                showForgotAlert(data.message || 'Portal website ini khusus untuk Operator, Pengawas Lapangan, dan Kepala Daerah. Akun Warga Masyarakat silakan gunakan Aplikasi Mobile SI-APPIK.');
                 setTimeout(() => {
                     closeForgotPasswordModal();
                     openWargaModal(data.name || 'Warga');

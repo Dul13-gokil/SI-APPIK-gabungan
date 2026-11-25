@@ -41,9 +41,9 @@
         <div class="text-center space-y-1">
             <h2 class="text-base font-extrabold uppercase underline underline-offset-4">
                 @if(!empty($isAll))
-                    {{ $mode === 'team' ? 'Rekapitulasi Laporan Kinerja Seluruh Regu Lapangan' : 'Rekapitulasi Laporan Kinerja Seluruh Pekerja Lapangan' }}
+                    {{ $mode === 'team' ? 'Rekapitulasi Laporan Kinerja Seluruh Regu Lapangan' : 'Rekapitulasi Laporan Kinerja Seluruh Pengawas Lapangan' }}
                 @else
-                    {{ $mode === 'team' ? 'Laporan Kinerja Regu Lapangan' : 'Laporan Kinerja Individu Pekerja Lapangan' }}
+                    {{ $mode === 'team' ? 'Laporan Kinerja Regu Lapangan' : 'Laporan Kinerja Individu Pengawas Lapangan' }}
                 @endif
             </h2>
             <p class="text-xs text-slate-600">
@@ -148,7 +148,7 @@
                 </div>
 
                 <div class="space-y-2">
-                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700">Rekap Kinerja Seluruh Pekerja Lapangan (Per Individu)</h3>
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700">Rekap Kinerja Seluruh Pengawas Lapangan (Per Individu)</h3>
                     <table class="w-full text-[11.5px] border border-slate-200 rounded-xl overflow-hidden">
                         <thead class="bg-slate-50 text-slate-600">
                             <tr>
@@ -180,7 +180,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="7" class="px-3 py-6 text-center text-slate-400">Belum ada data pekerja lapangan tercatat.</td>
+                                <td colspan="7" class="px-3 py-6 text-center text-slate-400">Belum ada data pengawas lapangan tercatat.</td>
                             </tr>
                             @endforelse
                         </tbody>
@@ -301,7 +301,7 @@
                         @if(!empty($isAll))
                             Penanggung Jawab Rekapitulasi
                         @else
-                            {{ $mode === 'team' ? 'Ketua Regu Lapangan' : 'Pekerja Lapangan' }}
+                            {{ $mode === 'team' ? 'Ketua Regu Lapangan' : 'Pengawas Lapangan' }}
                         @endif
                     </p>
                 </div>

@@ -241,7 +241,7 @@ class ComplaintController extends Controller
                     'members'           => $currentTeam->members()->with('user')->get()->map(function ($m) {
                         return [
                             'user_id'   => $m->user_id,
-                            'name'      => $m->user?->name ?? 'Pekerja Lapangan',
+                            'name'      => $m->user?->name ?? 'Pengawas Lapangan',
                             'phone'     => $m->user?->phone ?? '-',
                             'role'      => $m->role === 'LEADER' ? 'Ketua Regu' : 'Anggota Regu',
                             'is_leader' => $m->role === 'LEADER',

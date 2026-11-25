@@ -234,7 +234,7 @@ class MeetingChangesTest extends TestCase
         $this->assertSame('REJECTED', $complaint->fresh()->status);
     }
 
-    public function test_new_roles_get_the_right_portals_and_operator_can_create_field_worker(): void
+    public function test_peran_baru_mendapat_portal_yang_benar(): void
     {
         $monitoring = $this->user('MONITORING');
         $this->actingAs($monitoring)->get('/monitoring')->assertStatus(200);
@@ -243,17 +243,12 @@ class MeetingChangesTest extends TestCase
         $pengawas = $this->user('PENGAWAS');
         $this->actingAs($pengawas)->get('/petugas')->assertStatus(200);
 
+        // Pembuatan akun pengawas lapangan dipindah ke pengelolaan regu, bukan menu akun.
         $operator = $this->user('OPERATOR');
+        $this->actingAs($operator)->get('/operator/regu')->assertStatus(200);
         $this->actingAs($operator)->post('/operator/petugas', [
             'name' => 'Petugas Baru',
             'email' => 'petugas.baru@example.test',
-            'phone' => '081299990001',
-        ])->assertRedirect();
-
-        $this->assertDatabaseHas('users', [
-            'email' => 'petugas.baru@example.test',
-            'role' => 'PETUGAS',
-        ]);
-        $this->assertDatabaseHas('audit_logs', ['action' => 'USER_CREATED_BY_OPERATOR']);
+        ])->assertStatus(404);
     }
 }

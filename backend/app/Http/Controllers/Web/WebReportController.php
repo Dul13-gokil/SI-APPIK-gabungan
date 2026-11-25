@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 class WebReportController extends Controller
 {
     /**
-     * Ekspor Rekapitulasi Pengaduan atau Kinerja Pekerja Lapangan ke format CSV (UTF-8 BOM, siap buka di Microsoft Excel).
+     * Ekspor Rekapitulasi Pengaduan atau Kinerja Pengawas Lapangan ke format CSV (UTF-8 BOM, siap buka di Microsoft Excel).
      */
     public function exportCsv(Request $request): StreamedResponse
     {
@@ -123,7 +123,7 @@ class WebReportController extends Controller
     }
 
     /**
-     * Ekspor Kinerja Pekerja Lapangan (Per Regu atau Per Individu, semua atau 1 entitas) ke format CSV.
+     * Ekspor Kinerja Pengawas Lapangan (Per Regu atau Per Individu, semua atau 1 entitas) ke format CSV.
      */
     private function exportPerformanceCsv(Request $request, string $mode): StreamedResponse
     {
@@ -232,7 +232,7 @@ class WebReportController extends Controller
     }
 
     /**
-     * Cetak Dokumen Resmi Laporan Kinerja Pekerja Lapangan (Mode Individu atau Regu, Semua atau 1 Entitas).
+     * Cetak Dokumen Resmi Laporan Kinerja Pengawas Lapangan (Mode Individu atau Regu, Semua atau 1 Entitas).
      */
     public function printPetugasPerformance(Request $request)
     {
@@ -292,7 +292,7 @@ class WebReportController extends Controller
                 }
             }
         } else {
-            // Pekerja Lapangan biasa: hanya bisa mencetak kinerja diri sendiri atau regunya sendiri
+            // Pengawas Lapangan biasa: hanya bisa mencetak kinerja diri sendiri atau regunya sendiri
             $officer = \App\Models\User::with('teams.leader')->find($authUser->id);
             $team = $officer?->teams?->first();
             $teamId = $team?->id;

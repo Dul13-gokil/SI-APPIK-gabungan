@@ -605,7 +605,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Aktivasi Akun Pekerja Lapangan',
+                              'Aktivasi Akun Pengawas Lapangan',
                               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
                             ),
                             Text(
@@ -624,7 +624,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                     controller: nameCtrl,
                     style: GoogleFonts.inter(fontSize: 13.5, color: AppColors.textPrimary),
                     decoration: InputDecoration(
-                      hintText: 'Nama lengkap pekerja lapangan',
+                      hintText: 'Nama lengkap pengawas lapangan',
                       hintStyle: GoogleFonts.inter(fontSize: 13.5, color: AppColors.textSecondary.withValues(alpha: 0.7)),
                       prefixIcon: const Icon(LucideIcons.user, size: 18, color: AppColors.textSecondary),
                       filled: true,
@@ -820,7 +820,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                                   });
                                   showV2Toast(
                                     this.context,
-                                    message: 'Akun Pekerja Lapangan berhasil diaktifkan dengan sandi baru!',
+                                    message: 'Akun Pengawas Lapangan berhasil diaktifkan dengan sandi baru!',
                                     type: V2ToastType.success,
                                   );
                                 }
@@ -895,7 +895,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
       setState(() => _userRole = role);
 
       // Verifikasi status aktif akun ke server secara langsung agar akun yang dinonaktifkan
-      // (baik Warga maupun Pekerja Lapangan) tidak dapat tetap menggunakan sesi lama
+      // (baik Warga maupun Pengawas Lapangan) tidak dapat tetap menggunakan sesi lama
       if (user != null && role != 'TAMU') {
         final session = await _authService.verifyActiveSession();
         if (!mounted) return;

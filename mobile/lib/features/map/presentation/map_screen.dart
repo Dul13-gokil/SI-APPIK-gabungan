@@ -180,7 +180,7 @@ class _MapScreenState extends State<MapScreen> {
   List<dynamic> get _filteredMarkers {
     List<dynamic> baseList;
     if (_isPetugas) {
-      // Pekerja Lapangan: Sembunyikan laporan yang berstatus verifikasi (SUBMITTED/PENDING/VERIFICATION/VERIFIED) dan REJECTED.
+      // Pengawas Lapangan: Sembunyikan laporan yang berstatus verifikasi (SUBMITTED/PENDING/VERIFICATION/VERIFIED) dan REJECTED.
       // Hanya laporan berstatus Ditugaskan, Dikerjakan, Validasi, dan Selesai yang muncul pada peta GIS.
       const allowedOfficerStatuses = [
         'DISPATCHED',

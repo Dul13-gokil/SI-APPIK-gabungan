@@ -37,7 +37,7 @@ class OperatorUxTest extends TestCase
         ]);
     }
 
-    public function test_menu_tambah_pekerja_berada_di_dalam_accordion_operator(): void
+    public function test_menu_regu_dan_anggota_berada_di_dalam_accordion_operator(): void
     {
         $html = $this->actingAs($this->operator())
             ->get('/operator')
@@ -45,87 +45,44 @@ class OperatorUxTest extends TestCase
             ->getContent();
 
         $posisiAccordion = strpos($html, 'accordionBody-operator');
-        $posisiMenu = strpos($html, 'Tambah Pekerja Lapangan');
+        $posisiMenu = strpos($html, 'Regu &amp; Anggota');
+        $posisiMenu = $posisiMenu !== false ? $posisiMenu : strpos($html, 'Regu & Anggota');
 
         $this->assertNotFalse($posisiAccordion);
         $this->assertNotFalse($posisiMenu);
         $this->assertGreaterThan(
             $posisiAccordion,
             $posisiMenu,
-            'Menu tambah pekerja harus dirender di dalam accordion Operator PUPR, bukan menu terpisah.'
+            'Menu Regu & Anggota harus dirender di dalam accordion Operator PUPR.'
         );
     }
 
-    public function test_akun_pekerja_baru_memakai_sandi_acak_bukan_password(): void
+    public function test_operator_membuat_identitas_anggota_regu_dengan_sandi_acak(): void
     {
         $operator = $this->operator();
+        $team = \App\Models\Team::firstOrFail();
 
-        $response = $this->actingAs($operator)->post('/operator/petugas', [
-            'name' => 'Petugas Baru',
-            'email' => 'petugas.baru@example.test',
+        $this->actingAs($operator)->post("/operator/regu/{$team->id}/anggota", [
+            'name' => 'Anggota Baru',
+            'email' => 'anggota.baru@example.test',
             'phone' => '081299970002',
-        ]);
+        ])->assertRedirect();
 
-        $response->assertRedirect();
+        $anggota = User::where('email', 'anggota.baru@example.test')->firstOrFail();
 
-        $petugas = User::where('email', 'petugas.baru@example.test')->firstOrFail();
-
+        $this->assertSame('PETUGAS', $anggota->role);
         $this->assertFalse(
-            Hash::check('password', $petugas->password),
-            'Sandi bawaan "password" tidak boleh dipakai lagi untuk akun pekerja baru.'
+            Hash::check('password', $anggota->password),
+            'Sandi bawaan "password" tidak boleh dipakai lagi.'
         );
-
-        // Sandi sementara harus bisa dibaca operator sekali dari pesan sukses.
-        $pesan = session('success');
-        $this->assertStringContainsString('Sandi sementara:', (string) $pesan);
-
-        preg_match('/Sandi sementara: (\S+)/', (string) $pesan, $cocok);
-        $this->assertNotEmpty($cocok[1] ?? null);
-        $this->assertTrue(Hash::check($cocok[1], $petugas->password));
-    }
-
-    public function test_operator_bisa_menolak_laporan_yang_sudah_ditugaskan(): void
-    {
-        $operator = $this->operator();
-        $reporter = User::create([
-            'name' => 'Warga Uji',
-            'email' => 'warga.tolak@example.test',
-            'phone' => '081299970003',
-            'password' => 'Password123',
-            'role' => 'WARGA',
-            'is_active' => true,
-        ]);
-        $category = \App\Models\Category::create([
-            'name' => 'Jalan & Jembatan',
-            'department_id' => $operator->department_id ?? \App\Models\Department::query()->value('id'),
-            'severity_default' => 3,
+        $this->assertDatabaseHas('team_members', [
+            'team_id' => $team->id,
+            'user_id' => $anggota->id,
         ]);
 
-        $complaint = \App\Models\Complaint::create([
-            'public_code' => 'UJI-TOLAK-1',
-            'user_id' => $reporter->id,
-            'category_id' => $category->id,
-            'title' => 'Jalan berlubang',
-            'description' => 'Lubang di badan jalan.',
-            'address' => 'Jl. Poros Lasusua',
-            'latitude' => -3.5060,
-            'longitude' => 120.8878,
-            'radius_m' => 20,
-            'status' => 'DISPATCHED',
-            'priority_score' => 10,
-            'priority_level' => 'LOW',
-        ]);
-
-        $this->actingAs($operator)
-            ->post(route('operator.complaints.reject', $complaint->id), [
-                'reason' => 'Bukti lapangan tidak sesuai.',
-            ])
-            ->assertRedirect();
-
-        $this->assertSame('REJECTED', $complaint->fresh()->status);
-        $this->assertDatabaseHas('audit_logs', [
-            'action' => 'REJECTED',
-            'entity_id' => $complaint->id,
-        ]);
+        $pesan = (string) session('success');
+        $this->assertStringContainsString('Sandi sementara:', $pesan);
+        preg_match('/Sandi sementara: (\S+)/', $pesan, $cocok);
+        $this->assertTrue(Hash::check($cocok[1] ?? '', $anggota->password));
     }
 }

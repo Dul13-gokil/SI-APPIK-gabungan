@@ -134,7 +134,7 @@ class ComplaintResource extends JsonResource
                 'team_id'        => $latestDisp->team_id,
                 'team_name'      => $latestDisp->team?->name,
                 'assigned_to'    => $latestDisp->assigned_to,
-                'assignee_name'  => $latestDisp->assignee?->name ?? ($latestDisp->team ? $latestDisp->team->name : 'Pekerja Lapangan'),
+                'assignee_name'  => $latestDisp->assignee?->name ?? ($latestDisp->team ? $latestDisp->team->name : 'Pengawas Lapangan'),
                 'assignee_phone' => $latestDisp->assignee?->phone,
                 'instruction'    => $latestDisp->instruction,
                 'deadline'       => $deadlineStr,

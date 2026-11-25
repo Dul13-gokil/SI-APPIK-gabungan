@@ -46,7 +46,11 @@ class WebSuperAdminController extends Controller
 
         $activeTab = $request->get('tab', 'overview');
 
-        $query = Complaint::with(['category', 'user', 'citizen', 'photos', 'latestDisposition.assignee', 'latestDisposition.department', 'latestDisposition.team.leader', 'aiAssessments'])->latest();
+        // Daftar Aduan memuat seluruh status, termasuk yang selesai dan ditolak, sehingga
+        // tab "Arsip Aduan" dan "Aduan Ditolak" tidak lagi diperlukan sebagai halaman terpisah.
+        $query = Complaint::withoutGlobalScope('excludeAdminRejected')
+            ->with(['category', 'user', 'citizen', 'photos', 'latestDisposition.assignee', 'latestDisposition.department', 'latestDisposition.team.leader', 'aiAssessments'])
+            ->latest();
 
         if ($request->filled('status')) {
             if ($request->status === 'ARCHIVED') {
