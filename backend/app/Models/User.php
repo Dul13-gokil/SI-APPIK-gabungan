@@ -134,6 +134,16 @@ class User extends Authenticatable
         return Team::where('leader_id', $this->id)->exists();
     }
 
+    /**
+     * Fitur setara Super Admin, kecuali Log Aktivitas & Pengaturan Sistem.
+     * Satu tempat untuk aturan ini agar Kepala Daerah/Kepala Dinas tidak
+     * tertinggal saat fitur admin baru ditambahkan.
+     */
+    public function hasFullAdminAccess(): bool
+    {
+        return $this->isSuperAdmin() || $this->isKepalaDaerah() || $this->isKepalaDinas();
+    }
+
     /** Akun khusus dashboard monitoring (hanya baca). */
     public function isMonitoring(): bool
     {

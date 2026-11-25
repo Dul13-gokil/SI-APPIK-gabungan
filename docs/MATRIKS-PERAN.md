@@ -35,7 +35,9 @@ Catatan:
    membuka Log Aktivitas dan Pengaturan Sistem. Middleware `EnsureUserHasRole` tidak lagi
    memberi jalan pintas kepada peran lain; setiap rute harus menyebut peran yang diizinkan.
 2. **Kepala Daerah** memakai seluruh fitur administrasi seperti Super Admin, kecuali dua
-   menu di atas.
+   menu di atas. Aturan ini ditetapkan di `User::hasFullAdminAccess()` dan dikunci oleh
+   `RoleAccessTest::test_kepala_daerah_setara_super_admin_kecuali_log_dan_pengaturan`,
+   yang menyapu semua rute `admin.*` — jadi fitur admin baru otomatis ikut teruji.
 3. **Kepala Dinas** setara Kepala Daerah untuk urusan teknis; pembatasan Log Aktivitas dan
    Pengaturan Sistem juga berlaku.
 4. **Akun anggota regu (`PETUGAS`) tidak dibuat dari menu Kelola Akun.** Identitas personil

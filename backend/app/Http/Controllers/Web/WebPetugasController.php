@@ -17,8 +17,8 @@ class WebPetugasController extends Controller
     {
         $user = auth()->user();
 
-        // Jika Super Admin, tampilkan SEMUA tugas penanganan fisik aktif
-        if ($user->isSuperAdmin()) {
+        // Super Admin, Kepala Daerah, dan Kepala Dinas melihat SEMUA tugas penanganan fisik aktif.
+        if ($user->hasFullAdminAccess()) {
             $dispatchedTasks = Complaint::with(['category', 'photos', 'latestDisposition.assignee', 'citizen'])
                 ->whereIn('status', ['VERIFIED', 'DISPATCHED'])
                 ->latest('updated_at')

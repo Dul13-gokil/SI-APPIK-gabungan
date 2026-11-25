@@ -198,4 +198,44 @@ class RoleAccessTest extends TestCase
         $this->post('/login', ['email' => 'kd.landing@example.test', 'password' => 'Password123'])
             ->assertRedirect('/admin');
     }
+
+    /**
+     * Aturan tetap: Kepala Daerah memakai fitur Super Admin apa adanya,
+     * kecuali Log Aktivitas dan Pengaturan Sistem. Tes ini menyapu seluruh
+     * rute admin.* agar fitur baru tidak diam-diam tertutup untuknya.
+     */
+    public function test_kepala_daerah_setara_super_admin_kecuali_log_dan_pengaturan(): void
+    {
+        $sa = $this->buat('SUPERADMIN', 'sa.parity@example.test');
+        $kd = $this->buat('KEPALA_DAERAH', 'kd.parity@example.test');
+
+        $khususSuperAdmin = ['admin.activity', 'admin.settings', 'admin.settings.update'];
+        $diperiksa = 0;
+
+        foreach (app('router')->getRoutes() as $route) {
+            $nama = $route->getName();
+
+            if (! $nama || ! str_starts_with($nama, 'admin.')) {
+                continue;
+            }
+
+            $metode = in_array('POST', $route->methods(), true) ? 'POST' : 'GET';
+            $uri = '/' . preg_replace('/\{[^}]+\}/', '999999', ltrim($route->uri(), '/'));
+
+            $statusSa = $this->actingAs($sa)->call($metode, $uri, [])->getStatusCode();
+            $statusKd = $this->actingAs($kd)->call($metode, $uri, [])->getStatusCode();
+            $diperiksa++;
+
+            if (in_array($nama, $khususSuperAdmin, true)) {
+                $this->assertSame(403, $statusKd, "{$nama} harus ditolak untuk Kepala Daerah.");
+                $this->assertNotSame(403, $statusSa, "{$nama} harus terbuka untuk Super Admin.");
+                continue;
+            }
+
+            $this->assertNotSame(403, $statusKd, "{$nama} tidak boleh ditolak untuk Kepala Daerah.");
+            $this->assertSame($statusSa, $statusKd, "Hasil {$nama} berbeda antara Super Admin dan Kepala Daerah.");
+        }
+
+        $this->assertGreaterThan(10, $diperiksa, 'Rute admin.* tidak terbaca, tes paritas tidak berjalan.');
+    }
 }
