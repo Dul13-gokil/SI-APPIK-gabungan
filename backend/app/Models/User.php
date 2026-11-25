@@ -35,6 +35,7 @@ class User extends Authenticatable
         'last_login_ip',
         'last_login_user_agent',
         'last_login_at',
+        'must_change_password',
     ];
 
     /**
@@ -63,7 +64,8 @@ class User extends Authenticatable
             'last_login_at'     => 'datetime',
             'deactivated_at'    => 'datetime',
             'is_anonymous'      => 'boolean',
-            'is_active'         => 'boolean',
+            'is_active'            => 'boolean',
+            'must_change_password' => 'boolean',
         ];
     }
 
@@ -176,8 +178,14 @@ class User extends Authenticatable
      */
     public function needsFirstLoginSetup(): bool
     {
-        if (!in_array($this->role, ['PETUGAS', 'OPERATOR', 'DINAS', 'PENGAWAS', 'MONITORING'], true)) {
+        if ($this->role === 'WARGA') {
             return false;
+        }
+
+        // Akun yang dibuat Super Admin memakai sandi sementara acak; kolom ini
+        // yang menandai kewajiban menggantinya saat login pertama.
+        if (!empty($this->must_change_password)) {
+            return true;
         }
 
         // Jika sandi masih berupa default 'password'

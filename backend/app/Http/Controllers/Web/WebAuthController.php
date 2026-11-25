@@ -239,6 +239,7 @@ class WebAuthController extends Controller
         $user->name = $validated['name'];
         $user->phone = $validated['phone'];
         $user->password = Hash::make($validated['password']);
+        $user->must_change_password = false;
         $user->save();
 
         // Kirim email konfirmasi perubahan sandi dengan deteksi lokasi dinamis

@@ -57,4 +57,98 @@ class AdminUserManagementTest extends TestCase
             'role'  => 'KEPALA_DAERAH',
         ]);
     }
+
+    public function test_sandi_awal_acak_dan_wajib_diganti_saat_login_pertama(): void
+    {
+        $this->actingAs($this->admin())->post('/admin/users', [
+            'name'  => 'Operator Baru',
+            'email' => 'operator.baru@example.test',
+            'phone' => '081200000203',
+            'role'  => 'OPERATOR',
+        ])->assertRedirect();
+
+        $user = User::where('email', 'operator.baru@example.test')->firstOrFail();
+
+        $this->assertFalse(Hash::check('password', $user->password), 'Sandi awal tidak boleh "password".');
+        $this->assertTrue($user->must_change_password);
+        $this->assertTrue($user->needsFirstLoginSetup());
+
+        // Sandi sementara ditampilkan sekali pada pesan sukses.
+        $pesan = (string) session('success');
+        $this->assertStringContainsString('Sandi sementara:', $pesan);
+        preg_match('/Sandi sementara: (\S+)/', $pesan, $cocok);
+        $this->assertTrue(Hash::check($cocok[1] ?? '', $user->password));
+    }
+
+    public function test_peran_akun_dapat_diperbarui_dari_daftar_pengguna(): void
+    {
+        $user = User::create([
+            'name'      => 'Calon Operator',
+            'email'     => 'calon.operator@example.test',
+            'phone'     => '081200000204',
+            'password'  => Hash::make('Rahasia123'),
+            'role'      => 'PETUGAS',
+            'is_active' => true,
+        ]);
+
+        $this->actingAs($this->admin())->put("/admin/users/{$user->id}", [
+            'name'  => 'Calon Operator',
+            'email' => 'calon.operator@example.test',
+            'phone' => '081200000204',
+            'role'  => 'OPERATOR',
+        ])->assertRedirect();
+
+        $this->assertSame('OPERATOR', $user->fresh()->role);
+    }
+
+    public function test_perubahan_peran_dibatasi_untuk_akun_tunggal_dan_akun_sendiri(): void
+    {
+        $admin = $this->admin();
+        $lain = User::create([
+            'name'      => 'Operator Lain',
+            'email'     => 'operator.lain@example.test',
+            'phone'     => '081200000205',
+            'password'  => Hash::make('Rahasia123'),
+            'role'      => 'OPERATOR',
+            'is_active' => true,
+        ]);
+
+        // Super Admin sudah ada (akun yang sedang login).
+        $this->actingAs($admin)->put("/admin/users/{$lain->id}", [
+            'name'  => 'Operator Lain',
+            'email' => 'operator.lain@example.test',
+            'phone' => '081200000205',
+            'role'  => 'SUPERADMIN',
+        ])->assertSessionHas('error');
+
+        // Peran akun sendiri tidak boleh diubah.
+        $this->actingAs($admin)->put("/admin/users/{$admin->id}", [
+            'name'  => $admin->name,
+            'email' => $admin->email,
+            'phone' => '081200000201',
+            'role'  => 'KEPALA_DAERAH',
+        ])->assertSessionHas('error');
+
+        $this->assertSame('OPERATOR', $lain->fresh()->role);
+        $this->assertSame('SUPERADMIN', $admin->fresh()->role);
+    }
+
+    public function test_reset_sandi_menghasilkan_sandi_sementara_bukan_password(): void
+    {
+        $user = User::create([
+            'name'      => 'Pengawas Uji',
+            'email'     => 'pengawas.uji@example.test',
+            'phone'     => '081200000206',
+            'password'  => Hash::make('Rahasia123'),
+            'role'      => 'PENGAWAS',
+            'is_active' => true,
+        ]);
+
+        $this->actingAs($this->admin())->post("/admin/users/{$user->id}/reset")->assertRedirect();
+
+        $user->refresh();
+        $this->assertFalse(Hash::check('password', $user->password));
+        $this->assertTrue($user->must_change_password);
+        $this->assertStringContainsString('Sandi sementara:', (string) session('success'));
+    }
 }

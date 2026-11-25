@@ -2314,22 +2314,25 @@
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
                                     <i data-lucide="shield" class="w-4 h-4"></i>
                                 </div>
-                                <select id="editUserRole" disabled
-                                    class="w-full text-xs font-bold pl-9 pr-8 py-2.5 rounded-xl border border-slate-200 bg-slate-100/90 text-slate-600 cursor-not-allowed select-none opacity-90 appearance-none">
-                                    <option value="ADMIN">Administrator (Super Admin)</option>
-                                    <option value="KEPALA_DAERAH">Kepala Daerah Kabupaten</option>
-                                    <option value="OPERATOR">Operator Verifikasi</option>
-                                    <option value="PETUGAS">Pengawas Lapangan (PUPR)</option>
-                                    <option value="PENGAWAS">Pengawas Lapangan</option>
+                                <select id="editUserRole" name="role"
+                                    class="w-full text-xs font-bold pl-9 pr-8 py-2.5 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] cursor-pointer appearance-none focus:bg-white focus:ring-2 focus:ring-[#2563EB]/15 focus:border-[#2563EB] transition">
+                                    <option value="OPERATOR">Operator PUPR</option>
+                                    <option value="PENGAWAS">Pengawas Lapangan (Ketua Regu)</option>
+                                    <option value="PETUGAS">Pengawas Lapangan (Anggota Regu)</option>
                                     <option value="DINAS">Kepala Dinas</option>
-                                    <option value="MONITORING">Monitoring (Hanya Baca)</option>
+                                    <option value="MONITORING">Monitoring</option>
+                                    <option value="KEPALA_DAERAH">Kepala Daerah Kabupaten</option>
+                                    <option value="ADMIN">Super Administrator</option>
                                     <option value="WARGA" id="editUserOptionWarga" class="hidden">Warga Terdaftar</option>
                                 </select>
                                 <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-slate-400">
-                                    <i data-lucide="lock" class="w-3.5 h-3.5"></i>
+                                    <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
                                 </div>
                             </div>
-                            <input type="hidden" id="editUserRoleHidden" name="role" value="">
+                            <p class="text-[11px] text-[#64748B] mt-1">
+                                Peran dapat diperbarui. Sistem menolak bila akun Super Administrator atau
+                                Kepala Daerah sudah ada, dan menolak perubahan peran pada akun Anda sendiri.
+                            </p>
                         </div>
 
                         <!-- Reset Kata Sandi Default -->
@@ -2338,7 +2341,7 @@
                                 <input type="checkbox" id="editUserResetDefault" name="reset_default" value="1"
                                     class="w-4 h-4 rounded text-[#2563EB] focus:ring-[#2563EB] border-slate-300">
                                 <span class="text-xs text-slate-800 font-bold block">
-                                    Reset Kata Sandi ke Default (<span class="font-mono text-[#2563EB]">password</span>)
+                                    Reset ke Sandi Sementara (acak, ditampilkan sekali setelah disimpan)
                                 </span>
                             </label>
                         </div>
@@ -4077,10 +4080,6 @@
         }
         const roleVal = user.role || 'PETUGAS';
         document.getElementById('editUserRole').value = roleVal;
-        const roleHidden = document.getElementById('editUserRoleHidden');
-        if (roleHidden) {
-            roleHidden.value = roleVal;
-        }
         const resetDefaultBox = document.getElementById('editUserResetDefault');
         if (resetDefaultBox) {
             resetDefaultBox.checked = false;

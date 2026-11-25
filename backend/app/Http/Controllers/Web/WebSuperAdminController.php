@@ -10,6 +10,7 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class WebSuperAdminController extends Controller
@@ -396,15 +397,17 @@ class WebSuperAdminController extends Controller
         }
 
         // Aturan 4: Zero Knowledge Password (No Password Impersonation)
-        // Super Admin tidak boleh menetapkan sandi kustom. Password awal selalu di-lock ke default: 'password'
-        $defaultPassword = 'password';
+        // Super Admin tidak menetapkan sandi kustom; sistem membuat sandi sementara acak
+        // yang ditampilkan sekali dan wajib diganti saat login pertama.
+        $defaultPassword = Str::password(10, symbols: false);
 
         $user = User::create([
-            'name'     => $validated['name'],
-            'email'    => $validated['email'],
-            'phone'    => $validated['phone'] ?? null,
-            'password' => Hash::make($defaultPassword),
-            'role'     => $validated['role'],
+            'name'                 => $validated['name'],
+            'email'                => $validated['email'],
+            'phone'                => $validated['phone'] ?? null,
+            'password'             => Hash::make($defaultPassword),
+            'role'                 => $validated['role'],
+            'must_change_password' => true,
         ]);
 
         // Aturan 5: Kirim email pemberitahuan ke email pengguna jika ditambahkan sebagai PETUGAS atau OPERATOR
@@ -416,7 +419,7 @@ class WebSuperAdminController extends Controller
             }
         }
 
-        return back()->with('success', "Akun {$validated['name']} ({$validated['role']}) berhasil ditambahkan dengan kata sandi awal default: 'password'. Notifikasi aktivasi telah dikirim ke email terdaftar.");
+        return back()->with('success', "Akun {$validated['name']} ({$validated['role']}) berhasil ditambahkan. Sandi sementara: {$defaultPassword} — catat dan berikan ke yang bersangkutan; wajib diganti saat login pertama.");
     }
 
     public function updateUser(Request $request, int $id): RedirectResponse
@@ -451,19 +454,40 @@ class WebSuperAdminController extends Controller
             $changes['Nomor Handphone / WA'] = "Diperbarui dari " . ($oldPhone ?: '-') . " menjadi " . ($newPhone ?: '-');
         }
 
-        // ATURAN BAKU: Peran / Role Pengguna DIKUNCI PERMANEN
-        // Super Admin TIDAK BISA mengubah role akun yang telah terdaftar demi menjaga stabilitas RBAC
-        // $user->role tetap menggunakan nilai asli dari database ($user->role tidak di-update)
+        // Peran boleh diperbarui, dengan penjaga agar tidak ada peran tunggal yang hilang
+        // atau akun pimpinan kehilangan aksesnya sendiri.
+        $peranBaru = strtoupper((string) ($validated['role'] ?? $user->role));
+
+        if ($peranBaru !== $user->role) {
+            $pesanTolak = $this->penolakanPerubahanPeran($user, $peranBaru);
+
+            if ($pesanTolak !== null) {
+                return back()->with('error', $pesanTolak);
+            }
+
+            $changes['Peran Akun'] = 'Diubah dari "' . $this->labelPeran($user->role) . '" menjadi "' . $this->labelPeran($peranBaru) . '"';
+
+            // Peran non-lapangan tidak boleh tertinggal di dalam regu.
+            if (! in_array($peranBaru, ['PETUGAS', 'PENGAWAS'], true)) {
+                \App\Models\Team::where('leader_id', $user->id)->update(['leader_id' => null]);
+                \App\Models\TeamMember::where('user_id', $user->id)->delete();
+            }
+
+            $user->role = $peranBaru;
+        }
 
         $user->name  = $validated['name'];
         $user->email = $validated['email'];
         $user->phone = $newPhone;
 
         // Zero Knowledge: Super Admin TIDAK BISA mengetik sandi baru sepihak.
-        // Hanya bisa mereset ke default "password" jika opsi reset dipilih
+        // Opsi reset menghasilkan sandi sementara acak yang wajib diganti pengguna.
+        $sandiSementara = null;
         if ($request->boolean('reset_default')) {
-            $user->password = Hash::make('password');
-            $changes['Kata Sandi'] = 'Direset ke default ("password"). Pengguna diwajibkan mengganti kata sandi saat masuk kembali.';
+            $sandiSementara = Str::password(10, symbols: false);
+            $user->password = Hash::make($sandiSementara);
+            $user->must_change_password = true;
+            $changes['Kata Sandi'] = 'Direset ke sandi sementara. Pengguna diwajibkan mengganti kata sandi saat masuk kembali.';
         }
 
         $user->save();
@@ -481,7 +505,59 @@ class WebSuperAdminController extends Controller
             }
         }
 
-        return back()->with('success', "Data profil akun {$user->name} berhasil diperbarui oleh Super Admin. Notifikasi keamanan telah dikirimkan ke email terkait.");
+        $catatanSandi = $sandiSementara
+            ? " Sandi sementara: {$sandiSementara} — catat dan berikan ke yang bersangkutan; wajib diganti saat login pertama."
+            : '';
+
+        return back()->with('success', "Data profil akun {$user->name} berhasil diperbarui oleh Super Admin. Notifikasi keamanan telah dikirimkan ke email terkait.{$catatanSandi}");
+    }
+
+    /**
+     * Alasan penolakan perubahan peran, atau null bila boleh dilanjutkan.
+     */
+    private function penolakanPerubahanPeran(User $user, string $peranBaru): ?string
+    {
+        if ($peranBaru === 'WARGA') {
+            return 'Peran Warga tidak dapat ditetapkan dari portal; akun warga hanya lahir dari pendaftaran di aplikasi mobile.';
+        }
+
+        if ($user->id === auth()->id()) {
+            return 'Proteksi Keamanan: Anda tidak dapat mengubah peran akun Anda sendiri.';
+        }
+
+        if (in_array($peranBaru, ['KEPALA_DAERAH', 'BUPATI'], true)) {
+            $lain = User::whereIn('role', ['KEPALA_DAERAH', 'BUPATI'])->where('id', '<>', $user->id)->count();
+
+            if ($lain > 0) {
+                return 'Sistem hanya mengizinkan 1 akun Kepala Daerah Kabupaten. Akun tersebut sudah ada.';
+            }
+        }
+
+        if (in_array($peranBaru, ['ADMIN', 'SUPERADMIN'], true)) {
+            $lain = User::whereIn('role', ['ADMIN', 'SUPERADMIN'])->where('id', '<>', $user->id)->count();
+
+            if ($lain > 0) {
+                return 'Sistem hanya mengizinkan 1 akun Super Administrator. Akun tersebut sudah ada.';
+            }
+        }
+
+        return null;
+    }
+
+    private function labelPeran(string $role): string
+    {
+        return [
+            'SUPERADMIN'    => 'Super Administrator',
+            'ADMIN'         => 'Super Administrator',
+            'KEPALA_DAERAH' => 'Kepala Daerah',
+            'BUPATI'        => 'Kepala Daerah',
+            'DINAS'         => 'Kepala Dinas',
+            'OPERATOR'      => 'Operator PUPR',
+            'PENGAWAS'      => 'Pengawas Lapangan (Ketua Regu)',
+            'PETUGAS'       => 'Pengawas Lapangan (Anggota Regu)',
+            'MONITORING'    => 'Monitoring',
+            'WARGA'         => 'Warga',
+        ][strtoupper($role)] ?? $role;
     }
 
     public function deactivateUser(Request $request, int $id): RedirectResponse
@@ -600,9 +676,10 @@ class WebSuperAdminController extends Controller
     public function resetUserPassword(Request $request, int $id): RedirectResponse
     {
         $user = User::findOrFail($id);
-        $newPass = 'password';
+        $newPass = Str::password(10, symbols: false);
 
         $user->password = Hash::make($newPass);
+        $user->must_change_password = true;
         $user->save();
 
         // Cabut seluruh sesi aktif mobile / web pengguna demi keamanan
@@ -631,7 +708,7 @@ class WebSuperAdminController extends Controller
             ? "Email pemberitahuan resmi telah dikirim ke {$user->email}."
             : "Email gagal terkirim (periksa konfigurasi MAIL_MAILER / layanan email HTTP di Railway).";
 
-        return back()->with('success', "Kata sandi akun {$user->name} berhasil direset ke default ('password'). {$mailNote}");
+        return back()->with('success', "Kata sandi akun {$user->name} berhasil direset. Sandi sementara: {$newPass} — catat dan berikan ke yang bersangkutan; wajib diganti saat login pertama. {$mailNote}");
     }
 
     public function rejectComplaint(Request $request, int $id): RedirectResponse
