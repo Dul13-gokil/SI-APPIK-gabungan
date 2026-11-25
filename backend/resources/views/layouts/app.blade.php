@@ -180,7 +180,24 @@
                         Portal Kerja &amp; Role
                     </div>
 
-                    @if(auth()->user()->isSuperAdmin() || auth()->user()->isKepalaDinas() || auth()->user()->isKepalaDaerah())
+                    @php
+                        // Satu daftar menu panel admin. Kepala Daerah memakai daftar yang sama
+                        // persis, hanya tanpa Log Aktivitas & Pengaturan Sistem.
+                        $menuPanelAdmin = [
+                            ['tab' => 'overview', 'label' => 'Dashboard Admin', 'icon' => 'layout-dashboard'],
+                            ['tab' => 'users-management', 'label' => 'Kelola Akun & Pengguna', 'icon' => 'users'],
+                            ['tab' => 'complaints-list', 'label' => 'Daftar Aduan', 'icon' => 'layers'],
+                            ['tab' => 'teams-management', 'label' => 'Regu & Tugas', 'icon' => 'hard-hat'],
+                            ['tab' => 'regions-gis', 'label' => 'Peta Wilayah GIS', 'icon' => 'map-pin'],
+                            ['tab' => 'reporting', 'label' => 'Laporan Kinerja', 'icon' => 'bar-chart-3'],
+                            ['url' => route('admin.activity'), 'label' => 'Log Aktivitas', 'icon' => 'scroll-text', 'active' => 'admin.activity', 'khusus_super_admin' => true],
+                            ['url' => route('admin.settings'), 'label' => 'Pengaturan Sistem', 'icon' => 'settings', 'active' => 'admin.settings', 'khusus_super_admin' => true],
+                        ];
+                        $menuKepalaDaerah = array_values(array_filter($menuPanelAdmin, fn ($i) => empty($i['khusus_super_admin'])));
+                        $menuSuperAdmin = array_values(array_filter($menuPanelAdmin, fn ($i) => empty($i['khusus_super_admin']) || auth()->user()->isSuperAdmin()));
+                    @endphp
+
+                    @if(auth()->user()->isSuperAdmin() || auth()->user()->isKepalaDinas())
                         <div class="role-accordion-group rounded-xl transition">
                             <button type="button" onclick="toggleRoleAccordion('admin')" aria-expanded="{{ $isAdminRoute ? 'true' : 'false' }}"
                                 class="w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl text-xs font-bold border {{ $isAdminRoute ? 'bg-[#EFF6FF] text-[#2563EB] border-[#BFDBFE]' : 'bg-white text-[#334155] border-[#E2E8F0] hover:bg-[#F8FAFC] hover:text-[#0F172A]' }} transition">
@@ -191,69 +208,23 @@
                                 <i data-lucide="chevron-down" id="accordionChevron-admin" class="w-3.5 h-3.5 shrink-0 transition-transform duration-200 {{ $isAdminRoute ? 'rotate-180 text-[#2563EB]' : 'text-[#64748B]' }}"></i>
                             </button>
                             <div id="accordionBody-admin" class="{{ $isAdminRoute ? 'block' : 'hidden' }} py-1.5 px-1 space-y-1">
-                                @php
-                                    $adminMenuItems = [
-                                        ['tab' => 'overview', 'label' => 'Dashboard Admin', 'icon' => 'layout-dashboard'],
-                                        ['tab' => 'users-management', 'label' => 'Kelola Akun & Pengguna', 'icon' => 'users'],
-                                        // Daftar Aduan sudah memuat semua status (termasuk arsip & ditolak),
-                                        // jadi tab terpisah untuk keduanya dihapus.
-                                        ['tab' => 'complaints-list', 'label' => 'Daftar Aduan', 'icon' => 'layers'],
-                                        ['tab' => 'teams-management', 'label' => 'Regu & Tugas', 'icon' => 'hard-hat'],
-                                        ['tab' => 'regions-gis', 'label' => 'Peta Wilayah GIS', 'icon' => 'map-pin'],
-                                        ['tab' => 'reporting', 'label' => 'Laporan Kinerja', 'icon' => 'bar-chart-3'],
-                                        // Log Aktivitas & Pengaturan Sistem hanya untuk Super Admin.
-                                        ...(auth()->user()->isSuperAdmin() ? [
-                                            ['url' => route('admin.activity'), 'label' => 'Log Aktivitas', 'icon' => 'scroll-text', 'active' => 'admin.activity'],
-                                            ['url' => route('admin.settings'), 'label' => 'Pengaturan Sistem', 'icon' => 'settings', 'active' => 'admin.settings'],
-                                        ] : []),
-                                    ];
-                                @endphp
-                                @foreach($adminMenuItems as $item)
-                                    @php
-                                        $isSubActive = $isAdminRoute && (
-                                            !empty($item['active'])
-                                                ? request()->routeIs($item['active'])
-                                                : ($currentQueryTab === ($item['tab'] ?? null) ||
-                                                   (($item['tab'] ?? null) === 'users-management' && $currentQueryTab === 'users-list'))
-                                        );
-                                    @endphp
-                                    <a href="{{ $item['url'] ?? route('admin.dashboard', ['tab' => $item['tab']]) }}"
-                                       @if(empty($item['url'])) onclick="return handleSidebarTabClick(event, 'admin', '{{ $item['tab'] }}')" @endif
-                                       data-sidebar-role="admin" @if(!empty($item['tab'])) data-sidebar-tab="{{ $item['tab'] }}" @endif
-                                       class="sidebar-subitem flex items-center gap-2 px-3 py-2 rounded-xl text-[11px] font-semibold transition {{ $isSubActive ? 'bg-[#2563EB] text-white font-bold shadow-xs' : 'text-[#475569] hover:bg-[#F8FAFC] hover:text-[#0F172A]' }}">
-                                        <i data-lucide="{{ $item['icon'] }}" class="w-3.5 h-3.5 shrink-0 {{ $isSubActive ? 'text-white' : 'text-[#64748B]' }}"></i>
-                                        <span class="truncate">{{ $item['label'] }}</span>
-                                    </a>
-                                @endforeach
+                                @include('partials.sidebar_menu_items', ['items' => $menuSuperAdmin, 'role' => 'admin', 'activeRoute' => 'admin'])
                             </div>
                         </div>
                     @endif
 
                     @if(auth()->user()->isBupati() || auth()->user()->isSuperAdmin())
                         <div class="role-accordion-group rounded-xl transition">
-                            <button type="button" onclick="toggleRoleAccordion('bupati')" aria-expanded="{{ $isBupatiRoute ? 'true' : 'false' }}"
-                                class="w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl text-xs font-bold border {{ $isBupatiRoute ? 'bg-[#EFF6FF] text-[#2563EB] border-[#BFDBFE]' : 'bg-white text-[#334155] border-[#E2E8F0] hover:bg-[#F8FAFC] hover:text-[#0F172A]' }} transition">
+                            <button type="button" onclick="toggleRoleAccordion('bupati')" aria-expanded="{{ $isAdminRoute ? 'true' : 'false' }}"
+                                class="w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl text-xs font-bold border {{ $isAdminRoute ? 'bg-[#EFF6FF] text-[#2563EB] border-[#BFDBFE]' : 'bg-white text-[#334155] border-[#E2E8F0] hover:bg-[#F8FAFC] hover:text-[#0F172A]' }} transition">
                                 <span class="flex items-center gap-2.5 min-w-0">
-                                    <i data-lucide="landmark" class="w-4 h-4 shrink-0 {{ $isBupatiRoute ? 'text-[#2563EB]' : 'text-[#64748B]' }}"></i>
+                                    <i data-lucide="landmark" class="w-4 h-4 shrink-0 {{ $isAdminRoute ? 'text-[#2563EB]' : 'text-[#64748B]' }}"></i>
                                     <span class="truncate">Kepala Daerah</span>
                                 </span>
-                                <i data-lucide="chevron-down" id="accordionChevron-bupati" class="w-3.5 h-3.5 shrink-0 transition-transform duration-200 {{ $isBupatiRoute ? 'rotate-180 text-[#2563EB]' : 'text-[#64748B]' }}"></i>
+                                <i data-lucide="chevron-down" id="accordionChevron-bupati" class="w-3.5 h-3.5 shrink-0 transition-transform duration-200 {{ $isAdminRoute ? 'rotate-180 text-[#2563EB]' : 'text-[#64748B]' }}"></i>
                             </button>
-                            <div id="accordionBody-bupati" class="{{ $isBupatiRoute ? 'block' : 'hidden' }} py-1.5 px-1 space-y-1">
-                                @php
-                                    // Satu pintu ke portal eksekutif; menu operasionalnya sudah ada di panel admin.
-                                    $bupatiMenuItems = [
-                                        ['url' => route('bupati.dashboard'), 'label' => 'Dasbor Eksekutif', 'icon' => 'landmark'],
-                                    ];
-                                @endphp
-                                @foreach($bupatiMenuItems as $item)
-                                    <a href="{{ $item['url'] }}"
-                                       data-sidebar-role="bupati"
-                                       class="sidebar-subitem flex items-center gap-2 px-3 py-2 rounded-xl text-[11px] font-semibold transition {{ $isBupatiRoute ? 'bg-[#2563EB] text-white font-bold shadow-xs' : 'text-[#475569] hover:bg-[#F8FAFC] hover:text-[#0F172A]' }}">
-                                        <i data-lucide="{{ $item['icon'] }}" class="w-3.5 h-3.5 shrink-0 {{ $isBupatiRoute ? 'text-white' : 'text-[#64748B]' }}"></i>
-                                        <span class="truncate">{{ $item['label'] }}</span>
-                                    </a>
-                                @endforeach
+                            <div id="accordionBody-bupati" class="{{ $isAdminRoute ? 'block' : 'hidden' }} py-1.5 px-1 space-y-1">
+                                @include('partials.sidebar_menu_items', ['items' => $menuKepalaDaerah, 'role' => 'admin', 'activeRoute' => 'admin'])
                             </div>
                         </div>
                     @endif

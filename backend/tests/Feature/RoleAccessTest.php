@@ -236,4 +236,37 @@ class RoleAccessTest extends TestCase
 
         $this->assertGreaterThan(10, $diperiksa, 'Rute admin.* tidak terbaca, tes paritas tidak berjalan.');
     }
+
+    /**
+     * Dropdown Kepala Daerah harus berisi menu yang sama dengan Super Admin,
+     * hanya tanpa Log Aktivitas dan Pengaturan Sistem.
+     */
+    public function test_dropdown_kepala_daerah_sama_dengan_super_admin_tanpa_log_dan_pengaturan(): void
+    {
+        $wajib = [
+            'Dashboard Admin',
+            'Kelola Akun',
+            'Daftar Aduan',
+            'Regu &amp; Tugas',
+            'Peta Wilayah GIS',
+            'Laporan Kinerja',
+        ];
+
+        foreach (['SUPERADMIN' => 'sa.menu@example.test', 'KEPALA_DAERAH' => 'kd.menu@example.test'] as $peran => $email) {
+            $html = $this->actingAs($this->buat($peran, $email))->get('/admin')->assertOk()->getContent();
+
+            $awal = strpos($html, 'accordionBody-bupati');
+            $akhir = strpos($html, 'accordionBody-operator');
+            $this->assertNotFalse($awal);
+            $this->assertNotFalse($akhir);
+            $dropdown = substr($html, $awal, $akhir - $awal);
+
+            foreach ($wajib as $label) {
+                $this->assertStringContainsString($label, $dropdown, "Dropdown Kepala Daerah ({$peran}) tidak memuat {$label}.");
+            }
+
+            $this->assertStringNotContainsString('Log Aktivitas', $dropdown, "Log Aktivitas tidak boleh ada di dropdown Kepala Daerah ({$peran}).");
+            $this->assertStringNotContainsString('Pengaturan Sistem', $dropdown, "Pengaturan Sistem tidak boleh ada di dropdown Kepala Daerah ({$peran}).");
+        }
+    }
 }
