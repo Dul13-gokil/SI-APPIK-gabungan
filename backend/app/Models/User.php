@@ -69,6 +69,12 @@ class User extends Authenticatable
         ];
     }
 
+    /** Email selalu disimpan huruf kecil agar tidak ada akun kembar yang beda kapital. */
+    public function setEmailAttribute($value): void
+    {
+        $this->attributes['email'] = mb_strtolower(trim((string) $value));
+    }
+
     public function region(): BelongsTo
     {
         return $this->belongsTo(Region::class);
@@ -146,6 +152,39 @@ class User extends Authenticatable
         return $this->isSuperAdmin() || $this->isKepalaDaerah() || $this->isKepalaDinas();
     }
 
+    /**
+     * Cari akun dari email atau nomor HP yang diketik pengguna.
+     *
+     * Perbandingan harus tidak peka huruf besar/kecil: PostgreSQL membedakan
+     * "Admin@..." dan "admin@...", sehingga pengguna yang mengetik huruf kapital
+     * (atau diisi otomatis oleh ponsel) ditolak walau sandinya benar.
+     * Nomor HP dibandingkan tanpa spasi, titik, dan tanda hubung.
+     */
+    public static function findByLogin(string $input): ?self
+    {
+        $input = trim($input);
+
+        if ($input === '') {
+            return null;
+        }
+
+        $email = mb_strtolower($input);
+        $phone = preg_replace('/[^0-9+]/', '', $input);
+
+        return static::query()
+            ->where(function ($q) use ($email, $phone) {
+                $q->whereRaw('LOWER(email) = ?', [$email]);
+
+                if ($phone !== '') {
+                    $q->orWhereRaw(
+                        "REPLACE(REPLACE(REPLACE(COALESCE(phone, ''), ' ', ''), '-', ''), '.', '') = ?",
+                        [$phone]
+                    );
+                }
+            })
+            ->first();
+    }
+
     /** Akun khusus dashboard monitoring (hanya baca). */
     public function isMonitoring(): bool
     {
@@ -182,26 +221,10 @@ class User extends Authenticatable
             return false;
         }
 
-        // Akun yang dibuat Super Admin memakai sandi sementara acak; kolom ini
-        // yang menandai kewajiban menggantinya saat login pertama.
-        if (!empty($this->must_change_password)) {
-            return true;
-        }
-
-        // Jika sandi masih berupa default 'password'
-        // Hash::check melempar RuntimeException untuk hash non-bcrypt (mis. data lama/seed),
-        // sehingga harus diveg lebih dahulu agar layout tidak error 500.
-        if (\Illuminate\Support\Facades\Hash::isHashed($this->password)
-            && \Illuminate\Support\Facades\Hash::check('password', $this->password)) {
-            return true;
-        }
-
-        // Jika nomor telepon / WhatsApp masih belum dilengkapi
-        if (empty($this->phone) || trim($this->phone) === '') {
-            return true;
-        }
-
-        return false;
+        // Satu sumber kebenaran: kolom must_change_password. Dulu gerbang ini juga
+        // menebak dari hash "password" dan nomor HP kosong, sehingga akun yang
+        // sengaja diberi sandi tertentu tetap dipaksa mengisi ulang.
+        return !empty($this->must_change_password);
     }
 
     public function getNeedsFirstLoginSetupAttribute(): bool

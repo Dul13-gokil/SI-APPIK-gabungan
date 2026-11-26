@@ -233,4 +233,35 @@ class AdminUserManagementTest extends TestCase
             'password' => 'Rahasia2026',
         ])->assertRedirect('/operator');
     }
+
+    /**
+     * Pengguna sering mengetik email dengan huruf kapital atau mengisi nomor HP
+     * dengan spasi. PostgreSQL peka huruf, jadi dulu login selalu gagal.
+     */
+    public function test_login_tidak_peka_huruf_besar_kecil_dan_format_nomor(): void
+    {
+        $user = User::create([
+            'name'      => 'Operator Kapital',
+            'email'     => 'Operator.Kapital@Example.Test',
+            'phone'     => '0812-0000-0211',
+            'password'  => Hash::make('Rahasia2026'),
+            'role'      => 'OPERATOR',
+            'is_active' => true,
+        ]);
+
+        // Email tersimpan huruf kecil.
+        $this->assertSame('operator.kapital@example.test', $user->fresh()->email);
+
+        foreach (['operator.kapital@example.test', 'OPERATOR.KAPITAL@EXAMPLE.TEST', '  Operator.Kapital@Example.Test  '] as $email) {
+            $this->post('/login', ['email' => $email, 'password' => 'Rahasia2026'])
+                ->assertRedirect('/operator');
+            $this->post('/logout');
+        }
+
+        foreach (['081200000211', '0812-0000-0211'] as $phone) {
+            $this->post('/login', ['email' => $phone, 'password' => 'Rahasia2026'])
+                ->assertRedirect('/operator');
+            $this->post('/logout');
+        }
+    }
 }

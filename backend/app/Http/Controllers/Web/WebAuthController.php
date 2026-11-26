@@ -30,11 +30,8 @@ class WebAuthController extends Controller
 
         $loginInput = trim($request->input('email'));
 
-        // Mendukung login aman berbasis Email atau Nomor Handphone (nama dikecualikan agar tidak terjadi tabrakan nama)
-        $user = User::where(function ($q) use ($loginInput) {
-            $q->where('email', $loginInput)
-              ->orWhere('phone', $loginInput);
-        })->first();
+        // Email/HP dicocokkan tanpa membedakan huruf besar-kecil (PostgreSQL peka huruf).
+        $user = User::findByLogin($loginInput);
 
         if ($user && Hash::check($request->password, $user->password)) {
             if (!($user->is_active ?? true)) {
@@ -103,7 +100,7 @@ class WebAuthController extends Controller
 
         $email = strtolower(trim($request->input('email')));
 
-        $user = User::where('email', $email)->first();
+        $user = User::whereRaw('LOWER(email) = ?', [$email])->first();
 
         if (!$user) {
             return response()->json([
