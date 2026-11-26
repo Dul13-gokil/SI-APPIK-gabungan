@@ -178,4 +178,59 @@ class AdminUserManagementTest extends TestCase
         $response->assertSee('Sandi sementara:');
         $response->assertSee('data-persist="1"', false);
     }
+
+    public function test_super_admin_boleh_menetapkan_sandi_akun_baru(): void
+    {
+        $this->actingAs($this->admin())->post('/admin/users', [
+            'name'     => 'Operator Bersandi',
+            'email'    => 'operator.bersandi@example.test',
+            'phone'    => '081200000208',
+            'role'     => 'OPERATOR',
+            'password' => 'Rahasia2026',
+        ])->assertRedirect();
+
+        $user = User::where('email', 'operator.bersandi@example.test')->firstOrFail();
+
+        $this->assertTrue(Hash::check('Rahasia2026', $user->password));
+        $this->assertFalse($user->must_change_password, 'Sandi yang ditetapkan admin tidak perlu dipaksa ganti.');
+        $this->assertStringContainsString('sandi yang Anda tetapkan', (string) session('success'));
+    }
+
+    public function test_sandi_dapat_diubah_dari_modal_edit(): void
+    {
+        $user = User::create([
+            'name'      => 'Operator Ganti Sandi',
+            'email'     => 'operator.ganti@example.test',
+            'phone'     => '081200000209',
+            'password'  => Hash::make('Rahasia123'),
+            'role'      => 'OPERATOR',
+            'is_active' => true,
+        ]);
+
+        $this->actingAs($this->admin())->put("/admin/users/{$user->id}", [
+            'name'     => 'Operator Ganti Sandi',
+            'email'    => 'operator.ganti@example.test',
+            'phone'    => '081200000209',
+            'role'     => 'OPERATOR',
+            'password' => 'SandiBaru2026',
+        ])->assertRedirect();
+
+        $this->assertTrue(Hash::check('SandiBaru2026', $user->fresh()->password));
+    }
+
+    public function test_akun_baru_dengan_sandi_ditetapkan_bisa_login(): void
+    {
+        $this->actingAs($this->admin())->post('/admin/users', [
+            'name'     => 'Operator Login',
+            'email'    => 'operator.login@example.test',
+            'phone'    => '081200000210',
+            'role'     => 'OPERATOR',
+            'password' => 'Rahasia2026',
+        ])->assertRedirect();
+
+        $this->post('/login', [
+            'email'    => 'operator.login@example.test',
+            'password' => 'Rahasia2026',
+        ])->assertRedirect('/operator');
+    }
 }

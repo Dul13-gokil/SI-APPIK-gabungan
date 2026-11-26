@@ -424,12 +424,12 @@
                             <select name="role" required class="w-full text-xs rounded-xl border border-[#E2E8F0] px-3 py-2 bg-[#F8FAFC] focus:bg-white focus:ring-2 focus:ring-[#2563EB]/15 focus:border-[#2563EB] transition">
                                 <option value="OPERATOR">Operator PUPR</option>
                                 <option value="PENGAWAS">Pengawas Lapangan (Ketua Regu)</option>
-                                <option value="DINAS">Kepala Dinas (akses penuh, tanpa log &amp; pengaturan)</option>
+                                <option value="DINAS">Kepala Dinas (akses admin, tanpa log &amp; pengaturan)</option>
                                 <option value="MONITORING">Monitoring (layar pantau, wajib login)</option>
                                 <option value="KEPALA_DAERAH" {{ $hasBupati ? 'disabled class=text-slate-400' : '' }}>
                                     Kepala Daerah Kabupaten {{ $hasBupati ? '(Terkunci)' : '' }}
                                 </option>
-                                <option value="ADMIN" {{ $hasSuperAdmin ? 'disabled class=text-slate-400' : '' }}>
+                                <option value="SUPERADMIN" {{ $hasSuperAdmin ? 'disabled class=text-slate-400' : '' }}>
                                     Super Administrator {{ $hasSuperAdmin ? '(Terkunci)' : '' }}
                                 </option>
                             </select>
@@ -440,6 +440,16 @@
                                 class="w-full text-xs rounded-xl border border-[#E2E8F0] px-3 py-2 bg-[#F8FAFC] focus:bg-white focus:ring-2 focus:ring-[#2563EB]/15 focus:border-[#2563EB] transition">
                             <input type="text" name="phone" placeholder="No. Handphone / WA"
                                 class="w-full text-xs rounded-xl border border-[#E2E8F0] px-3 py-2 bg-[#F8FAFC] focus:bg-white focus:ring-2 focus:ring-[#2563EB]/15 focus:border-[#2563EB] transition">
+                        </div>
+
+                        <div>
+                            <input type="text" name="password" placeholder="Kata Sandi awal (opsional, min. 8 karakter huruf + angka)"
+                                autocomplete="new-password"
+                                class="w-full text-xs rounded-xl border border-[#E2E8F0] px-3 py-2 bg-[#F8FAFC] focus:bg-white focus:ring-2 focus:ring-[#2563EB]/15 focus:border-[#2563EB] transition">
+                            <p class="text-[11px] text-[#64748B] mt-1">
+                                Isi sendiri agar akun langsung bisa dipakai login. Bila dikosongkan,
+                                sistem membuat sandi sementara acak yang ditampilkan sekali.
+                            </p>
                         </div>
 
                         <button type="submit" class="w-full py-2.5 px-4 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold text-xs shadow-xs transition flex items-center justify-center gap-2 cursor-pointer">
@@ -487,11 +497,11 @@
 
                     <select id="userRoleFilter" onchange="filterUsersTable()" class="text-xs font-semibold rounded-xl border border-[#E2E8F0] py-2 px-3 bg-[#F8FAFC] text-[#334155] focus:outline-none focus:border-[#2563EB] focus:bg-white transition">
                         <option value="">Peran: Semua</option>
-                        <option value="ADMIN">Administrator</option>
+                        <option value="ADMIN">Super Administrator</option>
                         <option value="KEPALA_DAERAH">Kepala Daerah</option>
-                        <option value="OPERATOR">Operator Verifikasi</option>
-                        <option value="PETUGAS">Pengawas Lapangan</option>
-                        <option value="PENGAWAS">Pengawas Lapangan</option>
+                        <option value="OPERATOR">Operator PUPR</option>
+                        <option value="PETUGAS">Pengawas Lapangan (Anggota Regu)</option>
+                        <option value="PENGAWAS">Pengawas Lapangan (Ketua Regu)</option>
                         <option value="DINAS">Kepala Dinas</option>
                         <option value="MONITORING">Monitoring</option>
                         <option value="WARGA">Warga Masyarakat</option>
@@ -2288,6 +2298,14 @@
                             </p>
                         </div>
 
+                        <div>
+                            <label class="block text-[11px] font-bold text-[#334155] mb-1">Kata Sandi Baru (opsional)</label>
+                            <input type="text" id="editUserPassword" name="password" autocomplete="new-password"
+                                placeholder="Kosongkan bila sandi tidak diubah"
+                                class="w-full text-xs rounded-xl border border-[#E2E8F0] px-3 py-2.5 bg-[#F8FAFC] focus:bg-white focus:ring-2 focus:ring-[#2563EB]/15 focus:border-[#2563EB] transition">
+                            <p class="text-[11px] text-[#64748B] mt-1">Minimal 8 karakter, memuat huruf dan angka. Sandi lama tidak dapat dilihat.</p>
+                        </div>
+
                     </div>
 
                     <div class="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100">
@@ -3061,7 +3079,8 @@
 
         const controlsEl = document.getElementById(controlsId);
         if (!controlsEl) return;
-        if (total === 0) {
+        // Satu halaman saja: tombol Sebelumnya/Berikutnya hanya jadi noise.
+        if (total === 0 || totalPages <= 1) {
             controlsEl.innerHTML = '';
             return;
         }
@@ -4013,6 +4032,8 @@
         document.getElementById('editUserName').value = user.name || '';
         document.getElementById('editUserEmail').value = user.email || '';
         document.getElementById('editUserPhone').value = user.phone || '';
+        const sandiEdit = document.getElementById('editUserPassword');
+        if (sandiEdit) sandiEdit.value = '';
         const wargaOpt = document.getElementById('editUserOptionWarga');
         if (wargaOpt) {
             if (user.role === 'WARGA') {

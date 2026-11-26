@@ -371,8 +371,11 @@ class WebSuperAdminController extends Controller
             'email'    => 'required|email|unique:users,email',
             'phone'    => 'nullable|string|max:20|unique:users,phone',
             'role'     => 'required|in:ADMIN,SUPERADMIN,KEPALA_DAERAH,BUPATI,OPERATOR,PETUGAS,PENGAWAS,DINAS,MONITORING,WARGA',
+            'password' => ['nullable', 'string', 'min:8', 'regex:/[A-Za-z]/', 'regex:/[0-9]/'],
         ], [
-            'phone.unique' => 'Nomor handphone ini sudah terdaftar pada akun pengguna lain.',
+            'phone.unique'  => 'Nomor handphone ini sudah terdaftar pada akun pengguna lain.',
+            'password.min'  => 'Kata sandi minimal 8 karakter.',
+            'password.regex'=> 'Kata sandi harus memuat huruf dan angka.',
         ]);
 
         // Aturan 1: Akun WARGA disembunyikan dan dilarang dibuat oleh Super Admin dari web
@@ -396,10 +399,11 @@ class WebSuperAdminController extends Controller
             }
         }
 
-        // Aturan 4: Zero Knowledge Password (No Password Impersonation)
-        // Super Admin tidak menetapkan sandi kustom; sistem membuat sandi sementara acak
-        // yang ditampilkan sekali dan wajib diganti saat login pertama.
-        $defaultPassword = Str::password(10, symbols: false);
+        // Sandi: bila Super Admin mengisi sendiri, itulah yang dipakai (tanpa wajib ganti).
+        // Bila dibiarkan kosong, sistem membuat sandi sementara acak yang ditampilkan sekali
+        // dan wajib diganti saat login pertama.
+        $sandiDitetapkan = trim((string) ($validated['password'] ?? '')) !== '';
+        $defaultPassword = $sandiDitetapkan ? $validated['password'] : Str::password(10, symbols: false);
 
         $user = User::create([
             'name'                 => $validated['name'],
@@ -407,7 +411,7 @@ class WebSuperAdminController extends Controller
             'phone'                => $validated['phone'] ?? null,
             'password'             => Hash::make($defaultPassword),
             'role'                 => $validated['role'],
-            'must_change_password' => true,
+            'must_change_password' => ! $sandiDitetapkan,
         ]);
 
         // Aturan 5: Kirim email pemberitahuan ke email pengguna jika ditambahkan sebagai PETUGAS atau OPERATOR
@@ -419,7 +423,11 @@ class WebSuperAdminController extends Controller
             }
         }
 
-        return back()->with('success', "Akun {$validated['name']} ({$validated['role']}) berhasil ditambahkan. Sandi sementara: {$defaultPassword} — catat dan berikan ke yang bersangkutan; wajib diganti saat login pertama.");
+        $pesan = $sandiDitetapkan
+            ? "Akun {$validated['name']} berhasil ditambahkan dengan sandi yang Anda tetapkan."
+            : "Akun {$validated['name']} berhasil ditambahkan. Sandi sementara: {$defaultPassword} — catat dan berikan ke yang bersangkutan; wajib diganti saat login pertama.";
+
+        return back()->with('success', $pesan);
     }
 
     public function updateUser(Request $request, int $id): RedirectResponse
@@ -431,8 +439,11 @@ class WebSuperAdminController extends Controller
             'email'    => 'required|email|unique:users,email,' . $user->id,
             'phone'    => 'nullable|string|max:20|unique:users,phone,' . $user->id,
             'role'     => 'nullable|string',
+            'password' => ['nullable', 'string', 'min:8', 'regex:/[A-Za-z]/', 'regex:/[0-9]/'],
         ], [
-            'phone.unique' => 'Nomor handphone ini sudah terdaftar pada akun pengguna lain.',
+            'phone.unique'   => 'Nomor handphone ini sudah terdaftar pada akun pengguna lain.',
+            'password.min'   => 'Kata sandi minimal 8 karakter.',
+            'password.regex' => 'Kata sandi harus memuat huruf dan angka.',
         ]);
 
         // Simpan data lama untuk komparasi jejak audit & notifikasi keamanan
@@ -480,8 +491,14 @@ class WebSuperAdminController extends Controller
         $user->email = $validated['email'];
         $user->phone = $newPhone;
 
-        // Sandi tidak diubah di sini: reset sandi hanya lewat tombol kunci pada daftar
-        // pengguna, supaya hanya ada satu jalur dan tidak ada perubahan tak sengaja.
+        // Sandi hanya berubah bila kolomnya diisi; kolom kosong berarti tidak diubah.
+        $sandiBaru = trim((string) ($validated['password'] ?? ''));
+
+        if ($sandiBaru !== '') {
+            $user->password = Hash::make($sandiBaru);
+            $user->must_change_password = false;
+            $changes['Kata Sandi'] = 'Diperbarui oleh Super Admin.';
+        }
 
         $user->save();
 

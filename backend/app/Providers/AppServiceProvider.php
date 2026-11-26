@@ -38,7 +38,8 @@ class AppServiceProvider extends ServiceProvider
      */
     private function configureRateLimiters(): void
     {
-        RateLimiter::for('login', fn (Request $request) => Limit::perMinute(5)->by($request->ip()));
+        // 5 percobaan/menit terlalu ketat untuk kantor yang berbagi satu IP.
+        RateLimiter::for('login', fn (Request $request) => Limit::perMinute(10)->by($request->ip()));
         RateLimiter::for('password-reset', fn (Request $request) => Limit::perMinute(5)->by($request->ip()));
         RateLimiter::for('api-auth', fn (Request $request) => Limit::perMinute(5)->by($request->ip()));
         RateLimiter::for('check-warga', fn (Request $request) => Limit::perMinute(30)->by($request->ip()));
