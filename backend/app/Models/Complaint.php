@@ -13,6 +13,9 @@ class Complaint extends Model
     use HasFactory;
 
     protected $fillable = [
+        'authority',
+        'referred_to',
+        'referred_at',
         'public_code',
         'user_id',
         'category_id',

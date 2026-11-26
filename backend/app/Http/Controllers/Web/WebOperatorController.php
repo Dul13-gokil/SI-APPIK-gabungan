@@ -256,11 +256,28 @@ class WebOperatorController extends Controller
             'deadline_days' => 'nullable|integer|min:1|max:30',
             'deadline_date' => 'nullable|date',
             'instruction'   => 'required|string',
+            'authority'     => 'nullable|in:KABUPATEN,PROVINSI,NASIONAL,DESA',
         ];
 
         $validated = $request->validate($rules);
 
         $complaint = Complaint::findOrFail($id);
+
+        // Ruas provinsi/nasional/desa bukan kewenangan kabupaten: teruskan, jangan ditugaskan.
+        $authority = strtoupper((string) ($validated['authority'] ?? 'KABUPATEN'));
+        if ($authority !== 'KABUPATEN') {
+            app(WorkflowService::class)->refer(
+                $complaint,
+                auth()->user(),
+                $authority,
+                $validated['instruction'],
+                $request->ip()
+            );
+
+            return redirect()->route('operator.dashboard', ['tab' => 'dispatched'])
+                ->with('success', "Laporan #{$complaint->public_code} diteruskan ke {$complaint->fresh()->referred_to}, bukan ditugaskan ke regu.");
+        }
+
         $oldStatus = $complaint->status;
         $newStatus = 'DISPATCHED';
 
@@ -295,8 +312,10 @@ class WebOperatorController extends Controller
             $request->ip()
         );
 
-        return redirect()->route('operator.dashboard', ['tab' => 'inprogress'])
-            ->with('success', "Laporan #{$complaint->public_code} berhasil diverifikasi dan ditugaskan dengan deadline {$deadline->diffForHumans()}!");
+        // Tugas yang baru ditugaskan tampil di tab "Ditugaskan"; dulu diarahkan ke
+        // "Dikerjakan" sehingga daftarnya kosong dan operator mengira gagal.
+        return redirect()->route('operator.dashboard', ['tab' => 'dispatched'])
+            ->with('success', "Laporan #{$complaint->public_code} berhasil ditugaskan dengan deadline {$deadline->diffForHumans()}.");
     }
 
     /**

@@ -68,8 +68,6 @@ services:
       # GeoJSON jaringan jalan dibagi dengan container scheduler agar hasil impor
       # bulanan langsung terbaca oleh aplikasi.
       - geojson-data:/var/www/html/public/geojson
-      # Opsional: impor data demo dari dump saat volume database masih kosong.
-      - ./si-appik.sql:/var/www/html/database/si-appik.sql:ro
     ports:
       # APP_BIND=127.0.0.1 saat di belakang reverse proxy (VPS), 0.0.0.0 untuk akses LAN.
       - "${APP_BIND:-0.0.0.0}:${APP_PORT:-8080}:80"

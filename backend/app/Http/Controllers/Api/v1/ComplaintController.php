@@ -368,7 +368,10 @@ class ComplaintController extends Controller
             $aiCategory = (int) $aiResult['category_id'];
             // PJU (kategori 2) sudah tidak ada; semua fasilitas non-jalan masuk kategori 3.
             $validated['category_id'] = in_array($aiCategory, [1, 3], true) ? $aiCategory : 3;
-            $damageType = ((int) ($aiResult['severity_level'] ?? 1) >= 3) ? 'major' : 'minor';
+            // Bentuk laporan (titik vs ruas panjang) tetap mengikuti pilihan warga:
+            // itu soal geometri laporan, bukan tingkat keparahan. Tingkat keparahan
+            // hanya memengaruhi prioritas, bukan mengubah satu titik menjadi ruas
+            // panjang yang tidak punya titik akhir.
         }
 
         // Verifikasi manual dihapus (keputusan rapat): AI yang memutuskan status awal.
@@ -936,7 +939,7 @@ class ComplaintController extends Controller
         $road = '';
         $village = $nearestRegion?->village ?? 'Kel. Lasusua';
         $district = $nearestRegion?->district ?? 'Kecamatan Lasusua';
-        $regency = 'Kabupaten';
+        $regency = 'Kabupaten Kolaka Utara';
 
         try {
             $response = \Illuminate\Support\Facades\Http::withHeaders([
@@ -978,7 +981,7 @@ class ComplaintController extends Controller
         }
         $parts[] = "Desa/Kel. {$cleanVillage}";
         $parts[] = "Kec. {$cleanDistrict}";
-        $parts[] = "Kabupaten";
+        $parts[] = "Kabupaten Kolaka Utara";
 
         $formatted = implode(', ', $parts);
         $isWithinKolaka = ($lat >= -3.80 && $lat <= -2.50 && $lon >= 120.70 && $lon <= 121.50);
@@ -988,7 +991,7 @@ class ComplaintController extends Controller
             'road'                  => $road,
             'village'               => $cleanVillage,
             'district'              => "Kecamatan {$cleanDistrict}",
-            'regency'               => 'Kabupaten',
+            'regency'               => $regency,
             'formatted_address'     => $formatted,
             'display_name'          => $formatted,
             'is_within_kolaka_utara'=> $isWithinKolaka,
@@ -1019,7 +1022,7 @@ class ComplaintController extends Controller
 
         $parts[] = "Desa/Kel. " . trim($villageName);
         $parts[] = "Kec. " . trim($districtName);
-        $parts[] = "Kabupaten";
+        $parts[] = "Kabupaten Kolaka Utara";
 
         return implode(', ', $parts);
     }

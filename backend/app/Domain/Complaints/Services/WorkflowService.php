@@ -345,6 +345,60 @@ class WorkflowService
     }
 
     /**
+     * Teruskan laporan ke dinas berwenang. Dipakai untuk ruas yang bukan kewenangan
+     * kabupaten (provinsi, nasional, desa) supaya laporan warga tidak berhenti di
+     * antrean regu yang tidak berhak mengerjakannya.
+     */
+    public function refer(Complaint $complaint, ?User $actor, string $authority, string $reason, ?string $ip = null): void
+    {
+        $targets = [
+            'PROVINSI' => 'Dinas Bina Marga & SDA Provinsi Sulawesi Tenggara',
+            'NASIONAL' => 'BPJN Sulawesi Tenggara',
+            'DESA'     => 'Pemerintah Desa setempat',
+        ];
+        $target = $targets[$authority] ?? 'Dinas terkait';
+
+        $oldStatus = $complaint->status;
+        $newStatus = 'REFERRED';
+
+        ComplaintStateMachine::validateTransition($oldStatus, $newStatus);
+
+        DB::transaction(function () use ($complaint, $actor, $authority, $target, $reason, $oldStatus, $newStatus, $ip) {
+            $complaint->update([
+                'status'      => $newStatus,
+                'authority'   => $authority,
+                'referred_to' => $target,
+                'referred_at' => now(),
+            ]);
+
+            ComplaintStatusHistory::create([
+                'complaint_id' => $complaint->id,
+                'from_status'  => $oldStatus,
+                'to_status'    => $newStatus,
+                'note'         => "Diteruskan ke {$target}. Catatan: {$reason}",
+                'changed_by'   => $actor?->id,
+            ]);
+
+            AuditLog::create([
+                'actor_id'    => $actor?->id,
+                'action'      => 'REFERRED',
+                'entity_type' => Complaint::class,
+                'entity_id'   => $complaint->id,
+                'before_json' => ['status' => $oldStatus],
+                'after_json'  => ['status' => $newStatus, 'referred_to' => $target, 'reason' => $reason],
+                'ip'          => $ip,
+            ]);
+
+            $this->notifyOwner(
+                $complaint,
+                'COMPLAINT_REFERRED',
+                'Laporan Diteruskan ke Dinas Berwenang',
+                "Laporan #{$complaint->public_code} \"{$complaint->title}\" bukan kewenangan Pemerintah Kabupaten, sehingga diteruskan ke {$target}. Terima kasih sudah melapor."
+            );
+        });
+    }
+
+    /**
      * Operator memvalidasi hasil kerja lapangan: selesai atau minta revisi.
      */
     public function decideCompletion(Complaint $complaint, ?User $actor, string $decision, ?string $notes = null, ?string $ip = null): void

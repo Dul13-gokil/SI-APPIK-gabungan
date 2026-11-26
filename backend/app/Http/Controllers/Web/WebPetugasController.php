@@ -86,12 +86,20 @@ class WebPetugasController extends Controller
         $categories = \App\Models\Category::all();
 
         // 6 KPI Summary Metrics (Persis Gambar 5 dengan DITUGASKAN)
-        $total = Complaint::count();
-        $completedCount = Complaint::whereIn('status', ['COMPLETED', 'CLOSED'])->count();
-        $dispatchedCount = Complaint::where('status', 'DISPATCHED')->count();
-        $inProgressCount = Complaint::whereIn('status', ['IN_PROGRESS', 'REVISION_REQUIRED'])->count();
-        $pendingCount = Complaint::whereIn('status', ['SUBMITTED', 'VERIFICATION'])->count();
-        $waitingVerificationCount = Complaint::where('status', 'WAITING_VERIFICATION')->count();
+        // Angka ringkasan hanya menghitung tugas milik regu/pengguna ini. Dulu memakai
+        // Complaint::count() sehingga pengawas lapangan melihat total aduan seluruh
+        // kabupaten, termasuk laporan regu lain yang bukan tugasnya.
+        $scopeIds = $user->hasFullAdminAccess() ? null : ($assignedComplaintIds ?? collect());
+        $scoped = fn () => $scopeIds === null
+            ? Complaint::query()
+            : Complaint::whereIn('id', $scopeIds);
+
+        $total = $scoped()->count();
+        $completedCount = $scoped()->whereIn('status', ['COMPLETED', 'CLOSED'])->count();
+        $dispatchedCount = $scoped()->whereIn('status', ['VERIFIED', 'DISPATCHED'])->count();
+        $inProgressCount = $scoped()->whereIn('status', ['IN_PROGRESS', 'REVISION_REQUIRED'])->count();
+        $pendingCount = 0; // verifikasi manual dihapus; tak ada antrean milik regu
+        $waitingVerificationCount = $scoped()->where('status', 'WAITING_VERIFICATION')->count();
         $completionRate = $total > 0 ? round(($completedCount / $total) * 100, 1) : 0;
 
         $summary = [

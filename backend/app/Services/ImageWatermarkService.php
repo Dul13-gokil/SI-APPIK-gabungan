@@ -52,7 +52,7 @@ class ImageWatermarkService
             $timestamp = now('Asia/Makassar')->format('d/m/Y H:i') . ' WITA';
             $gpsText = ($latitude !== null && $longitude !== null)
                 ? sprintf('GPS: %.5f, %.5f', $latitude, $longitude)
-                : 'Kabupaten';
+                : 'Kabupaten Kolaka Utara';
 
             $line1 = "SI-APPIK KABUPATEN  |  {$code}  |  {$timestamp}";
             $line2 = $officerName ? "{$gpsText}  |  Petugas: {$officerName}" : $gpsText;

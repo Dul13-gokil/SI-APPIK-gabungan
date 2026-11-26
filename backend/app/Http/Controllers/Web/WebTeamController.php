@@ -49,6 +49,9 @@ class WebTeamController extends Controller
             'phone'    => $validated['phone'] ?? null,
             'password' => Hash::make($sandi),
             'role'     => 'PETUGAS',
+            // Pesan ke operator menjanjikan sandi wajib diganti saat login pertama;
+            // tandai di sini supaya janji itu benar-benar dijalankan sistem.
+            'must_change_password' => true,
         ]);
 
         $peran = $validated['role'] ?? 'MEMBER';

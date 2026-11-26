@@ -42,7 +42,7 @@
                         </h3>
                     </div>
                     <p class="text-xs text-blue-100 mt-1 flex items-center gap-2 flex-wrap">
-                        <span>Wilayah: <strong>{{ $myTeam->coverage_area ?? 'Kecamatan Terkait' }}</strong></span>
+                        <span>Wilayah: <strong>{{ $myTeam->district ?? $myTeam->coverage_area ?? 'Wilayah belum diatur' }}</strong></span>
                         <span>•</span>
                         <span>{{ $myTeam->members->count() }} Personil</span>
                         <span>•</span>
@@ -1891,6 +1891,13 @@
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-[#334155] mb-1.5">Catatan Teknis <span class="text-red-500">*</span></label>
+                    {{-- Pilihan cepat agar pengawas lapangan tidak perlu mengetik di lapangan. --}}
+                    <div class="flex flex-wrap gap-1.5 mb-2">
+                        @foreach (['Sudah ditambal aspal', 'Sudah diganti baru', 'Sudah dibersihkan', 'Perbaikan sementara'] as $pilihanCatatan)
+                            <button type="button" onclick="document.querySelector('textarea[name=note]').value = @js($pilihanCatatan)"
+                                class="px-2.5 py-1.5 rounded-lg border border-[#CBD5E1] bg-[#F8FAFC] hover:bg-[#EFF6FF] hover:border-[#2563EB] text-[11px] font-semibold text-[#334155] transition">{{ $pilihanCatatan }}</button>
+                        @endforeach
+                    </div>
                     <textarea name="note" rows="3" required placeholder="Contoh: Penambalan aspal selesai dan rata sesuai standar." class="w-full text-xs rounded-xl border border-[#CBD5E1] py-2.5 px-3 bg-white text-[#0F172A] focus:ring-2 focus:ring-[#2563EB] focus:border-[#2563EB] leading-relaxed"></textarea>
                 </div>
                 <input type="hidden" name="latitude" id="finishLatitude">

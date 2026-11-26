@@ -34,6 +34,7 @@
                         'IN_PROGRESS' => 'DIKERJAKAN',
                         'DISPATCHED' => 'DITUGASKAN',
                         'VERIFIED' => 'SIAP DITUGASKAN',
+                        'REFERRED' => 'DITERUSKAN',
                         'REJECTED' => 'DITOLAK',
                         'CANCELLED' => 'DIBATALKAN',
                         'REVISION_REQUIRED' => 'PERLU REVISI',

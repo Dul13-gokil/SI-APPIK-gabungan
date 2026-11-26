@@ -343,7 +343,7 @@ class WebSuperAdminController extends Controller
 
         \App\Models\Region::create([
             'province'  => 'Sulawesi Tenggara',
-            'regency'   => 'Kabupaten',
+            'regency'   => 'Kabupaten Kolaka Utara',
             'district'  => $validated['district'],
             'village'   => $validated['village'],
             'latitude'  => $validated['latitude'],

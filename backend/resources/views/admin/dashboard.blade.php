@@ -136,86 +136,6 @@
         </div>
     </div>
 
-    <!-- 3. MENU FITUR ADMIN (DIPINDAHKAN KE SIDEBAR ACCORDION) -->
-    <div class="hidden grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-2 sm:gap-2.5 w-full">
-        <!-- 1. Tab Pengaturan Akun -->
-        <button type="button" onclick="switchAdminTab('users-management')" id="tabBtn-users-management"
-            class="admin-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'users-management' ? 'bg-[#2563EB] text-white border-[#2563EB]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
-            <i data-lucide="user-plus" class="w-4 h-4 shrink-0 text-current"></i>
-            <div class="min-w-0 flex-1">
-                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Kelola Akun</span>
-            </div>
-        </button>
-
-        <!-- 2. Tab Daftar Pengguna -->
-        <button type="button" onclick="switchAdminTab('users-list')" id="tabBtn-users-list"
-            class="admin-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'users-list' ? 'bg-[#2563EB] text-white border-[#2563EB]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
-            <i data-lucide="users" class="w-4 h-4 shrink-0 text-current"></i>
-            <div class="min-w-0 flex-1">
-                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Pengguna</span>
-            </div>
-            <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'users-list' ? 'bg-white text-[#2563EB]' : 'bg-blue-50 text-[#2563EB] border border-blue-200' }}">
-                {{ $users->count() }}
-            </span>
-        </button>
-
-        <!-- 3. Tab Daftar Aduan -->
-        <button type="button" onclick="switchAdminTab('complaints-list')" id="tabBtn-complaints-list"
-            class="admin-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'complaints-list' ? 'bg-[#2563EB] text-white border-[#2563EB]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
-            <i data-lucide="layers" class="w-4 h-4 shrink-0 text-current"></i>
-            <div class="min-w-0 flex-1">
-                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Daftar Aduan</span>
-            </div>
-            <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'complaints-list' ? 'bg-white text-[#2563EB]' : 'bg-blue-50 text-[#2563EB] border border-blue-200' }}">
-                {{ $complaints->count() }}
-            </span>
-        </button>
-
-        <!-- 4. Tab Peta Wilayah -->
-        <button type="button" onclick="switchAdminTab('regions-gis')" id="tabBtn-regions-gis"
-            class="admin-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'regions-gis' ? 'bg-[#2563EB] text-white border-[#2563EB]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
-            <i data-lucide="map" class="w-4 h-4 shrink-0 text-current"></i>
-            <div class="min-w-0 flex-1">
-                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Peta Wilayah</span>
-            </div>
-            <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'regions-gis' ? 'bg-white text-[#2563EB]' : 'bg-blue-50 text-[#2563EB] border border-blue-200' }}">
-                {{ count($districtStats ?? $regions) }}
-            </span>
-        </button>
-
-        <!-- 5. Tab Regu & Tugas -->
-        <button type="button" onclick="switchAdminTab('teams-management')" id="tabBtn-teams-management"
-            class="admin-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'teams-management' ? 'bg-[#2563EB] text-white border-[#2563EB]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
-            <i data-lucide="users-2" class="w-4 h-4 shrink-0 text-current"></i>
-            <div class="min-w-0 flex-1">
-                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Regu &amp; Tugas</span>
-            </div>
-            <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'teams-management' ? 'bg-white text-[#2563EB]' : 'bg-blue-50 text-[#2563EB] border border-blue-200' }}">
-                {{ $teams->count() }}
-            </span>
-        </button>
-
-        <!-- 6. Tab Arsip Ditolak (Khusus Super Admin) -->
-        <button type="button" onclick="switchAdminTab('admin-rejected')" id="tabBtn-admin-rejected"
-            class="admin-tab-btn text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'admin-rejected' ? 'bg-[#2563EB] text-white border-[#2563EB]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
-            <i data-lucide="archive-x" class="w-4 h-4 shrink-0 text-current"></i>
-            <div class="min-w-0 flex-1">
-                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Arsip Ditolak</span>
-            </div>
-            <span class="tab-badge px-1.5 py-0.5 rounded-md text-[10px] font-bold shrink-0 {{ $activeTab === 'admin-rejected' ? 'bg-white text-[#2563EB]' : 'bg-blue-50 text-[#2563EB] border border-blue-200' }}">
-                {{ ($adminRejectedComplaints ?? collect())->count() }}
-            </span>
-        </button>
-
-        <!-- 7. Tab Laporan Kinerja -->
-        <button type="button" onclick="switchAdminTab('reporting')" id="tabBtn-reporting"
-            class="admin-tab-btn col-span-2 sm:col-span-1 text-left p-2.5 sm:p-3 rounded-xl border transition flex items-center gap-2 sm:gap-2.5 cursor-pointer {{ $activeTab === 'reporting' ? 'bg-[#2563EB] text-white border-[#2563EB]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:bg-[#F8FAFC]' }}">
-            <i data-lucide="bar-chart-3" class="w-4 h-4 shrink-0 text-current"></i>
-            <div class="min-w-0 flex-1">
-                <span class="text-[11px] sm:text-xs font-bold block leading-tight">Laporan Kinerja</span>
-            </div>
-        </button>
-    </div>
 
     <!-- Tab Panel 0: Dashboard Ringkasan Super Admin (Clean & Ringkas) -->
     @php
@@ -991,7 +911,8 @@
                             'WAITING_VERIFICATION' => 'DIPROSES',
                             'IN_PROGRESS' => 'DIKERJAKAN',
                             'DISPATCHED' => 'DITUGASKAN',
-                            'REJECTED' => 'DITOLAK',
+                            'REFERRED' => 'DITERUSKAN',
+                        'REJECTED' => 'DITOLAK',
                             'CANCELLED' => 'DIBATALKAN',
                             'REVISION_REQUIRED' => 'PERLU REVISI',
                             default => 'VERIFIKASI',

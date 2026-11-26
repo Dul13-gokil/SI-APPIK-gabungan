@@ -15,15 +15,16 @@ class ComplaintStateMachine
      */
     protected static array $allowedTransitions = [
         'DRAFT' => ['SUBMITTED'],
-        'SUBMITTED' => ['VERIFICATION', 'VERIFIED', 'DISPATCHED', 'REJECTED', 'CANCELLED'],
-        'VERIFICATION' => ['VERIFIED', 'DISPATCHED', 'REJECTED'],
-        'VERIFIED' => ['DISPATCHED', 'IN_PROGRESS', 'REJECTED'],
+        'SUBMITTED' => ['VERIFICATION', 'VERIFIED', 'DISPATCHED', 'REJECTED', 'REFERRED', 'CANCELLED'],
+        'VERIFICATION' => ['VERIFIED', 'DISPATCHED', 'REJECTED', 'REFERRED'],
+        'VERIFIED' => ['DISPATCHED', 'IN_PROGRESS', 'REJECTED', 'REFERRED'],
         'DISPATCHED' => ['IN_PROGRESS', 'WAITING_VERIFICATION', 'REJECTED'],
         'IN_PROGRESS' => ['WAITING_VERIFICATION'],
         'WAITING_VERIFICATION' => ['COMPLETED', 'REVISION_REQUIRED'],
         'REVISION_REQUIRED' => ['IN_PROGRESS', 'WAITING_VERIFICATION'],
         'COMPLETED' => ['CLOSED'],
         'REJECTED' => ['SUBMITTED'],
+        'REFERRED' => [],
         'CANCELLED' => [],
         'CLOSED' => [],
     ];

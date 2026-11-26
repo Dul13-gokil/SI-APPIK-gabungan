@@ -57,7 +57,7 @@ class PerformanceMetricsService
                 'team_id'            => $team->id,
                 'team_name'          => $team->name,
                 'team_code'          => $team->code ?? 'REGU',
-                'district'           => $team->district ?? 'Kabupaten',
+                'district'           => $team->district ?? 'Kabupaten Kolaka Utara',
                 'leader_name'        => $team->leader?->name ?? '-',
                 'members_count'      => $team->members->count(),
                 'total_tasks'        => $total,

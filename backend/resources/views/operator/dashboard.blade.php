@@ -1157,6 +1157,19 @@
             <form id="dispatchForm" method="POST" action="" class="space-y-3.5">
                 @csrf
                 
+                <!-- 0. Kewenangan Ruas Jalan -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Kewenangan Ruas Jalan</label>
+                    <select id="dispatchAuthoritySelect" name="authority" onchange="updateDispatchActionLabel()"
+                        class="w-full text-xs rounded-xl border border-slate-200 py-2 px-3 bg-white text-slate-800 font-semibold focus:ring-2 focus:ring-[#2563EB] focus:border-[#2563EB]">
+                        <option value="KABUPATEN" selected>Jalan Kabupaten — ditangani PUPR Kabupaten</option>
+                        <option value="PROVINSI">Jalan Provinsi — teruskan ke Dinas Bina Marga Provinsi</option>
+                        <option value="NASIONAL">Jalan Nasional — teruskan ke BPJN Sulawesi Tenggara</option>
+                        <option value="DESA">Jalan Desa — teruskan ke Pemerintah Desa</option>
+                    </select>
+                    <p class="text-[11px] text-slate-500 mt-1">Bila bukan kewenangan kabupaten, laporan diteruskan dan tidak masuk antrean regu.</p>
+                </div>
+
                 <!-- 1. Dinas Teknis -->
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">
@@ -1266,7 +1279,7 @@
                         <button type="button" onclick="closeDispatchModal()" class="py-2.5 px-3 sm:px-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer">
                             Tutup
                         </button>
-                        <button type="submit" 
+                        <button type="submit" id="dispatchSubmitBtn"
                             class="py-2.5 px-3.5 sm:px-5 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] active:scale-[0.99] text-white font-bold text-xs shadow-sm transition flex items-center gap-1.5 cursor-pointer">
                             <i data-lucide="check-circle" class="w-4 h-4"></i>
                             <span class="sm:hidden">Verifikasi</span>
@@ -1495,7 +1508,12 @@
 <script>
     // Data seluruh aduan dari semua tab agar modal detail berfungsi instan di mana pun
     @php
-        $allComplaints = $pendingVerification->concat($dispatched)->concat($inProgress)->concat($waitingValidation)->concat($completed)->unique('id');
+        // Sertakan aduan yang siap ditugaskan; tanpa ini modal Tugaskan/Detail di tab
+        // pertama tidak menemukan datanya dan tombolnya tampak mati.
+        $allComplaints = $pendingVerification
+            ->concat($readyToDispatch ?? collect())
+            ->concat($dispatched)->concat($inProgress)->concat($waitingValidation)->concat($completed)
+            ->unique('id');
         $operatorComplaintsJson = $allComplaints->map(function($c) {
             $citizenPhotos = $c->photos->filter(function($p) {
                 return $p->type !== 'resolution_after';
@@ -2319,7 +2337,23 @@
     // ==========================================
     let currentDispatchComplaintId = null;
 
+    function updateDispatchActionLabel() {
+        const sel = document.getElementById('dispatchAuthoritySelect');
+        const btn = document.getElementById('dispatchSubmitBtn');
+        if (!sel || !btn) return;
+        const teruskan = sel.value !== 'KABUPATEN';
+        btn.querySelectorAll('span').forEach(sp => {
+            sp.innerText = teruskan ? 'Teruskan' : (sp.classList.contains('sm:hidden') ? 'Verifikasi' : 'Konfirmasi & Verifikasi');
+        });
+        btn.classList.toggle('bg-amber-600', teruskan);
+        btn.classList.toggle('hover:bg-amber-700', teruskan);
+        btn.classList.toggle('bg-[#2563EB]', !teruskan);
+        btn.classList.toggle('hover:bg-[#1D4ED8]', !teruskan);
+    }
+
     function openDispatchModal(id) {
+        const authSel = document.getElementById('dispatchAuthoritySelect');
+        if (authSel) { authSel.value = 'KABUPATEN'; updateDispatchActionLabel(); }
         const item = operatorComplaints.find(c => c.id === id);
         if (!item) return;
 

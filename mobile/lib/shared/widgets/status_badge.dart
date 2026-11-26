@@ -25,6 +25,8 @@ class StatusBadge extends StatelessWidget {
         return AppColors.statusCompleted;
       case 'REJECTED':
         return AppColors.statusRejected;
+      case 'REFERRED':
+        return AppColors.statusDispatched;
       case 'CANCELLED':
         return AppColors.textSecondary;
       case 'REVISION_REQUIRED':
@@ -48,7 +50,8 @@ class StatusBadge extends StatelessWidget {
       case 'IN_PROGRESS':
         return 'Dikerjakan';
       case 'WAITING_VERIFICATION':
-        return 'Validasi';
+        // Validasi manual sudah dihapus; status ini hanya menunggu penilaian AI.
+        return 'Pengecekan Akhir';
       case 'REVISION_REQUIRED':
         return 'Perlu Revisi';
       case 'COMPLETED':
@@ -57,6 +60,8 @@ class StatusBadge extends StatelessWidget {
         return 'Ditutup';
       case 'REJECTED':
         return 'Ditolak';
+      case 'REFERRED':
+        return 'Diteruskan';
       case 'CANCELLED':
         return 'Dibatalkan';
       default:
