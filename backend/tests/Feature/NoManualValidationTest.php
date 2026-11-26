@@ -65,4 +65,25 @@ class NoManualValidationTest extends TestCase
             $this->assertStringNotContainsString('value="WAITING_VERIFICATION"', $html);
         }
     }
+
+    /**
+     * Kata "validasi" tidak boleh muncul lagi di halaman mana pun yang dirender,
+     * karena validasi hasil kerja kini sepenuhnya oleh AI.
+     */
+    public function test_kata_validasi_tidak_muncul_di_halaman(): void
+    {
+        $sa = $this->user('SUPERADMIN', 'sa.kata@example.test');
+
+        $halaman = ['/admin', '/admin?tab=reporting', '/operator', '/bupati', '/petugas', '/'];
+
+        foreach ($halaman as $url) {
+            $html = $this->actingAs($sa)->get($url)->assertOk()->getContent();
+
+            $this->assertSame(
+                0,
+                preg_match_all('/validasi/i', $html),
+                "{$url} masih memuat kata 'validasi'."
+            );
+        }
+    }
 }
