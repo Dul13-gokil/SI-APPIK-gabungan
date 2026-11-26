@@ -1,4 +1,7 @@
 # =====================================================================
+
+# Skrip ini ada di scripts/; akar repo satu tingkat di atasnya.
+$repoRoot = Split-Path -Parent $PSScriptRoot
 # connect-hp.ps1 - Otomatis Deteksi IP Tailscale HP & Hubungkan ADB
 # =====================================================================
 param(
@@ -115,7 +118,7 @@ if ($devicesOutput -match "$escapedTargetHost.*device\b") {
 
     if ($run) {
         Write-Host "Menjalankan aplikasi Flutter pada perangkat: $targetDevice..." -ForegroundColor Cyan
-        Set-Location (Join-Path $PSScriptRoot "mobile")
+        Set-Location (Join-Path $repoRoot "mobile")
         flutter run -d $targetDevice
     } else {
         Write-Host "Aplikasi Flutter kini siap dijalankan dengan: flutter run" -ForegroundColor Cyan
@@ -137,4 +140,3 @@ if ($devicesOutput -match "$escapedTargetHost.*device\b") {
     Write-Host "Daftar Perangkat Saat Ini:" -ForegroundColor Yellow
     adb devices -l
 }
-

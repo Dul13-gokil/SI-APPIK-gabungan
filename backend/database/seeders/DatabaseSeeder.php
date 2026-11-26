@@ -47,60 +47,14 @@ class DatabaseSeeder extends Seeder
         }
         $region = $firstRegion;
 
-        // 2. Initial Users per Role (SAP Section 5)
-        User::create([
-            'name' => 'Super Administrator',
-            'email' => 'admin@kabupaten.go.id',
-            'phone' => '081100000001',
-            'password' => Hash::make('Admin123!'),
-            'role' => 'ADMIN',
-            'region_id' => $region->id,
-        ]);
-
-        User::create([
-            'name' => 'Kepala Daerah Kabupaten',
-            'email' => 'bupati@kabupaten.go.id',
-            'phone' => '081100000002',
-            'password' => Hash::make('Bupati123!'),
-            'role' => 'KEPALA_DAERAH',
-            'region_id' => $region->id,
-        ]);
-
-        User::create([
-            'name' => 'Operator Verifikasi',
-            'email' => 'operator@kabupaten.go.id',
-            'phone' => '081100000003',
-            'password' => Hash::make('Operator123!'),
-            'role' => 'OPERATOR',
-            'region_id' => $region->id,
-        ]);
-
-        User::create([
-            'name' => 'Petugas Lapangan PUPR',
-            'email' => 'petugas@kabupaten.go.id',
-            'phone' => '081100000004',
-            'password' => Hash::make('Petugas123!'),
-            'role' => 'PETUGAS',
-            'region_id' => $region->id,
-        ]);
-
-        User::create([
-            'name' => 'Warga Masyarakat (Budi)',
-            'email' => 'warga@example.com',
-            'phone' => '081234567890',
-            'password' => Hash::make('Warga123!'),
-            'role' => 'WARGA',
-            'region_id' => $region->id,
-        ]);
-
-        // 3. Master Department (Hanya Dinas PUPR)
+        // 2. Master Department (Hanya Dinas PUPR)
         $deptPupr = Department::create([
             'name' => 'Dinas Pekerjaan Umum dan Penataan Ruang (PUPR)',
             'code' => 'PUPR',
             'description' => 'Penanganan jalan, jembatan, penerangan jalan umum, dan fasilitas umum.',
         ]);
 
-        // 4. Master Categories with Default Severity & AI Label (Seluruhnya di bawah naungan Dinas PUPR)
+        // 3. Master Categories with Default Severity & AI Label (Seluruhnya di bawah naungan Dinas PUPR)
         Category::create([
             'id' => 1,
             'name' => 'Jalan & Jembatan',

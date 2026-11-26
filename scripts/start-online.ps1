@@ -4,6 +4,9 @@
 
 $ErrorActionPreference = "Continue"
 
+# Skrip ini ada di scripts/; akar repo satu tingkat di atasnya.
+$repoRoot = Split-Path -Parent $PSScriptRoot
+
 Write-Host "==========================================================" -ForegroundColor Cyan
 Write-Host "   SI-APPIK - TAILSCALE FUNNEL (DOMAIN PERMANEN RESMI)    " -ForegroundColor Cyan
 Write-Host "==========================================================" -ForegroundColor Cyan
@@ -15,7 +18,7 @@ $funnelUrl = "https://dul-1378.tail09bd7a.ts.net/"
 $port8000 = Get-NetTCPConnection -LocalPort 8000 -State Listen -ErrorAction SilentlyContinue
 if (-not $port8000) {
     Write-Host "[1/3] Menjalankan Laravel Backend & Database PostgreSQL..." -ForegroundColor Yellow
-    Start-Process -FilePath "php" -ArgumentList "backend/artisan serve --host=127.0.0.1 --port=8000" -WindowStyle Hidden
+    Start-Process -FilePath "php" -ArgumentList "artisan serve --host=127.0.0.1 --port=8000" -WorkingDirectory (Join-Path $repoRoot "backend") -WindowStyle Hidden
     Start-Sleep -Seconds 2
 } else {
     Write-Host "[1/3] Laravel Backend sudah aktif di port 8000." -ForegroundColor Green
