@@ -39,10 +39,7 @@
             'title' => 'Arsip Resmi Pengaduan & Rekam Jejak Pelayanan',
             'subtitle' => 'Daftar laporan berstatus Selesai, Dibatalkan Warga, dan Ditolak oleh Operator.',
         ],
-        'admin-rejected' => [
-            'title' => 'Arsip Pengaduan Ditolak (Khusus Super Admin)',
-            'subtitle' => 'Daftar laporan yang ditolak langsung oleh Super Admin beserta alasan resmi penolakan.',
-        ],
+
     ];
     $currentMeta = $tabMeta[$activeTab] ?? $tabMeta['overview'];
 @endphp
@@ -310,10 +307,6 @@
                         <li class="flex items-center justify-between">
                             <span>Cakupan Wilayah</span>
                             <span class="font-semibold text-[#0F172A]">{{ $regions->count() }} Kecamatan</span>
-                        </li>
-                        <li class="flex items-center justify-between">
-                            <span>Arsip Ditolak Admin</span>
-                            <span class="font-semibold text-[#0F172A]">{{ $adminRejectedComplaints->count() }} laporan</span>
                         </li>
                     </ul>
                 </div>
@@ -1931,158 +1924,6 @@
     </script>
 
     <!-- Tab Panel 7: Arsip Pengaduan Ditolak oleh Super Admin (Seragam Daftar Aduan & Daftar Pengguna) -->
-    <div id="tabPanel-admin-rejected" class="admin-tab-panel {{ $activeTab === 'admin-rejected' ? '' : 'hidden' }}">
-        <div class="card-white rounded-2xl p-5 sm:p-6 bg-white border border-[#E2E8F0] shadow-xs space-y-4">
-            <!-- Header & Search Toolbar -->
-            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
-                <div class="flex items-center gap-2.5 shrink-0">
-                    <div class="w-9 h-9 rounded-xl bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE] flex items-center justify-center shrink-0">
-                        <i data-lucide="archive-x" class="w-4 h-4"></i>
-                    </div>
-                    <h3 class="font-outfit font-bold text-sm sm:text-base text-[#0F172A] flex items-center gap-2 flex-wrap">
-                        <span>Arsip Pengaduan Ditolak Super Admin</span>
-                        <span class="px-2 py-0.5 rounded-full bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE] text-[11px] font-bold whitespace-nowrap">
-                            {{ $adminRejectedComplaints->count() }} Laporan
-                        </span>
-                    </h3>
-                </div>
-
-                <div class="flex flex-wrap items-center gap-2 flex-1 lg:justify-end">
-                    <div class="relative flex-1 min-w-[180px] sm:max-w-xs">
-                        <i data-lucide="search" class="w-4 h-4 text-[#64748B] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
-                        <input type="text" id="adminRejectedSearchInput" oninput="filterAdminRejected()"
-                            placeholder="Cari kode, judul, pelapor, atau alasan..."
-                            class="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] focus:bg-white focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/15 transition">
-                    </div>
-                    <div class="inline-flex items-center p-0.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] shrink-0 ml-auto" role="group" aria-label="Tata letak arsip ditolak">
-                        <button type="button" id="adminRejectedLayoutBtn-list" onclick="setAdminRejectedLayout('list')"
-                            class="px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition cursor-pointer bg-[#2563EB] text-white">
-                            <i data-lucide="list" class="w-3.5 h-3.5"></i>
-                            <span>Daftar</span>
-                        </button>
-                        <button type="button" id="adminRejectedLayoutBtn-grid" onclick="setAdminRejectedLayout('grid')"
-                            class="px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition cursor-pointer text-[#475569] hover:text-[#0F172A]">
-                            <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
-                            <span>Petak</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tata Letak Daftar (Wadah Bordered Seragam) -->
-            <div class="rounded-xl border border-[#E2E8F0] overflow-hidden">
-            <div id="adminRejectedListWrap">
-                <table class="block md:table w-full text-left text-xs text-slate-600">
-                    <thead class="hidden md:table-header-group bg-[#F8FAFC] text-[#64748B] font-bold border-b border-[#E2E8F0] uppercase tracking-wider text-[11px]">
-                        <tr>
-                            <th class="py-3 px-4 whitespace-nowrap">Kode</th>
-                            <th class="py-3 px-4">Judul &amp; Lokasi</th>
-                            <th class="py-3 px-4 whitespace-nowrap">Kategori</th>
-                            <th class="py-3 px-4">Pelapor</th>
-                            <th class="py-3 px-4">Alasan Penolakan Resmi</th>
-                            <th class="py-3 px-4 whitespace-nowrap">Waktu Ditolak</th>
-                        </tr>
-                    </thead>
-                    <tbody class="block md:table-row-group divide-y divide-slate-100 bg-white">
-                        @forelse(($adminRejectedComplaints ?? collect()) as $rc)
-                            @php
-                                $rcSearch = strtolower(($rc->public_code ?? '') . ' ' . ($rc->title ?? '') . ' ' . ($rc->address ?? '') . ' ' . ($rc->user?->name ?? $rc->citizen?->name ?? '') . ' ' . ($rc->admin_rejection_reason ?? ''));
-                            @endphp
-                            <tr class="admin-rejected-row block md:table-row p-3.5 md:p-0 hover:bg-slate-50/70 transition space-y-1.5 md:space-y-0"
-                                data-search="{{ $rcSearch }}">
-                                <td class="block md:table-cell md:py-3 md:px-4 font-mono font-bold text-[#0F172A] whitespace-nowrap align-top">
-                                    <div class="flex items-center justify-between md:block">
-                                        <span>#{{ $rc->public_code }}</span>
-                                        <span class="md:hidden px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 text-[10px] font-sans font-semibold border border-slate-200">
-                                            {{ $rc->category?->name ?? 'Infrastruktur' }}
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="block md:table-cell md:py-3 md:px-4 align-top">
-                                    <div class="font-bold text-slate-900">{{ $rc->title }}</div>
-                                    <div class="text-[11px] text-slate-500 mt-0.5">{{ $rc->address ?? '-' }}</div>
-                                </td>
-                                <td class="hidden md:table-cell md:py-3 md:px-4 whitespace-nowrap align-top">
-                                    <span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 text-[10.5px] font-semibold border border-slate-200">
-                                        {{ $rc->category?->name ?? 'Infrastruktur' }}
-                                    </span>
-                                </td>
-                                <td class="block md:table-cell md:py-3 md:px-4 align-top font-semibold text-slate-800 whitespace-nowrap">
-                                    <span class="md:hidden text-slate-400 font-normal">Pelapor: </span>{{ $rc->user?->name ?? $rc->citizen?->name ?? 'Warga' }}
-                                </td>
-                                <td class="block md:table-cell md:py-3 md:px-4 align-top text-slate-700">
-                                    <span class="md:hidden text-slate-400 font-medium block text-[10.5px]">Alasan Penolakan:</span>
-                                    <span>{{ $rc->admin_rejection_reason ?? '-' }}</span>
-                                </td>
-                                <td class="block md:table-cell md:py-3 md:px-4 whitespace-nowrap align-top text-[11px] text-slate-500">
-                                    <div>{{ $rc->admin_rejected_at ? \Illuminate\Support\Carbon::parse($rc->admin_rejected_at)->locale('id')->isoFormat('D MMM Y, HH:mm') : '-' }}</div>
-                                    <div class="text-[10px] text-slate-400">Oleh: {{ $rc->adminRejector?->name ?? 'Super Admin' }}</div>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="6" class="block md:table-cell py-10 text-center text-slate-400 text-xs">
-                                    Belum ada laporan yang ditolak oleh Super Admin.
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-            </div>
-
-            <!-- Tata Letak Petak (Grid Kartu) -->
-            <div id="adminRejectedGridWrap" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
-                @foreach(($adminRejectedComplaints ?? collect()) as $rc)
-                    @php
-                        $rcSearch = strtolower(($rc->public_code ?? '') . ' ' . ($rc->title ?? '') . ' ' . ($rc->address ?? '') . ' ' . ($rc->user?->name ?? $rc->citizen?->name ?? '') . ' ' . ($rc->admin_rejection_reason ?? ''));
-                    @endphp
-                    <div class="admin-rejected-grid-card rounded-xl border border-[#E2E8F0] bg-white p-4 space-y-2.5"
-                        data-search="{{ $rcSearch }}">
-                        <div class="flex items-center justify-between gap-2 flex-wrap">
-                            <span class="px-2 py-0.5 rounded-md bg-slate-100 text-[#0F172A] font-mono text-[11px] font-semibold border border-[#E2E8F0]">#{{ $rc->public_code }}</span>
-                            <span class="px-2 py-0.5 rounded-md text-[10.5px] font-semibold bg-slate-100 text-slate-700 border border-slate-200">
-                                {{ $rc->category?->name ?? 'Infrastruktur' }}
-                            </span>
-                        </div>
-                        <div>
-                            <h4 class="font-outfit font-bold text-sm text-slate-900">{{ $rc->title }}</h4>
-                            <p class="text-xs text-slate-500 mt-0.5">{{ $rc->address ?? '-' }}</p>
-                        </div>
-                        <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700">
-                            <span class="text-[10px] font-bold uppercase text-slate-500 block mb-0.5">Alasan Penolakan:</span>
-                            <span>{{ $rc->admin_rejection_reason ?? '-' }}</span>
-                        </div>
-                        <div class="flex items-center justify-between text-[11px] text-slate-500 pt-1 border-t border-slate-100">
-                            <span>Pelapor: <strong class="text-slate-800">{{ $rc->user?->name ?? $rc->citizen?->name ?? 'Warga' }}</strong></span>
-                            <span>{{ $rc->admin_rejected_at ? \Illuminate\Support\Carbon::parse($rc->admin_rejected_at)->locale('id')->isoFormat('D MMM Y') : '-' }}</span>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-
-            <div id="noAdminRejectedFoundMsg" class="hidden p-8 text-center text-[#475569] text-xs">
-                Tidak ada laporan ditolak yang sesuai dengan kata kunci pencarian.
-            </div>
-
-            <!-- Pagination Bar Arsip Ditolak -->
-            <div id="adminRejectedPaginationBar" class="px-4 py-3 bg-[#F8FAFC] border-t border-[#E2E8F0] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
-                <div class="flex flex-wrap items-center gap-3 text-[#475569]">
-                    <div class="flex items-center gap-2">
-                        <span class="font-medium">Tampilkan:</span>
-                        <select id="adminRejectedPageSizeSelect" onchange="changeAdminRejectedPageSize(this.value)" aria-label="Jumlah laporan ditolak per halaman"
-                            class="text-xs font-semibold rounded-lg border border-[#E2E8F0] bg-white text-[#0F172A] px-2.5 py-1.5 focus:outline-none focus:border-[#2563EB] cursor-pointer">
-                            <option value="5">5 laporan</option>
-                            <option value="10" selected>10 laporan</option>
-                            <option value="50">50 laporan</option>
-                        </select>
-                    </div>
-                    <span id="adminRejectedPageInfo" class="font-medium"><span class="hidden sm:inline">Menampilkan </span>0–0 dari 0 laporan</span>
-                </div>
-                <div id="adminRejectedPageControls" class="flex items-center gap-1.5 flex-wrap"></div>
-            </div>
-        </div>
-    </div>
 
 @push('modals')
     <!-- MODAL TOLAK LAPORAN RESMI (PENGGANTI HARD DELETE — WAJIB ALASAN & PERNYATAAN) -->
@@ -2890,10 +2731,6 @@
             title: 'Arsip Resmi Pengaduan & Rekam Jejak Pelayanan',
             subtitle: 'Daftar laporan berstatus Selesai, Dibatalkan Warga, dan Ditolak oleh Operator.'
         },
-        'admin-rejected': {
-            title: 'Arsip Pengaduan Ditolak (Khusus Super Admin)',
-            subtitle: 'Daftar laporan yang ditolak langsung oleh Super Admin beserta alasan resmi penolakan.'
-        }
     };
 
     function switchAdminTab(tabId) {
@@ -2979,7 +2816,6 @@
         complaints: { page: 1, size: 10 },
         teams: { page: 1, size: 5 },
         adminArchive: { page: 1, size: 10 },
-        adminRejected: { page: 1, size: 10 }
     };
 
     function renderPagination(key, matchedRows, infoId, controlsId, unitLabel, onPageChange) {
@@ -3241,74 +3077,6 @@
         });
     }
 
-    function setAdminRejectedLayout(mode) {
-        const listWrap = document.getElementById('adminRejectedListWrap');
-        const gridWrap = document.getElementById('adminRejectedGridWrap');
-        const btnList = document.getElementById('adminRejectedLayoutBtn-list');
-        const btnGrid = document.getElementById('adminRejectedLayoutBtn-grid');
-        if (!listWrap || !gridWrap) return;
-
-        if (mode === 'grid') {
-            listWrap.classList.add('hidden');
-            gridWrap.classList.remove('hidden');
-            if (btnGrid) btnGrid.className = 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition bg-[#2563EB] text-white shadow-sm';
-            if (btnList) btnList.className = 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:bg-slate-50';
-        } else {
-            listWrap.classList.remove('hidden');
-            gridWrap.classList.add('hidden');
-            if (btnList) btnList.className = 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition bg-[#2563EB] text-white shadow-sm';
-            if (btnGrid) btnGrid.className = 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:bg-slate-50';
-        }
-    }
-
-    function changeAdminRejectedPageSize(size) {
-        adminPaginationState.adminRejected.size = parseInt(size, 10) || 10;
-        adminPaginationState.adminRejected.page = 1;
-        filterAdminRejected(true);
-    }
-
-    function goAdminRejectedPage(page) {
-        adminPaginationState.adminRejected.page = page;
-        filterAdminRejected(true);
-    }
-
-    function filterAdminRejected(keepPage = false) {
-        const searchInput = document.getElementById('adminRejectedSearchInput');
-        if (!searchInput) return;
-
-        const q = (searchInput.value || '').toLowerCase().trim();
-        const rows = Array.from(document.querySelectorAll('.admin-rejected-row'));
-        const cards = Array.from(document.querySelectorAll('.admin-rejected-grid-card'));
-        const noMsg = document.getElementById('noAdminRejectedFoundMsg');
-
-        if (!keepPage) adminPaginationState.adminRejected.page = 1;
-
-        const matchedRows = [];
-        const matchedCards = [];
-
-        rows.forEach((row, index) => {
-            const hay = (row.getAttribute('data-search') || '').toLowerCase();
-            const isMatch = !q || hay.includes(q);
-            const card = cards[index];
-
-            if (isMatch) {
-                matchedRows.push(row);
-                if (card) matchedCards.push(card);
-            } else {
-                row.style.display = 'none';
-                if (card) card.style.display = 'none';
-            }
-        });
-
-        if (noMsg) {
-            noMsg.classList.toggle('hidden', matchedRows.length > 0 || rows.length === 0);
-        }
-
-        renderPagination('adminRejected', matchedRows, 'adminRejectedPageInfo', 'adminRejectedPageControls', 'laporan', 'goAdminRejectedPage');
-        matchedCards.forEach((card, i) => {
-            card.style.display = matchedRows[i] ? matchedRows[i].style.display : 'none';
-        });
-    }
 
     document.addEventListener('DOMContentLoaded', () => {
         if (window.innerWidth < 768) {
@@ -3316,13 +3084,11 @@
             setAdminComplaintsLayout('grid');
             setAdminTeamsLayout('grid');
             setAdminArchiveLayout('grid');
-            setAdminRejectedLayout('grid');
         }
         filterUsersTable(true);
         filterComplaintsTable(true);
         applyAdminTeamsPagination();
         filterAdminArchive(true);
-        filterAdminRejected(true);
     });
 
     function resetComplaintFilters() {

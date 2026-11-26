@@ -59,7 +59,7 @@ class WebOperatorController extends Controller
 
         // 5. Riwayat Arsip (Selesai & Ditolak)
         $completed = Complaint::with(['category', 'user', 'citizen', 'photos', 'latestDisposition.team.leader', 'latestDisposition.assignee.teams.leader', 'latestDisposition.department', 'statusHistories', 'aiAssessments'])
-            ->whereIn('status', ['COMPLETED', 'CLOSED', 'REJECTED', 'CANCELLED'])
+            ->whereIn('status', ['COMPLETED', 'CLOSED', 'REJECTED', 'CANCELLED', 'REFERRED'])
             ->latest()
             ->take(100)
             ->get();

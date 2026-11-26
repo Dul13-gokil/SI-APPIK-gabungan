@@ -246,7 +246,7 @@
                                         ['tab' => 'ready', 'label' => 'Siap Ditugaskan', 'icon' => 'sparkles'],
                                         ['tab' => 'dispatched', 'label' => 'Ditugaskan', 'icon' => 'send'],
                                         ['tab' => 'inprogress', 'label' => 'Dikerjakan', 'icon' => 'hammer'],
-                                        ['tab' => 'archive', 'label' => 'Arsip Aduan', 'icon' => 'archive'],
+                                        ['tab' => 'archive', 'label' => 'Arsip & Diteruskan', 'icon' => 'archive'],
                                         ['url' => route('operator.teams'), 'label' => 'Regu & Anggota', 'icon' => 'users', 'active' => 'operator.teams'],
                                         ['tab' => 'regions-gis', 'label' => 'Peta Wilayah GIS', 'icon' => 'map-pin'],
                                         ['tab' => 'monitoring', 'label' => 'Laporan Kinerja', 'icon' => 'bar-chart-3'],
