@@ -76,7 +76,7 @@
                 <div class="font-outfit text-2xl sm:text-[26px] font-bold text-[#0F172A] leading-none tabular-nums">
                     {{ $summary['total_complaints'] ?? 0 }}
                 </div>
-                <span class="hidden sm:block text-[11px] text-[#475569] font-medium mt-0.5">Laporan masuk</span>
+                <span class="hidden sm:block text-[11px] text-[#475569] font-medium mt-0.5">Laporan masuk{{ ($summary['referred'] ?? 0) > 0 ? ' · ' . $summary['referred'] . ' diteruskan' : '' }}</span>
             </div>
         </div>
 

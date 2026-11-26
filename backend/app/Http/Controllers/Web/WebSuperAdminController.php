@@ -17,16 +17,21 @@ class WebSuperAdminController extends Controller
 {
     public function index(Request $request): View
     {
-        $totalComplaints = Complaint::count();
-        $completedComplaints = Complaint::whereIn('status', ['COMPLETED', 'CLOSED'])->count();
-        $dispatchedComplaints = Complaint::where('status', 'DISPATCHED')->count();
-        $inProgressComplaints = Complaint::whereIn('status', ['IN_PROGRESS', 'REVISION_REQUIRED'])->count();
-        $pendingComplaints = Complaint::whereIn('status', ['SUBMITTED', 'VERIFICATION'])->count();
-        $rejectedComplaints = Complaint::where('status', 'REJECTED')->count();
-        $waitingComplaints = Complaint::where('status', 'WAITING_VERIFICATION')->count();
+        // Laporan yang diteruskan ke provinsi/nasional/desa bukan pekerjaan kabupaten,
+        // jadi tidak dihitung pada total dan tingkat penyelesaian, tetapi tetap ditampilkan.
+        $referredComplaints = Complaint::where('status', 'REFERRED')->count();
+        $inScope = fn () => Complaint::where('status', '<>', 'REFERRED');
+        $totalComplaints = $inScope()->count();
+        $completedComplaints = $inScope()->whereIn('status', ['COMPLETED', 'CLOSED'])->count();
+        $dispatchedComplaints = $inScope()->where('status', 'DISPATCHED')->count();
+        $inProgressComplaints = $inScope()->whereIn('status', ['IN_PROGRESS', 'REVISION_REQUIRED'])->count();
+        $pendingComplaints = $inScope()->whereIn('status', ['SUBMITTED', 'VERIFICATION'])->count();
+        $rejectedComplaints = $inScope()->where('status', 'REJECTED')->count();
+        $waitingComplaints = $inScope()->where('status', 'WAITING_VERIFICATION')->count();
         $completionRate = $totalComplaints > 0 ? round(($completedComplaints / $totalComplaints) * 100, 1) : 0;
 
         $summary = [
+            'referred'             => $referredComplaints,
             'total'                => $totalComplaints,
             'total_complaints'     => $totalComplaints,
             'pending'              => $pendingComplaints,
