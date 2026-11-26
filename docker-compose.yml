@@ -117,18 +117,19 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
-  # Konektor Cloudflare Tunnel. Hanya aktif bila dijalankan dengan --profile tunnel
-  # dan TUNNEL_TOKEN sudah diisi di .env root.
+  # Konektor Cloudflare Tunnel: ikut naik setiap `docker compose up -d`, tidak perlu
+  # --profile. TUNNEL_TOKEN wajib ada di .env root; tanpa token container ini akan
+  # berhenti sendiri dengan pesan galat yang jelas (lebih baik daripada diam-diam mati).
   tunnel:
     image: cloudflare/cloudflared:latest
-    command: tunnel --no-autoupdate run
+    # QUIC (UDP 7844) sering diblokir jaringan kantor/ISP; HTTP/2 lewat TCP lebih tahan.
+    command: tunnel --no-autoupdate --protocol http2 run
     environment:
       TUNNEL_TOKEN: ${TUNNEL_TOKEN:-}
     depends_on:
       app:
         condition: service_healthy
     restart: unless-stopped
-    profiles: ["tunnel"]
 
 volumes:
   db-data:
