@@ -278,7 +278,7 @@
             statusLabel = 'SELESAI';
             statusClass = 'bg-emerald-50 text-emerald-800 border-emerald-200';
         } else if (item.status === 'WAITING_VERIFICATION') {
-            statusLabel = 'VALIDASI';
+            statusLabel = 'DIPROSES';
             statusClass = 'bg-amber-50 text-amber-700 border-amber-300';
         } else if (item.status === 'IN_PROGRESS') {
             statusLabel = 'DIKERJAKAN';

@@ -70,7 +70,7 @@
             <p class="text-[11px] text-[#64748B] mt-0.5">{{ $sumOpRejected }} laporan ditolak</p>
         </div>
         <div class="rounded-2xl p-4 bg-white border border-[#E2E8F0]">
-            <p class="text-[11px] font-semibold text-[#64748B]">Validasi Disetujui</p>
+            <p class="text-[11px] font-semibold text-[#64748B]">Pemeriksaan AI Disetujui</p>
             <p class="font-outfit font-bold text-2xl text-emerald-700 mt-1">{{ $sumOpApproved }}</p>
             <p class="text-[11px] text-[#64748B] mt-0.5">{{ $sumOpRevision }} diminta revisi</p>
         </div>
@@ -93,9 +93,9 @@
                         <th class="text-left py-2.5 px-3 font-bold">Nama Operator</th>
                         <th class="text-center py-2.5 px-3 font-bold">Verifikasi &amp; Disposisi</th>
                         <th class="text-center py-2.5 px-3 font-bold">Ditolak</th>
-                        <th class="text-center py-2.5 px-3 font-bold">Validasi (Setuju / Revisi)</th>
+                        <th class="text-center py-2.5 px-3 font-bold">Pemeriksaan AI</th>
                         <th class="text-center py-2.5 px-3 font-bold">Rata-rata Verifikasi</th>
-                        <th class="text-right py-2.5 px-3 font-bold">Rata-rata Validasi</th>
+                        <th class="text-right py-2.5 px-3 font-bold">Rata-rata Pemeriksaan AI</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-[#E2E8F0]">
@@ -138,7 +138,7 @@
                         <span class="text-[10.5px] text-red-600 font-semibold ml-1">({{ $op['rejected'] }} ditolak)</span>
                     </div>
                     <div class="p-2.5 rounded-xl bg-white border border-[#E2E8F0]">
-                        <span class="block text-[10.5px] text-[#64748B]">Validasi (Setuju / Revisi)</span>
+                        <span class="block text-[10.5px] text-[#64748B]">Pemeriksaan AI</span>
                         <strong class="text-emerald-700">{{ $op['validated_approved'] }}</strong> /
                         <strong class="text-amber-700">{{ $op['validated_revision'] }}</strong>
                     </div>
@@ -147,7 +147,7 @@
                         <strong class="text-[#0F172A]">{{ $op['avg_verify_hours'] !== null ? $op['avg_verify_hours'] . ' jam' : '-' }}</strong>
                     </div>
                     <div class="p-2.5 rounded-xl bg-white border border-[#E2E8F0]">
-                        <span class="block text-[10.5px] text-[#64748B]">Rata-rata Validasi</span>
+                        <span class="block text-[10.5px] text-[#64748B]">Rata-rata Pemeriksaan AI</span>
                         <strong class="text-[#0F172A]">{{ $op['avg_validate_hours'] !== null ? $op['avg_validate_hours'] . ' jam' : '-' }}</strong>
                     </div>
                 </div>

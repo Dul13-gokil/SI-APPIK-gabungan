@@ -424,7 +424,7 @@
                                     $pStatusLabel = 'DIKERJAKAN';
                                     if ($t->status === 'WAITING_VERIFICATION') {
                                         $pStatusBadgeClass = 'bg-blue-50 text-[#2563EB] border border-blue-200';
-                                        $pStatusLabel = 'VALIDASI';
+                                        $pStatusLabel = 'DIPROSES';
                                     } elseif ($t->status === 'REVISION_REQUIRED') {
                                         $pStatusBadgeClass = 'bg-amber-50 text-amber-800 border border-amber-200';
                                         $pStatusLabel = 'PERLU REVISI';
@@ -528,7 +528,7 @@
     <div id="petugasTabContent-history" class="hidden space-y-4">
         @if($completedTasks->isEmpty())
             <div class="card-white rounded-2xl p-12 text-center text-slate-400 text-xs bg-white border border-[#E2E8F0]">
-                Belum ada riwayat tugas yang selesai divalidasi.
+                Belum ada tugas yang selesai diperiksa AI.
             </div>
         @else
             @include('partials.role_complaints_table', ['wrapId' => 'petugasTableWrap-history', 'rowClass' => 'petugas-history-row', 'items' => $completedTasks, 'mode' => 'petugas-history', 'hidden' => false])
@@ -1007,7 +1007,7 @@
                             `;
                         } else if (p.status === 'WAITING_VERIFICATION') {
                             color = '#F59E0B';
-                            statusText = 'VALIDASI';
+                            statusText = 'DIPROSES';
                             statusBg = '#FEF3C7';
                             statusColor = '#92400E';
                             statusBorder = '#FDE68A';
@@ -1165,7 +1165,7 @@
             statusLabel = 'DITUGASKAN';
             statusClass = 'bg-blue-50 text-[#2563EB] border-blue-200';
         } else if (item.status === 'WAITING_VERIFICATION') {
-            statusLabel = 'VALIDASI';
+            statusLabel = 'DIPROSES';
             statusClass = 'bg-amber-50 text-amber-700 border-amber-300';
         } else if (item.status === 'REVISION_REQUIRED') {
             statusLabel = 'PERLU REVISI';

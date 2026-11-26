@@ -647,7 +647,7 @@
                 <div class="rounded-2xl p-4 bg-white border border-[#E2E8F0]">
                     <p class="text-[11px] font-semibold text-[#64748B]">Skor Kinerja</p>
                     <p class="font-outfit font-bold text-2xl text-[#2563EB] mt-1">${m.score}<span class="text-xs font-normal text-[#64748B]">/100</span></p>
-                    <p class="text-[11px] text-[#64748B] mt-0.5">Lolos 1x validasi: ${m.first_pass_rate}%</p>
+                    <p class="text-[11px] text-[#64748B] mt-0.5">Lolos pemeriksaan AI: ${m.first_pass_rate}%</p>
                 </div>
                 <div class="rounded-2xl p-4 bg-white border border-[#E2E8F0]">
                     <p class="text-[11px] font-semibold text-[#64748B]">Rata-rata Pengerjaan</p>

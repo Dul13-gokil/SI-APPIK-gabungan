@@ -48,13 +48,13 @@
 
         <div>
             <label class="block text-[12px] font-semibold text-[#0F172A] mb-1">
-                Ambang validasi hasil kerja (0,50 - 0,99) *
+                Ambang pemeriksaan hasil kerja oleh AI (0,50 - 0,99) *
             </label>
             <input type="number" step="0.01" min="0.50" max="0.99" name="ai_completion_threshold" required
                    value="{{ old('ai_completion_threshold', $settings['ai_completion_threshold']) }}"
                    class="w-full rounded-xl border border-[#E2E8F0] px-3 py-2 text-[13px]">
             <p class="text-[11px] text-[#64748B] mt-1">
-                Bila skor AI memenuhi nilai ini, pekerjaan langsung COMPLETED tanpa validasi operator.
+                Bila skor AI memenuhi nilai ini, pekerjaan langsung dinyatakan selesai (COMPLETED).
             </p>
         </div>
 

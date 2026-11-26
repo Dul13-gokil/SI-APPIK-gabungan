@@ -226,7 +226,7 @@
                 ['label' => 'Verifikasi', 'count' => $summary['pending'] ?? 0, 'color' => '#EF4444'],
                 ['label' => 'Ditugaskan', 'count' => $summary['dispatched'] ?? 0, 'color' => '#2563EB'],
                 ['label' => 'Dikerjakan', 'count' => $summary['in_progress'] ?? 0, 'color' => '#F59E0B'],
-                ['label' => 'Validasi', 'count' => $summary['waiting_verification'] ?? 0, 'color' => '#F59E0B'],
+                ['label' => 'Pemeriksaan AI', 'count' => $summary['waiting_verification'] ?? 0, 'color' => '#F59E0B'],
                 ['label' => 'Selesai', 'count' => $summary['completed'] ?? 0, 'color' => '#10B981'],
                 ['label' => 'Ditolak', 'count' => $summary['rejected'] ?? 0, 'color' => '#DC2626'],
             ];
@@ -541,7 +541,7 @@
                                         <td class="border border-slate-400 py-1.5 px-2.5 text-right font-bold">{{ $fieldCount }} Tindakan ({{ $fieldPercent }}%)</td>
                                     </tr>
                                     <tr>
-                                        <td class="border border-slate-400 py-1.5 px-2.5 font-semibold">Operator (Verifikasi &amp; Validasi)</td>
+                                        <td class="border border-slate-400 py-1.5 px-2.5 font-semibold">Operator PUPR</td>
                                         <td class="border border-slate-400 py-1.5 px-2.5 text-right font-bold">{{ $operatorCount }} Telaah ({{ $operatorPercent }}%)</td>
                                     </tr>
                                     <tr class="bg-slate-50">
@@ -748,7 +748,7 @@
                                         ['label' => 'Menunggu Verifikasi (SUBMITTED)', 'count' => $summary['pending'] ?? 0],
                                         ['label' => 'Sudah Ditugaskan (DISPATCHED)', 'count' => $summary['dispatched'] ?? 0],
                                         ['label' => 'Sedang Dikerjakan (IN_PROGRESS)', 'count' => $summary['in_progress'] ?? 0],
-                                        ['label' => 'Menunggu Validasi (WAITING_VERIFICATION)', 'count' => $summary['waiting_verification'] ?? 0],
+                                        ['label' => 'Menunggu Pemeriksaan AI (WAITING_VERIFICATION)', 'count' => $summary['waiting_verification'] ?? 0],
                                         ['label' => 'Selesai / Tuntas (COMPLETED/CLOSED)', 'count' => $summary['completed'] ?? 0],
                                         ['label' => 'Ditolak (REJECTED)', 'count' => $summary['rejected'] ?? 0],
                                     ];

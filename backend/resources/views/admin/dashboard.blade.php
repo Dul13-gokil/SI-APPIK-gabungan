@@ -310,7 +310,7 @@
                             $stBadge = match($st) {
                                 'SUBMITTED' => ['label' => 'VERIFIKASI', 'cls' => 'bg-red-50 text-[#EF4444] border-red-200'],
                                 'VERIFIED', 'DISPATCHED' => ['label' => 'DITUGASKAN', 'cls' => 'bg-[#EFF6FF] text-[#2563EB] border-[#BFDBFE]'],
-                                'IN_PROGRESS', 'WAITING_VERIFICATION', 'REVISION_REQUIRED' => ['label' => $st === 'WAITING_VERIFICATION' ? 'VALIDASI' : 'DIKERJAKAN', 'cls' => 'bg-amber-50 text-[#D97706] border-amber-200'],
+                                'IN_PROGRESS', 'WAITING_VERIFICATION', 'REVISION_REQUIRED' => ['label' => 'DIKERJAKAN', 'cls' => 'bg-amber-50 text-[#D97706] border-amber-200'],
                                 'COMPLETED', 'CLOSED' => ['label' => 'SELESAI', 'cls' => 'bg-emerald-50 text-[#10B981] border-emerald-200'],
                                 'REJECTED' => ['label' => 'DITOLAK', 'cls' => 'bg-red-50 text-[#DC2626] border-red-200'],
                                 default => ['label' => $st, 'cls' => 'bg-slate-50 text-slate-600 border-slate-200'],
@@ -331,7 +331,13 @@
                             </button>
                         </div>
                     @empty
-                        <div class="p-8 text-center text-xs text-[#64748B]">Belum ada laporan masuk.</div>
+                        <div class="px-5 py-10 text-center">
+                            <p class="text-xs font-semibold text-[#0F172A]">Belum ada laporan masuk</p>
+                            <p class="text-[11px] text-[#64748B] mt-1 leading-snug">
+                                Laporan warga dari aplikasi mobile akan muncul di sini begitu terkirim.
+                                Data lama bisa Anda pulihkan dari menu Pengaturan Sistem.
+                            </p>
+                        </div>
                     @endforelse
                 </div>
             </div>
@@ -864,7 +870,7 @@
                                 $statusLabel = 'SELESAI';
                                 $statusBadgeClass = 'bg-emerald-50 text-emerald-700 border-emerald-200';
                             } elseif ($status === 'WAITING_VERIFICATION') {
-                                $statusLabel = 'VALIDASI';
+                                $statusLabel = 'DIPROSES';
                                 $statusBadgeClass = 'bg-amber-50 text-amber-700 border-amber-300';
                             } elseif ($status === 'IN_PROGRESS') {
                                 $statusLabel = 'DIKERJAKAN';
@@ -982,7 +988,7 @@
                         $cSt = $c->status?->value ?? $c->status;
                         $cStLabel = match($cSt) {
                             'COMPLETED', 'CLOSED' => 'SELESAI',
-                            'WAITING_VERIFICATION' => 'VALIDASI',
+                            'WAITING_VERIFICATION' => 'DIPROSES',
                             'IN_PROGRESS' => 'DIKERJAKAN',
                             'DISPATCHED' => 'DITUGASKAN',
                             'REJECTED' => 'DITOLAK',
@@ -3635,7 +3641,7 @@
                         `;
                     } else if (cp.status === 'WAITING_VERIFICATION') {
                         color = '#F59E0B';
-                        statusText = 'VALIDASI';
+                        statusText = 'DIPROSES';
                         statusBg = '#FEF3C7';
                         statusColor = '#92400E';
                         statusBorder = '#FDE68A';
@@ -4309,7 +4315,7 @@
             statusLabel = 'SELESAI';
             statusClass = 'bg-emerald-50 text-emerald-800 border-emerald-200';
         } else if (item.status === 'WAITING_VERIFICATION') {
-            statusLabel = 'VALIDASI';
+            statusLabel = 'DIPROSES';
             statusClass = 'bg-amber-50 text-amber-700 border-amber-300';
         } else if (item.status === 'IN_PROGRESS') {
             statusLabel = 'DIKERJAKAN';

@@ -16,7 +16,7 @@
             <div class="flex items-center gap-2.5 text-[11px] font-semibold text-[#475569] overflow-x-auto whitespace-nowrap pb-0.5 sm:pb-0">
                 <span class="inline-flex items-center gap-1 shrink-0"><span class="w-2 h-2 rounded-full bg-[#EF4444]"></span> Verifikasi</span>
                 <span class="inline-flex items-center gap-1 shrink-0"><span class="w-2 h-2 rounded-full bg-[#2563EB]"></span> Ditugaskan</span>
-                <span class="inline-flex items-center gap-1 shrink-0"><span class="w-2 h-2 rounded-full bg-[#F59E0B]"></span> Dikerjakan / Validasi</span>
+                <span class="inline-flex items-center gap-1 shrink-0"><span class="w-2 h-2 rounded-full bg-[#F59E0B]"></span> Dikerjakan</span>
                 <span class="inline-flex items-center gap-1 shrink-0"><span class="w-2 h-2 rounded-full bg-[#10B981]"></span> Selesai</span>
                 <span class="inline-flex items-center gap-1 shrink-0"><span class="w-2 h-2 rounded-full bg-[#DC2626]"></span> Ditolak</span>
             </div>
@@ -108,7 +108,7 @@
                                 <span class="px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 border border-amber-200 text-[10px] font-bold">{{ $ds['in_progress'] }} Dikerjakan</span>
                             @endif
                             @if(($ds['waiting_verification'] ?? 0) > 0)
-                                <span class="px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 border border-amber-200 text-[10px] font-bold">{{ $ds['waiting_verification'] }} Validasi</span>
+                                <span class="px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 border border-amber-200 text-[10px] font-bold">{{ $ds['waiting_verification'] }} Diperiksa AI</span>
                             @endif
                             @if(($ds['completed'] ?? 0) > 0)
                                 <span class="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold">{{ $ds['completed'] }} Selesai</span>

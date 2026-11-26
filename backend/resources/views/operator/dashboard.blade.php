@@ -641,129 +641,6 @@
         </div>
     </div>
 
-    <!-- TAB 4: VALIDASI PENYELESAIAN AKHIR -->
-    <div id="tabPanel-validation" class="tab-panel {{ $activeTab === 'validation' ? '' : 'hidden' }} space-y-4">
-        <div class="space-y-4">
-            @if($waitingValidation->isEmpty())
-                <div class="card-white rounded-2xl p-12 text-center text-slate-400 text-xs bg-white border border-[#E2E8F0]">
-                    Tidak ada laporan yang sedang menunggu validasi selesai.
-                </div>
-            @else
-                @include('partials.role_complaints_table', ['wrapId' => 'operatorTableWrap-validation', 'rowClass' => 'operator-validation-row', 'items' => $waitingValidation, 'mode' => 'operator-validation', 'hidden' => false])
-                <div id="validationCardsContainer" class="hidden grid grid-cols-1 lg:grid-cols-2 gap-5">
-                    @foreach($waitingValidation as $c)
-                        @php
-                            $disp = $c->latestDisposition;
-                            $beforePhoto = $c->photos->where('type', 'evidence_before')->first() ?? $c->photos->first();
-                            $afterPhoto = $c->photos->where('type', 'resolution_after')->first() ?? $c->photos->last();
-                            $beforeUrl = $beforePhoto ? ($beforePhoto->url ?? asset('storage/' . $beforePhoto->storage_key)) : null;
-                            $afterUrl = $afterPhoto && $afterPhoto->id !== ($beforePhoto?->id) ? ($afterPhoto->url ?? asset('storage/' . $afterPhoto->storage_key)) : null;
-                        @endphp
-                        <div onclick="if (window.innerWidth < 768) { openOperatorModal({{ $c->id }}); }" class="complaint-validation-card card-white rounded-2xl p-4 sm:p-5 bg-white border border-slate-200/90 hover:border-blue-300 hover:shadow-md transition-all duration-200 flex flex-col justify-between space-y-3.5 cursor-pointer md:cursor-default"
-                            data-category="{{ $c->category_id }}"
-                            data-damage-type="{{ $c->damage_type ?? 'minor' }}"
-                            data-search="{{ strtolower($c->public_code . ' ' . ($c->user?->name ?? $c->citizen?->name ?? '') . ' ' . $c->title . ' ' . $c->address) }}">
-                            
-                            <div class="space-y-3">
-                                <!-- 1. Header Card: 1 Baris Sejajar - Kode + Tipe + Kategori (Kiri) & Waktu (Kanan) -->
-                                <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-slate-100 min-w-0">
-                                    <div class="flex items-center gap-1.5 min-w-0 flex-nowrap overflow-hidden">
-                                        <span class="px-2 py-0.5 rounded-md bg-slate-100 text-[#0F172A] font-semibold text-[11px] font-mono border border-[#E2E8F0] whitespace-nowrap shrink-0">
-                                            #{{ $c->public_code }}
-                                        </span>
-                                        <span class="px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-red-50 text-red-700 border border-red-200/80 inline-flex items-center gap-1 whitespace-nowrap shrink-0">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
-                                            <span>{{ $c->damage_type === 'major' ? 'Berat' : 'Ringan' }}</span>
-                                        </span>
-                                        <span class="inline-flex px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-slate-100 text-slate-600 border border-slate-200/80 whitespace-nowrap truncate shrink-0 max-w-[170px]" title="{{ $c->category?->name ?? 'Infrastruktur' }}">
-                                            {{ $c->category?->name ?? 'Infrastruktur' }}
-                                        </span>
-                                    </div>
-                                    <span class="text-[11px] text-slate-400 font-medium whitespace-nowrap flex items-center gap-1 shrink-0">
-                                        <i data-lucide="clock" class="w-3 h-3 text-slate-300"></i>
-                                        <span>{{ $c->created_at->diffForHumans() }}</span>
-                                    </span>
-                                </div>
-
-                                <!-- 2. Konten Utama: 1 Foto Bukti + Rincian (Sejajar Sempurna) -->
-                                <div class="flex gap-4 items-stretch">
-                                    <div class="relative w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden border border-slate-200/90 bg-slate-100 shrink-0 shadow-2xs">
-                                        @if($afterUrl)
-                                            <img src="{{ $afterUrl }}" alt="Hasil Perbaikan" class="w-full h-full object-cover">
-                                            <span class="absolute bottom-1.5 left-1.5 bg-emerald-800/90 text-white text-[9px] font-bold px-1.5 py-0.5 rounded shadow-xs">
-                                                Hasil Selesai
-                                            </span>
-                                        @elseif($beforeUrl)
-                                            <img src="{{ $beforeUrl }}" alt="Kondisi Awal" class="w-full h-full object-cover">
-                                            <span class="absolute bottom-1.5 left-1.5 bg-black/70 text-white text-[9px] font-bold px-1.5 py-0.5 rounded shadow-xs">
-                                                Foto Awal
-                                            </span>
-                                        @else
-                                            <div class="w-full h-full flex flex-col items-center justify-center text-slate-400 text-[10px] gap-1 p-2 text-center bg-slate-50">
-                                                <i data-lucide="image-off" class="w-5 h-5 text-slate-300"></i>
-                                                <span>Tanpa Foto</span>
-                                            </div>
-                                        @endif
-                                    </div>
-
-                                    <!-- Rincian Informasi Aduan: Sejajar Sempurna dengan Foto -->
-                                    <div class="flex-1 min-w-0 flex flex-col justify-between py-0.5">
-                                        <!-- Baris 1: Judul Laporan -->
-                                        <div class="flex items-center justify-between gap-2 min-w-0">
-                                            <h4 class="font-outfit font-extrabold text-sm sm:text-base text-slate-900 tracking-tight leading-snug truncate" title="{{ $c->title }}">
-                                                {{ $c->title }}
-                                            </h4>
-                                        </div>
-
-                                        <!-- Baris 2: Lokasi Fisik (1 Baris Rapi) -->
-                                        <div class="text-xs text-slate-600 flex items-center gap-1.5 min-w-0">
-                                            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#2563EB] shrink-0"></i>
-                                            <span class="truncate font-medium" title="{{ $c->address }}">{{ $c->address }}</span>
-                                        </div>
-
-                                        <!-- Baris 3: Info Pelapor & No Telepon (1 Baris Rapi) -->
-                                        <div class="flex items-center gap-2 text-xs min-w-0">
-                                            <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-blue-50/90 border border-blue-100/90 text-slate-700 min-w-0 max-w-full">
-                                                <i data-lucide="user" class="w-3 h-3 text-[#2563EB] shrink-0"></i>
-                                                <span class="font-semibold text-slate-800 text-[11px] truncate">{{ $c->citizen?->name ?? 'Warga' }}</span>
-                                                @if($c->citizen?->phone)
-                                                    <span class="text-blue-300 shrink-0">•</span>
-                                                    <span class="font-mono text-slate-600 font-medium text-[10.5px] shrink-0">{{ $c->citizen->phone }}</span>
-                                                @endif
-                                            </div>
-                                        </div>
-
-                                        <!-- Baris 4: Tombol Detail Lengkap & Foto (1 Baris Rapi) -->
-                                        <div class="relative z-10 hidden md:block">
-                                            <button type="button" onclick="openOperatorModal({{ $c->id }})" class="text-xs font-bold text-[#2563EB] hover:underline inline-flex items-center gap-1 cursor-pointer">
-                                                <span>Lihat Rincian Lengkap & Foto</span>
-                                                <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- 3. Tombol Aksi Validasi (Full-width Dominan Biru) -->
-                            <div onclick="event.stopPropagation();" class="pt-3 border-t border-slate-100/90 cursor-default">
-                                <button type="button" onclick="openValidationModal({{ $c->id }})" 
-                                    class="w-full py-2.5 px-3 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] active:scale-[0.99] text-white font-bold text-xs shadow-xs hover:shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
-                                    <i data-lucide="check-circle-2" class="w-4 h-4"></i>
-                                    <span>Lakukan Validasi</span>
-                                </button>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-
-                <!-- Notifikasi Filter Kosong Tab Validasi -->
-                <div id="emptyFilterNotice-validation" class="hidden card-white rounded-2xl p-8 text-center text-slate-400 text-xs bg-white border border-slate-200">
-                    Tidak ditemukan laporan validasi yang cocok dengan filter yang dipilih.
-                </div>
-            @endif
-        </div>
-    </div>
-
     <!-- TAB 5: ARSIP LAPORAN SELESAI & PERMANEN -->
     <div id="tabPanel-archive" class="tab-panel {{ $activeTab === 'archive' ? '' : 'hidden' }} space-y-4">
         @if($completed->isEmpty())
@@ -1485,256 +1362,6 @@
     </div>
 </div>
 
-<!-- MODAL VALIDASI HASIL PENGERJAAN LAPANGAN (Desain 760px Side-by-Side SI-APPIK V2 + Aksi Tutup, Revisi & Selesai) -->
-<div id="operatorValidationModal" class="fixed inset-0 z-50 hidden flex items-end sm:items-center justify-center p-3.5 sm:p-5 bg-slate-900/65 overscroll-contain">
-    <div class="bg-white w-full sm:max-w-[760px] rounded-[24px] shadow-[0_20px_50px_rgba(15,23,42,0.22)] border border-[#E2E8F0] overflow-hidden flex flex-col max-h-[86vh] sm:max-h-[90vh]">
-
-        <!-- Drag Handle Khusus Mobile -->
-        <div class="sm:hidden flex justify-center pt-3 pb-1 bg-white shrink-0">
-            <span class="w-11 h-1 rounded-full bg-[#CBD5E1]"></span>
-        </div>
-
-        <!-- Sticky Modal Top Header (3 Badge 1 Baris + Tanggal & Kode Aduan + Tombol X di Tengah Kanan) -->
-        <div class="px-4 sm:px-7 pt-2.5 pb-3.5 sm:py-5 border-b border-[#E2E8F0] bg-white flex items-center justify-between gap-2.5 shrink-0">
-            <div class="min-w-0 flex-1 space-y-2">
-                <div class="flex items-center gap-1 sm:gap-2 flex-nowrap overflow-x-auto no-scrollbar">
-                    <span id="valModalTypeBadge" class="shrink-0 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10.5px] sm:text-xs font-bold bg-[#FEF2F2] text-[#DC2626] border border-[#FECACA] inline-flex items-center gap-1 whitespace-nowrap">
-                        <span class="w-1.5 h-1.5 rounded-full bg-[#DC2626] shrink-0"></span>
-                        <span>Kerusakan Ringan</span>
-                    </span>
-                    <span id="valModalCategoryBadge" class="shrink min-w-0 truncate px-2 sm:px-3 py-0.5 sm:py-1 rounded-full bg-[#F1F5F9] text-[#475569] font-semibold text-[10.5px] sm:text-xs border border-[#E2E8F0]">
-                        Kategori
-                    </span>
-                    <span class="shrink-0 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10.5px] sm:text-xs font-bold bg-amber-50 text-[#D97706] border border-amber-200 whitespace-nowrap">
-                        MENUNGGU VALIDASI
-                    </span>
-                </div>
-                <div class="flex items-center flex-wrap gap-2 text-[11.5px] sm:text-[13px] text-[#475569]">
-                    <div class="flex items-center gap-1.5 font-medium">
-                        <i data-lucide="calendar" class="w-3.5 h-3.5 text-[#64748B] shrink-0"></i>
-                        <span id="valModalDate">03 Sep 2026</span>
-                    </div>
-                    <span class="text-slate-300">&bull;</span>
-                    <span id="valModalCode" class="font-mono font-bold text-[#2563EB] bg-[#EFF6FF] border border-[#BFDBFE] px-2 py-0.5 rounded-full text-[10.5px] sm:text-[11px]">#ADU-0000</span>
-                </div>
-            </div>
-            <button type="button" onclick="closeValidationModal()" class="w-8 h-8 sm:w-9 sm:h-9 rounded-[10px] bg-[#F8FAFC] hover:bg-slate-100 text-[#475569] hover:text-[#0F172A] border border-[#E2E8F0] flex items-center justify-center transition cursor-pointer shrink-0" title="Tutup Detail" aria-label="Tutup Rincian">
-                <i data-lucide="x" class="w-4 h-4"></i>
-            </button>
-        </div>
-
-        <!-- Modal Scrollable Body -->
-        <div class="px-5 py-4 sm:px-7 sm:py-5 overflow-y-auto space-y-4 flex-1 overscroll-contain bg-white" style="-webkit-overflow-scrolling: touch;">
-
-            <!-- Judul Aduan -->
-            <h3 id="valModalTitle" class="font-outfit font-bold text-lg sm:text-xl text-[#0F172A] leading-snug">
-                Judul Laporan
-            </h3>
-
-            <!-- 1. Galeri Foto Berdampingan 2 Kolom (Rasio 16:10 Side-by-Side) -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3.5">
-                <div id="valModalCitizenPhotoSection" class="space-y-1.5">
-                    <div class="aspect-[16/10] rounded-xl sm:rounded-2xl overflow-hidden border border-[#E2E8F0] bg-[#1E293B] relative flex items-center justify-center">
-                        <img id="valModalCitizenPhoto" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Foto Kondisi Lokasi" class="w-full h-full object-cover">
-                        <div class="absolute bottom-2 left-2 sm:bottom-3 sm:left-3 bg-[#0F172A]/85 text-white text-[10px] sm:text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5 pointer-events-none">
-                            <i data-lucide="camera" class="w-3 h-3 shrink-0 hidden sm:inline"></i>
-                            <span id="valModalCitizenPhotoLabel">Foto Kondisi Lokasi</span>
-                        </div>
-                    </div>
-                    <div id="valModalCitizenGallery" class="flex items-center gap-1.5 overflow-x-auto pb-0.5 hidden"></div>
-                </div>
-
-                <div id="valModalOfficerPhotoSection" class="space-y-1.5">
-                    <div class="aspect-[16/10] rounded-xl sm:rounded-2xl overflow-hidden border border-[#A7F3D0] bg-[#ECFDF5] relative flex items-center justify-center">
-                        <img id="valModalOfficerPhoto" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Foto Hasil Pengerjaan" class="w-full h-full object-cover">
-                        <div class="absolute bottom-2 left-2 sm:bottom-3 sm:left-3 bg-[#047857]/90 text-white text-[10px] sm:text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5 pointer-events-none">
-                            <i data-lucide="badge-check" class="w-3 h-3 shrink-0 hidden sm:inline"></i>
-                            <span id="valModalOfficerPhotoLabel">Foto Hasil Pengerjaan</span>
-                        </div>
-                    </div>
-                    <div id="valModalOfficerGallery" class="flex items-center gap-1.5 overflow-x-auto pb-0.5 hidden"></div>
-                </div>
-            </div>
-
-            <!-- 2. Grid Informasi Pelapor & Lokasi (2 Kolom Seimbang) -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-3.5">
-                <div class="p-4 rounded-2xl bg-[#F8FAFC] border border-[#E2E8F0] space-y-1.5">
-                    <div class="flex items-center gap-1.5 text-[11px] font-bold text-[#475569] uppercase tracking-wider">
-                        <i data-lucide="user" class="w-3.5 h-3.5 text-[#2563EB]"></i>
-                        <span>Pelapor Aduan</span>
-                    </div>
-                    <div class="flex items-center gap-2 flex-wrap">
-                        <span id="valModalCitizenName" class="font-outfit font-bold text-sm sm:text-base text-[#0F172A] truncate">Nama Pelapor</span>
-                        <span id="valModalAnonymousBadge" class="hidden text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-200 text-slate-700">Anonim</span>
-                    </div>
-                    <div class="flex items-center gap-1.5 text-xs font-bold text-[#047857]">
-                        <i data-lucide="shield-check" class="w-3.5 h-3.5 text-[#10B981] shrink-0"></i>
-                        <a id="valModalCitizenPhone" href="#" class="font-mono hover:underline text-[#047857]">08123456789</a>
-                    </div>
-                </div>
-
-                <div class="p-4 rounded-2xl bg-[#F8FAFC] border border-[#E2E8F0] space-y-2 flex flex-col justify-between">
-                    <div class="space-y-1">
-                        <div class="flex items-center gap-1.5 text-[11px] font-bold text-[#475569] uppercase tracking-wider">
-                            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#2563EB]"></i>
-                            <span>Lokasi Kerusakan</span>
-                        </div>
-                        <p id="valModalFullAddress" class="text-xs sm:text-[13px] font-semibold text-[#0F172A] leading-relaxed">
-                            Alamat lokasi kerusakan...
-                        </p>
-                        <span id="valModalRoad" class="hidden"></span>
-                        <span id="valModalVillage" class="hidden"></span>
-                        <span id="valModalDistrict" class="hidden"></span>
-                        <span id="valModalRegency" class="hidden"></span>
-                    </div>
-                    <div class="flex items-center justify-between gap-2 pt-0.5">
-                        <span id="valModalCoords" class="hidden">-</span>
-                        <button type="button" onclick="const c = (document.getElementById('valModalCoords')?.textContent || '').trim(); if(c && c !== '-') window.open('https://www.google.com/maps?q=' + encodeURIComponent(c.replace(/\s+/g,'')), '_blank', 'noopener');"
-                            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#EFF6FF] hover:bg-[#DBEAFE] text-[#2563EB] border border-[#BFDBFE] text-xs font-bold transition cursor-pointer">
-                            <i data-lucide="map" class="w-3.5 h-3.5"></i>
-                            <span>Buka di Peta</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 3. Regu Penanganan Lapangan -->
-            <div id="valModalOfficerCard" class="p-4 rounded-2xl bg-[#EFF6FF]/60 border border-[#BFDBFE] space-y-2.5">
-                <div class="flex items-start justify-between gap-2">
-                    <div class="flex items-center gap-2.5 min-w-0">
-                        <div class="w-9 h-9 rounded-xl bg-[#2563EB] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
-                            <i data-lucide="hard-hat" class="w-4 h-4"></i>
-                        </div>
-                        <div class="min-w-0">
-                            <span class="text-[10px] text-[#2563EB] font-extrabold uppercase tracking-wider block">Regu Lapangan Pelaksana</span>
-                            <h4 id="valModalTeamName" class="font-outfit font-bold text-xs sm:text-sm text-[#0F172A] truncate leading-tight">Regu Lapangan PUPR</h4>
-                            <span id="valModalOfficerDept" class="text-[11px] font-medium text-[#475569] block truncate">Dinas Pekerjaan Umum dan Penataan Ruang (PUPR)</span>
-                        </div>
-                    </div>
-                    <div id="valModalDeadlineBox" class="text-right shrink-0">
-                        <span class="text-[10px] text-[#64748B] block font-medium">Target Waktu:</span>
-                        <span id="valModalOfficerDeadline" class="text-xs font-bold text-[#2563EB] bg-white px-2.5 py-0.5 rounded-lg border border-[#BFDBFE] inline-block mt-0.5">-</span>
-                    </div>
-                </div>
-
-                <div class="p-2.5 rounded-xl bg-white border border-[#E2E8F0] flex items-center justify-between gap-2 text-xs">
-                    <div class="flex items-center gap-2 min-w-0">
-                        <div class="w-6 h-6 rounded-lg bg-[#EFF6FF] text-[#2563EB] flex items-center justify-center shrink-0">
-                            <i data-lucide="crown" class="w-3.5 h-3.5"></i>
-                        </div>
-                        <div class="min-w-0">
-                            <span class="text-[10px] text-[#64748B] font-bold block leading-none">Ketua Regu:</span>
-                            <span id="valModalTeamLeader" class="font-bold text-[#0F172A] truncate block mt-0.5">Nama Ketua Regu</span>
-                        </div>
-                    </div>
-                    <a id="valModalTeamPhone" href="#" class="px-2.5 py-1 rounded-lg bg-[#EFF6FF] hover:bg-[#DBEAFE] text-[#2563EB] font-bold font-mono text-xs flex items-center gap-1.5 transition shrink-0">
-                        <i data-lucide="phone-call" class="w-3 h-3"></i>
-                        <span id="valModalTeamPhoneText">081234567890</span>
-                    </a>
-                </div>
-
-                <span id="valModalOfficerName" class="hidden"></span>
-                <span id="valModalOfficerPhone" class="hidden"></span>
-
-                <div id="valModalInstructionRow" class="hidden text-xs text-[#475569] flex items-start gap-1.5 pt-1.5 border-t border-[#BFDBFE]/60">
-                    <i data-lucide="clipboard-list" class="w-3.5 h-3.5 text-[#2563EB] shrink-0 mt-0.5"></i>
-                    <span>Instruksi: <span id="valModalOfficerInstruction" class="text-[#0F172A] font-medium italic">Lakukan perbaikan</span></span>
-                </div>
-            </div>
-
-            <!-- 4. Detail Kerusakan Berat Ruas Panjang (Major) -->
-            <div id="valModalMajorRoadBox" class="hidden p-4 rounded-2xl bg-[#EFF6FF]/60 border border-[#BFDBFE] space-y-2 text-xs">
-                <div class="flex items-center justify-between font-bold text-[#2563EB]">
-                    <span class="flex items-center gap-1.5">
-                        <i data-lucide="route" class="w-4 h-4 text-[#2563EB]"></i>
-                        <span>Kerusakan Ruas Panjang</span>
-                    </span>
-                    <span id="valModalRoadLengthBadge" class="text-[10px] text-white bg-[#2563EB] px-2.5 py-0.5 rounded-full font-bold">≥ 500 Meter</span>
-                </div>
-                <div class="grid grid-cols-2 gap-2">
-                    <div class="p-2.5 rounded-xl bg-white border border-[#E2E8F0]">
-                        <span class="text-[10px] text-[#64748B] block font-semibold">Estimasi Panjang:</span>
-                        <span id="valModalRoadLength" class="font-bold text-[#0F172A]">-</span>
-                    </div>
-                    <div class="p-2.5 rounded-xl bg-white border border-[#E2E8F0]">
-                        <span class="text-[10px] text-[#64748B] block font-semibold">Kondisi:</span>
-                        <span id="valModalRoadCondition" class="font-bold text-[#0F172A]">-</span>
-                    </div>
-                </div>
-                <div class="p-2.5 rounded-xl bg-white border border-[#E2E8F0] font-mono text-[11px] text-[#334155] space-y-0.5">
-                    <div><span class="font-bold text-[#2563EB]">Awal:</span> <span id="valModalStartCoords">-</span></div>
-                    <div><span class="font-bold text-[#0F172A]">Akhir:</span> <span id="valModalEndCoords">-</span></div>
-                </div>
-            </div>
-
-            <!-- 5. Deskripsi Lengkap -->
-            <div class="space-y-1.5">
-                <h4 class="text-[11px] font-bold text-[#475569] uppercase tracking-wider flex items-center gap-1.5">
-                    <i data-lucide="file-text" class="w-3.5 h-3.5 text-[#64748B]"></i>
-                    <span>Deskripsi Kondisi Kerusakan</span>
-                </h4>
-                <div id="valModalDescription" class="p-4 rounded-2xl bg-[#F8FAFC] border border-[#E2E8F0] text-xs sm:text-[13px] text-[#334155] leading-relaxed whitespace-pre-line font-sans">
-                    Deskripsi lengkap...
-                </div>
-            </div>
-
-            <!-- 6. Analisis AI Vision -->
-            <div id="valModalAiBox" class="p-4 rounded-2xl bg-[#EFF6FF]/50 border border-[#BFDBFE] space-y-2 text-xs">
-                <div class="flex items-center justify-between font-bold text-[#2563EB]">
-                    <span class="flex items-center gap-1.5">
-                        <i data-lucide="sparkles" class="w-4 h-4"></i>
-                        <span>Analisis AI Vision</span>
-                    </span>
-                    <span id="valModalAiConfidence" class="text-[10px] text-[#047857] bg-white px-2 py-0.5 rounded-full border border-[#A7F3D0] font-bold">Akurasi 90%</span>
-                </div>
-                <div class="grid grid-cols-2 gap-2">
-                    <div class="p-2.5 rounded-xl bg-white border border-[#E2E8F0]">
-                        <span class="text-[10px] text-[#64748B] block font-semibold">Tipe:</span>
-                        <span id="valModalAiType" class="font-bold text-[#0F172A]">-</span>
-                    </div>
-                    <div class="p-2.5 rounded-xl bg-white border border-[#E2E8F0]">
-                        <span class="text-[10px] text-[#64748B] block font-semibold">Prioritas:</span>
-                        <span id="valModalAiPriority" class="font-bold text-[#0F172A]">-</span>
-                    </div>
-                    <div class="p-2.5 rounded-xl bg-white border border-[#E2E8F0] col-span-2">
-                        <span class="text-[10px] text-[#64748B] block font-semibold">Estimasi Dimensi &amp; Material:</span>
-                        <span id="valModalAiEstimate" class="font-medium text-[#334155] text-[11px]">-</span>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- Modal Footer: Tombol Tutup, Revisi, & Selesai -->
-        <div class="px-5 py-3.5 sm:px-7 border-t border-[#E2E8F0] bg-white flex items-center justify-between gap-2 flex-nowrap shrink-0">
-            <button type="button" onclick="closeValidationModal()" class="px-4 sm:px-5 py-2.5 rounded-xl bg-[#F1F5F9] hover:bg-slate-200 text-[#334155] font-bold text-xs transition cursor-pointer shrink-0 whitespace-nowrap">
-                <span class="sm:hidden">Tutup</span>
-                <span class="hidden sm:inline">Tutup Rincian</span>
-            </button>
-            <div class="flex items-center gap-2 shrink-0">
-                <button type="button" onclick="openRevisionFromValidationModal()" 
-                    class="px-4 py-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-[#B45309] border border-amber-200 font-bold text-xs transition flex items-center gap-1.5 cursor-pointer whitespace-nowrap">
-                    <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
-                    <span>Revisi</span>
-                </button>
-                <button type="button" onclick="approveFromValidationModal()" 
-                    class="px-5 py-2.5 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold text-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer whitespace-nowrap">
-                    <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i>
-                    <span>Selesai</span>
-                </button>
-            </div>
-        </div>
-
-    </div>
-</div>
-
-<!-- Form Submit Aksi Validasi (Selesai / Revisi) -->
-<form id="validationActionForm" method="POST" action="" class="hidden">
-    @csrf
-    <input type="hidden" name="decision" id="validationDecisionInput" value="COMPLETED">
-    <input type="hidden" name="notes" id="validationNotesInput" value="">
-</form>
-
 <!-- Form Tolak Cepat (Hoax) -->
 <form id="quickRejectForm" method="POST" action="" class="hidden">
     @csrf
@@ -2004,10 +1631,6 @@
                 title: 'Pemantauan Pelaksanaan Penanganan Lapangan',
                 subtitle: 'Pengawasan progres fisik penanganan dan kepatuhan batas waktu Service Level Agreement (SLA)'
             },
-            'validation': {
-                title: 'Validasi Kelayakan Hasil Pekerjaan Teknis',
-                subtitle: 'Verifikasi komparasi visual sebelum-sesudah dan pemeriksaan berita acara penyelesaian lapangan'
-            },
             'archive': {
                 title: 'Arsip Resmi Pengaduan & Rekam Jejak Pelayanan',
                 subtitle: 'Dokumentasi permanen laporan yang telah tuntas ditangani demi akuntabilitas dan transparansi publik'
@@ -2036,11 +1659,11 @@
         const unifiedCard = document.getElementById('operatorUnifiedCard');
         const filterBar = document.getElementById('operatorFilterBar');
         const paginationBar = document.getElementById('operatorPaginationBar');
-        const isListTab = ['verify', 'dispatched', 'inprogress', 'validation', 'archive'].includes(tabId);
+        const isListTab = ['verify', 'dispatched', 'inprogress', 'archive'].includes(tabId);
         if (unifiedCard) unifiedCard.classList.toggle('hidden', !isListTab);
         if (filterBar) filterBar.classList.toggle('hidden', !isListTab);
         if (paginationBar) paginationBar.classList.toggle('hidden', !isListTab);
-        const opTabTitles = { verify: 'Antrean Verifikasi', dispatched: 'Daftar Ditugaskan', inprogress: 'Sedang Dikerjakan', validation: 'Validasi Hasil Kerja', archive: 'Arsip Aduan' };
+        const opTabTitles = { verify: 'Antrean Verifikasi', dispatched: 'Daftar Ditugaskan', inprogress: 'Sedang Dikerjakan', archive: 'Arsip Aduan' };
         const opTitleEl = document.getElementById('operatorUnifiedTitle');
         if (opTitleEl && opTabTitles[tabId]) opTitleEl.textContent = opTabTitles[tabId];
         if (typeof operatorPaginationState !== 'undefined') operatorPaginationState.page = 1;
@@ -2189,7 +1812,7 @@
                             `;
                         } else if (p.status === 'WAITING_VERIFICATION') {
                             color = '#F59E0B';
-                            statusText = 'VALIDASI';
+                            statusText = 'DIPROSES';
                             statusBg = '#FEF3C7';
                             statusColor = '#92400E';
                             statusBorder = '#FDE68A';
@@ -2359,7 +1982,7 @@
             statusLabel = 'SELESAI';
             statusClass = 'bg-emerald-50 text-emerald-800 border-emerald-200';
         } else if (item.status === 'WAITING_VERIFICATION') {
-            statusLabel = 'VALIDASI';
+            statusLabel = 'DIPROSES';
             statusClass = 'bg-amber-50 text-amber-700 border-amber-300';
         } else if (item.status === 'IN_PROGRESS') {
             statusLabel = 'DIKERJAKAN';
@@ -2692,280 +2315,6 @@
     }
 
     // ==========================================
-    // LOGIKA MODAL VALIDASI HASIL PENGERJAAN
-    // ==========================================
-    let currentValidationComplaintId = null;
-
-    function openValidationModal(id) {
-        const item = operatorComplaints.find(c => c.id === id);
-        if (!item) return;
-
-        currentValidationComplaintId = id;
-
-        const form = document.getElementById('validationActionForm');
-        if (form) {
-            form.action = `/operator/complaints/${id}/validate`;
-        }
-
-        const codeEl = document.getElementById('valModalCode');
-        if (codeEl) codeEl.innerText = '#' + item.public_code;
-
-        const typeBadge = document.getElementById('valModalTypeBadge');
-        if (typeBadge) {
-            typeBadge.className = 'shrink-0 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold bg-red-50 text-red-700 border border-red-200 inline-flex items-center gap-1 whitespace-nowrap';
-            typeBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0"></span><span>${item.damage_type === 'major' ? 'Kerusakan Berat' : 'Kerusakan Ringan'}</span>`;
-        }
-
-        const catBadge = document.getElementById('valModalCategoryBadge');
-        if (catBadge) catBadge.innerText = item.category_name || 'Infrastruktur';
-
-        // 1. Foto Bukti Kerusakan Warga (Atas)
-        const citizenPhotoSection = document.getElementById('valModalCitizenPhotoSection');
-        const citizenPhotoImg = document.getElementById('valModalCitizenPhoto');
-        const citizenGallery = document.getElementById('valModalCitizenGallery');
-        const citizenLabel = document.getElementById('valModalCitizenPhotoLabel');
-
-        const citizenPhotos = item.citizen_photos && item.citizen_photos.length > 0 
-            ? item.citizen_photos 
-            : (item.photo_url ? [item.photo_url] : []);
-
-        if (citizenPhotos.length > 0) {
-            citizenPhotoImg.src = citizenPhotos[0];
-            if (citizenLabel) citizenLabel.innerText = `Foto Bukti 1 dari ${citizenPhotos.length}`;
-            if (citizenGallery) {
-                citizenGallery.innerHTML = '';
-                if (citizenPhotos.length > 1) {
-                    citizenGallery.classList.remove('hidden');
-                    citizenPhotos.forEach((url, idx) => {
-                        const thumb = document.createElement('img');
-                        thumb.src = url;
-                        thumb.className = `w-14 h-14 rounded-xl object-cover cursor-pointer border-2 transition ${idx === 0 ? 'border-[#2563EB] ring-2 ring-blue-200' : 'border-slate-200 opacity-70 hover:opacity-100'}`;
-                        thumb.onclick = () => {
-                            citizenPhotoImg.src = url;
-                            if (citizenLabel) citizenLabel.innerText = `Foto Bukti ${idx + 1} dari ${citizenPhotos.length}`;
-                            citizenGallery.querySelectorAll('img').forEach(img => {
-                                img.className = 'w-14 h-14 rounded-xl object-cover cursor-pointer border-2 border-slate-200 opacity-70 hover:opacity-100 transition';
-                            });
-                            thumb.className = 'w-14 h-14 rounded-xl object-cover cursor-pointer border-2 border-[#2563EB] ring-2 ring-blue-200 transition';
-                        };
-                        citizenGallery.appendChild(thumb);
-                    });
-                } else {
-                    citizenGallery.classList.add('hidden');
-                }
-            }
-            citizenPhotoSection.classList.remove('hidden');
-        } else {
-            citizenPhotoSection.classList.add('hidden');
-        }
-
-        // 2. Foto Bukti Penanganan Pengawas Lapangan (Bawah)
-        const officerPhotoSection = document.getElementById('valModalOfficerPhotoSection');
-        const officerPhotoImg = document.getElementById('valModalOfficerPhoto');
-        const officerGallery = document.getElementById('valModalOfficerGallery');
-        const officerLabel = document.getElementById('valModalOfficerPhotoLabel');
-
-        const officerPhotos = item.officer_photos && item.officer_photos.length > 0 
-            ? item.officer_photos 
-            : (item.completion_photo_url ? [item.completion_photo_url] : []);
-
-        if (officerPhotos.length > 0) {
-            officerPhotoImg.src = officerPhotos[0];
-            if (officerLabel) officerLabel.innerText = `Bukti Hasil Petugas 1 dari ${officerPhotos.length}`;
-            if (officerGallery) {
-                officerGallery.innerHTML = '';
-                if (officerPhotos.length > 1) {
-                    officerGallery.classList.remove('hidden');
-                    officerPhotos.forEach((url, idx) => {
-                        const thumb = document.createElement('img');
-                        thumb.src = url;
-                        thumb.className = `w-14 h-14 rounded-xl object-cover cursor-pointer border-2 transition ${idx === 0 ? 'border-emerald-600 ring-2 ring-emerald-200' : 'border-slate-200 opacity-70 hover:opacity-100'}`;
-                        thumb.onclick = () => {
-                            officerPhotoImg.src = url;
-                            if (officerLabel) officerLabel.innerText = `Bukti Hasil Petugas ${idx + 1} dari ${officerPhotos.length}`;
-                            officerGallery.querySelectorAll('img').forEach(img => {
-                                img.className = 'w-14 h-14 rounded-xl object-cover cursor-pointer border-2 border-slate-200 opacity-70 hover:opacity-100 transition';
-                            });
-                            thumb.className = 'w-14 h-14 rounded-xl object-cover cursor-pointer border-2 border-emerald-600 ring-2 ring-emerald-200 transition';
-                        };
-                        officerGallery.appendChild(thumb);
-                    });
-                } else {
-                    officerGallery.classList.add('hidden');
-                }
-            }
-            officerPhotoSection.classList.remove('hidden');
-        } else {
-            officerPhotoSection.classList.add('hidden');
-        }
-
-        // Judul & Tanggal
-        document.getElementById('valModalTitle').innerText = item.title;
-        document.getElementById('valModalDate').innerText = item.created_at_full;
-
-        // Identitas Pelapor
-        document.getElementById('valModalCitizenName').innerText = item.citizen_name || 'Warga Terdaftar';
-        document.getElementById('valModalCitizenPhone').innerText = item.citizen_phone || '-';
-        const anonBadge = document.getElementById('valModalAnonymousBadge');
-        if (anonBadge) {
-            if (item.is_anonymous) anonBadge.classList.remove('hidden');
-            else anonBadge.classList.add('hidden');
-        }
-
-        // Regu Penanganan Lapangan (Sesuai Permintaan: Menampilkan Regu, Ketua Regu, & Nomor HP)
-        const valTeamNameEl = document.getElementById('valModalTeamName');
-        const valOfficerDeptEl = document.getElementById('valModalOfficerDept');
-        const valTeamLeaderEl = document.getElementById('valModalTeamLeader');
-        const valTeamPhoneLink = document.getElementById('valModalTeamPhone');
-        const valTeamPhoneText = document.getElementById('valModalTeamPhoneText');
-
-        const teamDisplayName = item.team_name 
-            ? (item.team_code ? `[${item.team_code}] ${item.team_name}` : item.team_name)
-            : (item.officer_name ? `Regu Petugas (${item.officer_name})` : 'Regu Lapangan Terpadu');
-
-        if (valTeamNameEl) valTeamNameEl.innerText = teamDisplayName;
-        if (valOfficerDeptEl) valOfficerDeptEl.innerText = item.department_name || 'Dinas Terkait (PUPR / PRKP)';
-
-        const leaderName = item.team_leader_name || item.officer_name || 'Pengawas Lapangan';
-        const leaderPhone = item.team_leader_phone || item.officer_phone || '-';
-
-        if (valTeamLeaderEl) valTeamLeaderEl.innerText = leaderName;
-        if (valTeamPhoneLink && valTeamPhoneText) {
-            valTeamPhoneText.innerText = (leaderPhone && leaderPhone !== '-') ? leaderPhone : '-';
-            if (leaderPhone && leaderPhone !== '-') {
-                valTeamPhoneLink.href = 'tel:' + leaderPhone;
-                valTeamPhoneLink.classList.remove('hidden');
-            } else {
-                valTeamPhoneLink.removeAttribute('href');
-            }
-        }
-
-        // Legacy fallback elements
-        const valOfficerNameEl = document.getElementById('valModalOfficerName');
-        if (valOfficerNameEl) valOfficerNameEl.innerText = leaderName;
-        const valOfficerPhoneEl = document.getElementById('valModalOfficerPhone');
-        if (valOfficerPhoneEl) valOfficerPhoneEl.innerText = leaderPhone;
-
-        if (item.deadline) {
-            document.getElementById('valModalDeadlineBox').classList.remove('hidden');
-            document.getElementById('valModalOfficerDeadline').innerText = item.deadline;
-        } else {
-            document.getElementById('valModalDeadlineBox').classList.add('hidden');
-        }
-        if (item.instruction) {
-            document.getElementById('valModalInstructionRow').classList.remove('hidden');
-            document.getElementById('valModalOfficerInstruction').innerText = item.instruction;
-        } else {
-            document.getElementById('valModalInstructionRow').classList.add('hidden');
-        }
-
-        // Alamat & Koordinat
-        function parseAdminAddress(rawAddress) {
-            let road = 'Jalan / Area Kerusakan';
-            let village = 'Desa Wilayah';
-            let district = 'Kecamatan Terkait';
-            let regency = 'Kabupaten';
-            if (!rawAddress) return { road, village, district, regency };
-            const parts = rawAddress.split(',').map(s => s.trim());
-            parts.forEach(p => {
-                if (p.toLowerCase().startsWith('desa') || p.toLowerCase().startsWith('kel.')) village = p;
-                else if (p.toLowerCase().startsWith('kec.')) district = p;
-                else if (p.toLowerCase().startsWith('kab.')) regency = p;
-                else if (!p.toLowerCase().includes('sulawesi') && !p.toLowerCase().includes('indonesia')) road = p;
-            });
-            return { road, village, district, regency };
-        }
-        const adm = parseAdminAddress(item.address);
-        const valRoadEl = document.getElementById('valModalRoad');
-        const valVillageEl = document.getElementById('valModalVillage');
-        const valDistrictEl = document.getElementById('valModalDistrict');
-        const valRegencyEl = document.getElementById('valModalRegency');
-        if (valRoadEl) valRoadEl.innerText = adm.road;
-        if (valVillageEl) valVillageEl.innerText = adm.village;
-        if (valDistrictEl) valDistrictEl.innerText = adm.district;
-        if (valRegencyEl) valRegencyEl.innerText = adm.regency;
-
-        // Alamat Lengkap & Koordinat Bersih
-        const valFullAddressEl = document.getElementById('valModalFullAddress');
-        if (valFullAddressEl) valFullAddressEl.innerText = item.address || 'Alamat lokasi tidak tersedia';
-        const valCoordsEl = document.getElementById('valModalCoords');
-        if (valCoordsEl) valCoordsEl.innerText = (item.latitude && item.longitude) ? `${item.latitude}, ${item.longitude}` : '-';
-
-        // Major Road
-        const majorBox = document.getElementById('valModalMajorRoadBox');
-        if (majorBox) {
-            if (item.damage_type === 'major' || item.road_length) {
-                majorBox.classList.remove('hidden');
-                const rlClean = (item.road_length || '').toString().replace(/\s*(meter|m)\s*$/i, '').trim();
-                document.getElementById('valModalRoadLength').innerText = rlClean ? rlClean + ' Meter' : '\u2265 500 Meter';
-                document.getElementById('valModalRoadCondition').innerText = item.road_condition || 'Jalan Tanah / Rusak';
-                document.getElementById('valModalStartCoords').innerText = `${item.latitude}, ${item.longitude}`;
-                document.getElementById('valModalEndCoords').innerText = (item.end_latitude && item.end_longitude) ? `${item.end_latitude}, ${item.end_longitude}` : 'Tidak ditentukan';
-            } else {
-                majorBox.classList.add('hidden');
-            }
-        }
-
-        // Deskripsi
-        document.getElementById('valModalDescription').innerText = item.description;
-
-        // AI Box
-        const aiBox = document.getElementById('valModalAiBox');
-        if (item.ai_damage_type || item.ai_category || item.ai_repair_estimate) {
-            aiBox.classList.remove('hidden');
-            document.getElementById('valModalAiType').innerText = item.ai_damage_type || item.ai_category || '-';
-            document.getElementById('valModalAiPriority').innerText = (item.severity_text || ('Tingkat ' + (item.severity_level || 3) + '/5')) + (item.priority_score ? ` (Skor: ${item.priority_score})` : '');
-            document.getElementById('valModalAiEstimate').innerText = item.ai_repair_estimate || 'Penanganan standar teknis';
-            document.getElementById('valModalAiConfidence').innerText = `Akurasi ${item.ai_confidence}%`;
-        } else {
-            aiBox.classList.add('hidden');
-        }
-
-        const modal = document.getElementById('operatorValidationModal');
-        if (modal) {
-            const scrollBox = modal.querySelector('.overflow-y-auto');
-            if (scrollBox) scrollBox.scrollTop = 0;
-            modal.classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
-            if (window.lucide) lucide.createIcons({ root: modal });
-        }
-    }
-
-    function closeValidationModal() {
-        const modal = document.getElementById('operatorValidationModal');
-        if (modal) modal.classList.add('hidden');
-        document.body.style.overflow = '';
-        currentValidationComplaintId = null;
-    }
-
-    function approveFromValidationModal() {
-        if (!currentValidationComplaintId) return;
-        const form = document.getElementById('validationActionForm');
-        const decisionInput = document.getElementById('validationDecisionInput');
-        if (form && decisionInput) {
-            form.action = `/operator/complaints/${currentValidationComplaintId}/validate`;
-            decisionInput.value = 'COMPLETED';
-            form.submit();
-        }
-    }
-
-    function openRevisionFromValidationModal() {
-        if (!currentValidationComplaintId) return;
-        const item = operatorComplaints.find(c => c.id === currentValidationComplaintId);
-        if (!item) return;
-
-        closeValidationModal();
-
-        // Siapkan modal revisi dengan target form validationActionForm
-        const form = document.getElementById('validationActionForm');
-        form.action = `/operator/complaints/${currentValidationComplaintId}/validate`;
-        const decisionInput = document.getElementById('validationDecisionInput');
-        decisionInput.value = 'REVISION_REQUIRED';
-
-        openRevisionModal(form, item.public_code);
-    }
-
-    // ==========================================
     // LOGIKA MODAL DISPOSISI & PENUGASAN PETUGAS
     // ==========================================
     let currentDispatchComplaintId = null;
@@ -3156,10 +2505,6 @@
         if (e.target === modal) {
             closeOperatorModal();
         }
-        const valModal = document.getElementById('operatorValidationModal');
-        if (e.target === valModal) {
-            closeValidationModal();
-        }
         const dispatchModal = document.getElementById('dispatchModal');
         if (e.target === dispatchModal) {
             closeDispatchModal();
@@ -3181,7 +2526,6 @@
     window.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
             closeOperatorModal();
-            closeValidationModal();
             closeDispatchModal();
             closeAssignTeamModal();
             closeRejectModal();
@@ -3189,9 +2533,9 @@
         }
     });
 
-    // Filter Kategori & Pencarian Real-time untuk Semua Tab (Verifikasi, Dikerjakan, Validasi, Arsip)
+    // Filter Kategori & Pencarian Real-time untuk Semua Tab (Verifikasi, Dikerjakan, Arsip)
     function setOperatorLayout(mode) {
-        const tabs = ['verify', 'dispatched', 'inprogress', 'validation', 'archive'];
+        const tabs = ['verify', 'dispatched', 'inprogress', 'archive'];
         tabs.forEach(tab => {
             const tableWrap = document.getElementById(`operatorTableWrap-${tab}`);
             const cardsEl = document.getElementById(`${tab}CardsContainer`);
@@ -3306,9 +2650,6 @@
         } else if (currentTab === 'inprogress') {
             selector = '.complaint-inprogress-card';
             rowSelector = '.operator-inprogress-row';
-        } else if (currentTab === 'validation') {
-            selector = '.complaint-validation-card';
-            rowSelector = '.operator-validation-row';
         } else if (currentTab === 'archive') {
             selector = '.complaint-archive-card';
             rowSelector = '.operator-archive-row';
@@ -3367,7 +2708,7 @@
         }
 
         // Update notifikasi filter kosong sesuai tab aktif
-        const allTabs = ['verify', 'dispatched', 'inprogress', 'validation', 'archive'];
+        const allTabs = ['verify', 'dispatched', 'inprogress', 'archive'];
         allTabs.forEach(tab => {
             const noticeId = tab === 'verify' ? 'emptyFilterNotice' : `emptyFilterNotice-${tab}`;
             const el = document.getElementById(noticeId);

@@ -240,7 +240,7 @@
                                 };
                                 $statusLabel = match($c->status) {
                                     'COMPLETED', 'CLOSED' => 'SELESAI',
-                                    'WAITING_VERIFICATION' => 'VALIDASI',
+                                    'WAITING_VERIFICATION' => 'DIPROSES',
                                     'IN_PROGRESS' => 'DIKERJAKAN',
                                     'DISPATCHED' => 'DITUGASKAN',
                                     'SUBMITTED', 'VERIFICATION' => 'VERIFIKASI',
@@ -352,7 +352,7 @@
                         $cSt = $c->status?->value ?? $c->status;
                         $cStLabel = match($cSt) {
                             'COMPLETED', 'CLOSED' => 'SELESAI',
-                            'WAITING_VERIFICATION' => 'VALIDASI',
+                            'WAITING_VERIFICATION' => 'DIPROSES',
                             'IN_PROGRESS' => 'DIKERJAKAN',
                             'DISPATCHED' => 'DITUGASKAN',
                             'REJECTED' => 'DITOLAK',
@@ -933,7 +933,7 @@
                         `;
                     } else if (p.status === 'WAITING_VERIFICATION') {
                         color = '#F59E0B';
-                        statusText = 'VALIDASI';
+                        statusText = 'DIPROSES';
                         statusBg = '#FEF3C7';
                         statusColor = '#92400E';
                         statusBorder = '#FDE68A';
@@ -1365,7 +1365,7 @@
             statusBadge = 'SELESAI';
             statusBg = 'bg-emerald-50 text-[#10B981] border-emerald-200';
         } else if (item.status === 'WAITING_VERIFICATION') {
-            statusBadge = 'VALIDASI';
+            statusBadge = 'DIPROSES';
             statusBg = 'bg-amber-50 text-amber-700 border-amber-300';
         } else if (item.status === 'IN_PROGRESS') {
             statusBadge = 'DIKERJAKAN';

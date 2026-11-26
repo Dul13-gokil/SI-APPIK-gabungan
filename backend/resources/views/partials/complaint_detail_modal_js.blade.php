@@ -54,7 +54,7 @@
                 statusBadge.innerText = 'SELESAI';
             } else if (s === 'WAITING_VERIFICATION') {
                 statusBadge.className = 'shrink-0 px-2.5 py-1 rounded-md text-xs font-bold bg-amber-50 text-amber-700 border border-amber-300 whitespace-nowrap';
-                statusBadge.innerText = 'VALIDASI';
+                statusBadge.innerText = 'DIPROSES';
             } else if (s === 'IN_PROGRESS') {
                 statusBadge.className = 'shrink-0 px-2.5 py-1 rounded-md text-xs font-bold bg-amber-50 text-amber-800 border border-amber-300 whitespace-nowrap';
                 statusBadge.innerText = 'DIKERJAKAN';

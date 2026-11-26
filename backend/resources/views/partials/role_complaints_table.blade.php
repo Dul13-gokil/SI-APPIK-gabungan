@@ -30,7 +30,7 @@
                     $stVal = $item->status?->value ?? $item->status;
                     $stLabel = match($stVal) {
                         'COMPLETED', 'CLOSED' => 'SELESAI',
-                        'WAITING_VERIFICATION' => 'VALIDASI',
+                        'WAITING_VERIFICATION' => 'DIPROSES',
                         'IN_PROGRESS' => 'DIKERJAKAN',
                         'DISPATCHED' => 'DITUGASKAN',
                         'VERIFIED' => 'SIAP DITUGASKAN',

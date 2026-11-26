@@ -149,7 +149,7 @@
     <div class="kartu">
         <div class="label">Selesai</div>
         <div class="angka" id="kpi-selesai" style="color: var(--hijau)">{{ $ringkasan['selesai'] }}</div>
-        <div class="ket">divalidasi AI dari foto radius</div>
+        <div class="ket">diperiksa AI dari foto radius</div>
     </div>
     <div class="kartu">
         <div class="label">Tingkat Tuntas</div>
