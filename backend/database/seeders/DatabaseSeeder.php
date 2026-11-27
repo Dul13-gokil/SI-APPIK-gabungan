@@ -35,7 +35,7 @@ class DatabaseSeeder extends Seeder
 
         $firstRegion = null;
         foreach ($districtsKolakaUtara as $d) {
-            $r = Region::create([
+            $r = Region::firstOrCreate(['district' => $d['district'], 'village' => $d['village']], [
                 'province'  => 'Sulawesi Tenggara',
                 'regency'   => 'Kabupaten Kolaka Utara',
                 'district'  => $d['district'],
@@ -48,14 +48,14 @@ class DatabaseSeeder extends Seeder
         $region = $firstRegion;
 
         // 2. Master Department (Hanya Dinas PUPR)
-        $deptPupr = Department::create([
+        $deptPupr = Department::updateOrCreate(['code' => 'PUPR'], [
             'name' => 'Dinas Pekerjaan Umum dan Penataan Ruang (PUPR)',
             'code' => 'PUPR',
             'description' => 'Penanganan jalan, jembatan, penerangan jalan umum, dan fasilitas umum.',
         ]);
 
         // 3. Master Categories with Default Severity & AI Label (Seluruhnya di bawah naungan Dinas PUPR)
-        Category::create([
+        Category::updateOrCreate(['id' => 1], [
             'id' => 1,
             'name' => 'Jalan & Jembatan',
             'department_id' => $deptPupr->id,
@@ -64,7 +64,7 @@ class DatabaseSeeder extends Seeder
             'sla_hours' => 48,
         ]);
 
-        Category::create([
+        Category::updateOrCreate(['id' => 2], [
             'id' => 2,
             'name' => 'Penerangan Jalan Umum (PJU)',
             'department_id' => $deptPupr->id,
@@ -73,7 +73,7 @@ class DatabaseSeeder extends Seeder
             'sla_hours' => 72,
         ]);
 
-        Category::create([
+        Category::updateOrCreate(['id' => 3], [
             'id' => 3,
             'name' => 'Fasilitas Umum',
             'department_id' => $deptPupr->id,
@@ -83,21 +83,21 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // 5. System Settings (SAP Section 32)
-        SystemSetting::create([
+        SystemSetting::updateOrCreate(['key' => 'duplicate_radius_m'], [
             'key' => 'duplicate_radius_m',
             'value' => '100',
             'type' => 'integer',
             'description' => 'Radius pencarian duplikasi laporan dalam meter',
         ]);
 
-        SystemSetting::create([
+        SystemSetting::updateOrCreate(['key' => 'upload_max_mb'], [
             'key' => 'upload_max_mb',
             'value' => '10',
             'type' => 'integer',
             'description' => 'Batas maksimal ukuran upload foto dalam MB',
         ]);
 
-        SystemSetting::create([
+        SystemSetting::updateOrCreate(['key' => 'priority_weights'], [
             'key' => 'priority_weights',
             'value' => json_encode([
                 'severity_weight' => 0.35,
